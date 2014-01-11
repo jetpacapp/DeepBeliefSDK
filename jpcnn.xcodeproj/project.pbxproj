@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		59D2FBBB187F8D2A00427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBBA187F8D2A00427417 /* main.cpp */; };
-		59D2FBBD187F8D2A00427417 /* jpcnn.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59D2FBBC187F8D2A00427417 /* jpcnn.1 */; };
+		594BBA35187F9816007F9A2A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
+		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
+		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,16 +19,21 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				59D2FBBD187F8D2A00427417 /* jpcnn.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		594BBA2B187F94A4007F9A2A /* jpcnn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jpcnn.h; sourceTree = "<group>"; };
+		594BBA31187F97F4007F9A2A /* basenode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = basenode.h; sourceTree = "<group>"; };
+		594BBA32187F97F4007F9A2A /* buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
+		594BBA33187F9816007F9A2A /* buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buffer.cpp; sourceTree = "<group>"; };
+		594BBA36187F9897007F9A2A /* dimensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dimensions.h; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
-		59D2FBBA187F8D2A00427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		59D2FBBC187F8D2A00427417 /* jpcnn.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = jpcnn.1; sourceTree = "<group>"; };
+		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
+		59D2FBC7187F8E4300427417 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,10 +47,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		594BBA30187F97F4007F9A2A /* graph */ = {
+			isa = PBXGroup;
+			children = (
+				594BBA31187F97F4007F9A2A /* basenode.h */,
+				594BBA32187F97F4007F9A2A /* buffer.h */,
+				594BBA33187F9816007F9A2A /* buffer.cpp */,
+				594BBA36187F9897007F9A2A /* dimensions.h */,
+			);
+			path = graph;
+			sourceTree = "<group>";
+		};
 		59D2FBAE187F8D2A00427417 = {
 			isa = PBXGroup;
 			children = (
-				59D2FBB9187F8D2A00427417 /* jpcnn */,
+				59D2FBC3187F8D9000427417 /* src */,
 				59D2FBB8187F8D2A00427417 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -57,13 +74,24 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		59D2FBB9187F8D2A00427417 /* jpcnn */ = {
+		59D2FBC3187F8D9000427417 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				59D2FBBA187F8D2A00427417 /* main.cpp */,
-				59D2FBBC187F8D2A00427417 /* jpcnn.1 */,
+				594BBA30187F97F4007F9A2A /* graph */,
+				594BBA2B187F94A4007F9A2A /* jpcnn.h */,
+				59D2FBC4187F8D9000427417 /* main.cpp */,
+				59D2FBC5187F8DDA00427417 /* third_party */,
 			);
-			path = jpcnn;
+			path = src;
+			sourceTree = "<group>";
+		};
+		59D2FBC5187F8DDA00427417 /* third_party */ = {
+			isa = PBXGroup;
+			children = (
+				59D2FBC6187F8DDA00427417 /* stb_image.c */,
+				59D2FBC7187F8E4300427417 /* stb_image.h */,
+			);
+			path = third_party;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -117,7 +145,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59D2FBBB187F8D2A00427417 /* main.cpp in Sources */,
+				594BBA35187F9816007F9A2A /* buffer.cpp in Sources */,
+				59D2FBC8187F926700427417 /* main.cpp in Sources */,
+				59D2FBC9187F926700427417 /* stb_image.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +255,7 @@
 				59D2FBC2187F8D2A00427417 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
