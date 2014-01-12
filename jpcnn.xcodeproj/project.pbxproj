@@ -12,6 +12,16 @@
 		594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
 		594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */; };
 		594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
+		594BBA4718834DFF007F9A2A /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4518834DFF007F9A2A /* nodefactory.cpp */; };
+		594BBA4A188350EF007F9A2A /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
+		594BBA4D18835947007F9A2A /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4B18835947007F9A2A /* dropoutnode.cpp */; };
+		594BBA5018835B69007F9A2A /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4E18835B69007F9A2A /* flatnode.cpp */; };
+		594BBA5318835C25007F9A2A /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5118835C25007F9A2A /* gconvnode.cpp */; };
+		594BBA5618835CBB007F9A2A /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5418835CBB007F9A2A /* neuronnode.cpp */; };
+		594BBA5918835D1C007F9A2A /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5718835D1C007F9A2A /* normalizenode.cpp */; };
+		594BBA5C18835D8B007F9A2A /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5A18835D8B007F9A2A /* poolnode.cpp */; };
+		594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
+		594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
@@ -41,6 +51,26 @@
 		594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_ops_naive.cpp; sourceTree = "<group>"; };
 		594BBA421882929D007F9A2A /* binary_format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = binary_format.h; sourceTree = "<group>"; };
 		594BBA43188298E8007F9A2A /* binary_format.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = binary_format.cpp; sourceTree = "<group>"; };
+		594BBA4518834DFF007F9A2A /* nodefactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nodefactory.cpp; sourceTree = "<group>"; };
+		594BBA4618834DFF007F9A2A /* nodefactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nodefactory.h; sourceTree = "<group>"; };
+		594BBA48188350EF007F9A2A /* convnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = convnode.cpp; sourceTree = "<group>"; };
+		594BBA49188350EF007F9A2A /* convnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convnode.h; sourceTree = "<group>"; };
+		594BBA4B18835947007F9A2A /* dropoutnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dropoutnode.cpp; sourceTree = "<group>"; };
+		594BBA4C18835947007F9A2A /* dropoutnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dropoutnode.h; sourceTree = "<group>"; };
+		594BBA4E18835B69007F9A2A /* flatnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flatnode.cpp; sourceTree = "<group>"; };
+		594BBA4F18835B69007F9A2A /* flatnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flatnode.h; sourceTree = "<group>"; };
+		594BBA5118835C25007F9A2A /* gconvnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gconvnode.cpp; sourceTree = "<group>"; };
+		594BBA5218835C25007F9A2A /* gconvnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gconvnode.h; sourceTree = "<group>"; };
+		594BBA5418835CBB007F9A2A /* neuronnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = neuronnode.cpp; sourceTree = "<group>"; };
+		594BBA5518835CBB007F9A2A /* neuronnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = neuronnode.h; sourceTree = "<group>"; };
+		594BBA5718835D1C007F9A2A /* normalizenode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = normalizenode.cpp; sourceTree = "<group>"; };
+		594BBA5818835D1C007F9A2A /* normalizenode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = normalizenode.h; sourceTree = "<group>"; };
+		594BBA5A18835D8B007F9A2A /* poolnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = poolnode.cpp; sourceTree = "<group>"; };
+		594BBA5B18835D8B007F9A2A /* poolnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = poolnode.h; sourceTree = "<group>"; };
+		594BBA5D18835DFD007F9A2A /* relunode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = relunode.cpp; sourceTree = "<group>"; };
+		594BBA5E18835DFD007F9A2A /* relunode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = relunode.h; sourceTree = "<group>"; };
+		594BBA6018835EC1007F9A2A /* maxnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maxnode.cpp; sourceTree = "<group>"; };
+		594BBA6118835EC1007F9A2A /* maxnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maxnode.h; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
@@ -63,11 +93,31 @@
 			children = (
 				594BBA3A1880CD5A007F9A2A /* basenode.cpp */,
 				594BBA31187F97F4007F9A2A /* basenode.h */,
-				594BBA32187F97F4007F9A2A /* buffer.h */,
 				594BBA33187F9816007F9A2A /* buffer.cpp */,
+				594BBA32187F97F4007F9A2A /* buffer.h */,
+				594BBA48188350EF007F9A2A /* convnode.cpp */,
+				594BBA49188350EF007F9A2A /* convnode.h */,
 				594BBA36187F9897007F9A2A /* dimensions.h */,
+				594BBA4B18835947007F9A2A /* dropoutnode.cpp */,
+				594BBA4C18835947007F9A2A /* dropoutnode.h */,
+				594BBA4E18835B69007F9A2A /* flatnode.cpp */,
+				594BBA4F18835B69007F9A2A /* flatnode.h */,
+				594BBA5118835C25007F9A2A /* gconvnode.cpp */,
+				594BBA5218835C25007F9A2A /* gconvnode.h */,
+				594BBA6018835EC1007F9A2A /* maxnode.cpp */,
+				594BBA6118835EC1007F9A2A /* maxnode.h */,
+				594BBA5418835CBB007F9A2A /* neuronnode.cpp */,
+				594BBA5518835CBB007F9A2A /* neuronnode.h */,
+				594BBA4518834DFF007F9A2A /* nodefactory.cpp */,
+				594BBA4618834DFF007F9A2A /* nodefactory.h */,
+				594BBA5718835D1C007F9A2A /* normalizenode.cpp */,
+				594BBA5818835D1C007F9A2A /* normalizenode.h */,
+				594BBA5A18835D8B007F9A2A /* poolnode.cpp */,
+				594BBA5B18835D8B007F9A2A /* poolnode.h */,
 				594BBA381880CC43007F9A2A /* prepareinput.cpp */,
 				594BBA371880CB4D007F9A2A /* prepareinput.h */,
+				594BBA5D18835DFD007F9A2A /* relunode.cpp */,
+				594BBA5E18835DFD007F9A2A /* relunode.h */,
 			);
 			path = graph;
 			sourceTree = "<group>";
@@ -181,11 +231,21 @@
 			files = (
 				594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */,
 				594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */,
+				594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */,
 				594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */,
+				594BBA5C18835D8B007F9A2A /* poolnode.cpp in Sources */,
+				594BBA5018835B69007F9A2A /* flatnode.cpp in Sources */,
 				594BBA35187F9816007F9A2A /* buffer.cpp in Sources */,
 				594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */,
+				594BBA5618835CBB007F9A2A /* neuronnode.cpp in Sources */,
 				59D2FBC8187F926700427417 /* main.cpp in Sources */,
+				594BBA4718834DFF007F9A2A /* nodefactory.cpp in Sources */,
+				594BBA4A188350EF007F9A2A /* convnode.cpp in Sources */,
+				594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */,
+				594BBA5318835C25007F9A2A /* gconvnode.cpp in Sources */,
+				594BBA5918835D1C007F9A2A /* normalizenode.cpp in Sources */,
 				59D2FBC9187F926700427417 /* stb_image.c in Sources */,
+				594BBA4D18835947007F9A2A /* dropoutnode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

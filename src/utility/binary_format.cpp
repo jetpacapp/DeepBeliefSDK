@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 SBinaryTag* read_tag_from_file(FILE* file) {
 
@@ -69,4 +70,25 @@ SBinaryTag* get_tag_from_dict(SBinaryTag* tag, const char* wantedKey) {
   }
 
   return result;
+}
+
+const char* get_string_from_dict(SBinaryTag* tag, const char* wantedKey) {
+  SBinaryTag* valueTag = get_tag_from_dict(tag, wantedKey);
+  assert(valueTag != NULL);
+  assert(valueTag->type == JP_CHAR);
+  return valueTag->payload.jpchar;
+}
+
+uint32_t get_uint_from_dict(SBinaryTag* tag, const char* wantedKey) {
+  SBinaryTag* valueTag = get_tag_from_dict(tag, wantedKey);
+  assert(valueTag != NULL);
+  assert(valueTag->type == JP_UINT);
+  return valueTag->payload.jpuint;
+}
+
+jpfloat_t get_float_from_dict(SBinaryTag* tag, const char* wantedKey) {
+  SBinaryTag* valueTag = get_tag_from_dict(tag, wantedKey);
+  assert(valueTag != NULL);
+  assert(valueTag->type == JP_FL32);
+  return valueTag->payload.jpfl32;
 }

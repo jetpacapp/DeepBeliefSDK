@@ -56,5 +56,8 @@ SBinaryTag* get_tag_from_memory(char* current, const char* end);
 
 size_t get_total_sizeof_tag(SBinaryTag* tag);
 SBinaryTag* get_tag_from_dict(SBinaryTag* tag, const char* wantedKey);
+const char* get_string_from_dict(SBinaryTag* tag, const char* wantedKey);
+uint32_t get_uint_from_dict(SBinaryTag* tag, const char* wantedKey);
+jpfloat_t get_float_from_dict(SBinaryTag* tag, const char* wantedKey);
 
 #endif // INCLUDE_BINARY_FORMAT_H
