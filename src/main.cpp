@@ -10,6 +10,8 @@
 
 #include "buffer.h"
 
+#include "prepareinput.h"
+
 int main(int argc, const char * argv[])
 {
   if (argc < 2) {
@@ -23,18 +25,23 @@ int main(int argc, const char * argv[])
 
   const char* expectedFileName = "data/lena_blobs/000_input_data.blob";
   Buffer* expectedInput = buffer_from_dump_file(expectedFileName);
+  expectedInput->setName("expectedInput");
 
-  const char* testFileName = "data/lena_blobs/001_input_conv1.blob";
-  Buffer* testInput = buffer_from_dump_file(testFileName);
+  const char* dataMeanFileName = "data/data_mean.blob";
+  Buffer* dataMean = buffer_from_dump_file(dataMeanFileName);
 
-  testInput->_data[0] += 0.00001f;
+  PrepareInput prepareInput(dataMean, true);
 
-  const bool isEqual = buffer_are_all_close(expectedInput, testInput);
+  Buffer* rescaledInput = prepareInput.run(input);
 
-  if (!isEqual) {
-    fprintf(stderr, "Buffers aren't equal.\n");
+  expectedInput->saveDebugImage();
+  rescaledInput->saveDebugImage();
+
+  const bool isRescaledEqual = buffer_are_all_close(expectedInput, rescaledInput);
+  if (!isRescaledEqual) {
+    fprintf(stderr, "Rescaled buffers aren't equal.\n");
   } else {
-    fprintf(stderr, "Buffers are equal.\n");
+    fprintf(stderr, "Rescaled buffers are equal.\n");
   }
 
   return 0;

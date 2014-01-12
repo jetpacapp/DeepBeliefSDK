@@ -12,14 +12,23 @@
 #include "stdio.h"
 #include "string.h"
 #include "math.h"
+#include "assert.h"
 
 #include "stb_image.h"
+
+static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
 
 Buffer::Buffer(const Dimensions& dims) : _dims(dims)
 {
   const int elementCount = _dims.elementCount();
   const size_t byteCount = (elementCount * sizeof(jpfloat_t));
   _data = (jpfloat_t*)(malloc(byteCount));
+  _debugString = NULL;
+  setName("None");
+}
+
+Buffer::Buffer(const Dimensions& dims, jpfloat_t* data) : _dims(dims) {
+  _data = data;
   _debugString = NULL;
   setName("None");
 }
@@ -47,8 +56,7 @@ char* Buffer::debugString()
   return _debugString;
 }
 
-void Buffer::setName(const char* name)
-{
+void Buffer::setName(const char* name) {
   if (_name)
   {
     free(_name);
@@ -56,6 +64,10 @@ void Buffer::setName(const char* name)
   size_t byteCount = (strlen(name) + 1);
   _name = (char*)(malloc(byteCount));
   strncpy(_name, name, byteCount);
+}
+
+void Buffer::saveDebugImage() {
+  buffer_save_to_image_file(this, this->_name);
 }
 
 Buffer* buffer_from_image_file(const char* filename)
@@ -132,6 +144,65 @@ Buffer* buffer_from_dump_file(const char* filename)
   return buffer;
 }
 
+void buffer_save_to_image_file(Buffer* buffer, const char* basename) {
+  const int maxFilenameLength = 1024;
+  char filename[maxFilenameLength];
+
+  const Dimensions dims = buffer->_dims;
+  assert((dims._length == 4) || (dims._length == 3));
+
+  if (dims._length == 3) {
+    snprintf(filename, maxFilenameLength, "%s.ppm", basename);
+    buffer_do_save_to_image_file(buffer, filename);
+  } else {
+    for (int index = 0; index < dims[0]; index += 1) {
+      Buffer* view = buffer_view_at_top_index(buffer, index);
+      snprintf(filename, maxFilenameLength, "%s_%02d.ppm", basename, index);
+      buffer_do_save_to_image_file(view, filename);
+    }
+  }
+}
+
+void buffer_do_save_to_image_file(Buffer* buffer, const char* filename) {
+
+  const Dimensions dims = buffer->_dims;
+  assert(dims._length == 3);
+
+  const int width = dims[1];
+  const int height = dims[0];
+  const int channels = dims[2];
+  assert(channels <= 3);
+
+  const jpfloat_t* const data = buffer->_data;
+
+  FILE* outputFile = fopen(filename, "w");
+  if (!outputFile) {
+    fprintf(stderr, "jpcnn couldn't open '%s' for writing\n", filename);
+    return;
+  }
+
+  fprintf(outputFile, "P3\n");
+  fprintf(outputFile, "# CREATOR: jpcnn from %s\n", buffer->debugString());
+
+  fprintf(outputFile, "%d %d\n", width, height);
+  fprintf(outputFile, "255\n");
+
+  for (int y = 0; y < height; y += 1) {
+    for (int x = 0; x < width; x += 1) {
+      for (int channel = 0; channel < 3; channel += 1) {
+        int value;
+        if (channel >= channels) {
+          value = 0;
+        } else {
+          value = (int)(*(data + dims.offset(y, x, channel)));
+        }
+        fprintf(outputFile, "%d ", value);
+      }
+    }
+  }
+  fclose(outputFile);
+}
+
 bool buffer_are_all_close(Buffer* a, Buffer* b, jpfloat_t tolerance) {
 
   if (a == NULL) {
@@ -157,6 +228,7 @@ bool buffer_are_all_close(Buffer* a, Buffer* b, jpfloat_t tolerance) {
   }
 
   int differentCount = 0;
+  jpfloat_t totalDelta = 0.0f;
   jpfloat_t* aCurrent = a->_data;
   jpfloat_t* aEnd = a->dataEnd();
   jpfloat_t* bCurrent = b->_data;
@@ -168,15 +240,34 @@ bool buffer_are_all_close(Buffer* a, Buffer* b, jpfloat_t tolerance) {
     if (absDelta > tolerance) {
       differentCount += 1;
     }
+    totalDelta += absDelta;
     aCurrent += 1;
     bCurrent += 1;
   }
 
   if (differentCount > 0) {
-    const jpfloat_t differentPercentage = (differentCount / (jpfloat_t)(a->_dims.elementCount()));
-    fprintf(stderr, "Buffers contained %f%% different values - %s vs %s\n", differentPercentage, a->debugString(), b->debugString());
+    const jpfloat_t differentPercentage = 100 * (differentCount / (jpfloat_t)(a->_dims.elementCount()));
+    const jpfloat_t meanDelta = (totalDelta / a->_dims.elementCount());
+    fprintf(stderr, "Buffers contained %f%% different values (%d), mean delta = %f - %s vs %s\n",
+      differentPercentage,
+      differentCount,
+      meanDelta,
+      a->debugString(),
+      b->debugString());
     return false;
   }
 
   return true;
 }
+
+Buffer* buffer_view_at_top_index(Buffer* input, int index) {
+  const Dimensions inputDims = input->_dims;
+  assert(inputDims._length > 1);
+  assert(index < inputDims[0]);
+  Dimensions outputDims = inputDims.removeDimensions(1);
+  const int topStride = outputDims.elementCount();
+  jpfloat_t* const viewData = (input->_data + (topStride * index));
+  Buffer* output = new Buffer(outputDims, viewData);
+  return output;
+}
+

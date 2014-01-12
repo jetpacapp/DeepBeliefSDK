@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		594BBA35187F9816007F9A2A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
+		594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
+		594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
+		594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
@@ -30,6 +33,11 @@
 		594BBA32187F97F4007F9A2A /* buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
 		594BBA33187F9816007F9A2A /* buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buffer.cpp; sourceTree = "<group>"; };
 		594BBA36187F9897007F9A2A /* dimensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dimensions.h; sourceTree = "<group>"; };
+		594BBA371880CB4D007F9A2A /* prepareinput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prepareinput.h; sourceTree = "<group>"; };
+		594BBA381880CC43007F9A2A /* prepareinput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = prepareinput.cpp; sourceTree = "<group>"; };
+		594BBA3A1880CD5A007F9A2A /* basenode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = basenode.cpp; sourceTree = "<group>"; };
+		594BBA3D1881ECCD007F9A2A /* matrix_ops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matrix_ops.h; sourceTree = "<group>"; };
+		594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_ops_naive.cpp; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
@@ -50,12 +58,24 @@
 		594BBA30187F97F4007F9A2A /* graph */ = {
 			isa = PBXGroup;
 			children = (
+				594BBA3A1880CD5A007F9A2A /* basenode.cpp */,
 				594BBA31187F97F4007F9A2A /* basenode.h */,
 				594BBA32187F97F4007F9A2A /* buffer.h */,
 				594BBA33187F9816007F9A2A /* buffer.cpp */,
 				594BBA36187F9897007F9A2A /* dimensions.h */,
+				594BBA381880CC43007F9A2A /* prepareinput.cpp */,
+				594BBA371880CB4D007F9A2A /* prepareinput.h */,
 			);
 			path = graph;
+			sourceTree = "<group>";
+		};
+		594BBA3C1881EC76007F9A2A /* matrix_ops */ = {
+			isa = PBXGroup;
+			children = (
+				594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */,
+				594BBA3D1881ECCD007F9A2A /* matrix_ops.h */,
+			);
+			path = matrix_ops;
 			sourceTree = "<group>";
 		};
 		59D2FBAE187F8D2A00427417 = {
@@ -80,6 +100,7 @@
 				594BBA30187F97F4007F9A2A /* graph */,
 				594BBA2B187F94A4007F9A2A /* jpcnn.h */,
 				59D2FBC4187F8D9000427417 /* main.cpp */,
+				594BBA3C1881EC76007F9A2A /* matrix_ops */,
 				59D2FBC5187F8DDA00427417 /* third_party */,
 			);
 			path = src;
@@ -145,6 +166,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */,
+				594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */,
+				594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */,
 				594BBA35187F9816007F9A2A /* buffer.cpp in Sources */,
 				59D2FBC8187F926700427417 /* main.cpp in Sources */,
 				59D2FBC9187F926700427417 /* stb_image.c in Sources */,

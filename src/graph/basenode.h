@@ -20,7 +20,9 @@ public:
   BaseNode();
   virtual ~BaseNode();
 
-  void run(Buffer& input, Buffer& output);
+  virtual Buffer* run(Buffer* input)=0;
+
+  Buffer* _output;
 };
 
 #endif // INCLUDE_BASENODE_H
