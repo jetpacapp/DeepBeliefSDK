@@ -1,0 +1,72 @@
+//
+//  binary_format.cpp
+//  jpcnn
+//
+//  Created by Peter Warden on 1/9/14.
+//  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
+//
+
+#include "binary_format.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+SBinaryTag* read_tag_from_file(FILE* file) {
+
+  if (file == NULL) {
+    fprintf(stderr, "jpcnn read_tag_from_file() NULL file input\n");
+    return NULL;
+  }
+
+  SBinaryTag tagForSize;
+  fread(&tagForSize.type, sizeof(tagForSize.type), 1, file);
+  fread(&tagForSize.length, sizeof(tagForSize.length), 1, file);
+
+  const size_t tagTotalBytes = get_total_sizeof_tag(&tagForSize);
+
+  SBinaryTag* result = (SBinaryTag*)(malloc(tagTotalBytes));
+  result->type = tagForSize.type;
+  result->length = tagForSize.length;
+
+  fread(&result->payload.jpchar[0], 1, result->length, file);
+
+  return result;
+}
+
+SBinaryTag* get_tag_from_memory(char* current, const char* end) {
+  SBinaryTag* result = (SBinaryTag*)(current);
+  const size_t tagTotalBytes = get_total_sizeof_tag(result);
+  const size_t remainingLength = (end - current);
+  if (remainingLength < tagTotalBytes) {
+    fprintf(stderr, "jpcnn get_tag_from_memory() not enough bytes remaining\n");
+    return NULL;
+  }
+
+  return result;
+}
+
+size_t get_total_sizeof_tag(SBinaryTag* tag) {
+  return ((2 * sizeof(uint32_t)) + tag->length);
+}
+
+SBinaryTag* get_tag_from_dict(SBinaryTag* tag, const char* wantedKey) {
+  if (tag->type != JP_DICT) {
+    fprintf(stderr, "jpcnn get_tag_from_dict() called on non-DICT for %s\n", wantedKey);
+    return NULL;
+  }
+
+  SBinaryTag* result = NULL;
+  char* current = (char*)(&tag->payload);
+  char* end = (current + tag->length);
+  while (current < end) {
+    SBinaryTag* key = get_tag_from_memory(current, end);
+    current += get_total_sizeof_tag(key);
+    SBinaryTag* value = get_tag_from_memory(current, end);
+    current += get_total_sizeof_tag(value);
+    if (strncmp(wantedKey, key->payload.jpchar, key->length) == 0) {
+      result = value;
+    }
+  }
+
+  return result;
+}

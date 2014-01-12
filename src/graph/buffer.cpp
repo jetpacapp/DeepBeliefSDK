@@ -8,13 +8,14 @@
 
 #include "buffer.h"
 
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
-#include "math.h"
-#include "assert.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <assert.h>
 
 #include "stb_image.h"
+#include "binary_format.h"
 
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
 
@@ -103,7 +104,7 @@ Buffer* buffer_from_image_file(const char* filename)
   return buffer;
 }
 
-Buffer* buffer_from_dump_file(const char* filename)
+Buffer* buffer_from_dump_file_old(const char* filename)
 {
   FILE* inputFile = fopen(filename, "rb");
   if (!inputFile) {
@@ -140,6 +141,96 @@ Buffer* buffer_from_dump_file(const char* filename)
   }
 
   fclose(inputFile);
+
+  return buffer;
+}
+
+//Buffer* buffer_from_dump_file_old(const char* filename)
+//{
+//  FILE* inputFile = fopen(filename, "rb");
+//  if (!inputFile) {
+//    fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
+//    return NULL;
+//  }
+//
+//  uint32_t bitsPerFloat;
+//  fread(&bitsPerFloat, sizeof(bitsPerFloat), 1, inputFile);
+//  if (bitsPerFloat != 32) {
+//    fprintf(stderr, "jpcnn can only read 32-bit float dump files, found %d for '%s'\n", bitsPerFloat, filename);
+//    return NULL;
+//  }
+//
+//  int32_t dimensionsCount;
+//  fread(&dimensionsCount, sizeof(dimensionsCount), 1, inputFile);
+//  if (dimensionsCount > DIMENSIONS_MAX_LENGTH) {
+//    fprintf(stderr, "jpcnn can only read %d dimensional dump files, found %d for '%s'\n", DIMENSIONS_MAX_LENGTH, dimensionsCount, filename);
+//    return NULL;
+//  }
+//
+//  int32_t dimensions[DIMENSIONS_MAX_LENGTH];
+//  fread(dimensions, sizeof(int32_t), dimensionsCount, inputFile);
+//
+//  Dimensions dims(dimensions, dimensionsCount);
+//  Buffer* buffer = new Buffer(dims);
+//  buffer->setName(filename);
+//
+//  const int elementCount = buffer->_dims.elementCount();
+//  const size_t elementsRead = fread(buffer->_data, sizeof(jpfloat_t), elementCount, inputFile);
+//  if (elementsRead != elementCount) {
+//    fprintf(stderr, "jpcnn expected %d elements, found %zu for '%s'\n", elementCount, elementsRead, filename);
+//    return NULL;
+//  }
+//
+//  fclose(inputFile);
+//
+//  return buffer;
+//}
+
+Buffer* buffer_from_dump_file(const char* filename)
+{
+  FILE* inputFile = fopen(filename, "rb");
+  if (!inputFile) {
+    fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
+    return NULL;
+  }
+
+  SBinaryTag* mainDict = read_tag_from_file(inputFile);
+  assert(mainDict != NULL);
+
+  SBinaryTag* bitsPerFloatTag = get_tag_from_dict(mainDict, "float_bits");
+  const uint32_t bitsPerFloat = bitsPerFloatTag->payload.jpuint;
+  if (bitsPerFloat != 32) {
+    fprintf(stderr, "jpcnn can only read 32-bit float dump files, found %d for '%s'\n", bitsPerFloat, filename);
+    return NULL;
+  }
+
+  SBinaryTag* dimsTag = get_tag_from_dict(mainDict, "dims");
+  assert(dimsTag->type == JP_LIST);
+  int32_t dimensions[DIMENSIONS_MAX_LENGTH];
+  int32_t dimensionsCount = 0;
+  char* current = dimsTag->payload.jpchar;
+  char* end = (current + dimsTag->length);
+  while (current < end) {
+    SBinaryTag* entryTag = get_tag_from_memory(current, end);
+    current += get_total_sizeof_tag(entryTag);
+    assert(entryTag->type == JP_UINT);
+    dimensions[dimensionsCount] = entryTag->payload.jpuint;
+    dimensionsCount += 1;
+  }
+
+  Dimensions dims(dimensions, dimensionsCount);
+  Buffer* buffer = new Buffer(dims);
+  buffer->setName(filename);
+
+  SBinaryTag* dataTag = get_tag_from_dict(mainDict, "data");
+  assert(dataTag->type == JP_FARY);
+
+  const int elementCount = buffer->_dims.elementCount();
+  assert(dataTag->length == (elementCount * sizeof(jpfloat_t)));
+  memcpy(buffer->_data, dataTag->payload.jpchar, dataTag->length);
+
+  fclose(inputFile);
+  free(mainDict);
 
   return buffer;
 }

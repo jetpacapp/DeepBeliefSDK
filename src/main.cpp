@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
   Buffer* expectedInput = buffer_from_dump_file(expectedFileName);
   expectedInput->setName("expectedInput");
 
-  const char* dataMeanFileName = "data/data_mean.blob";
+  const char* dataMeanFileName = "data/data_mean.fary";
   Buffer* dataMean = buffer_from_dump_file(dataMeanFileName);
 
   PrepareInput prepareInput(dataMean, true);

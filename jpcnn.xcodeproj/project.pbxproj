@@ -11,6 +11,7 @@
 		594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
 		594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
 		594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */; };
+		594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
@@ -38,6 +39,8 @@
 		594BBA3A1880CD5A007F9A2A /* basenode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = basenode.cpp; sourceTree = "<group>"; };
 		594BBA3D1881ECCD007F9A2A /* matrix_ops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matrix_ops.h; sourceTree = "<group>"; };
 		594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_ops_naive.cpp; sourceTree = "<group>"; };
+		594BBA421882929D007F9A2A /* binary_format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = binary_format.h; sourceTree = "<group>"; };
+		594BBA43188298E8007F9A2A /* binary_format.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = binary_format.cpp; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
@@ -78,6 +81,15 @@
 			path = matrix_ops;
 			sourceTree = "<group>";
 		};
+		594BBA411882929D007F9A2A /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				594BBA43188298E8007F9A2A /* binary_format.cpp */,
+				594BBA421882929D007F9A2A /* binary_format.h */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
 		59D2FBAE187F8D2A00427417 = {
 			isa = PBXGroup;
 			children = (
@@ -102,6 +114,7 @@
 				59D2FBC4187F8D9000427417 /* main.cpp */,
 				594BBA3C1881EC76007F9A2A /* matrix_ops */,
 				59D2FBC5187F8DDA00427417 /* third_party */,
+				594BBA411882929D007F9A2A /* utility */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -170,6 +183,7 @@
 				594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */,
 				594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */,
 				594BBA35187F9816007F9A2A /* buffer.cpp in Sources */,
+				594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */,
 				59D2FBC8187F926700427417 /* main.cpp in Sources */,
 				59D2FBC9187F926700427417 /* stb_image.c in Sources */,
 			);
