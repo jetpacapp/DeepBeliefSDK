@@ -22,7 +22,12 @@ public:
 
   virtual Buffer* run(Buffer* input)=0;
 
+  void setClassName(const char* name);
+  void setName(const char* name);
+
   Buffer* _output;
+  char* _className;
+  char* _name;
 };
 
 #endif // INCLUDE_BASENODE_H

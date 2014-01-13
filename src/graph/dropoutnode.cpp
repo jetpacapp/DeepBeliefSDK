@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 DropoutNode::DropoutNode() : BaseNode() {
+  setClassName("DropoutNode");
 }
 
 DropoutNode::~DropoutNode() {
@@ -26,8 +27,8 @@ Buffer* DropoutNode::run(Buffer* input) {
 }
 
 BaseNode* new_dropoutnode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "dropout") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "dropout") == 0);
   DropoutNode* result = new DropoutNode();
   return result;
 }

@@ -30,6 +30,7 @@ PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly) {
   assert(expectedDims == dataMean->_dims);
   _dataMean = dataMean;
   _useCenterOnly = useCenterOnly;
+  setClassName("PrepareInput");
 }
 
 PrepareInput::~PrepareInput() {

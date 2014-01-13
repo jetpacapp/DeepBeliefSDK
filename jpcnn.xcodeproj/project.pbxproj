@@ -22,6 +22,7 @@
 		594BBA5C18835D8B007F9A2A /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5A18835D8B007F9A2A /* poolnode.cpp */; };
 		594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
 		594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
+		594BBA65188363BD007F9A2A /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA63188363BD007F9A2A /* graph.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
@@ -71,6 +72,8 @@
 		594BBA5E18835DFD007F9A2A /* relunode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = relunode.h; sourceTree = "<group>"; };
 		594BBA6018835EC1007F9A2A /* maxnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maxnode.cpp; sourceTree = "<group>"; };
 		594BBA6118835EC1007F9A2A /* maxnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maxnode.h; sourceTree = "<group>"; };
+		594BBA63188363BD007F9A2A /* graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = graph.cpp; sourceTree = "<group>"; };
+		594BBA64188363BD007F9A2A /* graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graph.h; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
@@ -104,6 +107,8 @@
 				594BBA4F18835B69007F9A2A /* flatnode.h */,
 				594BBA5118835C25007F9A2A /* gconvnode.cpp */,
 				594BBA5218835C25007F9A2A /* gconvnode.h */,
+				594BBA63188363BD007F9A2A /* graph.cpp */,
+				594BBA64188363BD007F9A2A /* graph.h */,
 				594BBA6018835EC1007F9A2A /* maxnode.cpp */,
 				594BBA6118835EC1007F9A2A /* maxnode.h */,
 				594BBA5418835CBB007F9A2A /* neuronnode.cpp */,
@@ -241,6 +246,7 @@
 				59D2FBC8187F926700427417 /* main.cpp in Sources */,
 				594BBA4718834DFF007F9A2A /* nodefactory.cpp in Sources */,
 				594BBA4A188350EF007F9A2A /* convnode.cpp in Sources */,
+				594BBA65188363BD007F9A2A /* graph.cpp in Sources */,
 				594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */,
 				594BBA5318835C25007F9A2A /* gconvnode.cpp in Sources */,
 				594BBA5918835D1C007F9A2A /* normalizenode.cpp in Sources */,

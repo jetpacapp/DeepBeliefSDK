@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 ReluNode::ReluNode() : BaseNode() {
+  setClassName("ReluNode");
 }
 
 ReluNode::~ReluNode() {
@@ -26,8 +27,8 @@ Buffer* ReluNode::run(Buffer* input) {
 }
 
 BaseNode* new_relunode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "relu") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "relu") == 0);
   ReluNode* result = new ReluNode();
   return result;
 }

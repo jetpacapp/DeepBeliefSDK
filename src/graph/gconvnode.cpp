@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 GConvNode::GConvNode() : BaseNode() {
+  setClassName("GConvNode");
 }
 
 GConvNode::~GConvNode() {
@@ -26,8 +27,8 @@ Buffer* GConvNode::run(Buffer* input) {
 }
 
 BaseNode* new_gconvnode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "gconv") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "gconv") == 0);
   GConvNode* result = new GConvNode();
   return result;
 }

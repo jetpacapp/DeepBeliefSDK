@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 FlatNode::FlatNode() : BaseNode() {
+  setClassName("FlatNode");
 }
 
 FlatNode::~FlatNode() {
@@ -26,8 +27,8 @@ Buffer* FlatNode::run(Buffer* input) {
 }
 
 BaseNode* new_flatnode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "flat") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "flat") == 0);
   FlatNode* result = new FlatNode();
   return result;
 }

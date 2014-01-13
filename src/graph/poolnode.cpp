@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 PoolNode::PoolNode() : BaseNode() {
+  setClassName("PoolNode");
 }
 
 PoolNode::~PoolNode() {
@@ -26,8 +27,8 @@ Buffer* PoolNode::run(Buffer* input) {
 }
 
 BaseNode* new_poolnode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "pool") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "pool") == 0);
   PoolNode* result = new PoolNode();
   return result;
 }

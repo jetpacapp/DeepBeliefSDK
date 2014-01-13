@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 NormalizeNode::NormalizeNode() : BaseNode() {
+  setClassName("NormalizeNode");
 }
 
 NormalizeNode::~NormalizeNode() {
@@ -26,8 +27,8 @@ Buffer* NormalizeNode::run(Buffer* input) {
 }
 
 BaseNode* new_normalizenode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "normalize") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "normalize") == 0);
   NormalizeNode* result = new NormalizeNode();
   return result;
 }

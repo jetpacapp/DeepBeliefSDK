@@ -92,3 +92,33 @@ jpfloat_t get_float_from_dict(SBinaryTag* tag, const char* wantedKey) {
   assert(valueTag->type == JP_FL32);
   return valueTag->payload.jpfl32;
 }
+
+int count_list_entries(SBinaryTag* tag) {
+  assert(tag->type == JP_LIST);
+  int result = 0;
+  SBinaryTag* current = get_first_list_entry(tag);
+  while (current != NULL) {
+    result += 1;
+    current = get_next_list_entry(tag, current);
+  }
+  return result;
+}
+
+SBinaryTag* get_first_list_entry(SBinaryTag* listTag) {
+  assert(listTag->type == JP_LIST);
+  SBinaryTag* result = (SBinaryTag*)(listTag->payload.jpchar);
+  return result;
+}
+
+SBinaryTag* get_next_list_entry(SBinaryTag* listTag, SBinaryTag* previous) {
+  assert(listTag->type == JP_LIST);
+  char* current = (previous->payload.jpchar + previous->length);
+  char* end = (listTag->payload.jpchar + listTag->length);
+  if (current >= end) {
+    return NULL;
+  }
+  SBinaryTag* result = get_tag_from_memory(current, end);
+
+  return result;
+}
+

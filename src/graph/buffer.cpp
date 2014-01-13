@@ -197,10 +197,21 @@ Buffer* buffer_from_dump_file(const char* filename)
   SBinaryTag* mainDict = read_tag_from_file(inputFile);
   assert(mainDict != NULL);
 
+  Buffer* result = buffer_from_tag_dict(mainDict);
+  result->setName(filename);
+
+  fclose(inputFile);
+  free(mainDict);
+
+  return result;
+}
+
+Buffer* buffer_from_tag_dict(SBinaryTag* mainDict) {
+
   SBinaryTag* bitsPerFloatTag = get_tag_from_dict(mainDict, "float_bits");
   const uint32_t bitsPerFloat = bitsPerFloatTag->payload.jpuint;
   if (bitsPerFloat != 32) {
-    fprintf(stderr, "jpcnn can only read 32-bit float dump files, found %d for '%s'\n", bitsPerFloat, filename);
+    fprintf(stderr, "jpcnn can only read 32-bit float dump files, found %d\n", bitsPerFloat);
     return NULL;
   }
 
@@ -220,7 +231,6 @@ Buffer* buffer_from_dump_file(const char* filename)
 
   Dimensions dims(dimensions, dimensionsCount);
   Buffer* buffer = new Buffer(dims);
-  buffer->setName(filename);
 
   SBinaryTag* dataTag = get_tag_from_dict(mainDict, "data");
   assert(dataTag->type == JP_FARY);
@@ -228,9 +238,6 @@ Buffer* buffer_from_dump_file(const char* filename)
   const int elementCount = buffer->_dims.elementCount();
   assert(dataTag->length == (elementCount * sizeof(jpfloat_t)));
   memcpy(buffer->_data, dataTag->payload.jpchar, dataTag->length);
-
-  fclose(inputFile);
-  free(mainDict);
 
   return buffer;
 }

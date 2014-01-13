@@ -12,6 +12,8 @@
 
 #include "prepareinput.h"
 
+#include "graph.h"
+
 int main(int argc, const char * argv[])
 {
   if (argc < 2) {
@@ -43,6 +45,8 @@ int main(int argc, const char * argv[])
   } else {
     fprintf(stderr, "Rescaled buffers are equal.\n");
   }
+
+  Graph* graph = new_graph_from_file("data/graph.btag");
 
   return 0;
 }

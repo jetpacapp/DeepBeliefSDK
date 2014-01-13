@@ -60,4 +60,8 @@ const char* get_string_from_dict(SBinaryTag* tag, const char* wantedKey);
 uint32_t get_uint_from_dict(SBinaryTag* tag, const char* wantedKey);
 jpfloat_t get_float_from_dict(SBinaryTag* tag, const char* wantedKey);
 
+int count_list_entries(SBinaryTag* tag);
+SBinaryTag* get_first_list_entry(SBinaryTag* listTag);
+SBinaryTag* get_next_list_entry(SBinaryTag* listTag, SBinaryTag* previous);
+
 #endif // INCLUDE_BINARY_FORMAT_H

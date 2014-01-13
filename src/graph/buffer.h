@@ -11,6 +11,7 @@
 
 #include "jpcnn.h"
 #include "dimensions.h"
+#include "binary_format.h"
 
 class Buffer
 {
@@ -36,6 +37,7 @@ inline jpfloat_t* Buffer::dataEnd() { return (_data + _dims.elementCount()); }
 
 extern Buffer* buffer_from_image_file(const char* filename);
 extern Buffer* buffer_from_dump_file(const char* filename);
+extern Buffer* buffer_from_tag_dict(SBinaryTag* mainDict);
 extern void buffer_save_to_image_file(Buffer* buffer, const char* filename);
 extern bool buffer_are_all_close(Buffer* a, Buffer* b, jpfloat_t tolerance=0.000001);
 extern Buffer* buffer_view_at_top_index(Buffer* input, int index);

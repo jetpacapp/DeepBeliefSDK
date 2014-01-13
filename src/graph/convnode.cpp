@@ -16,6 +16,7 @@
 
 ConvNode::ConvNode() : BaseNode() {
   _kernels = NULL;
+  setClassName("ConvNode");
 }
 
 ConvNode::~ConvNode() {
@@ -29,8 +30,8 @@ Buffer* ConvNode::run(Buffer* input) {
 }
 
 BaseNode* new_convnode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "conv") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "conv") == 0);
   ConvNode* result = new ConvNode();
   return result;
 }

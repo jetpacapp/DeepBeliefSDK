@@ -24,7 +24,7 @@
 
 typedef BaseNode*(*nodeFunctionPtr)(SBinaryTag*);
 typedef struct SFuncLookupStruct {
-  const char* nodeName;
+  const char* className;
   nodeFunctionPtr createFunction;
 } SFuncLookup;
 
@@ -43,18 +43,20 @@ static int g_createFunctionsLength = (sizeof(g_createFunctions) / sizeof(g_creat
 
 BaseNode* new_node_from_tag(SBinaryTag* tag) {
 
-  const char* tagName = get_string_from_dict(tag, "name");
+  const char* tagClass = get_string_from_dict(tag, "class");
   nodeFunctionPtr createFunction = NULL;
   for (int index = 0; index < g_createFunctionsLength; index += 1) {
     SFuncLookup* entry = &g_createFunctions[index];
-    if (strcmp(entry->nodeName, tagName) == 0) {
+    if (strcmp(entry->className, tagClass) == 0) {
       createFunction = entry->createFunction;
     }
   }
   if (createFunction == NULL) {
-    fprintf(stderr, "new_node_from_tag(): Couldn't find a factory function for node name '%s'\n", tagName);
+    fprintf(stderr, "new_node_from_tag(): Couldn't find a factory function for node class '%s'\n", tagClass);
     return NULL;
   }
   BaseNode* result = createFunction(tag);
+  const char* name = get_string_from_dict(tag, "name");
+  result->setName(name);
   return result;
 }

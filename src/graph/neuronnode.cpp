@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 NeuronNode::NeuronNode() : BaseNode() {
+  setClassName("NeuronNode");
 }
 
 NeuronNode::~NeuronNode() {
@@ -26,8 +27,8 @@ Buffer* NeuronNode::run(Buffer* input) {
 }
 
 BaseNode* new_neuronnode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "neuron") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "neuron") == 0);
   NeuronNode* result = new NeuronNode();
   return result;
 }

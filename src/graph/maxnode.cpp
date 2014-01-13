@@ -15,6 +15,7 @@
 #include "binary_format.h"
 
 MaxNode::MaxNode() : BaseNode() {
+  setClassName("MaxNode");
 }
 
 MaxNode::~MaxNode() {
@@ -26,8 +27,8 @@ Buffer* MaxNode::run(Buffer* input) {
 }
 
 BaseNode* new_maxnode_from_tag(SBinaryTag* tag) {
-  const char* name = get_string_from_dict(tag, "name");
-  assert(strcmp(name, "max") == 0);
+  const char* className = get_string_from_dict(tag, "class");
+  assert(strcmp(className, "max") == 0);
   MaxNode* result = new MaxNode();
   return result;
 }
