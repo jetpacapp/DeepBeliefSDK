@@ -186,8 +186,7 @@ void buffer_do_save_to_image_file(Buffer* buffer, const char* filename) {
 
   const int width = dims[1];
   const int height = dims[0];
-  const int channels = dims[2];
-  assert(channels <= 3);
+  const int channels = MIN(dims[2], 3);
 
   const jpfloat_t* const data = buffer->_data;
 

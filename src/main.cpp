@@ -33,13 +33,6 @@ int main(int argc, const char * argv[])
   const int labelsCount = predictionsDims[1];
 
   for (int imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
-    Buffer* subimage = buffer_view_at_top_index(rescaledInput, imageIndex);
-    char filename[1024];
-    sprintf(filename, "input_%d.ppm", imageIndex);
-    buffer_save_to_image_file(subimage, filename);
-  }
-
-  for (int imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
     for (int labelIndex = 0; labelIndex < labelsCount; labelIndex += 1) {
       const int predictionIndex = predictionsDims.offset(imageIndex, labelIndex);
       const jpfloat_t labelValue = predictions->_data[predictionIndex];

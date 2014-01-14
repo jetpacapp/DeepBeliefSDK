@@ -96,7 +96,7 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   CBLAS_TRANSPOSE transposeA = CblasNoTrans;
   CBLAS_TRANSPOSE transposeB = CblasNoTrans;
   const int m = kernelCount;
-  const int n = patches->_dims[1];
+  const int n = (patches->_dims[1] * patches->_dims[0]);
   const int k = patches->_dims[2];
   const float alpha = 1.0f;
   const int lda = m;
