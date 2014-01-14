@@ -37,10 +37,21 @@ Buffer* ConvNode::run(Buffer* input) {
   Dimensions expectedKernelsDims(valuesPerKernel, _kernelCount);
   assert(expectedKernelsDims == _kernels->_dims);
 
-  _output = matrix_correlate(input, _kernels, _kernelWidth, _kernelCount, _sampleStride);
+  Buffer* inputWithMargin;
+  if (_marginSize == 0) {
+    inputWithMargin = input;
+  } else {
+    inputWithMargin = matrix_insert_margin(input, _marginSize, _marginSize);
+  }
+
+  _output = matrix_correlate(inputWithMargin, _kernels, _kernelWidth, _kernelCount, _sampleStride);
   _output->setName(_name);
 
   matrix_add_inplace(_output, _bias, 1.0);
+
+  if (_marginSize != 0) {
+    delete inputWithMargin;
+  }
 
   return _output;
 }
@@ -63,6 +74,8 @@ BaseNode* new_convnode_from_tag(SBinaryTag* tag) {
     SBinaryTag* biasTag = get_tag_from_dict(tag, "bias");
     result->_bias = buffer_from_tag_dict(biasTag);
   }
+
+  result->_marginSize = get_uint_from_dict(tag, "padding");
 
   return result;
 }

@@ -28,6 +28,8 @@
 		594BBA711884C0B5007F9A2A /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA701884C0B5007F9A2A /* matrix_dot.cpp */; };
 		594BBA731884CA8F007F9A2A /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA721884CA8F007F9A2A /* matrix_max.cpp */; };
 		594BBA751884DCCC007F9A2A /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */; };
+		594BBA771885B754007F9A2A /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA761885B754007F9A2A /* matrix_channels.cpp */; };
+		594BBA791885C1DA007F9A2A /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
@@ -84,6 +86,8 @@
 		594BBA701884C0B5007F9A2A /* matrix_dot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_dot.cpp; sourceTree = "<group>"; };
 		594BBA721884CA8F007F9A2A /* matrix_max.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_max.cpp; sourceTree = "<group>"; };
 		594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_local_response.cpp; sourceTree = "<group>"; };
+		594BBA761885B754007F9A2A /* matrix_channels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_channels.cpp; sourceTree = "<group>"; };
+		594BBA781885C1D9007F9A2A /* matrix_margin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_margin.cpp; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
@@ -151,9 +155,11 @@
 			isa = PBXGroup;
 			children = (
 				594BBA6918846E50007F9A2A /* matrix_add.cpp */,
+				594BBA761885B754007F9A2A /* matrix_channels.cpp */,
 				594BBA6B18847014007F9A2A /* matrix_correlate.cpp */,
 				594BBA701884C0B5007F9A2A /* matrix_dot.cpp */,
 				594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */,
+				594BBA781885C1D9007F9A2A /* matrix_margin.cpp */,
 				594BBA721884CA8F007F9A2A /* matrix_max.cpp */,
 				594BBA6718846D53007F9A2A /* matrix_ops.h */,
 			);
@@ -262,11 +268,13 @@
 				594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */,
 				594BBA6A18846E50007F9A2A /* matrix_add.cpp in Sources */,
 				594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */,
+				594BBA791885C1DA007F9A2A /* matrix_margin.cpp in Sources */,
 				594BBA5C18835D8B007F9A2A /* poolnode.cpp in Sources */,
 				594BBA5018835B69007F9A2A /* flatnode.cpp in Sources */,
 				594BBA711884C0B5007F9A2A /* matrix_dot.cpp in Sources */,
 				594BBA35187F9816007F9A2A /* buffer.cpp in Sources */,
 				594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */,
+				594BBA771885B754007F9A2A /* matrix_channels.cpp in Sources */,
 				594BBA5618835CBB007F9A2A /* neuronnode.cpp in Sources */,
 				594BBA6C18847014007F9A2A /* matrix_correlate.cpp in Sources */,
 				594BBA751884DCCC007F9A2A /* matrix_local_response.cpp in Sources */,

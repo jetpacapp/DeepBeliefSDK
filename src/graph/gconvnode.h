@@ -21,6 +21,10 @@ public:
   ~GConvNode();
 
   virtual Buffer* run(Buffer* input);
+
+  int _subnodesCount;
+  BaseNode** _subnodes;
+  int _kernelsCount;
 };
 
 BaseNode* new_gconvnode_from_tag(SBinaryTag* tag);

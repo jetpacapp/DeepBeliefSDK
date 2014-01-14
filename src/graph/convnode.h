@@ -28,6 +28,7 @@ public:
   Buffer* _kernels;
   bool _useBias;
   Buffer* _bias;
+  uint32_t _marginSize;
 };
 
 BaseNode* new_convnode_from_tag(SBinaryTag* tag);
