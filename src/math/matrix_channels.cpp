@@ -72,5 +72,7 @@ Buffer* matrix_join_channels(Buffer** inputs, int inputsCount) {
     }
   }
 
+  free(inputDatas);
+
   return output;
 }

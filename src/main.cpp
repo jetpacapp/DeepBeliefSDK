@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
 
   Buffer* input = buffer_from_image_file((char*)(argv[1]));
 
-  PrepareInput prepareInput(graph->_dataMean, false);
+  PrepareInput prepareInput(graph->_dataMean, true);
 
   Buffer* rescaledInput = prepareInput.run(input);
 

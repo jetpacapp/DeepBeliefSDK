@@ -8,9 +8,16 @@
 
 #include "matrix_ops.h"
 
+#define USE_ACCELERATE_GEMM
+//#define USE_MKL_GEMM
+
 #include <assert.h>
 
 #include "buffer.h"
+
+#ifdef USE_ACCELERATE_GEMM
+#include <Accelerate/Accelerate.h>
+#endif
 
 Buffer* matrix_dot(Buffer* input, Buffer* weights) {
 
@@ -29,6 +36,39 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
 
   const Dimensions outputDims(imageCount, outputChannels);
   Buffer* output = new Buffer(outputDims);
+
+#ifdef USE_ACCELERATE_GEMM
+
+  CBLAS_ORDER order = CblasColMajor;
+  CBLAS_TRANSPOSE transposeA = CblasNoTrans;
+  CBLAS_TRANSPOSE transposeB = CblasNoTrans;
+  const int m = outputChannels;
+  const int n = input->_dims[0];
+  const int k = input->_dims[1];
+  const float alpha = 1.0f;
+  const int lda = m;
+  const int ldb = k;
+  const int ldc = m;
+  const jpfloat_t beta = 0.0f;
+
+  cblas_sgemm(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    weights->_data,
+    lda,
+    input->_data,
+    ldb,
+    beta,
+    output->_data,
+    ldc
+  );
+
+#else // Use naive algorithm instead
 
   const jpfloat_t* const weightsDataStart = weights->_data;
   jpfloat_t* const outputDataStart = output->_data;
@@ -54,6 +94,7 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
       outputData += 1;
     }
   }
+#endif // USE_ACCELERATE_GEMM
 
   return output;
 }
