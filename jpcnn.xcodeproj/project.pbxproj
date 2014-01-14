@@ -10,7 +10,6 @@
 		594BBA35187F9816007F9A2A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
 		594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
 		594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
-		594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */; };
 		594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
 		594BBA4718834DFF007F9A2A /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4518834DFF007F9A2A /* nodefactory.cpp */; };
 		594BBA4A188350EF007F9A2A /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
@@ -23,6 +22,9 @@
 		594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
 		594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
 		594BBA65188363BD007F9A2A /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA63188363BD007F9A2A /* graph.cpp */; };
+		594BBA6A18846E50007F9A2A /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6918846E50007F9A2A /* matrix_add.cpp */; };
+		594BBA6C18847014007F9A2A /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6B18847014007F9A2A /* matrix_correlate.cpp */; };
+		594BBA6E1884A94A007F9A2A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
@@ -48,8 +50,6 @@
 		594BBA371880CB4D007F9A2A /* prepareinput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prepareinput.h; sourceTree = "<group>"; };
 		594BBA381880CC43007F9A2A /* prepareinput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = prepareinput.cpp; sourceTree = "<group>"; };
 		594BBA3A1880CD5A007F9A2A /* basenode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = basenode.cpp; sourceTree = "<group>"; };
-		594BBA3D1881ECCD007F9A2A /* matrix_ops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matrix_ops.h; sourceTree = "<group>"; };
-		594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_ops_naive.cpp; sourceTree = "<group>"; };
 		594BBA421882929D007F9A2A /* binary_format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = binary_format.h; sourceTree = "<group>"; };
 		594BBA43188298E8007F9A2A /* binary_format.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = binary_format.cpp; sourceTree = "<group>"; };
 		594BBA4518834DFF007F9A2A /* nodefactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nodefactory.cpp; sourceTree = "<group>"; };
@@ -74,6 +74,10 @@
 		594BBA6118835EC1007F9A2A /* maxnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maxnode.h; sourceTree = "<group>"; };
 		594BBA63188363BD007F9A2A /* graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = graph.cpp; sourceTree = "<group>"; };
 		594BBA64188363BD007F9A2A /* graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graph.h; sourceTree = "<group>"; };
+		594BBA6718846D53007F9A2A /* matrix_ops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matrix_ops.h; sourceTree = "<group>"; };
+		594BBA6918846E50007F9A2A /* matrix_add.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_add.cpp; sourceTree = "<group>"; };
+		594BBA6B18847014007F9A2A /* matrix_correlate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_correlate.cpp; sourceTree = "<group>"; };
+		594BBA6D1884A94A007F9A2A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
@@ -85,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594BBA6E1884A94A007F9A2A /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,15 +132,6 @@
 			path = graph;
 			sourceTree = "<group>";
 		};
-		594BBA3C1881EC76007F9A2A /* matrix_ops */ = {
-			isa = PBXGroup;
-			children = (
-				594BBA3E1881ED48007F9A2A /* matrix_ops_naive.cpp */,
-				594BBA3D1881ECCD007F9A2A /* matrix_ops.h */,
-			);
-			path = matrix_ops;
-			sourceTree = "<group>";
-		};
 		594BBA411882929D007F9A2A /* utility */ = {
 			isa = PBXGroup;
 			children = (
@@ -145,10 +141,29 @@
 			path = utility;
 			sourceTree = "<group>";
 		};
+		594BBA6618846D53007F9A2A /* math */ = {
+			isa = PBXGroup;
+			children = (
+				594BBA6918846E50007F9A2A /* matrix_add.cpp */,
+				594BBA6B18847014007F9A2A /* matrix_correlate.cpp */,
+				594BBA6718846D53007F9A2A /* matrix_ops.h */,
+			);
+			path = math;
+			sourceTree = "<group>";
+		};
+		594BBA6F1884A996007F9A2A /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				594BBA6D1884A94A007F9A2A /* Accelerate.framework */,
+			);
+			name = frameworks;
+			sourceTree = "<group>";
+		};
 		59D2FBAE187F8D2A00427417 = {
 			isa = PBXGroup;
 			children = (
 				59D2FBC3187F8D9000427417 /* src */,
+				594BBA6F1884A996007F9A2A /* frameworks */,
 				59D2FBB8187F8D2A00427417 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -167,7 +182,7 @@
 				594BBA30187F97F4007F9A2A /* graph */,
 				594BBA2B187F94A4007F9A2A /* jpcnn.h */,
 				59D2FBC4187F8D9000427417 /* main.cpp */,
-				594BBA3C1881EC76007F9A2A /* matrix_ops */,
+				594BBA6618846D53007F9A2A /* math */,
 				59D2FBC5187F8DDA00427417 /* third_party */,
 				594BBA411882929D007F9A2A /* utility */,
 			);
@@ -235,14 +250,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */,
-				594BBA3F1881ED48007F9A2A /* matrix_ops_naive.cpp in Sources */,
 				594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */,
+				594BBA6A18846E50007F9A2A /* matrix_add.cpp in Sources */,
 				594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */,
 				594BBA5C18835D8B007F9A2A /* poolnode.cpp in Sources */,
 				594BBA5018835B69007F9A2A /* flatnode.cpp in Sources */,
 				594BBA35187F9816007F9A2A /* buffer.cpp in Sources */,
 				594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */,
 				594BBA5618835CBB007F9A2A /* neuronnode.cpp in Sources */,
+				594BBA6C18847014007F9A2A /* matrix_correlate.cpp in Sources */,
 				59D2FBC8187F926700427417 /* main.cpp in Sources */,
 				594BBA4718834DFF007F9A2A /* nodefactory.cpp in Sources */,
 				594BBA4A188350EF007F9A2A /* convnode.cpp in Sources */,

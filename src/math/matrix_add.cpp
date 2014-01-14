@@ -1,5 +1,5 @@
 //
-//  matrix_ops_naive.cpp
+//  matrix_add.cpp
 //  jpcnn
 //
 //  Created by Peter Warden on 1/9/14.
@@ -8,15 +8,16 @@
 
 #include "matrix_ops.h"
 
-#include "assert.h"
+#include <assert.h>
 
 #include "buffer.h"
 
-void add_matrix_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale) {
-  assert(output->_dims == input->_dims);
+void matrix_add_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale) {
+  assert((output->_dims.elementCount() % input->_dims.elementCount()) == 0);
   jpfloat_t* const outputDataStart = output->_data;
   jpfloat_t* const outputDataEnd = (outputDataStart + output->_dims.elementCount());
   const jpfloat_t* const inputDataStart = input->_data;
+  const jpfloat_t* const inputDataEnd = (inputDataStart + input->_dims.elementCount());
   jpfloat_t* outputData = outputDataStart;
   const jpfloat_t* inputData = inputDataStart;
   while (outputData != outputDataEnd) {
@@ -24,5 +25,8 @@ void add_matrix_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale) {
     *outputData += (inputValue * inputScale);
     outputData += 1;
     inputData += 1;
+    if (inputData >= inputDataEnd) {
+      inputData = inputDataStart;
+    }
   }
 }

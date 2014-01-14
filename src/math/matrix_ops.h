@@ -13,6 +13,7 @@
 
 class Buffer;
 
-void add_matrix_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale);
+void matrix_add_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale);
+Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride);
 
 #endif // INCLUDE_MATRIX_OPS_H

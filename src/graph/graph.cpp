@@ -17,6 +17,11 @@
 #include "basenode.h"
 #include "nodefactory.h"
 
+#define CHECK_RESULTS
+#ifdef CHECK_RESULTS
+#define FN_LEN (1024)
+#endif // CHECK_RESULTS
+
 Graph::Graph() :
   _dataMean(NULL),
   _preparationNode(NULL),
@@ -38,6 +43,41 @@ Graph::~Graph() {
     free(_layers);
   }
 }
+
+Buffer* Graph::run(Buffer* input) {
+
+  Buffer* currentInput = input;
+  for (int index = 0; index < _layersLength; index += 1) {
+    BaseNode* layer = _layers[index];
+#ifdef CHECK_RESULTS
+    char expectedInputFilename[FN_LEN];
+    snprintf(expectedInputFilename, FN_LEN,
+      "data/lena_blobs/%03d_input_%s.blob",
+      ((index * 2) + 1), layer->_name);
+    Buffer* expectedInput = buffer_from_dump_file(expectedInputFilename);
+    if (!buffer_are_all_close(currentInput, expectedInput)) {
+      fprintf(stderr, "Inputs don't match for %s\n", layer->_name);
+      return NULL;
+    }
+#endif // CHECK_RESULTS
+    Buffer* currentOutput = layer->run(currentInput);
+#ifdef CHECK_RESULTS
+    char expectedOutputFilename[FN_LEN];
+    snprintf(expectedOutputFilename, FN_LEN,
+      "data/lena_blobs/%03d_output_%s.blob",
+      ((index * 2) + 2), layer->_name);
+    Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
+    if (!buffer_are_all_close(currentOutput, expectedOutput)) {
+      fprintf(stderr, "Outputs don't match for %s\n", layer->_name);
+      return NULL;
+    }
+#endif // CHECK_RESULTS
+    currentInput = currentOutput;
+  }
+
+  return currentInput;
+}
+
 
 Graph* new_graph_from_file(const char* filename) {
 

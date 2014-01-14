@@ -45,7 +45,7 @@ Buffer* PrepareInput::run(Buffer* input) {
 
   rescale_image_to_fit(input, rescaled, true);
   rescaled->saveDebugImage();
-  add_matrix_inplace(rescaled, _dataMean, -1.0f);
+  matrix_add_inplace(rescaled, _dataMean, -1.0f);
 
   if (_output != NULL) {
     delete _output;

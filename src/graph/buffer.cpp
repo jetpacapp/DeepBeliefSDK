@@ -19,12 +19,11 @@
 
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
 
-Buffer::Buffer(const Dimensions& dims) : _dims(dims)
+Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(NULL)
 {
   const int elementCount = _dims.elementCount();
   const size_t byteCount = (elementCount * sizeof(jpfloat_t));
   _data = (jpfloat_t*)(malloc(byteCount));
-  _debugString = NULL;
   setName("None");
 }
 

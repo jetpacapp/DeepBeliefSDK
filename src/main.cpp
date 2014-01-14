@@ -48,6 +48,8 @@ int main(int argc, const char * argv[])
 
   Graph* graph = new_graph_from_file("data/graph.btag");
 
+  Buffer* predictions = graph->run(expectedInput);
+
   return 0;
 }
 

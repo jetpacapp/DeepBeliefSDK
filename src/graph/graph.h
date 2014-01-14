@@ -21,6 +21,8 @@ public:
   Graph();
   virtual ~Graph();
 
+  Buffer* run(Buffer* input);
+
   Buffer* _dataMean;
   BaseNode* _preparationNode;
   BaseNode** _layers;
