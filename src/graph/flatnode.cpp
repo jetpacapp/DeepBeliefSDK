@@ -23,7 +23,22 @@ FlatNode::~FlatNode() {
 }
 
 Buffer* FlatNode::run(Buffer* input) {
-  return input;
+  const Dimensions inputDims = input->_dims;
+  // We're expecting (# of images, height, width, # of channels)
+  assert(inputDims._length == 4);
+
+  const int imageCount = inputDims[0];
+  const int inputWidth = inputDims[2];
+  const int inputHeight = inputDims[1];
+  const int inputChannels = inputDims[3];
+
+  const int outputElementCount = (inputHeight * inputWidth * inputChannels);
+  const Dimensions outputDims(imageCount, outputElementCount);
+
+  // Doesn't do a data copy, just returns a new view with a different shape.
+  _output = new Buffer(outputDims, input->_data);
+
+  return _output;
 }
 
 BaseNode* new_flatnode_from_tag(SBinaryTag* tag) {

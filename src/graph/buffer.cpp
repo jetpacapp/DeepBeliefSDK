@@ -28,9 +28,9 @@ Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(
   setName("None");
 }
 
-Buffer::Buffer(const Dimensions& dims, jpfloat_t* data) : _dims(dims) {
+Buffer::Buffer(const Dimensions& dims, jpfloat_t* data) : _dims(dims), _name(NULL), _debugString(NULL) {
   _data = data;
-  _debugString = NULL;
+  _doesOwnData = false;
   setName("None");
 }
 
