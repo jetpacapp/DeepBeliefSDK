@@ -27,6 +27,8 @@ public:
   BaseNode* _preparationNode;
   BaseNode** _layers;
   int _layersLength;
+  char** _labelNames;
+  int _labelNamesLength;
 };
 
 Graph* new_graph_from_file(const char* filename);

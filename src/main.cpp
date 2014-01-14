@@ -43,8 +43,19 @@ int main(int argc, const char * argv[])
     fprintf(stderr, "Rescaled buffers are equal.\n");
   }
 
-
   Buffer* predictions = graph->run(expectedInput);
+  const Dimensions predictionsDims = predictions->_dims;
+  const int imageCount = predictionsDims[0];
+  const int labelsCount = predictionsDims[1];
+
+  for (int imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    for (int labelIndex = 0; labelIndex < labelsCount; labelIndex += 1) {
+      const int predictionIndex = predictionsDims.offset(imageIndex, labelIndex);
+      const jpfloat_t labelValue = predictions->_data[predictionIndex];
+      char* labelName = graph->_labelNames[labelIndex];
+      fprintf(stdout, "%f\t%s\n", labelValue, labelName);
+    }
+  }
 
   return 0;
 }

@@ -26,7 +26,9 @@ Graph::Graph() :
   _dataMean(NULL),
   _preparationNode(NULL),
   _layers(NULL),
-  _layersLength(0) {
+  _layersLength(0),
+  _labelNames(NULL),
+  _labelNamesLength(0) {
 }
 
 Graph::~Graph() {
@@ -41,6 +43,12 @@ Graph::~Graph() {
       delete _layers[index];
     }
     free(_layers);
+  }
+  if (_labelNames != NULL) {
+    for (int index = 0; index < _labelNamesLength; index += 1) {
+      free(_labelNames[index]);
+    }
+    free(_labelNames);
   }
 }
 
@@ -94,6 +102,7 @@ Graph* new_graph_from_file(const char* filename) {
     fprintf(stderr, "new_graph_from_file(): Couldn't interpret data from '%s'\n", filename);
     return NULL;
   }
+  fclose(inputFile);
 
   Graph* result = new Graph();
 
@@ -115,7 +124,22 @@ Graph* new_graph_from_file(const char* filename) {
     currentLayerTag = get_next_list_entry(layersTag, currentLayerTag);
   }
 
-  fclose(inputFile);
+  SBinaryTag* labelNamesTag = get_tag_from_dict(graphDict, "label_names");
+
+  result->_labelNamesLength = count_list_entries(labelNamesTag);
+  result->_labelNames = (char**)(malloc(sizeof(char*) * result->_labelNamesLength));
+
+  index = 0;
+  SBinaryTag* currentLabelNameTag = get_first_list_entry(labelNamesTag);
+  while (currentLabelNameTag != NULL) {
+    const char* const fileLabelName = currentLabelNameTag->payload.jpchar;
+    const size_t labelNameLength = strlen(fileLabelName);
+    result->_labelNames[index] = (char*)(malloc(labelNameLength + 1));
+    strncpy(result->_labelNames[index], fileLabelName, labelNameLength);
+    index += 1;
+    currentLabelNameTag = get_next_list_entry(labelNamesTag, currentLabelNameTag);
+  }
+
   free(graphDict);
 
   return result;
