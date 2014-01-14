@@ -68,8 +68,10 @@ Buffer* Graph::run(Buffer* input) {
       ((index * 2) + 2), layer->_name);
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
     if (!buffer_are_all_close(currentOutput, expectedOutput)) {
-      fprintf(stderr, "Outputs don't match for %s\n", layer->_name);
-      return NULL;
+      fprintf(stderr, "!!!Outputs don't match for %s\n", layer->_name);
+      currentOutput = expectedOutput;
+    } else {
+      fprintf(stderr, "***Outputs match for %s\n", layer->_name);
     }
 #endif // CHECK_RESULTS
     currentInput = currentOutput;

@@ -21,18 +21,15 @@ int main(int argc, const char * argv[])
     return 1;
   }
 
-  Buffer* input = buffer_from_image_file((char*)(argv[1]));
+  Graph* graph = new_graph_from_file("data/graph.btag");
 
-  fprintf(stderr, "input=%s\n", input->debugString());
+  Buffer* input = buffer_from_image_file((char*)(argv[1]));
 
   const char* expectedFileName = "data/lena_blobs/000_input_data.blob";
   Buffer* expectedInput = buffer_from_dump_file(expectedFileName);
   expectedInput->setName("expectedInput");
 
-  const char* dataMeanFileName = "data/data_mean.fary";
-  Buffer* dataMean = buffer_from_dump_file(dataMeanFileName);
-
-  PrepareInput prepareInput(dataMean, true);
+  PrepareInput prepareInput(graph->_dataMean, true);
 
   Buffer* rescaledInput = prepareInput.run(input);
 
@@ -46,7 +43,6 @@ int main(int argc, const char * argv[])
     fprintf(stderr, "Rescaled buffers are equal.\n");
   }
 
-  Graph* graph = new_graph_from_file("data/graph.btag");
 
   Buffer* predictions = graph->run(expectedInput);
 

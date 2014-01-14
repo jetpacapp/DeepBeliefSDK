@@ -25,8 +25,8 @@ public:
   uint32_t _kernelCount;
   uint32_t _kernelWidth;
   uint32_t _sampleStride;
-  bool _useBias;
   Buffer* _kernels;
+  bool _useBias;
   Buffer* _bias;
 };
 

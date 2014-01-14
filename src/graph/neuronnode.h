@@ -21,6 +21,11 @@ public:
   ~NeuronNode();
 
   virtual Buffer* run(Buffer* input);
+
+  int _outputsCount;
+  Buffer* _weights;
+  bool _useBias;
+  Buffer* _bias;
 };
 
 BaseNode* new_neuronnode_from_tag(SBinaryTag* tag);

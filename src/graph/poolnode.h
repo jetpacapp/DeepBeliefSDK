@@ -21,6 +21,10 @@ public:
   ~PoolNode();
 
   virtual Buffer* run(Buffer* input);
+
+  int _patchWidth;
+  int _stride;
+  enum { EModeMax, EModeAverage } _mode;
 };
 
 BaseNode* new_poolnode_from_tag(SBinaryTag* tag);

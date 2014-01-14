@@ -119,8 +119,8 @@ void rescale_image_to_fit(Buffer* input, Buffer* output, bool doFlip) {
 
   for (int outputY = 0; outputY < outputHeight; outputY += 1) {
     const jpfloat_t inputY = (flipBias + (outputY * scaleY));
-    const int indexY0 = fmaxf(0.0f, floorf(inputY));
-    const int indexY1 = fminf((inputHeight - 1.0f), ceilf(inputY));
+    const int indexY0 = fmaxf(0.0f, fminf((inputHeight - 1.0f), floorf(inputY)));
+    const int indexY1 = fmaxf(0.0f, fminf((inputHeight - 1.0f), ceilf(inputY)));
     const jpfloat_t lerpY = (indexY1 - inputY);
     const jpfloat_t oneMinusLerpY = (1.0f - lerpY);
 

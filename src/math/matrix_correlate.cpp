@@ -26,7 +26,7 @@ static Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride);
 
 Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
   const Dimensions inputDims = input->_dims;
-  // We're expection (# of images, height, width, # of channels)
+  // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
 
   const int imageCount = inputDims[0];
@@ -71,7 +71,7 @@ Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
 
 Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride) {
   const Dimensions inputDims = input->_dims;
-  // We're expection (# of images, height, width, # of channels)
+  // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
 
   const int imageCount = inputDims[0];
@@ -131,7 +131,7 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
 Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride) {
 
   const Dimensions inputDims = input->_dims;
-  // We're expection (# of images, height, width, # of channels)
+  // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
 
   const int imageCount = inputDims[0];

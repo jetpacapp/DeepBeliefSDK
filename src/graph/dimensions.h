@@ -21,7 +21,7 @@ public:
   Dimensions(int a, int b, int c);
   Dimensions(int a, int b, int c, int d);
   Dimensions(int a, int b, int c, int d, int e);
-  Dimensions(int* dims, int length);
+  Dimensions(const int* dims, int length);
   Dimensions(const Dimensions & other);
 
   int elementCount() const;
@@ -77,7 +77,7 @@ inline Dimensions::Dimensions(int a, int b, int c, int d, int e) {
   _length = 5;
 }
 
-inline Dimensions::Dimensions(int* dims, int length) {
+inline Dimensions::Dimensions(const int* dims, int length) {
   if (length > DIMENSIONS_MAX_LENGTH) {
     fprintf(stderr, "Length too large in Dimensions::Dimensions(): %d, max is %d", length, DIMENSIONS_MAX_LENGTH);
   }

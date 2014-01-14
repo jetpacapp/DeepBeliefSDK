@@ -13,6 +13,7 @@
 
 #include "buffer.h"
 #include "binary_format.h"
+#include "matrix_ops.h"
 
 ReluNode::ReluNode() : BaseNode() {
   setClassName("ReluNode");
@@ -23,7 +24,10 @@ ReluNode::~ReluNode() {
 }
 
 Buffer* ReluNode::run(Buffer* input) {
-  return input;
+
+  _output = matrix_max(input, 0.0f);
+
+  return _output;
 }
 
 BaseNode* new_relunode_from_tag(SBinaryTag* tag) {

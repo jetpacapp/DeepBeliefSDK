@@ -15,5 +15,9 @@ class Buffer;
 
 void matrix_add_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale);
 Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride);
+Buffer* matrix_dot(Buffer* a, Buffer* b);
+Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloat_t alpha, jpfloat_t beta);
+Buffer* matrix_max(Buffer* input, jpfloat_t maxValue);
+Buffer* matrix_max_patch(Buffer* input, int patchWidth, int stride);
 
 #endif // INCLUDE_MATRIX_OPS_H

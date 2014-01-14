@@ -24,6 +24,7 @@ Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(
   const int elementCount = _dims.elementCount();
   const size_t byteCount = (elementCount * sizeof(jpfloat_t));
   _data = (jpfloat_t*)(malloc(byteCount));
+  _doesOwnData = true;
   setName("None");
 }
 
@@ -102,88 +103,6 @@ Buffer* buffer_from_image_file(const char* filename)
 
   return buffer;
 }
-
-Buffer* buffer_from_dump_file_old(const char* filename)
-{
-  FILE* inputFile = fopen(filename, "rb");
-  if (!inputFile) {
-    fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
-    return NULL;
-  }
-
-  uint32_t bitsPerFloat;
-  fread(&bitsPerFloat, sizeof(bitsPerFloat), 1, inputFile);
-  if (bitsPerFloat != 32) {
-    fprintf(stderr, "jpcnn can only read 32-bit float dump files, found %d for '%s'\n", bitsPerFloat, filename);
-    return NULL;
-  }
-
-  int32_t dimensionsCount;
-  fread(&dimensionsCount, sizeof(dimensionsCount), 1, inputFile);
-  if (dimensionsCount > DIMENSIONS_MAX_LENGTH) {
-    fprintf(stderr, "jpcnn can only read %d dimensional dump files, found %d for '%s'\n", DIMENSIONS_MAX_LENGTH, dimensionsCount, filename);
-    return NULL;
-  }
-
-  int32_t dimensions[DIMENSIONS_MAX_LENGTH];
-  fread(dimensions, sizeof(int32_t), dimensionsCount, inputFile);
-
-  Dimensions dims(dimensions, dimensionsCount);
-  Buffer* buffer = new Buffer(dims);
-  buffer->setName(filename);
-
-  const int elementCount = buffer->_dims.elementCount();
-  const size_t elementsRead = fread(buffer->_data, sizeof(jpfloat_t), elementCount, inputFile);
-  if (elementsRead != elementCount) {
-    fprintf(stderr, "jpcnn expected %d elements, found %zu for '%s'\n", elementCount, elementsRead, filename);
-    return NULL;
-  }
-
-  fclose(inputFile);
-
-  return buffer;
-}
-
-//Buffer* buffer_from_dump_file_old(const char* filename)
-//{
-//  FILE* inputFile = fopen(filename, "rb");
-//  if (!inputFile) {
-//    fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
-//    return NULL;
-//  }
-//
-//  uint32_t bitsPerFloat;
-//  fread(&bitsPerFloat, sizeof(bitsPerFloat), 1, inputFile);
-//  if (bitsPerFloat != 32) {
-//    fprintf(stderr, "jpcnn can only read 32-bit float dump files, found %d for '%s'\n", bitsPerFloat, filename);
-//    return NULL;
-//  }
-//
-//  int32_t dimensionsCount;
-//  fread(&dimensionsCount, sizeof(dimensionsCount), 1, inputFile);
-//  if (dimensionsCount > DIMENSIONS_MAX_LENGTH) {
-//    fprintf(stderr, "jpcnn can only read %d dimensional dump files, found %d for '%s'\n", DIMENSIONS_MAX_LENGTH, dimensionsCount, filename);
-//    return NULL;
-//  }
-//
-//  int32_t dimensions[DIMENSIONS_MAX_LENGTH];
-//  fread(dimensions, sizeof(int32_t), dimensionsCount, inputFile);
-//
-//  Dimensions dims(dimensions, dimensionsCount);
-//  Buffer* buffer = new Buffer(dims);
-//  buffer->setName(filename);
-//
-//  const int elementCount = buffer->_dims.elementCount();
-//  const size_t elementsRead = fread(buffer->_data, sizeof(jpfloat_t), elementCount, inputFile);
-//  if (elementsRead != elementCount) {
-//    fprintf(stderr, "jpcnn expected %d elements, found %zu for '%s'\n", elementCount, elementsRead, filename);
-//    return NULL;
-//  }
-//
-//  fclose(inputFile);
-//
-//  return buffer;
-//}
 
 Buffer* buffer_from_dump_file(const char* filename)
 {

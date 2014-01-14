@@ -21,6 +21,11 @@ public:
   ~NormalizeNode();
 
   virtual Buffer* run(Buffer* input);
+
+  int _windowSize;
+  jpfloat_t _k;
+  jpfloat_t _alpha;
+  jpfloat_t _beta;
 };
 
 BaseNode* new_normalizenode_from_tag(SBinaryTag* tag);
