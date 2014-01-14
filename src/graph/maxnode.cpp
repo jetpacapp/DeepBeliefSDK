@@ -13,6 +13,7 @@
 
 #include "buffer.h"
 #include "binary_format.h"
+#include "matrix_ops.h"
 
 MaxNode::MaxNode() : BaseNode() {
   setClassName("MaxNode");
@@ -23,7 +24,8 @@ MaxNode::~MaxNode() {
 }
 
 Buffer* MaxNode::run(Buffer* input) {
-  return input;
+  _output = matrix_softmax(input);
+  return _output;
 }
 
 BaseNode* new_maxnode_from_tag(SBinaryTag* tag) {
