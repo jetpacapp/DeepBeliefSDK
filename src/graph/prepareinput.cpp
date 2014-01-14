@@ -44,7 +44,6 @@ Buffer* PrepareInput::run(Buffer* input) {
   rescaled->setName("rescaled");
 
   rescale_image_to_fit(input, rescaled, true);
-  rescaled->saveDebugImage();
   matrix_add_inplace(rescaled, _dataMean, -1.0f);
 
   if (_output != NULL) {
@@ -75,9 +74,11 @@ Buffer* PrepareInput::run(Buffer* input) {
 
     for (int flipPass = 0; flipPass < 2; flipPass += 1) {
       const bool doFlip = (flipPass == 1);
+      Buffer* blitDestination = buffer_view_at_top_index(_output, (flipPass * 5));
+      crop_and_flip_image(blitDestination, rescaled, marginX, marginY, doFlip);
       for (int yIndex = 0; yIndex < 2; yIndex += 1) {
         for (int xIndex = 0; xIndex < 2; xIndex += 1) {
-          const int viewIndex = ((flipPass * 5) + (yIndex * 2) + xIndex);
+          const int viewIndex = ((flipPass * 5) + (yIndex * 2) + xIndex + 1);
           Buffer* blitDestination = buffer_view_at_top_index(_output, viewIndex);
 
           const int sourceX = (xIndex * deltaX);
@@ -224,9 +225,13 @@ void crop_and_flip_image(Buffer* destBuffer, Buffer* sourceBuffer, int offsetX, 
       jpfloat_t* destCurrent = destRight;
       jpfloat_t* sourceCurrent = sourceLeft;
       while (destCurrent != destLeft) {
-        *destCurrent = *sourceCurrent;
-        destCurrent -= 1;
-        sourceCurrent += 1;
+        jpfloat_t* destChannelEnd = (destCurrent + destChannels);
+        while (destCurrent < destChannelEnd) {
+          *destCurrent = *sourceCurrent;
+          destCurrent += 1;
+          sourceCurrent += 1;
+        }
+        destCurrent -= (destChannels * 2);
       }
     }
   }

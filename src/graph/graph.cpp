@@ -17,7 +17,7 @@
 #include "basenode.h"
 #include "nodefactory.h"
 
-#define CHECK_RESULTS
+//#define CHECK_RESULTS
 #ifdef CHECK_RESULTS
 #define FN_LEN (1024)
 #endif // CHECK_RESULTS
@@ -65,7 +65,6 @@ Buffer* Graph::run(Buffer* input) {
     Buffer* expectedInput = buffer_from_dump_file(expectedInputFilename);
     if (!buffer_are_all_close(currentInput, expectedInput)) {
       fprintf(stderr, "Inputs don't match for %s\n", layer->_name);
-      return NULL;
     }
 #endif // CHECK_RESULTS
     Buffer* currentOutput = layer->run(currentInput);
@@ -77,7 +76,6 @@ Buffer* Graph::run(Buffer* input) {
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
     if (!buffer_are_all_close(currentOutput, expectedOutput)) {
       fprintf(stderr, "!!!Outputs don't match for %s\n", layer->_name);
-      currentOutput = expectedOutput;
     } else {
       fprintf(stderr, "***Outputs match for %s\n", layer->_name);
     }

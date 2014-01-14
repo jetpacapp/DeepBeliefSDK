@@ -30,8 +30,6 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
   const Dimensions outputDims(imageCount, outputChannels);
   Buffer* output = new Buffer(outputDims);
 
-  const jpfloat_t* const inputDataStart = input->_data;
-  const jpfloat_t* const inputDataEnd = (inputDataStart + inputDims.elementCount());
   const jpfloat_t* const weightsDataStart = weights->_data;
   jpfloat_t* const outputDataStart = output->_data;
 
@@ -39,6 +37,8 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
 
   jpfloat_t* outputData = outputDataStart;
   for (int imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    const jpfloat_t* const inputDataStart = (input->_data + (imageIndex * inputValuesCount));
+    const jpfloat_t* const inputDataEnd = (inputDataStart + inputValuesCount);
     for (int outputChannel = 0; outputChannel < outputChannels; outputChannel += 1) {
       jpfloat_t accumulated = 0.0f;
       const jpfloat_t* inputData = inputDataStart;
