@@ -23,6 +23,6 @@ public:
   virtual Buffer* run(Buffer* input);
 };
 
-BaseNode* new_dropoutnode_from_tag(SBinaryTag* tag);
+BaseNode* new_dropoutnode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_DROPOUTNODE_H

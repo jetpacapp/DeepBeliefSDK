@@ -22,7 +22,7 @@
 #include "relunode.h"
 #include "maxnode.h"
 
-typedef BaseNode*(*nodeFunctionPtr)(SBinaryTag*);
+typedef BaseNode*(*nodeFunctionPtr)(SBinaryTag*, bool);
 typedef struct SFuncLookupStruct {
   const char* className;
   nodeFunctionPtr createFunction;
@@ -41,7 +41,7 @@ static SFuncLookup g_createFunctions[] = {
 };
 static int g_createFunctionsLength = (sizeof(g_createFunctions) / sizeof(g_createFunctions[0]));
 
-BaseNode* new_node_from_tag(SBinaryTag* tag) {
+BaseNode* new_node_from_tag(SBinaryTag* tag, bool skipCopy) {
 
   const char* tagClass = get_string_from_dict(tag, "class");
   nodeFunctionPtr createFunction = NULL;
@@ -55,7 +55,7 @@ BaseNode* new_node_from_tag(SBinaryTag* tag) {
     fprintf(stderr, "new_node_from_tag(): Couldn't find a factory function for node class '%s'\n", tagClass);
     return NULL;
   }
-  BaseNode* result = createFunction(tag);
+  BaseNode* result = createFunction(tag, skipCopy);
   const char* name = get_string_from_dict(tag, "name");
   result->setName(name);
   return result;

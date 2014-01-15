@@ -28,6 +28,6 @@ public:
   jpfloat_t _beta;
 };
 
-BaseNode* new_normalizenode_from_tag(SBinaryTag* tag);
+BaseNode* new_normalizenode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_NORMALIZENODE_H

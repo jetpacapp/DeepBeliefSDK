@@ -23,6 +23,9 @@ public:
 
   Buffer* run(Buffer* input);
 
+  bool _useMemoryMap;
+  SBinaryTag* _fileTag;
+
   Buffer* _dataMean;
   BaseNode* _preparationNode;
   BaseNode** _layers;
@@ -31,6 +34,6 @@ public:
   int _labelNamesLength;
 };
 
-Graph* new_graph_from_file(const char* filename);
+Graph* new_graph_from_file(const char* filename, int useMemoryMap);
 
 #endif // INCLUDE_GRAPH_H

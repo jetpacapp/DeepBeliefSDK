@@ -23,6 +23,6 @@ public:
   virtual Buffer* run(Buffer* input);
 };
 
-BaseNode* new_relunode_from_tag(SBinaryTag* tag);
+BaseNode* new_relunode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_RELUNODE_H

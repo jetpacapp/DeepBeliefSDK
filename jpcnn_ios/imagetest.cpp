@@ -1,8 +1,8 @@
 //
-//  main.cpp
-//  jpcnn
+//  imagetest.cpp
+//  jpcnn_ios
 //
-//  Created by Peter Warden on 1/9/14.
+//  Created by Peter Warden on 1/15/14.
 //  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
 //
 
@@ -13,15 +13,11 @@
 #include "prepareinput.h"
 #include "graph.h"
 
-int main(int argc, const char * argv[]) {
-  if (argc < 3) {
-    fprintf(stderr, "Usage: jpcnn <network file> <input image>\n");
-    return 1;
-  }
+extern "C" void run_image_test(const char* graphFileName, const char* imageFileName) {
 
-  Graph* graph = new_graph_from_file(argv[1], false);
+  Graph* graph = new_graph_from_file(graphFileName, false);
 
-  Buffer* input = buffer_from_image_file((char*)(argv[2]));
+  Buffer* input = buffer_from_image_file(imageFileName);
 
   PrepareInput prepareInput(graph->_dataMean, true);
 
@@ -56,6 +52,4 @@ int main(int argc, const char * argv[]) {
   delete graph;
   delete input;
 
-  return 0;
 }
-

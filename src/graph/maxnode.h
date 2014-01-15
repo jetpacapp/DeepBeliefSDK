@@ -23,6 +23,6 @@ public:
   virtual Buffer* run(Buffer* input);
 };
 
-BaseNode* new_maxnode_from_tag(SBinaryTag* tag);
+BaseNode* new_maxnode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_MAXNODE_H

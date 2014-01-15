@@ -30,7 +30,7 @@ Buffer* ReluNode::run(Buffer* input) {
   return _output;
 }
 
-BaseNode* new_relunode_from_tag(SBinaryTag* tag) {
+BaseNode* new_relunode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "relu") == 0);
   ReluNode* result = new ReluNode();

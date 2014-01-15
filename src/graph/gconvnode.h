@@ -27,6 +27,6 @@ public:
   int _kernelsCount;
 };
 
-BaseNode* new_gconvnode_from_tag(SBinaryTag* tag);
+BaseNode* new_gconvnode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_GCONVNODE_H

@@ -11,27 +11,56 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-SBinaryTag* read_tag_from_file(FILE* file) {
+SBinaryTag* read_tag_from_file(const char* filename, bool useMemoryMap) {
 
-  if (file == NULL) {
-    fprintf(stderr, "jpcnn read_tag_from_file() NULL file input\n");
+  if (filename == NULL) {
+    fprintf(stderr, "jpcnn read_tag_from_file() NULL filename input\n");
     return NULL;
   }
 
-  SBinaryTag tagForSize;
-  fread(&tagForSize.type, sizeof(tagForSize.type), 1, file);
-  fread(&tagForSize.length, sizeof(tagForSize.length), 1, file);
+  SBinaryTag* result;
+  if (useMemoryMap) {
+    const int fileHandle = open(filename, O_RDONLY);
+    struct stat statBuffer;
+    fstat(fileHandle, &statBuffer);
+    const size_t bytesInFile = (size_t)(statBuffer.st_size);
+    result = (SBinaryTag*)(mmap(NULL, bytesInFile, PROT_READ, MAP_SHARED, fileHandle, 0));
+  } else {
+    FILE* file = fopen(filename, "rb");
+    if (file == NULL) {
+      fprintf(stderr, "read_tag_from_file() - couldn't open '%s'\n", filename);
+      return NULL;
+    }
+    SBinaryTag tagForSize;
+    fread(&tagForSize.type, sizeof(tagForSize.type), 1, file);
+    fread(&tagForSize.length, sizeof(tagForSize.length), 1, file);
 
-  const size_t tagTotalBytes = get_total_sizeof_tag(&tagForSize);
+    const size_t tagTotalBytes = get_total_sizeof_tag(&tagForSize);
 
-  SBinaryTag* result = (SBinaryTag*)(malloc(tagTotalBytes));
-  result->type = tagForSize.type;
-  result->length = tagForSize.length;
+    result = (SBinaryTag*)(malloc(tagTotalBytes));
+    result->type = tagForSize.type;
+    result->length = tagForSize.length;
 
-  fread(&result->payload.jpchar[0], 1, result->length, file);
+    fread(&result->payload.jpchar[0], 1, result->length, file);
+    fclose(file);
+  }
 
   return result;
+}
+
+void deallocate_file_tag(SBinaryTag* fileTag, bool useMemoryMap) {
+  if (useMemoryMap) {
+    // This assumes that there's only a single root tag in a binary file, so we can
+    // calculate the file length based on the tag length.
+    const size_t tagTotalBytes = get_total_sizeof_tag(fileTag);
+    munmap(fileTag, tagTotalBytes);
+  } else {
+    free(fileTag);
+  }
 }
 
 SBinaryTag* get_tag_from_memory(char* current, const char* end) {

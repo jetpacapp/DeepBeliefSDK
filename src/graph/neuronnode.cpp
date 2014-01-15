@@ -44,7 +44,7 @@ Buffer* NeuronNode::run(Buffer* input) {
   return _output;
 }
 
-BaseNode* new_neuronnode_from_tag(SBinaryTag* tag) {
+BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "neuron") == 0);
   NeuronNode* result = new NeuronNode();
@@ -53,12 +53,12 @@ BaseNode* new_neuronnode_from_tag(SBinaryTag* tag) {
   result->_outputsCount = get_uint_from_dict(specDict, "num_output");
 
   SBinaryTag* weightsTag = get_tag_from_dict(tag, "weight");
-  result->_weights = buffer_from_tag_dict(weightsTag);
+  result->_weights = buffer_from_tag_dict(weightsTag, skipCopy);
 
   result->_useBias = (get_uint_from_dict(tag, "has_bias") != 0);
   if (result->_useBias) {
     SBinaryTag* biasTag = get_tag_from_dict(tag, "bias");
-    result->_bias = buffer_from_tag_dict(biasTag);
+    result->_bias = buffer_from_tag_dict(biasTag, skipCopy);
   }
   
   return result;

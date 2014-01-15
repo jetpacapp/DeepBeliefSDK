@@ -62,7 +62,7 @@ Buffer* GConvNode::run(Buffer* input) {
   return _output;
 }
 
-BaseNode* new_gconvnode_from_tag(SBinaryTag* tag) {
+BaseNode* new_gconvnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "gconv") == 0);
   GConvNode* result = new GConvNode();
@@ -75,7 +75,7 @@ BaseNode* new_gconvnode_from_tag(SBinaryTag* tag) {
   int index = 0;
   SBinaryTag* currentSubnodeTag = get_first_list_entry(subnodesTag);
   while (currentSubnodeTag != NULL) {
-    BaseNode* subnode = new_node_from_tag(currentSubnodeTag);
+    BaseNode* subnode = new_node_from_tag(currentSubnodeTag, skipCopy);
     result->_subnodes[index] = subnode;
     index += 1;
     currentSubnodeTag = get_next_list_entry(subnodesTag, currentSubnodeTag);

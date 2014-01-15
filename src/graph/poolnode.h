@@ -27,6 +27,6 @@ public:
   enum { EModeMax, EModeAverage } _mode;
 };
 
-BaseNode* new_poolnode_from_tag(SBinaryTag* tag);
+BaseNode* new_poolnode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_POOLNODE_H

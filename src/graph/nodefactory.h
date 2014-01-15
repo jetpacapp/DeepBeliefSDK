@@ -14,6 +14,6 @@
 
 class BaseNode;
 
-BaseNode* new_node_from_tag(SBinaryTag* tag);
+BaseNode* new_node_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_NODEFACTORY_H

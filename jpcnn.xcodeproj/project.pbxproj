@@ -32,6 +32,44 @@
 		594BBA791885C1DA007F9A2A /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
 		594BBA7B1885DB8A007F9A2A /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */; };
 		594BBA7D188608A0007F9A2A /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7C188608A0007F9A2A /* stb_image.cpp */; };
+		594BBA851886FE8A007F9A2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA841886FE8A007F9A2A /* Foundation.framework */; };
+		594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA861886FE8A007F9A2A /* CoreGraphics.framework */; };
+		594BBA891886FE8A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA881886FE8A007F9A2A /* UIKit.framework */; };
+		594BBA8F1886FE8A007F9A2A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA8D1886FE8A007F9A2A /* InfoPlist.strings */; };
+		594BBA911886FE8A007F9A2A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA901886FE8A007F9A2A /* main.m */; };
+		594BBA951886FE8A007F9A2A /* JPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA941886FE8A007F9A2A /* JPAppDelegate.m */; };
+		594BBA981886FE8A007F9A2A /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA961886FE8A007F9A2A /* Main_iPhone.storyboard */; };
+		594BBA9B1886FE8A007F9A2A /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA991886FE8A007F9A2A /* Main_iPad.storyboard */; };
+		594BBA9E1886FE8A007F9A2A /* JPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA9D1886FE8A007F9A2A /* JPViewController.m */; };
+		594BBAA01886FE8A007F9A2A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA9F1886FE8A007F9A2A /* Images.xcassets */; };
+		594BBABA1886FF98007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
+		594BBABC1886FF98007F9A2A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
+		594BBABE1886FF98007F9A2A /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
+		594BBAC11886FF98007F9A2A /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4B18835947007F9A2A /* dropoutnode.cpp */; };
+		594BBAC31886FF98007F9A2A /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4E18835B69007F9A2A /* flatnode.cpp */; };
+		594BBAC51886FF98007F9A2A /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5118835C25007F9A2A /* gconvnode.cpp */; };
+		594BBAC71886FF98007F9A2A /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA63188363BD007F9A2A /* graph.cpp */; };
+		594BBAC91886FF98007F9A2A /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
+		594BBACB1886FF98007F9A2A /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5418835CBB007F9A2A /* neuronnode.cpp */; };
+		594BBACD1886FF98007F9A2A /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4518834DFF007F9A2A /* nodefactory.cpp */; };
+		594BBACF1886FF98007F9A2A /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5718835D1C007F9A2A /* normalizenode.cpp */; };
+		594BBAD11886FF98007F9A2A /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5A18835D8B007F9A2A /* poolnode.cpp */; };
+		594BBAD31886FF98007F9A2A /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
+		594BBAD51886FF98007F9A2A /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
+		594BBAD91886FF98007F9A2A /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6918846E50007F9A2A /* matrix_add.cpp */; };
+		594BBADA1886FF98007F9A2A /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA761885B754007F9A2A /* matrix_channels.cpp */; };
+		594BBADB1886FF98007F9A2A /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6B18847014007F9A2A /* matrix_correlate.cpp */; };
+		594BBADC1886FF98007F9A2A /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA701884C0B5007F9A2A /* matrix_dot.cpp */; };
+		594BBADD1886FF98007F9A2A /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */; };
+		594BBADE1886FF98007F9A2A /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
+		594BBADF1886FF98007F9A2A /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA721884CA8F007F9A2A /* matrix_max.cpp */; };
+		594BBAE11886FF98007F9A2A /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */; };
+		594BBAE21886FF98007F9A2A /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7C188608A0007F9A2A /* stb_image.cpp */; };
+		594BBAE41886FF98007F9A2A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
+		594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE81887024B007F9A2A /* imagenet.ntwk */; };
+		594BBAEB1887024B007F9A2A /* lena.png in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE91887024B007F9A2A /* lena.png */; };
+		594BBAED1887060E007F9A2A /* imagetest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBAEC1887060E007F9A2A /* imagetest.cpp */; };
+		594BBAEF18870D27007F9A2A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBAEE18870D27007F9A2A /* Accelerate.framework */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -91,12 +129,43 @@
 		594BBA781885C1D9007F9A2A /* matrix_margin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_margin.cpp; sourceTree = "<group>"; };
 		594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_softmax.cpp; sourceTree = "<group>"; };
 		594BBA7C188608A0007F9A2A /* stb_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stb_image.cpp; sourceTree = "<group>"; };
+		594BBA821886FE8A007F9A2A /* jpcnn_ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jpcnn_ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		594BBA841886FE8A007F9A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		594BBA861886FE8A007F9A2A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		594BBA881886FE8A007F9A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		594BBA8C1886FE8A007F9A2A /* jpcnn_ios-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "jpcnn_ios-Info.plist"; sourceTree = "<group>"; };
+		594BBA8E1886FE8A007F9A2A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		594BBA901886FE8A007F9A2A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		594BBA921886FE8A007F9A2A /* jpcnn_ios-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "jpcnn_ios-Prefix.pch"; sourceTree = "<group>"; };
+		594BBA931886FE8A007F9A2A /* JPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPAppDelegate.h; sourceTree = "<group>"; };
+		594BBA941886FE8A007F9A2A /* JPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPAppDelegate.m; sourceTree = "<group>"; };
+		594BBA971886FE8A007F9A2A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		594BBA9A1886FE8A007F9A2A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		594BBA9C1886FE8A007F9A2A /* JPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPViewController.h; sourceTree = "<group>"; };
+		594BBA9D1886FE8A007F9A2A /* JPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPViewController.m; sourceTree = "<group>"; };
+		594BBA9F1886FE8A007F9A2A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		594BBAA61886FE8A007F9A2A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		594BBAE81887024B007F9A2A /* imagenet.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = imagenet.ntwk; sourceTree = "<group>"; };
+		594BBAE91887024B007F9A2A /* lena.png */ = {isa = PBXFileReference; explicitFileType = archive.tar; path = lena.png; sourceTree = "<group>"; };
+		594BBAEC1887060E007F9A2A /* imagetest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imagetest.cpp; sourceTree = "<group>"; };
+		594BBAEE18870D27007F9A2A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC7187F8E4300427417 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		594BBA7F1886FE89007F9A2A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				594BBAEF18870D27007F9A2A /* Accelerate.framework in Frameworks */,
+				594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */,
+				594BBA891886FE8A007F9A2A /* UIKit.framework in Frameworks */,
+				594BBA851886FE8A007F9A2A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		59D2FBB4187F8D2A00427417 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -177,11 +246,70 @@
 			name = frameworks;
 			sourceTree = "<group>";
 		};
+		594BBA831886FE8A007F9A2A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				594BBAEE18870D27007F9A2A /* Accelerate.framework */,
+				594BBA841886FE8A007F9A2A /* Foundation.framework */,
+				594BBA861886FE8A007F9A2A /* CoreGraphics.framework */,
+				594BBA881886FE8A007F9A2A /* UIKit.framework */,
+				594BBAA61886FE8A007F9A2A /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		594BBA8A1886FE8A007F9A2A /* jpcnn_ios */ = {
+			isa = PBXGroup;
+			children = (
+				594BBAEC1887060E007F9A2A /* imagetest.cpp */,
+				594BBA931886FE8A007F9A2A /* JPAppDelegate.h */,
+				594BBA941886FE8A007F9A2A /* JPAppDelegate.m */,
+				594BBA961886FE8A007F9A2A /* Main_iPhone.storyboard */,
+				594BBA991886FE8A007F9A2A /* Main_iPad.storyboard */,
+				594BBA9C1886FE8A007F9A2A /* JPViewController.h */,
+				594BBA9D1886FE8A007F9A2A /* JPViewController.m */,
+				594BBA9F1886FE8A007F9A2A /* Images.xcassets */,
+				594BBA8B1886FE8A007F9A2A /* Supporting Files */,
+			);
+			path = jpcnn_ios;
+			sourceTree = "<group>";
+		};
+		594BBA8B1886FE8A007F9A2A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				594BBA8C1886FE8A007F9A2A /* jpcnn_ios-Info.plist */,
+				594BBA8D1886FE8A007F9A2A /* InfoPlist.strings */,
+				594BBA901886FE8A007F9A2A /* main.m */,
+				594BBA921886FE8A007F9A2A /* jpcnn_ios-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		594BBAE61887024B007F9A2A /* data */ = {
+			isa = PBXGroup;
+			children = (
+				594BBAE71887024B007F9A2A /* example_networks */,
+				594BBAE91887024B007F9A2A /* lena.png */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		594BBAE71887024B007F9A2A /* example_networks */ = {
+			isa = PBXGroup;
+			children = (
+				594BBAE81887024B007F9A2A /* imagenet.ntwk */,
+			);
+			path = example_networks;
+			sourceTree = "<group>";
+		};
 		59D2FBAE187F8D2A00427417 = {
 			isa = PBXGroup;
 			children = (
+				594BBAE61887024B007F9A2A /* data */,
 				59D2FBC3187F8D9000427417 /* src */,
 				594BBA6F1884A996007F9A2A /* frameworks */,
+				594BBA8A1886FE8A007F9A2A /* jpcnn_ios */,
+				594BBA831886FE8A007F9A2A /* Frameworks */,
 				59D2FBB8187F8D2A00427417 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -190,6 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				59D2FBB7187F8D2A00427417 /* jpcnn */,
+				594BBA821886FE8A007F9A2A /* jpcnn_ios.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -219,6 +348,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		594BBA811886FE89007F9A2A /* jpcnn_ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 594BBAB41886FE8A007F9A2A /* Build configuration list for PBXNativeTarget "jpcnn_ios" */;
+			buildPhases = (
+				594BBA7E1886FE89007F9A2A /* Sources */,
+				594BBA7F1886FE89007F9A2A /* Frameworks */,
+				594BBA801886FE89007F9A2A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = jpcnn_ios;
+			productName = jpcnn_ios;
+			productReference = 594BBA821886FE8A007F9A2A /* jpcnn_ios.app */;
+			productType = "com.apple.product-type.application";
+		};
 		59D2FBB6187F8D2A00427417 /* jpcnn */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 59D2FBC0187F8D2A00427417 /* Build configuration list for PBXNativeTarget "jpcnn" */;
@@ -251,6 +397,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 59D2FBAE187F8D2A00427417;
 			productRefGroup = 59D2FBB8187F8D2A00427417 /* Products */;
@@ -258,11 +405,63 @@
 			projectRoot = "";
 			targets = (
 				59D2FBB6187F8D2A00427417 /* jpcnn */,
+				594BBA811886FE89007F9A2A /* jpcnn_ios */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		594BBA801886FE89007F9A2A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */,
+				594BBA9B1886FE8A007F9A2A /* Main_iPad.storyboard in Resources */,
+				594BBAA01886FE8A007F9A2A /* Images.xcassets in Resources */,
+				594BBA981886FE8A007F9A2A /* Main_iPhone.storyboard in Resources */,
+				594BBA8F1886FE8A007F9A2A /* InfoPlist.strings in Resources */,
+				594BBAEB1887024B007F9A2A /* lena.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		594BBA7E1886FE89007F9A2A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				594BBABA1886FF98007F9A2A /* basenode.cpp in Sources */,
+				594BBABC1886FF98007F9A2A /* buffer.cpp in Sources */,
+				594BBABE1886FF98007F9A2A /* convnode.cpp in Sources */,
+				594BBAC11886FF98007F9A2A /* dropoutnode.cpp in Sources */,
+				594BBAC31886FF98007F9A2A /* flatnode.cpp in Sources */,
+				594BBAED1887060E007F9A2A /* imagetest.cpp in Sources */,
+				594BBAC51886FF98007F9A2A /* gconvnode.cpp in Sources */,
+				594BBAC71886FF98007F9A2A /* graph.cpp in Sources */,
+				594BBAC91886FF98007F9A2A /* maxnode.cpp in Sources */,
+				594BBACB1886FF98007F9A2A /* neuronnode.cpp in Sources */,
+				594BBACD1886FF98007F9A2A /* nodefactory.cpp in Sources */,
+				594BBACF1886FF98007F9A2A /* normalizenode.cpp in Sources */,
+				594BBAD11886FF98007F9A2A /* poolnode.cpp in Sources */,
+				594BBAD31886FF98007F9A2A /* prepareinput.cpp in Sources */,
+				594BBAD51886FF98007F9A2A /* relunode.cpp in Sources */,
+				594BBAD91886FF98007F9A2A /* matrix_add.cpp in Sources */,
+				594BBADA1886FF98007F9A2A /* matrix_channels.cpp in Sources */,
+				594BBADB1886FF98007F9A2A /* matrix_correlate.cpp in Sources */,
+				594BBADC1886FF98007F9A2A /* matrix_dot.cpp in Sources */,
+				594BBADD1886FF98007F9A2A /* matrix_local_response.cpp in Sources */,
+				594BBADE1886FF98007F9A2A /* matrix_margin.cpp in Sources */,
+				594BBADF1886FF98007F9A2A /* matrix_max.cpp in Sources */,
+				594BBAE11886FF98007F9A2A /* matrix_softmax.cpp in Sources */,
+				594BBAE21886FF98007F9A2A /* stb_image.cpp in Sources */,
+				594BBAE41886FF98007F9A2A /* binary_format.cpp in Sources */,
+				594BBA951886FE8A007F9A2A /* JPAppDelegate.m in Sources */,
+				594BBA9E1886FE8A007F9A2A /* JPViewController.m in Sources */,
+				594BBA911886FE8A007F9A2A /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		59D2FBB3187F8D2A00427417 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -297,7 +496,91 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		594BBA8D1886FE8A007F9A2A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				594BBA8E1886FE8A007F9A2A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		594BBA961886FE8A007F9A2A /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				594BBA971886FE8A007F9A2A /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		594BBA991886FE8A007F9A2A /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				594BBA9A1886FE8A007F9A2A /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		594BBAB51886FE8A007F9A2A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "jpcnn_ios/jpcnn_ios-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"USE_ACCELERATE_GEMM=1",
+				);
+				INFOPLIST_FILE = "jpcnn_ios/jpcnn_ios-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		594BBAB61886FE8A007F9A2A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_FAST_MATH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "jpcnn_ios/jpcnn_ios-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
+				GCC_UNROLL_LOOPS = YES;
+				INFOPLIST_FILE = "jpcnn_ios/jpcnn_ios-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LLVM_LTO = YES;
+				LLVM_VECTORIZE_LOOPS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		59D2FBBE187F8D2A00427417 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -389,6 +672,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		594BBAB41886FE8A007F9A2A /* Build configuration list for PBXNativeTarget "jpcnn_ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				594BBAB51886FE8A007F9A2A /* Debug */,
+				594BBAB61886FE8A007F9A2A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		59D2FBB2187F8D2A00427417 /* Build configuration list for PBXProject "jpcnn" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

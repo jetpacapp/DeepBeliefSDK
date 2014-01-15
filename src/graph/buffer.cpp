@@ -36,7 +36,9 @@ Buffer::Buffer(const Dimensions& dims, jpfloat_t* data) : _dims(dims), _name(NUL
 
 Buffer::~Buffer()
 {
-  free(_data);
+  if (_doesOwnData) {
+    free(_data);
+  }
   if (_debugString)
   {
     free(_debugString);
@@ -106,25 +108,18 @@ Buffer* buffer_from_image_file(const char* filename)
 
 Buffer* buffer_from_dump_file(const char* filename)
 {
-  FILE* inputFile = fopen(filename, "rb");
-  if (!inputFile) {
-    fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
-    return NULL;
-  }
-
-  SBinaryTag* mainDict = read_tag_from_file(inputFile);
+  SBinaryTag* mainDict = read_tag_from_file(filename, false);
   assert(mainDict != NULL);
 
-  Buffer* result = buffer_from_tag_dict(mainDict);
+  Buffer* result = buffer_from_tag_dict(mainDict, false);
   result->setName(filename);
 
-  fclose(inputFile);
-  free(mainDict);
+  deallocate_file_tag(mainDict, false);
 
   return result;
 }
 
-Buffer* buffer_from_tag_dict(SBinaryTag* mainDict) {
+Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
 
   SBinaryTag* bitsPerFloatTag = get_tag_from_dict(mainDict, "float_bits");
   const uint32_t bitsPerFloat = bitsPerFloatTag->payload.jpuint;
@@ -148,14 +143,20 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict) {
   }
 
   Dimensions dims(dimensions, dimensionsCount);
-  Buffer* buffer = new Buffer(dims);
-
   SBinaryTag* dataTag = get_tag_from_dict(mainDict, "data");
   assert(dataTag->type == JP_FARY);
 
-  const int elementCount = buffer->_dims.elementCount();
+  const int elementCount = dims.elementCount();
   assert(dataTag->length == (elementCount * sizeof(jpfloat_t)));
-  memcpy(buffer->_data, dataTag->payload.jpchar, dataTag->length);
+
+  Buffer* buffer;
+  if (skipCopy) {
+    jpfloat_t* tagDataArray = dataTag->payload.jpfary;
+    buffer = new Buffer(dims, tagDataArray);
+  } else {
+    buffer = new Buffer(dims);
+    memcpy(buffer->_data, dataTag->payload.jpchar, dataTag->length);
+  }
 
   return buffer;
 }

@@ -23,6 +23,8 @@
 #endif // CHECK_RESULTS
 
 Graph::Graph() :
+  _useMemoryMap(false),
+  _fileTag(NULL),
   _dataMean(NULL),
   _preparationNode(NULL),
   _layers(NULL),
@@ -32,6 +34,9 @@ Graph::Graph() :
 }
 
 Graph::~Graph() {
+  if (_fileTag != NULL) {
+    deallocate_file_tag(_fileTag, _useMemoryMap);
+  }
   if (_dataMean != NULL) {
     delete _dataMean;
   }
@@ -87,26 +92,22 @@ Buffer* Graph::run(Buffer* input) {
 }
 
 
-Graph* new_graph_from_file(const char* filename) {
+Graph* new_graph_from_file(const char* filename, int useMemoryMap) {
 
-  FILE* inputFile = fopen(filename, "rb");
-  if (inputFile == NULL) {
-    fprintf(stderr, "new_graph_from_file(): Couldn't open '%s'\n", filename);
-    return NULL;
-  }
-
-  SBinaryTag* graphDict = read_tag_from_file(inputFile);
+  SBinaryTag* graphDict = read_tag_from_file(filename, useMemoryMap);
   if (graphDict == NULL) {
     fprintf(stderr, "new_graph_from_file(): Couldn't interpret data from '%s'\n", filename);
     return NULL;
   }
-  fclose(inputFile);
 
   Graph* result = new Graph();
 
+  result->_useMemoryMap = useMemoryMap;
+  result->_fileTag = graphDict;
+
   SBinaryTag* dataMeanTag = get_tag_from_dict(graphDict, "data_mean");
   assert(dataMeanTag != NULL);
-  result->_dataMean = buffer_from_tag_dict(dataMeanTag);
+  result->_dataMean = buffer_from_tag_dict(dataMeanTag, useMemoryMap);
 
   SBinaryTag* layersTag = get_tag_from_dict(graphDict, "layers");
   assert(layersTag != NULL);
@@ -116,7 +117,7 @@ Graph* new_graph_from_file(const char* filename) {
   int index = 0;
   SBinaryTag* currentLayerTag = get_first_list_entry(layersTag);
   while (currentLayerTag != NULL) {
-    BaseNode* layerNode = new_node_from_tag(currentLayerTag);
+    BaseNode* layerNode = new_node_from_tag(currentLayerTag, useMemoryMap);
     result->_layers[index] = layerNode;
     index += 1;
     currentLayerTag = get_next_list_entry(layersTag, currentLayerTag);
@@ -137,8 +138,6 @@ Graph* new_graph_from_file(const char* filename) {
     index += 1;
     currentLabelNameTag = get_next_list_entry(labelNamesTag, currentLabelNameTag);
   }
-
-  free(graphDict);
 
   return result;
 }

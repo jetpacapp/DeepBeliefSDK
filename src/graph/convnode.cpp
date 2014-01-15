@@ -56,7 +56,7 @@ Buffer* ConvNode::run(Buffer* input) {
   return _output;
 }
 
-BaseNode* new_convnode_from_tag(SBinaryTag* tag) {
+BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "conv") == 0);
   ConvNode* result = new ConvNode();
@@ -67,12 +67,12 @@ BaseNode* new_convnode_from_tag(SBinaryTag* tag) {
   result->_sampleStride = get_uint_from_dict(specDict, "stride");
 
   SBinaryTag* kernelsTag = get_tag_from_dict(tag, "kernels");
-  result->_kernels = buffer_from_tag_dict(kernelsTag);
+  result->_kernels = buffer_from_tag_dict(kernelsTag, skipCopy);
 
   result->_useBias = (get_uint_from_dict(tag, "has_bias") != 0);
   if (result->_useBias) {
     SBinaryTag* biasTag = get_tag_from_dict(tag, "bias");
-    result->_bias = buffer_from_tag_dict(biasTag);
+    result->_bias = buffer_from_tag_dict(biasTag, skipCopy);
   }
 
   result->_marginSize = get_uint_from_dict(tag, "padding");

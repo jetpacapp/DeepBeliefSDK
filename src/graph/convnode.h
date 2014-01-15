@@ -31,6 +31,6 @@ public:
   uint32_t _marginSize;
 };
 
-BaseNode* new_convnode_from_tag(SBinaryTag* tag);
+BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_CONVNODE_H

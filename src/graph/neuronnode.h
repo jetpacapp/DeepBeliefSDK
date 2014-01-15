@@ -28,6 +28,6 @@ public:
   Buffer* _bias;
 };
 
-BaseNode* new_neuronnode_from_tag(SBinaryTag* tag);
+BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_NEURONNODE_H

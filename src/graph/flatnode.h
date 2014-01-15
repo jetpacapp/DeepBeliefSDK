@@ -23,6 +23,6 @@ public:
   virtual Buffer* run(Buffer* input);
 };
 
-BaseNode* new_flatnode_from_tag(SBinaryTag* tag);
+BaseNode* new_flatnode_from_tag(SBinaryTag* tag, bool skipCopy);
 
 #endif // INCLUDE_FLATNODE_H

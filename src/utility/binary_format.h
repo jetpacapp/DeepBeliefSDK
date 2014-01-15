@@ -49,11 +49,13 @@ typedef struct SBinaryTagStruct {
   } payload;
 } SBinaryTag;
 
-// read_tag_from_file() requires the caller to free the result.
+// read_tag_from_file() requires the caller to call deallocate_file_tag
+// on the result.
 // All other functions work in-place and don't need any memory management.
-SBinaryTag* read_tag_from_file(FILE* file);
-SBinaryTag* get_tag_from_memory(char* current, const char* end);
+SBinaryTag* read_tag_from_file(const char* filename, bool useMemoryMap);
+void deallocate_file_tag(SBinaryTag* fileTag, bool useMemoryMap);
 
+SBinaryTag* get_tag_from_memory(char* current, const char* end);
 size_t get_total_sizeof_tag(SBinaryTag* tag);
 SBinaryTag* get_tag_from_dict(SBinaryTag* tag, const char* wantedKey);
 const char* get_string_from_dict(SBinaryTag* tag, const char* wantedKey);

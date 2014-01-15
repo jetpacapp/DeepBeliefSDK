@@ -1,8 +1,8 @@
 CC=gcc
 CXX=g++
 RM=rm -f
-CPPFLAGS=-g -I ./src -I ./src/graph -I ./src/math -I ./src/third_party -I ./src/utility
-LDFLAG=-g
+CPPFLAGS=-O3 -I ./src -I ./src/graph -I ./src/math -I ./src/third_party -I ./src/utility
+LDFLAG=
 LDLIBS=
 
 MKLROOT=/opt/intel/composer_xe_2013_sp1.0.080/mkl
