@@ -14,7 +14,13 @@
 
 #ifdef USE_ACCELERATE_GEMM
 #include <Accelerate/Accelerate.h>
+#define USE_GEMM
 #endif
+
+#ifdef USE_MKL_GEMM
+#include <mkl_cblas.h>
+#define USE_GEMM
+#endif // USE_MKL_GEMM
 
 Buffer* matrix_dot(Buffer* input, Buffer* weights) {
 
@@ -34,7 +40,7 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
   const Dimensions outputDims(imageCount, outputChannels);
   Buffer* output = new Buffer(outputDims);
 
-#ifdef USE_ACCELERATE_GEMM
+#ifdef USE_GEMM
 
   CBLAS_ORDER order = CblasColMajor;
   CBLAS_TRANSPOSE transposeA = CblasNoTrans;
@@ -91,7 +97,7 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
       outputData += 1;
     }
   }
-#endif // USE_ACCELERATE_GEMM
+#endif // USE_GEMM
 
   return output;
 }

@@ -10,16 +10,24 @@
 
 #include <assert.h>
 #include <math.h>
+#include <string.h>
 
 #include "buffer.h"
 #include "dimensions.h"
 
 #ifdef USE_ACCELERATE_GEMM
 #include <Accelerate/Accelerate.h>
-static Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride);
+#define USE_GEMM
 #endif
 
-#ifdef USE_ACCELERATE_GEMM
+#ifdef USE_MKL_GEMM
+#include <mkl_cblas.h>
+#define USE_GEMM
+#endif // USE_MKL_GEMM
+
+#ifdef USE_GEMM
+
+static Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride);
 
 Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
   const Dimensions inputDims = input->_dims;
@@ -181,4 +189,4 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   return output;
 }
 
-#endif
+#endif // USE_GEMM

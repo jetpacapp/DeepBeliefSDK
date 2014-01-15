@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
 //
 
-#include <iostream>
+#include <stdio.h>
+#include <sys/time.h>
 
 #include "buffer.h"
 #include "prepareinput.h"
@@ -26,7 +27,12 @@ int main(int argc, const char * argv[]) {
 
   Buffer* rescaledInput = prepareInput.run(input);
 
+  struct timeval start;
+  gettimeofday(&start, NULL);
   Buffer* predictions = graph->run(rescaledInput);
+  struct timeval end;
+  gettimeofday(&end, NULL);
+
   const Dimensions predictionsDims = predictions->_dims;
   const int imageCount = predictionsDims[0];
   const int labelsCount = predictionsDims[1];
@@ -39,6 +45,13 @@ int main(int argc, const char * argv[]) {
       fprintf(stdout, "%f\t%s\n", labelValue, labelName);
     }
   }
+
+  long seconds  = end.tv_sec  - start.tv_sec;
+  long useconds = end.tv_usec - start.tv_usec;
+
+  long mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+
+  fprintf(stderr, "Classification took %ld milliseconds\n", mtime);
 
   return 0;
 }
