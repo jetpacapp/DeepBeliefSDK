@@ -8,9 +8,6 @@
 
 #include "matrix_ops.h"
 
-#define USE_ACCELERATE_GEMM
-//#define USE_MKL_GEMM
-
 #include <assert.h>
 #include <math.h>
 

@@ -12,8 +12,7 @@
 #include "prepareinput.h"
 #include "graph.h"
 
-int main(int argc, const char * argv[])
-{
+int main(int argc, const char * argv[]) {
   if (argc < 2) {
     fprintf(stderr, "Usage: jpcnn <input image>\n");
     return 1;

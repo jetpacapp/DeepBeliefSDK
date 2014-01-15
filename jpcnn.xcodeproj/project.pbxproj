@@ -31,8 +31,8 @@
 		594BBA771885B754007F9A2A /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA761885B754007F9A2A /* matrix_channels.cpp */; };
 		594BBA791885C1DA007F9A2A /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
 		594BBA7B1885DB8A007F9A2A /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */; };
+		594BBA7D188608A0007F9A2A /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7C188608A0007F9A2A /* stb_image.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
-		59D2FBC9187F926700427417 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC6187F8DDA00427417 /* stb_image.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -90,9 +90,9 @@
 		594BBA761885B754007F9A2A /* matrix_channels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_channels.cpp; sourceTree = "<group>"; };
 		594BBA781885C1D9007F9A2A /* matrix_margin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_margin.cpp; sourceTree = "<group>"; };
 		594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_softmax.cpp; sourceTree = "<group>"; };
+		594BBA7C188608A0007F9A2A /* stb_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stb_image.cpp; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		59D2FBC6187F8DDA00427417 /* stb_image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
 		59D2FBC7187F8E4300427417 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -210,7 +210,7 @@
 		59D2FBC5187F8DDA00427417 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
-				59D2FBC6187F8DDA00427417 /* stb_image.c */,
+				594BBA7C188608A0007F9A2A /* stb_image.cpp */,
 				59D2FBC7187F8E4300427417 /* stb_image.h */,
 			);
 			path = third_party;
@@ -279,6 +279,7 @@
 				594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */,
 				594BBA771885B754007F9A2A /* matrix_channels.cpp in Sources */,
 				594BBA5618835CBB007F9A2A /* neuronnode.cpp in Sources */,
+				594BBA7D188608A0007F9A2A /* stb_image.cpp in Sources */,
 				594BBA6C18847014007F9A2A /* matrix_correlate.cpp in Sources */,
 				594BBA751884DCCC007F9A2A /* matrix_local_response.cpp in Sources */,
 				594BBA7B1885DB8A007F9A2A /* matrix_softmax.cpp in Sources */,
@@ -290,7 +291,6 @@
 				594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */,
 				594BBA5318835C25007F9A2A /* gconvnode.cpp in Sources */,
 				594BBA5918835D1C007F9A2A /* normalizenode.cpp in Sources */,
-				59D2FBC9187F926700427417 /* stb_image.c in Sources */,
 				594BBA4D18835947007F9A2A /* dropoutnode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -369,6 +369,11 @@
 		59D2FBC1187F8D2A00427417 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_ACCELERATE_GEMM=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -376,6 +381,7 @@
 		59D2FBC2187F8D2A00427417 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
