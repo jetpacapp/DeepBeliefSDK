@@ -1,5 +1,5 @@
 /*
-     File: main.m
+     File: SquareCamViewController.h
  Abstract: Dmonstrates iOS 5 features of the AVCaptureStillImageOutput class
   Version: 1.0
  
@@ -46,15 +46,31 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
+@class CIDetector;
 
-#import "SquareCamAppDelegate.h"
-
-int main(int argc, char *argv[])
+@interface SquareCamViewController : UIViewController <UIGestureRecognizerDelegate, AVCaptureVideoDataOutputSampleBufferDelegate>
 {
-	int retVal = 0;
-	
-    @autoreleasepool {
-	    retVal = UIApplicationMain(argc, argv, nil, NSStringFromClass([SquareCamAppDelegate class]));
-	}
-	return retVal;
+	IBOutlet UIView *previewView;
+	IBOutlet UISegmentedControl *camerasControl;
+	AVCaptureVideoPreviewLayer *previewLayer;
+	AVCaptureVideoDataOutput *videoDataOutput;
+	BOOL detectFaces;
+	dispatch_queue_t videoDataOutputQueue;
+	AVCaptureStillImageOutput *stillImageOutput;
+	UIView *flashView;
+	UIImage *square;
+	BOOL isUsingFrontFacingCamera;
+	CIDetector *faceDetector;
+	CGFloat beginGestureScale;
+	CGFloat effectiveScale;
+  void* network;
 }
+@property (retain, nonatomic) CATextLayer *predictionTextLayer;
+
+- (IBAction)takePicture:(id)sender;
+- (IBAction)switchCameras:(id)sender;
+- (IBAction)handlePinchGesture:(UIGestureRecognizer *)sender;
+- (IBAction)toggleFaceDetection:(id)sender;
+
+@end

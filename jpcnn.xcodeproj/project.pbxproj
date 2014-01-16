@@ -35,13 +35,6 @@
 		594BBA851886FE8A007F9A2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA841886FE8A007F9A2A /* Foundation.framework */; };
 		594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA861886FE8A007F9A2A /* CoreGraphics.framework */; };
 		594BBA891886FE8A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA881886FE8A007F9A2A /* UIKit.framework */; };
-		594BBA8F1886FE8A007F9A2A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA8D1886FE8A007F9A2A /* InfoPlist.strings */; };
-		594BBA911886FE8A007F9A2A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA901886FE8A007F9A2A /* main.m */; };
-		594BBA951886FE8A007F9A2A /* JPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA941886FE8A007F9A2A /* JPAppDelegate.m */; };
-		594BBA981886FE8A007F9A2A /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA961886FE8A007F9A2A /* Main_iPhone.storyboard */; };
-		594BBA9B1886FE8A007F9A2A /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA991886FE8A007F9A2A /* Main_iPad.storyboard */; };
-		594BBA9E1886FE8A007F9A2A /* JPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA9D1886FE8A007F9A2A /* JPViewController.m */; };
-		594BBAA01886FE8A007F9A2A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 594BBA9F1886FE8A007F9A2A /* Images.xcassets */; };
 		594BBABA1886FF98007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
 		594BBABC1886FF98007F9A2A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
 		594BBABE1886FF98007F9A2A /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
@@ -68,8 +61,22 @@
 		594BBAE41886FF98007F9A2A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
 		594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE81887024B007F9A2A /* imagenet.ntwk */; };
 		594BBAEB1887024B007F9A2A /* lena.png in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE91887024B007F9A2A /* lena.png */; };
-		594BBAED1887060E007F9A2A /* imagetest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBAEC1887060E007F9A2A /* imagetest.cpp */; };
 		594BBAEF18870D27007F9A2A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBAEE18870D27007F9A2A /* Accelerate.framework */; };
+		594BBAFD18871401007F9A2A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAF118871401007F9A2A /* MainStoryboard_iPad.storyboard */; };
+		594BBAFE18871401007F9A2A /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAF318871401007F9A2A /* MainStoryboard_iPhone.storyboard */; };
+		594BBB0018871401007F9A2A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBAF618871401007F9A2A /* main.m */; };
+		594BBB0118871401007F9A2A /* SquareCamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBAF918871401007F9A2A /* SquareCamAppDelegate.m */; };
+		594BBB0218871401007F9A2A /* SquareCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBAFB18871401007F9A2A /* SquareCamViewController.m */; };
+		594BBB0318871401007F9A2A /* squarePNG.png in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAFC18871401007F9A2A /* squarePNG.png */; };
+		594BBB051887150B007F9A2A /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB041887150B007F9A2A /* ImageIO.framework */; };
+		594BBB0718871516007F9A2A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB0618871516007F9A2A /* QuartzCore.framework */; };
+		594BBB0918871523007F9A2A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB0818871523007F9A2A /* CoreMedia.framework */; };
+		594BBB0B1887152B007F9A2A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB0A1887152B007F9A2A /* AssetsLibrary.framework */; };
+		594BBB0D18871534007F9A2A /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB0C18871534007F9A2A /* CoreImage.framework */; };
+		594BBB0F18871539007F9A2A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB0E18871539007F9A2A /* AVFoundation.framework */; };
+		594BBB1118871541007F9A2A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB1018871541007F9A2A /* CoreVideo.framework */; };
+		594BBB131887154A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB121887154A007F9A2A /* UIKit.framework */; };
+		594BBB1518873271007F9A2A /* libjpcnn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBB1418873271007F9A2A /* libjpcnn.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -133,22 +140,30 @@
 		594BBA841886FE8A007F9A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		594BBA861886FE8A007F9A2A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		594BBA881886FE8A007F9A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		594BBA8C1886FE8A007F9A2A /* jpcnn_ios-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "jpcnn_ios-Info.plist"; sourceTree = "<group>"; };
-		594BBA8E1886FE8A007F9A2A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		594BBA901886FE8A007F9A2A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		594BBA921886FE8A007F9A2A /* jpcnn_ios-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "jpcnn_ios-Prefix.pch"; sourceTree = "<group>"; };
-		594BBA931886FE8A007F9A2A /* JPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPAppDelegate.h; sourceTree = "<group>"; };
-		594BBA941886FE8A007F9A2A /* JPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPAppDelegate.m; sourceTree = "<group>"; };
-		594BBA971886FE8A007F9A2A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		594BBA9A1886FE8A007F9A2A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
-		594BBA9C1886FE8A007F9A2A /* JPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPViewController.h; sourceTree = "<group>"; };
-		594BBA9D1886FE8A007F9A2A /* JPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPViewController.m; sourceTree = "<group>"; };
-		594BBA9F1886FE8A007F9A2A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		594BBAA61886FE8A007F9A2A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		594BBAE81887024B007F9A2A /* imagenet.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = imagenet.ntwk; sourceTree = "<group>"; };
 		594BBAE91887024B007F9A2A /* lena.png */ = {isa = PBXFileReference; explicitFileType = archive.tar; path = lena.png; sourceTree = "<group>"; };
-		594BBAEC1887060E007F9A2A /* imagetest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imagetest.cpp; sourceTree = "<group>"; };
 		594BBAEE18870D27007F9A2A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
+		594BBAF218871401007F9A2A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		594BBAF418871401007F9A2A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		594BBAF518871401007F9A2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		594BBAF618871401007F9A2A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		594BBAF718871401007F9A2A /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
+		594BBAF818871401007F9A2A /* SquareCamAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquareCamAppDelegate.h; sourceTree = "<group>"; };
+		594BBAF918871401007F9A2A /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamAppDelegate.m; sourceTree = "<group>"; };
+		594BBAFA18871401007F9A2A /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquareCamViewController.h; sourceTree = "<group>"; };
+		594BBAFB18871401007F9A2A /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamViewController.m; sourceTree = "<group>"; };
+		594BBAFC18871401007F9A2A /* squarePNG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = squarePNG.png; sourceTree = "<group>"; };
+		594BBB041887150B007F9A2A /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB0618871516007F9A2A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB0818871523007F9A2A /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB0A1887152B007F9A2A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/AssetsLibrary.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB0C18871534007F9A2A /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB0E18871539007F9A2A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB1018871541007F9A2A /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB121887154A007F9A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		594BBB1418873271007F9A2A /* libjpcnn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libjpcnn.cpp; sourceTree = "<group>"; };
+		594BBB16188732EE007F9A2A /* libjpcnn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libjpcnn.h; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC7187F8E4300427417 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
@@ -159,6 +174,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594BBB131887154A007F9A2A /* UIKit.framework in Frameworks */,
+				594BBB1118871541007F9A2A /* CoreVideo.framework in Frameworks */,
+				594BBB0F18871539007F9A2A /* AVFoundation.framework in Frameworks */,
+				594BBB0D18871534007F9A2A /* CoreImage.framework in Frameworks */,
+				594BBB0B1887152B007F9A2A /* AssetsLibrary.framework in Frameworks */,
+				594BBB0918871523007F9A2A /* CoreMedia.framework in Frameworks */,
+				594BBB0718871516007F9A2A /* QuartzCore.framework in Frameworks */,
+				594BBB051887150B007F9A2A /* ImageIO.framework in Frameworks */,
 				594BBAEF18870D27007F9A2A /* Accelerate.framework in Frameworks */,
 				594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */,
 				594BBA891886FE8A007F9A2A /* UIKit.framework in Frameworks */,
@@ -249,6 +272,14 @@
 		594BBA831886FE8A007F9A2A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				594BBB121887154A007F9A2A /* UIKit.framework */,
+				594BBB1018871541007F9A2A /* CoreVideo.framework */,
+				594BBB0E18871539007F9A2A /* AVFoundation.framework */,
+				594BBB0C18871534007F9A2A /* CoreImage.framework */,
+				594BBB0A1887152B007F9A2A /* AssetsLibrary.framework */,
+				594BBB0818871523007F9A2A /* CoreMedia.framework */,
+				594BBB0618871516007F9A2A /* QuartzCore.framework */,
+				594BBB041887150B007F9A2A /* ImageIO.framework */,
 				594BBAEE18870D27007F9A2A /* Accelerate.framework */,
 				594BBA841886FE8A007F9A2A /* Foundation.framework */,
 				594BBA861886FE8A007F9A2A /* CoreGraphics.framework */,
@@ -261,28 +292,17 @@
 		594BBA8A1886FE8A007F9A2A /* jpcnn_ios */ = {
 			isa = PBXGroup;
 			children = (
-				594BBAEC1887060E007F9A2A /* imagetest.cpp */,
-				594BBA931886FE8A007F9A2A /* JPAppDelegate.h */,
-				594BBA941886FE8A007F9A2A /* JPAppDelegate.m */,
-				594BBA961886FE8A007F9A2A /* Main_iPhone.storyboard */,
-				594BBA991886FE8A007F9A2A /* Main_iPad.storyboard */,
-				594BBA9C1886FE8A007F9A2A /* JPViewController.h */,
-				594BBA9D1886FE8A007F9A2A /* JPViewController.m */,
-				594BBA9F1886FE8A007F9A2A /* Images.xcassets */,
-				594BBA8B1886FE8A007F9A2A /* Supporting Files */,
+				594BBAF018871401007F9A2A /* en.lproj */,
+				594BBAF518871401007F9A2A /* Info.plist */,
+				594BBAF618871401007F9A2A /* main.m */,
+				594BBAF718871401007F9A2A /* Prefix.pch */,
+				594BBAF818871401007F9A2A /* SquareCamAppDelegate.h */,
+				594BBAF918871401007F9A2A /* SquareCamAppDelegate.m */,
+				594BBAFA18871401007F9A2A /* SquareCamViewController.h */,
+				594BBAFB18871401007F9A2A /* SquareCamViewController.m */,
+				594BBAFC18871401007F9A2A /* squarePNG.png */,
 			);
 			path = jpcnn_ios;
-			sourceTree = "<group>";
-		};
-		594BBA8B1886FE8A007F9A2A /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				594BBA8C1886FE8A007F9A2A /* jpcnn_ios-Info.plist */,
-				594BBA8D1886FE8A007F9A2A /* InfoPlist.strings */,
-				594BBA901886FE8A007F9A2A /* main.m */,
-				594BBA921886FE8A007F9A2A /* jpcnn_ios-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		594BBAE61887024B007F9A2A /* data */ = {
@@ -300,6 +320,15 @@
 				594BBAE81887024B007F9A2A /* imagenet.ntwk */,
 			);
 			path = example_networks;
+			sourceTree = "<group>";
+		};
+		594BBAF018871401007F9A2A /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				594BBAF118871401007F9A2A /* MainStoryboard_iPad.storyboard */,
+				594BBAF318871401007F9A2A /* MainStoryboard_iPhone.storyboard */,
+			);
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
 		59D2FBAE187F8D2A00427417 = {
@@ -328,6 +357,8 @@
 			children = (
 				594BBA30187F97F4007F9A2A /* graph */,
 				594BBA2B187F94A4007F9A2A /* jpcnn.h */,
+				594BBB1418873271007F9A2A /* libjpcnn.cpp */,
+				594BBB16188732EE007F9A2A /* libjpcnn.h */,
 				59D2FBC4187F8D9000427417 /* main.cpp */,
 				594BBA6618846D53007F9A2A /* math */,
 				59D2FBC5187F8DDA00427417 /* third_party */,
@@ -415,11 +446,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594BBAFD18871401007F9A2A /* MainStoryboard_iPad.storyboard in Resources */,
 				594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */,
-				594BBA9B1886FE8A007F9A2A /* Main_iPad.storyboard in Resources */,
-				594BBAA01886FE8A007F9A2A /* Images.xcassets in Resources */,
-				594BBA981886FE8A007F9A2A /* Main_iPhone.storyboard in Resources */,
-				594BBA8F1886FE8A007F9A2A /* InfoPlist.strings in Resources */,
+				594BBAFE18871401007F9A2A /* MainStoryboard_iPhone.storyboard in Resources */,
+				594BBB0318871401007F9A2A /* squarePNG.png in Resources */,
 				594BBAEB1887024B007F9A2A /* lena.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -431,18 +461,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594BBB0018871401007F9A2A /* main.m in Sources */,
 				594BBABA1886FF98007F9A2A /* basenode.cpp in Sources */,
 				594BBABC1886FF98007F9A2A /* buffer.cpp in Sources */,
 				594BBABE1886FF98007F9A2A /* convnode.cpp in Sources */,
 				594BBAC11886FF98007F9A2A /* dropoutnode.cpp in Sources */,
+				594BBB1518873271007F9A2A /* libjpcnn.cpp in Sources */,
 				594BBAC31886FF98007F9A2A /* flatnode.cpp in Sources */,
-				594BBAED1887060E007F9A2A /* imagetest.cpp in Sources */,
 				594BBAC51886FF98007F9A2A /* gconvnode.cpp in Sources */,
 				594BBAC71886FF98007F9A2A /* graph.cpp in Sources */,
 				594BBAC91886FF98007F9A2A /* maxnode.cpp in Sources */,
 				594BBACB1886FF98007F9A2A /* neuronnode.cpp in Sources */,
 				594BBACD1886FF98007F9A2A /* nodefactory.cpp in Sources */,
 				594BBACF1886FF98007F9A2A /* normalizenode.cpp in Sources */,
+				594BBB0218871401007F9A2A /* SquareCamViewController.m in Sources */,
 				594BBAD11886FF98007F9A2A /* poolnode.cpp in Sources */,
 				594BBAD31886FF98007F9A2A /* prepareinput.cpp in Sources */,
 				594BBAD51886FF98007F9A2A /* relunode.cpp in Sources */,
@@ -455,10 +487,8 @@
 				594BBADF1886FF98007F9A2A /* matrix_max.cpp in Sources */,
 				594BBAE11886FF98007F9A2A /* matrix_softmax.cpp in Sources */,
 				594BBAE21886FF98007F9A2A /* stb_image.cpp in Sources */,
+				594BBB0118871401007F9A2A /* SquareCamAppDelegate.m in Sources */,
 				594BBAE41886FF98007F9A2A /* binary_format.cpp in Sources */,
-				594BBA951886FE8A007F9A2A /* JPAppDelegate.m in Sources */,
-				594BBA9E1886FE8A007F9A2A /* JPViewController.m in Sources */,
-				594BBA911886FE8A007F9A2A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -497,28 +527,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		594BBA8D1886FE8A007F9A2A /* InfoPlist.strings */ = {
+		594BBAF118871401007F9A2A /* MainStoryboard_iPad.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				594BBA8E1886FE8A007F9A2A /* en */,
+				594BBAF218871401007F9A2A /* en */,
 			);
-			name = InfoPlist.strings;
+			name = MainStoryboard_iPad.storyboard;
 			sourceTree = "<group>";
 		};
-		594BBA961886FE8A007F9A2A /* Main_iPhone.storyboard */ = {
+		594BBAF318871401007F9A2A /* MainStoryboard_iPhone.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				594BBA971886FE8A007F9A2A /* Base */,
+				594BBAF418871401007F9A2A /* en */,
 			);
-			name = Main_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		594BBA991886FE8A007F9A2A /* Main_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				594BBA9A1886FE8A007F9A2A /* Base */,
-			);
-			name = Main_iPad.storyboard;
+			name = MainStoryboard_iPhone.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -531,21 +553,21 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "jpcnn_ios/jpcnn_ios-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 					"USE_ACCELERATE_GEMM=1",
 				);
-				INFOPLIST_FILE = "jpcnn_ios/jpcnn_ios-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Deep Belief";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -559,6 +581,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -566,14 +589,13 @@
 				);
 				GCC_FAST_MATH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "jpcnn_ios/jpcnn_ios-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
 				GCC_UNROLL_LOOPS = YES;
-				INFOPLIST_FILE = "jpcnn_ios/jpcnn_ios-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LLVM_LTO = YES;
 				LLVM_VECTORIZE_LOOPS = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Deep Belief";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

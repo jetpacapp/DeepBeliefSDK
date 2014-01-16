@@ -39,6 +39,8 @@ PrepareInput::~PrepareInput() {
 
 Buffer* PrepareInput::run(Buffer* input) {
 
+
+
   Dimensions rescaledDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
   Buffer* rescaled = new Buffer(rescaledDims);
   rescaled->setName("rescaled");
@@ -89,6 +91,8 @@ Buffer* PrepareInput::run(Buffer* input) {
       }
     }
   }
+
+  delete rescaled;
 
   return _output;
 }

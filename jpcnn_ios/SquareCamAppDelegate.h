@@ -1,5 +1,5 @@
 /*
-     File: main.m
+     File: SquareCamAppDelegate.h
  Abstract: Dmonstrates iOS 5 features of the AVCaptureStillImageOutput class
   Version: 1.0
  
@@ -47,14 +47,8 @@
 
 #import <UIKit/UIKit.h>
 
-#import "SquareCamAppDelegate.h"
+@interface SquareCamAppDelegate : UIResponder <UIApplicationDelegate>
 
-int main(int argc, char *argv[])
-{
-	int retVal = 0;
-	
-    @autoreleasepool {
-	    retVal = UIApplicationMain(argc, argv, nil, NSStringFromClass([SquareCamAppDelegate class]));
-	}
-	return retVal;
-}
+@property (strong, nonatomic) UIWindow *window;
+
+@end
