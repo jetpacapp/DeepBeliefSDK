@@ -7,61 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		594BBA35187F9816007F9A2A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
-		594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
-		594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
-		594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
-		594BBA4718834DFF007F9A2A /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4518834DFF007F9A2A /* nodefactory.cpp */; };
-		594BBA4A188350EF007F9A2A /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
-		594BBA4D18835947007F9A2A /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4B18835947007F9A2A /* dropoutnode.cpp */; };
-		594BBA5018835B69007F9A2A /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4E18835B69007F9A2A /* flatnode.cpp */; };
-		594BBA5318835C25007F9A2A /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5118835C25007F9A2A /* gconvnode.cpp */; };
-		594BBA5618835CBB007F9A2A /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5418835CBB007F9A2A /* neuronnode.cpp */; };
-		594BBA5918835D1C007F9A2A /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5718835D1C007F9A2A /* normalizenode.cpp */; };
-		594BBA5C18835D8B007F9A2A /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5A18835D8B007F9A2A /* poolnode.cpp */; };
-		594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
-		594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
-		594BBA65188363BD007F9A2A /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA63188363BD007F9A2A /* graph.cpp */; };
-		594BBA6A18846E50007F9A2A /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6918846E50007F9A2A /* matrix_add.cpp */; };
-		594BBA6C18847014007F9A2A /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6B18847014007F9A2A /* matrix_correlate.cpp */; };
-		594BBA6E1884A94A007F9A2A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
-		594BBA711884C0B5007F9A2A /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA701884C0B5007F9A2A /* matrix_dot.cpp */; };
-		594BBA731884CA8F007F9A2A /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA721884CA8F007F9A2A /* matrix_max.cpp */; };
-		594BBA751884DCCC007F9A2A /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */; };
-		594BBA771885B754007F9A2A /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA761885B754007F9A2A /* matrix_channels.cpp */; };
-		594BBA791885C1DA007F9A2A /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
-		594BBA7B1885DB8A007F9A2A /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */; };
-		594BBA7D188608A0007F9A2A /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7C188608A0007F9A2A /* stb_image.cpp */; };
+		5930AA8D188A23DA00997469 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBAEE18870D27007F9A2A /* Accelerate.framework */; };
+		5930AA8E188A23EA00997469 /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
+		5930AA8F188A23EA00997469 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
+		5930AA90188A23EA00997469 /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
+		5930AA91188A23EA00997469 /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4B18835947007F9A2A /* dropoutnode.cpp */; };
+		5930AA92188A23EA00997469 /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4E18835B69007F9A2A /* flatnode.cpp */; };
+		5930AA93188A23EA00997469 /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5118835C25007F9A2A /* gconvnode.cpp */; };
+		5930AA94188A23EA00997469 /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA63188363BD007F9A2A /* graph.cpp */; };
+		5930AA95188A23EA00997469 /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
+		5930AA96188A23EA00997469 /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5418835CBB007F9A2A /* neuronnode.cpp */; };
+		5930AA97188A23EA00997469 /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4518834DFF007F9A2A /* nodefactory.cpp */; };
+		5930AA98188A23EA00997469 /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5718835D1C007F9A2A /* normalizenode.cpp */; };
+		5930AA99188A23EA00997469 /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5A18835D8B007F9A2A /* poolnode.cpp */; };
+		5930AA9A188A23EA00997469 /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
+		5930AA9B188A23EA00997469 /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
+		5930AA9C188A23EA00997469 /* libjpcnn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBB1418873271007F9A2A /* libjpcnn.cpp */; };
+		5930AA9D188A23EA00997469 /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6918846E50007F9A2A /* matrix_add.cpp */; };
+		5930AA9E188A23EA00997469 /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA761885B754007F9A2A /* matrix_channels.cpp */; };
+		5930AA9F188A23EA00997469 /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6B18847014007F9A2A /* matrix_correlate.cpp */; };
+		5930AAA0188A23EA00997469 /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA701884C0B5007F9A2A /* matrix_dot.cpp */; };
+		5930AAA1188A23EA00997469 /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */; };
+		5930AAA2188A23EA00997469 /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
+		5930AAA3188A23EA00997469 /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA721884CA8F007F9A2A /* matrix_max.cpp */; };
+		5930AAA4188A23EA00997469 /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */; };
+		5930AAA5188A23EA00997469 /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7C188608A0007F9A2A /* stb_image.cpp */; };
+		5930AAA6188A23EA00997469 /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
 		594BBA851886FE8A007F9A2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA841886FE8A007F9A2A /* Foundation.framework */; };
 		594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA861886FE8A007F9A2A /* CoreGraphics.framework */; };
 		594BBA891886FE8A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA881886FE8A007F9A2A /* UIKit.framework */; };
-		594BBABA1886FF98007F9A2A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
-		594BBABC1886FF98007F9A2A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
-		594BBABE1886FF98007F9A2A /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
-		594BBAC11886FF98007F9A2A /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4B18835947007F9A2A /* dropoutnode.cpp */; };
-		594BBAC31886FF98007F9A2A /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4E18835B69007F9A2A /* flatnode.cpp */; };
-		594BBAC51886FF98007F9A2A /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5118835C25007F9A2A /* gconvnode.cpp */; };
-		594BBAC71886FF98007F9A2A /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA63188363BD007F9A2A /* graph.cpp */; };
-		594BBAC91886FF98007F9A2A /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
-		594BBACB1886FF98007F9A2A /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5418835CBB007F9A2A /* neuronnode.cpp */; };
-		594BBACD1886FF98007F9A2A /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4518834DFF007F9A2A /* nodefactory.cpp */; };
-		594BBACF1886FF98007F9A2A /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5718835D1C007F9A2A /* normalizenode.cpp */; };
-		594BBAD11886FF98007F9A2A /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5A18835D8B007F9A2A /* poolnode.cpp */; };
-		594BBAD31886FF98007F9A2A /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
-		594BBAD51886FF98007F9A2A /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
-		594BBAD91886FF98007F9A2A /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6918846E50007F9A2A /* matrix_add.cpp */; };
-		594BBADA1886FF98007F9A2A /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA761885B754007F9A2A /* matrix_channels.cpp */; };
-		594BBADB1886FF98007F9A2A /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6B18847014007F9A2A /* matrix_correlate.cpp */; };
-		594BBADC1886FF98007F9A2A /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA701884C0B5007F9A2A /* matrix_dot.cpp */; };
-		594BBADD1886FF98007F9A2A /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */; };
-		594BBADE1886FF98007F9A2A /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
-		594BBADF1886FF98007F9A2A /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA721884CA8F007F9A2A /* matrix_max.cpp */; };
-		594BBAE11886FF98007F9A2A /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */; };
-		594BBAE21886FF98007F9A2A /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7C188608A0007F9A2A /* stb_image.cpp */; };
-		594BBAE41886FF98007F9A2A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
 		594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE81887024B007F9A2A /* imagenet.ntwk */; };
 		594BBAEB1887024B007F9A2A /* lena.png in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE91887024B007F9A2A /* lena.png */; };
-		594BBAEF18870D27007F9A2A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBAEE18870D27007F9A2A /* Accelerate.framework */; };
 		594BBAFD18871401007F9A2A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAF118871401007F9A2A /* MainStoryboard_iPad.storyboard */; };
 		594BBAFE18871401007F9A2A /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAF318871401007F9A2A /* MainStoryboard_iPhone.storyboard */; };
 		594BBB0018871401007F9A2A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 594BBAF618871401007F9A2A /* main.m */; };
@@ -76,7 +52,33 @@
 		594BBB0F18871539007F9A2A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB0E18871539007F9A2A /* AVFoundation.framework */; };
 		594BBB1118871541007F9A2A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB1018871541007F9A2A /* CoreVideo.framework */; };
 		594BBB131887154A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB121887154A007F9A2A /* UIKit.framework */; };
-		594BBB1518873271007F9A2A /* libjpcnn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBB1418873271007F9A2A /* libjpcnn.cpp */; };
+		5962AD84188A09C3009E64DD /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA3A1880CD5A007F9A2A /* basenode.cpp */; };
+		5962AD85188A09C3009E64DD /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA33187F9816007F9A2A /* buffer.cpp */; };
+		5962AD86188A09C3009E64DD /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA48188350EF007F9A2A /* convnode.cpp */; };
+		5962AD87188A09C3009E64DD /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4B18835947007F9A2A /* dropoutnode.cpp */; };
+		5962AD88188A09C3009E64DD /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4E18835B69007F9A2A /* flatnode.cpp */; };
+		5962AD89188A09C3009E64DD /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5118835C25007F9A2A /* gconvnode.cpp */; };
+		5962AD8A188A09C3009E64DD /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA63188363BD007F9A2A /* graph.cpp */; };
+		5962AD8B188A09C3009E64DD /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6018835EC1007F9A2A /* maxnode.cpp */; };
+		5962AD8C188A09C3009E64DD /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5418835CBB007F9A2A /* neuronnode.cpp */; };
+		5962AD8D188A09C3009E64DD /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA4518834DFF007F9A2A /* nodefactory.cpp */; };
+		5962AD8E188A09C3009E64DD /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5718835D1C007F9A2A /* normalizenode.cpp */; };
+		5962AD8F188A09C3009E64DD /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5A18835D8B007F9A2A /* poolnode.cpp */; };
+		5962AD90188A09C3009E64DD /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA381880CC43007F9A2A /* prepareinput.cpp */; };
+		5962AD91188A09C3009E64DD /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA5D18835DFD007F9A2A /* relunode.cpp */; };
+		5962AD92188A09C3009E64DD /* libjpcnn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBB1418873271007F9A2A /* libjpcnn.cpp */; };
+		5962AD93188A09C3009E64DD /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6918846E50007F9A2A /* matrix_add.cpp */; };
+		5962AD94188A09C3009E64DD /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA761885B754007F9A2A /* matrix_channels.cpp */; };
+		5962AD95188A09C3009E64DD /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA6B18847014007F9A2A /* matrix_correlate.cpp */; };
+		5962AD96188A09C3009E64DD /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA701884C0B5007F9A2A /* matrix_dot.cpp */; };
+		5962AD97188A09C3009E64DD /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA741884DCCC007F9A2A /* matrix_local_response.cpp */; };
+		5962AD98188A09C3009E64DD /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA781885C1D9007F9A2A /* matrix_margin.cpp */; };
+		5962AD99188A09C3009E64DD /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA721884CA8F007F9A2A /* matrix_max.cpp */; };
+		5962AD9A188A09C3009E64DD /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */; };
+		5962AD9B188A09C3009E64DD /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA7C188608A0007F9A2A /* stb_image.cpp */; };
+		5962AD9C188A09C3009E64DD /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
+		5962AD9D188A09F2009E64DD /* liblibjpcnn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */; };
+		5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -136,7 +138,7 @@
 		594BBA781885C1D9007F9A2A /* matrix_margin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_margin.cpp; sourceTree = "<group>"; };
 		594BBA7A1885DB8A007F9A2A /* matrix_softmax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_softmax.cpp; sourceTree = "<group>"; };
 		594BBA7C188608A0007F9A2A /* stb_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stb_image.cpp; sourceTree = "<group>"; };
-		594BBA821886FE8A007F9A2A /* jpcnn_ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jpcnn_ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		594BBA821886FE8A007F9A2A /* Deep Belief.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Deep Belief.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		594BBA841886FE8A007F9A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		594BBA861886FE8A007F9A2A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		594BBA881886FE8A007F9A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -164,6 +166,7 @@
 		594BBB121887154A007F9A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		594BBB1418873271007F9A2A /* libjpcnn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libjpcnn.cpp; sourceTree = "<group>"; };
 		594BBB16188732EE007F9A2A /* libjpcnn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libjpcnn.h; sourceTree = "<group>"; };
+		5962AD80188A0987009E64DD /* liblibjpcnn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibjpcnn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC7187F8E4300427417 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
@@ -174,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5930AA8D188A23DA00997469 /* Accelerate.framework in Frameworks */,
 				594BBB131887154A007F9A2A /* UIKit.framework in Frameworks */,
 				594BBB1118871541007F9A2A /* CoreVideo.framework in Frameworks */,
 				594BBB0F18871539007F9A2A /* AVFoundation.framework in Frameworks */,
@@ -182,10 +186,17 @@
 				594BBB0918871523007F9A2A /* CoreMedia.framework in Frameworks */,
 				594BBB0718871516007F9A2A /* QuartzCore.framework in Frameworks */,
 				594BBB051887150B007F9A2A /* ImageIO.framework in Frameworks */,
-				594BBAEF18870D27007F9A2A /* Accelerate.framework in Frameworks */,
 				594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */,
 				594BBA891886FE8A007F9A2A /* UIKit.framework in Frameworks */,
 				594BBA851886FE8A007F9A2A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5962AD7D188A0987009E64DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +204,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				594BBA6E1884A94A007F9A2A /* Accelerate.framework in Frameworks */,
+				5962AD9D188A09F2009E64DD /* liblibjpcnn.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,7 +358,8 @@
 			isa = PBXGroup;
 			children = (
 				59D2FBB7187F8D2A00427417 /* jpcnn */,
-				594BBA821886FE8A007F9A2A /* jpcnn_ios.app */,
+				594BBA821886FE8A007F9A2A /* Deep Belief.app */,
+				5962AD80188A0987009E64DD /* liblibjpcnn.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -378,6 +390,16 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		5962AD7E188A0987009E64DD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		594BBA811886FE89007F9A2A /* jpcnn_ios */ = {
 			isa = PBXNativeTarget;
@@ -393,8 +415,25 @@
 			);
 			name = jpcnn_ios;
 			productName = jpcnn_ios;
-			productReference = 594BBA821886FE8A007F9A2A /* jpcnn_ios.app */;
+			productReference = 594BBA821886FE8A007F9A2A /* Deep Belief.app */;
 			productType = "com.apple.product-type.application";
+		};
+		5962AD7F188A0987009E64DD /* libjpcnn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5962AD81188A0987009E64DD /* Build configuration list for PBXNativeTarget "libjpcnn" */;
+			buildPhases = (
+				5962AD7C188A0987009E64DD /* Sources */,
+				5962AD7D188A0987009E64DD /* Frameworks */,
+				5962AD7E188A0987009E64DD /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libjpcnn;
+			productName = libjpcnn;
+			productReference = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		59D2FBB6187F8D2A00427417 /* jpcnn */ = {
 			isa = PBXNativeTarget;
@@ -437,6 +476,7 @@
 			targets = (
 				59D2FBB6187F8D2A00427417 /* jpcnn */,
 				594BBA811886FE89007F9A2A /* jpcnn_ios */,
+				5962AD7F188A0987009E64DD /* libjpcnn */,
 			);
 		};
 /* End PBXProject section */
@@ -461,34 +501,66 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5930AA8E188A23EA00997469 /* basenode.cpp in Sources */,
+				5930AA8F188A23EA00997469 /* buffer.cpp in Sources */,
+				5930AA90188A23EA00997469 /* convnode.cpp in Sources */,
+				5930AA91188A23EA00997469 /* dropoutnode.cpp in Sources */,
+				5930AA92188A23EA00997469 /* flatnode.cpp in Sources */,
+				5930AA93188A23EA00997469 /* gconvnode.cpp in Sources */,
+				5930AA94188A23EA00997469 /* graph.cpp in Sources */,
+				5930AA95188A23EA00997469 /* maxnode.cpp in Sources */,
+				5930AA96188A23EA00997469 /* neuronnode.cpp in Sources */,
+				5930AA97188A23EA00997469 /* nodefactory.cpp in Sources */,
+				5930AA98188A23EA00997469 /* normalizenode.cpp in Sources */,
+				5930AA99188A23EA00997469 /* poolnode.cpp in Sources */,
+				5930AA9A188A23EA00997469 /* prepareinput.cpp in Sources */,
+				5930AA9B188A23EA00997469 /* relunode.cpp in Sources */,
+				5930AA9C188A23EA00997469 /* libjpcnn.cpp in Sources */,
+				5930AA9D188A23EA00997469 /* matrix_add.cpp in Sources */,
+				5930AA9E188A23EA00997469 /* matrix_channels.cpp in Sources */,
+				5930AA9F188A23EA00997469 /* matrix_correlate.cpp in Sources */,
+				5930AAA0188A23EA00997469 /* matrix_dot.cpp in Sources */,
+				5930AAA1188A23EA00997469 /* matrix_local_response.cpp in Sources */,
+				5930AAA2188A23EA00997469 /* matrix_margin.cpp in Sources */,
+				5930AAA3188A23EA00997469 /* matrix_max.cpp in Sources */,
+				5930AAA4188A23EA00997469 /* matrix_softmax.cpp in Sources */,
+				5930AAA5188A23EA00997469 /* stb_image.cpp in Sources */,
+				5930AAA6188A23EA00997469 /* binary_format.cpp in Sources */,
 				594BBB0018871401007F9A2A /* main.m in Sources */,
-				594BBABA1886FF98007F9A2A /* basenode.cpp in Sources */,
-				594BBABC1886FF98007F9A2A /* buffer.cpp in Sources */,
-				594BBABE1886FF98007F9A2A /* convnode.cpp in Sources */,
-				594BBAC11886FF98007F9A2A /* dropoutnode.cpp in Sources */,
-				594BBB1518873271007F9A2A /* libjpcnn.cpp in Sources */,
-				594BBAC31886FF98007F9A2A /* flatnode.cpp in Sources */,
-				594BBAC51886FF98007F9A2A /* gconvnode.cpp in Sources */,
-				594BBAC71886FF98007F9A2A /* graph.cpp in Sources */,
-				594BBAC91886FF98007F9A2A /* maxnode.cpp in Sources */,
-				594BBACB1886FF98007F9A2A /* neuronnode.cpp in Sources */,
-				594BBACD1886FF98007F9A2A /* nodefactory.cpp in Sources */,
-				594BBACF1886FF98007F9A2A /* normalizenode.cpp in Sources */,
 				594BBB0218871401007F9A2A /* SquareCamViewController.m in Sources */,
-				594BBAD11886FF98007F9A2A /* poolnode.cpp in Sources */,
-				594BBAD31886FF98007F9A2A /* prepareinput.cpp in Sources */,
-				594BBAD51886FF98007F9A2A /* relunode.cpp in Sources */,
-				594BBAD91886FF98007F9A2A /* matrix_add.cpp in Sources */,
-				594BBADA1886FF98007F9A2A /* matrix_channels.cpp in Sources */,
-				594BBADB1886FF98007F9A2A /* matrix_correlate.cpp in Sources */,
-				594BBADC1886FF98007F9A2A /* matrix_dot.cpp in Sources */,
-				594BBADD1886FF98007F9A2A /* matrix_local_response.cpp in Sources */,
-				594BBADE1886FF98007F9A2A /* matrix_margin.cpp in Sources */,
-				594BBADF1886FF98007F9A2A /* matrix_max.cpp in Sources */,
-				594BBAE11886FF98007F9A2A /* matrix_softmax.cpp in Sources */,
-				594BBAE21886FF98007F9A2A /* stb_image.cpp in Sources */,
 				594BBB0118871401007F9A2A /* SquareCamAppDelegate.m in Sources */,
-				594BBAE41886FF98007F9A2A /* binary_format.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5962AD7C188A0987009E64DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5962AD84188A09C3009E64DD /* basenode.cpp in Sources */,
+				5962AD85188A09C3009E64DD /* buffer.cpp in Sources */,
+				5962AD86188A09C3009E64DD /* convnode.cpp in Sources */,
+				5962AD87188A09C3009E64DD /* dropoutnode.cpp in Sources */,
+				5962AD88188A09C3009E64DD /* flatnode.cpp in Sources */,
+				5962AD89188A09C3009E64DD /* gconvnode.cpp in Sources */,
+				5962AD8A188A09C3009E64DD /* graph.cpp in Sources */,
+				5962AD8B188A09C3009E64DD /* maxnode.cpp in Sources */,
+				5962AD8C188A09C3009E64DD /* neuronnode.cpp in Sources */,
+				5962AD8D188A09C3009E64DD /* nodefactory.cpp in Sources */,
+				5962AD8E188A09C3009E64DD /* normalizenode.cpp in Sources */,
+				5962AD8F188A09C3009E64DD /* poolnode.cpp in Sources */,
+				5962AD90188A09C3009E64DD /* prepareinput.cpp in Sources */,
+				5962AD91188A09C3009E64DD /* relunode.cpp in Sources */,
+				5962AD92188A09C3009E64DD /* libjpcnn.cpp in Sources */,
+				5962AD93188A09C3009E64DD /* matrix_add.cpp in Sources */,
+				5962AD94188A09C3009E64DD /* matrix_channels.cpp in Sources */,
+				5962AD95188A09C3009E64DD /* matrix_correlate.cpp in Sources */,
+				5962AD96188A09C3009E64DD /* matrix_dot.cpp in Sources */,
+				5962AD97188A09C3009E64DD /* matrix_local_response.cpp in Sources */,
+				5962AD98188A09C3009E64DD /* matrix_margin.cpp in Sources */,
+				5962AD99188A09C3009E64DD /* matrix_max.cpp in Sources */,
+				5962AD9A188A09C3009E64DD /* matrix_softmax.cpp in Sources */,
+				5962AD9B188A09C3009E64DD /* stb_image.cpp in Sources */,
+				5962AD9C188A09C3009E64DD /* binary_format.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,31 +568,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				594BBA3B1880CD5A007F9A2A /* basenode.cpp in Sources */,
-				594BBA6218835EC1007F9A2A /* maxnode.cpp in Sources */,
-				594BBA6A18846E50007F9A2A /* matrix_add.cpp in Sources */,
-				594BBA391880CC43007F9A2A /* prepareinput.cpp in Sources */,
-				594BBA791885C1DA007F9A2A /* matrix_margin.cpp in Sources */,
-				594BBA5C18835D8B007F9A2A /* poolnode.cpp in Sources */,
-				594BBA5018835B69007F9A2A /* flatnode.cpp in Sources */,
-				594BBA711884C0B5007F9A2A /* matrix_dot.cpp in Sources */,
-				594BBA35187F9816007F9A2A /* buffer.cpp in Sources */,
-				594BBA44188298E8007F9A2A /* binary_format.cpp in Sources */,
-				594BBA771885B754007F9A2A /* matrix_channels.cpp in Sources */,
-				594BBA5618835CBB007F9A2A /* neuronnode.cpp in Sources */,
-				594BBA7D188608A0007F9A2A /* stb_image.cpp in Sources */,
-				594BBA6C18847014007F9A2A /* matrix_correlate.cpp in Sources */,
-				594BBA751884DCCC007F9A2A /* matrix_local_response.cpp in Sources */,
-				594BBA7B1885DB8A007F9A2A /* matrix_softmax.cpp in Sources */,
 				59D2FBC8187F926700427417 /* main.cpp in Sources */,
-				594BBA731884CA8F007F9A2A /* matrix_max.cpp in Sources */,
-				594BBA4718834DFF007F9A2A /* nodefactory.cpp in Sources */,
-				594BBA4A188350EF007F9A2A /* convnode.cpp in Sources */,
-				594BBA65188363BD007F9A2A /* graph.cpp in Sources */,
-				594BBA5F18835DFD007F9A2A /* relunode.cpp in Sources */,
-				594BBA5318835C25007F9A2A /* gconvnode.cpp in Sources */,
-				594BBA5918835D1C007F9A2A /* normalizenode.cpp in Sources */,
-				594BBA4D18835947007F9A2A /* dropoutnode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,6 +615,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "Deep Belief";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -595,11 +644,34 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LLVM_LTO = YES;
 				LLVM_VECTORIZE_LOOPS = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "Deep Belief";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		5962AD82188A0987009E64DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"USE_ACCELERATE_GEMM=1",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5962AD83188A0987009E64DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -701,6 +773,16 @@
 				594BBAB61886FE8A007F9A2A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5962AD81188A0987009E64DD /* Build configuration list for PBXNativeTarget "libjpcnn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5962AD82188A0987009E64DD /* Debug */,
+				5962AD83188A0987009E64DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		59D2FBB2187F8D2A00427417 /* Build configuration list for PBXProject "jpcnn" */ = {
 			isa = XCConfigurationList;

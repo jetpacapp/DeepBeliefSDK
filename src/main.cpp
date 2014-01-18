@@ -9,9 +9,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 
-#include "buffer.h"
-#include "prepareinput.h"
-#include "graph.h"
+#include "libjpcnn.h"
 
 int main(int argc, const char * argv[]) {
   if (argc < 3) {
@@ -19,31 +17,24 @@ int main(int argc, const char * argv[]) {
     return 1;
   }
 
-  Graph* graph = new_graph_from_file(argv[1], false);
+  void* network = jpcnn_create_network(argv[1]);
+  void* input = jpcnn_create_image_buffer_from_file(argv[2]);
 
-  Buffer* input = buffer_from_image_file((char*)(argv[2]));
-
-  PrepareInput prepareInput(graph->_dataMean, true);
-
-  Buffer* rescaledInput = prepareInput.run(input);
-
+  float* predictions;
+  int predictionsLength;
+  char** predictionsLabels;
+  int predictionsLabelsLength;
   struct timeval start;
   gettimeofday(&start, NULL);
-  Buffer* predictions = graph->run(rescaledInput);
+  jpcnn_classify_image(network, input, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
   struct timeval end;
   gettimeofday(&end, NULL);
+  jpcnn_destroy_image_buffer(input);
 
-  const Dimensions predictionsDims = predictions->_dims;
-  const int imageCount = predictionsDims[0];
-  const int labelsCount = predictionsDims[1];
-
-  for (int imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
-    for (int labelIndex = 0; labelIndex < labelsCount; labelIndex += 1) {
-      const int predictionIndex = predictionsDims.offset(imageIndex, labelIndex);
-      const jpfloat_t labelValue = predictions->_data[predictionIndex];
-      char* labelName = graph->_labelNames[labelIndex];
-      fprintf(stdout, "%f\t%s\n", labelValue, labelName);
-    }
+   for (int index = 0; index < predictionsLength; index += 1) {
+    const float predictionValue = predictions[index];
+    char* label = predictionsLabels[index % predictionsLabelsLength];
+    fprintf(stdout, "%f\t%s\n", predictionValue, label);
   }
 
   long seconds  = end.tv_sec  - start.tv_sec;
@@ -53,8 +44,7 @@ int main(int argc, const char * argv[]) {
 
   fprintf(stderr, "Classification took %ld milliseconds\n", mtime);
 
-  delete graph;
-  delete input;
+  jpcnn_destroy_network(network);
 
   return 0;
 }

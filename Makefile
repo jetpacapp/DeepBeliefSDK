@@ -11,15 +11,21 @@ LDLIBS+= -Wl,--start-group /opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64
 LDLIBS+= -L/usr/lib/gcc/x86_64-linux-gnu/4.6/ -lgomp
 
 SRCS:=$(shell find $(SOURCEDIR) -name '*.cpp')
-OBJS=$(subst .cpp,.o,$(SRCS))
+LIBOBJS=$(subst .cpp,.o,$(SRCS))
 
 all: jpcnn
 
-jpcnn: $(OBJS)
-	g++ $(LDFLAGS) -o jpcnn $(OBJS) $(LDLIBS) 
+libjpcnn.so: $(LIBOBJS)
+	g++ -shared $(LDFLAGS) -o libjpcnn.so $(LIBOBJS) $(LDLIBS) 
+
+main.o: src/main.cpp
+	$(CXX) $(CPPFLAGS) -c src/main.cpp -o main.o
+
+jpcnn: libjpcnn.so main.o
+	g++ -o jpcnn -L. -ljpcnn main.o
 
 %.o: %.cpp
-	$(CXX) $(CPPFLAGS) -c $< -o $(basename $@).o
+	$(CXX) $(CPPFLAGS) -fPIC -c $< -o $(basename $@).o
 
 clean:
-	$(RM) $(OBJS)
+	find . -iname "*.o" -exec rm '{}' ';'
