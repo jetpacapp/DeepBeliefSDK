@@ -60,11 +60,35 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "data/example_networks/imagenet.ntwk"
+            argument = "--network data/example_networks/imagenet.ntwk"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "data/lena.png"
+            argument = "--output /Users/petewarden/jpcnnoutput_high.txt"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-t"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--multisample"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--mode train"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/dogs"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/nodogs"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--input data/lena.png"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
