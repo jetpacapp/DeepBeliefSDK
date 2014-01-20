@@ -24,6 +24,9 @@ NormalizeNode::~NormalizeNode() {
 }
 
 Buffer* NormalizeNode::run(Buffer* input) {
+  if (_output != NULL) {
+    delete _output;
+  }
   _output = matrix_local_response(input, _windowSize, _k, _alpha, _beta);
   return _output;
 }

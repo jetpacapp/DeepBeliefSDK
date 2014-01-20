@@ -24,6 +24,9 @@ MaxNode::~MaxNode() {
 }
 
 Buffer* MaxNode::run(Buffer* input) {
+  if (_output != NULL) {
+    delete _output;
+  }
   _output = matrix_softmax(input);
   return _output;
 }

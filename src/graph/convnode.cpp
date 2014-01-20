@@ -30,6 +30,9 @@ ConvNode::~ConvNode() {
 }
 
 Buffer* ConvNode::run(Buffer* input) {
+  if (_output != NULL) {
+    delete _output;
+  }
 
   Dimensions inputDims = input->_dims;
   const int inputChannels = inputDims[inputDims._length - 1];

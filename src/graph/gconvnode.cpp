@@ -30,6 +30,10 @@ GConvNode::~GConvNode() {
 }
 
 Buffer* GConvNode::run(Buffer* input) {
+  if (_output != NULL) {
+    delete _output;
+  }
+
   const Dimensions inputDims = input->_dims;
 
   assert(inputDims._length == 4);

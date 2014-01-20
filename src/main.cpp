@@ -290,6 +290,7 @@ void classify_images_in_directory(void* network, const char* directoryName, cons
       fprintf(outputFile, " %d:%f", (index + 1), predictionValue);
     }
     fprintf(outputFile, "\n");
+    free(fullPath);
   }
   if (filesRead == 0) {
     fprintf(stderr, "No image files were found in directory '%s'\n", directoryName);

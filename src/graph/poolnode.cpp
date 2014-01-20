@@ -24,6 +24,9 @@ PoolNode::~PoolNode() {
 }
 
 Buffer* PoolNode::run(Buffer* input) {
+  if (_output != NULL) {
+    delete _output;
+  }
   _output = matrix_max_patch(input, _patchWidth, _stride);
   return _output;
 }

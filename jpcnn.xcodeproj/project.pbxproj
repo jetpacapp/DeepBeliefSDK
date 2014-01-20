@@ -79,6 +79,7 @@
 		5962AD9C188A09C3009E64DD /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 594BBA43188298E8007F9A2A /* binary_format.cpp */; };
 		5962AD9D188A09F2009E64DD /* liblibjpcnn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */; };
 		5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
+		598241B4188DD3A6003F2C0A /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241B2188DD3A6003F2C0A /* svm.cpp */; };
 		59D2FBC8187F926700427417 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D2FBC4187F8D9000427417 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -167,6 +168,8 @@
 		594BBB1418873271007F9A2A /* libjpcnn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libjpcnn.cpp; sourceTree = "<group>"; };
 		594BBB16188732EE007F9A2A /* libjpcnn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libjpcnn.h; sourceTree = "<group>"; };
 		5962AD80188A0987009E64DD /* liblibjpcnn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibjpcnn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		598241B2188DD3A6003F2C0A /* svm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = svm.cpp; sourceTree = "<group>"; };
+		598241B3188DD3A6003F2C0A /* svm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svm.h; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2FBC4187F8D9000427417 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59D2FBC7187F8E4300427417 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
@@ -384,6 +387,8 @@
 			children = (
 				594BBA7C188608A0007F9A2A /* stb_image.cpp */,
 				59D2FBC7187F8E4300427417 /* stb_image.h */,
+				598241B2188DD3A6003F2C0A /* svm.cpp */,
+				598241B3188DD3A6003F2C0A /* svm.h */,
 			);
 			path = third_party;
 			sourceTree = "<group>";
@@ -568,6 +573,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				598241B4188DD3A6003F2C0A /* svm.cpp in Sources */,
 				59D2FBC8187F926700427417 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

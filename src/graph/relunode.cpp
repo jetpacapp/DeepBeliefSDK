@@ -24,6 +24,9 @@ ReluNode::~ReluNode() {
 }
 
 Buffer* ReluNode::run(Buffer* input) {
+  if (_output != NULL) {
+    delete _output;
+  }
 
   _output = matrix_max(input, 0.0f);
 

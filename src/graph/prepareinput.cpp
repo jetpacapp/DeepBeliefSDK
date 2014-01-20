@@ -38,8 +38,9 @@ PrepareInput::~PrepareInput() {
 }
 
 Buffer* PrepareInput::run(Buffer* input) {
-
-
+  if (_output != NULL) {
+    delete _output;
+  }
 
   Dimensions rescaledDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
   Buffer* rescaled = new Buffer(rescaledDims);
@@ -48,9 +49,6 @@ Buffer* PrepareInput::run(Buffer* input) {
   rescale_image_to_fit(input, rescaled, true);
   matrix_add_inplace(rescaled, _dataMean, -1.0f);
 
-  if (_output != NULL) {
-    delete _output;
-  }
   const int deltaX = (kRescaledWidth - kOutputWidth);
   const int deltaY = (kRescaledHeight - kOutputHeight);
   const int marginX = (deltaX / 2);
