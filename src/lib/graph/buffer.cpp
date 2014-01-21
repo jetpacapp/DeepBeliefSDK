@@ -14,7 +14,11 @@
 #include <math.h>
 #include <assert.h>
 
+#ifdef USE_OS_IMAGE_LOAD
+#include "os_image_load.h"
+#else // USE_OS_IMAGE_LOAD
 #include "stb_image.h"
+#endif // USE_OS_IMAGE_LOAD
 #include "binary_format.h"
 
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
@@ -75,17 +79,24 @@ void Buffer::saveDebugImage() {
 
 Buffer* buffer_from_image_file(const char* filename)
 {
+  int inputWidth;
+  int inputHeight;
+  int inputChannels;
+#ifdef USE_OS_IMAGE_LOAD
+  uint8_t* imageData = os_image_load_from_file(filename, &inputWidth, &inputHeight, &inputChannels, 0);
+#else // USE_OS_IMAGE_LOAD
   FILE* inputFile = fopen(filename, "rb");
   if (!inputFile) {
     fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
     return NULL;
   }
-
-  int inputWidth;
-  int inputHeight;
-  int inputChannels;
   uint8_t* imageData = stbi_load_from_file(inputFile, &inputWidth, &inputHeight, &inputChannels, 0);
   fclose(inputFile);
+#endif // USE_OS_IMAGE_LOAD
+  if (!imageData) {
+    fprintf(stderr, "jpcnn couldn't read '%s'\n", filename);
+    return NULL;
+  }
 
   Dimensions dims(inputHeight, inputWidth, inputChannels);
   Buffer* buffer = new Buffer(dims);
@@ -101,7 +112,11 @@ Buffer* buffer_from_image_file(const char* filename)
     imageCurrent += 1;
   }
 
+#ifdef USE_OS_IMAGE_LOAD
+  os_image_free(imageData);
+#else // USE_OS_IMAGE_LOAD
   stbi_image_free(imageData);
+#endif // USE_OS_IMAGE_LOAD
 
   return buffer;
 }

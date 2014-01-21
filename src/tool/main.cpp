@@ -243,6 +243,12 @@ void print_usage_and_exit(int argc, const char* argv[]) {
 
 void do_classify_image(void* network, const char* inputFilename, int doMultisample, int layerOffset, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration) {
   void* input = jpcnn_create_image_buffer_from_file(inputFilename);
+  if (input == NULL) {
+    *predictions = NULL;
+    *predictionsLength = 0;
+    *predictionsLabels = NULL;
+    return;
+  }
   int predictionsLabelsLength;
   int actualPredictionsLength;
   struct timeval start;
@@ -321,6 +327,11 @@ void classify_images_in_directory(void* network, const char* directoryName, SToo
       &predictionsLength,
       &predictionsLabels,
       &duration);
+
+    if (predictions == NULL) {
+      free(fullPath);
+      continue;
+    }
 
     durationTotal += duration;
     filesRead += 1;

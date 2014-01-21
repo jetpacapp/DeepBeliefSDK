@@ -84,6 +84,8 @@
 		59824254188DE333003F2C0A /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824252188DE333003F2C0A /* svmutils.cpp */; };
 		59824257188DE39F003F2C0A /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824255188DE39E003F2C0A /* svm.cpp */; };
 		59824258188E039E003F2C0A /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824252188DE333003F2C0A /* svmutils.cpp */; };
+		5982425D188F2631003F2C0A /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5982425C188F2631003F2C0A /* ApplicationServices.framework */; };
+		5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -177,6 +179,9 @@
 		59824253188DE333003F2C0A /* svmutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svmutils.h; sourceTree = "<group>"; };
 		59824255188DE39E003F2C0A /* svm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = svm.cpp; sourceTree = "<group>"; };
 		59824256188DE39F003F2C0A /* svm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svm.h; sourceTree = "<group>"; };
+		59824259188F1E0F003F2C0A /* os_image_load.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = os_image_load.cpp; sourceTree = "<group>"; };
+		5982425A188F1E0F003F2C0A /* os_image_load.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_image_load.h; sourceTree = "<group>"; };
+		5982425C188F2631003F2C0A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -204,6 +209,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5982425D188F2631003F2C0A /* ApplicationServices.framework in Frameworks */,
 				5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,6 +236,7 @@
 		594BBA831886FE8A007F9A2A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5982425C188F2631003F2C0A /* ApplicationServices.framework */,
 				594BBB121887154A007F9A2A /* UIKit.framework */,
 				594BBB1018871541007F9A2A /* CoreVideo.framework */,
 				594BBB0E18871539007F9A2A /* AVFoundation.framework */,
@@ -380,6 +387,8 @@
 			children = (
 				59824201188DE27D003F2C0A /* binary_format.cpp */,
 				59824202188DE27D003F2C0A /* binary_format.h */,
+				59824259188F1E0F003F2C0A /* os_image_load.cpp */,
+				5982425A188F1E0F003F2C0A /* os_image_load.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -574,6 +583,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */,
 				59824238188DE2F0003F2C0A /* basenode.cpp in Sources */,
 				59824239188DE2F0003F2C0A /* buffer.cpp in Sources */,
 				5982423A188DE2F0003F2C0A /* convnode.cpp in Sources */,
@@ -698,9 +708,9 @@
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
 					"USE_ACCELERATE_GEMM=1",
+					USE_OS_IMAGE_LOAD,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -710,7 +720,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_ACCELERATE_GEMM=1",
+					USE_OS_IMAGE_LOAD,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -788,7 +801,6 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_ACCELERATE_GEMM=1",
-					"DEBUG=1",
 					"$(inherited)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

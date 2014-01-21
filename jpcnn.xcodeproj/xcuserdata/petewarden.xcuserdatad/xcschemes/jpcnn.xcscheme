@@ -64,7 +64,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--model /Users/petewarden/dogs_high_layer.model"
+            argument = "--model /Users/petewarden/food_high_layer.model"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -77,27 +77,27 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode train"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/dogs_training"
-            isEnabled = "NO">
+            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/food_training"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/nodogs_training"
-            isEnabled = "NO">
+            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/nofood_training"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode test"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/dogs_testing"
-            isEnabled = "YES">
+            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/food_testing"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/nodogs_testing"
-            isEnabled = "YES">
+            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/nofood_testing"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--threshold 0.5"
