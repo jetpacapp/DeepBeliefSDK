@@ -57,10 +57,11 @@ Graph::~Graph() {
   }
 }
 
-Buffer* Graph::run(Buffer* input) {
+Buffer* Graph::run(Buffer* input, int layerOffset) {
 
   Buffer* currentInput = input;
-  for (int index = 0; index < _layersLength; index += 1) {
+  const int howManyLayers = (_layersLength + layerOffset);
+  for (int index = 0; index < howManyLayers; index += 1) {
     BaseNode* layer = _layers[index];
 #ifdef CHECK_RESULTS
     char expectedInputFilename[FN_LEN];

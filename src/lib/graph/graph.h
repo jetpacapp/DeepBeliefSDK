@@ -21,7 +21,7 @@ public:
   Graph();
   virtual ~Graph();
 
-  Buffer* run(Buffer* input);
+  Buffer* run(Buffer* input, int layerOffset = 0);
 
   bool _useMemoryMap;
   SBinaryTag* _fileTag;

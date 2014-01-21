@@ -32,6 +32,7 @@ typedef struct SToolArgumentValuesStruct {
   EToolMode mode;
   int doTime;
   float threshold;
+  int layerOffset;
 } SToolArgumentValues;
 
 typedef struct SToolOptionStruct {
@@ -63,7 +64,7 @@ typedef struct STestingCookieStruct {
 
 static void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* outValues);
 static void print_usage_and_exit(int argc, const char* argv[]);
-static void do_classify_image(void* network, const char* inputFilename, int doMultisample, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration);
+static void do_classify_image(void* network, const char* inputFilename, int doMultisample, int layerOffset, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration);
 static int has_image_suffix(const char* basename);
 static void classify_images_in_directory(void* network, const char* directoryName, SToolArgumentValues* argValues, ClassifyImagesFunctionPtr callback, void* callbackCookie);
 static void training_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath);
@@ -73,50 +74,18 @@ static void prediction_callback(void* cookie, float* predictions, int prediction
 static SToolOption g_toolOptions[] = {
   {"network", 'n', 1, 1, NULL, "The path to the neural network parameter file."},
   {"mode", 'm', 1, 1, NULL, "Which operation to perform. Can be 'single'/'s' to analyze one image, 'train'/'t' to produce a prediction model from folders of positive and negative images, 'test'/'e' to load a previously-created prediction model and run it against known positive and negative images, or 'predict'/'p' to run a prediction model against a folder of images."},
-  {"input", 'i', 0, 1, NULL, "The path to a single input image."},
+  {"input", 'i', 0, 1, "", "The path to a single input image."},
   {"positive", 'p', 0, 1, NULL, "The path to a folder of positive images."},
   {"negative", 'e', 0, 1, NULL, "The path to a folder of negative images."},
   {"multisample", 's', 0, 0, "0", "Whether to use a higher-quality but slower strategy of running the detection against ten different transforms of the image."},
   {"time", 't', 0, 0, "0", "Whether to print the time taken by the classification algorithm to stderr."},
   {"model", 'o', 0, 1, NULL, "The prediction model file."},
   {"threshold", 'h', 0, 1, "0.5", "Tunes the sensitivity of the prediction, with extreme values of 0.0 (accepts everything) to 1.0 (accepts nothing)."},
+  {"layer", 'l', 0, 1, "0", "If specified, use a lower layer from the neural network."},
 };
 const int g_toolOptionsLength = STATIC_ARRAY_LEN(g_toolOptions);
 
 void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* outValues) {
-
-  struct option getOptOptions[STATIC_ARRAY_LEN(g_toolOptions) + 1];
-  for (int index = 0; index < g_toolOptionsLength; index += 1) {
-    SToolOption* toolOption = &g_toolOptions[index];
-    struct option* getOptOption = &getOptOptions[index];
-    getOptOption->name = toolOption->longName;
-    if (!toolOption->hasArgument) {
-      getOptOption->has_arg = no_argument;
-    } else {
-      if (toolOption->defaultValue == NULL) {
-        getOptOption->has_arg = required_argument;
-      } else {
-        getOptOption->has_arg = optional_argument;
-      }
-    }
-    getOptOption->flag = NULL;
-    getOptOption->val = index;
-  }
-  struct option* lastGetOptOption = &getOptOptions[g_toolOptionsLength];
-  memset(lastGetOptOption, 0, sizeof(*lastGetOptOption));
-
-  char shortGetOptOptions[((STATIC_ARRAY_LEN(g_toolOptions) * 2) + 1)];
-  int shortOutputIndex = 0;
-  for (int index = 0; index < g_toolOptionsLength; index += 1) {
-    SToolOption* toolOption = &g_toolOptions[index];
-    shortGetOptOptions[shortOutputIndex] = toolOption->shortName;
-    shortOutputIndex += 1;
-    if (toolOption->hasArgument) {
-      shortGetOptOptions[shortOutputIndex] = ':';
-      shortOutputIndex += 1;
-    }
-  }
-  shortGetOptOptions[shortOutputIndex] = '\0';
 
   const char* optionStringValues[g_toolOptionsLength];
   for (int index = 0; index < g_toolOptionsLength; index += 1) {
@@ -124,41 +93,73 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
     optionStringValues[index] = toolOption->defaultValue;
   }
 
-  while (1) {
-    int optionIndex = -1;
-    const int getOptResult = getopt_long(argc, (char* const*)(argv),  shortGetOptOptions,
-      getOptOptions, &optionIndex);
-    if (getOptResult == -1) {
-      break;
-    }
-    if (optionIndex == -1) {
-      bool wasFound = false;
-      for (int index = 0; index < g_toolOptionsLength; index += 1) {
-        SToolOption* toolOption = &g_toolOptions[index];
-        if (toolOption->shortName == getOptResult) {
-          optionIndex = index;
-          wasFound = true;
-          break;
+  int argIndex = 1;
+  while (argIndex < argc) {
+
+    const char* fullArg = argv[argIndex];
+    const size_t fullArgLength = strlen(fullArg);
+    const char firstChar = fullArg[0];
+    if ((firstChar != '-') || (fullArgLength < 2)) {
+      // This is an anonymous argument (eg a file name or single '-', for now just ignore it
+      argIndex += 1;
+      continue;
+    } else {
+      const char secondChar = fullArg[1];
+      SToolOption* foundToolOption = NULL;
+      int foundIndex = -1;
+      if (secondChar == '-') {
+        // It's a long name, starting with '--'
+        const char* longName = (fullArg + 2);
+        for (int index = 0; index < g_toolOptionsLength; index += 1) {
+          SToolOption* toolOption = &g_toolOptions[index];
+          if (strcasecmp(toolOption->longName, longName) == 0) {
+            foundToolOption = toolOption;
+            foundIndex = index;
+            break;
+          }
+        }
+      } else {
+        if (fullArgLength > 2) {
+          fprintf(stderr, "Single-dash argument found with multiple characters: %s\n", fullArg);
+          print_usage_and_exit(argc, argv);
+        }
+        for (int index = 0; index < g_toolOptionsLength; index += 1) {
+          SToolOption* toolOption = &g_toolOptions[index];
+          if (secondChar == toolOption->shortName) {
+            foundToolOption = toolOption;
+            foundIndex = index;
+            break;
+          }
         }
       }
-      if (!wasFound) {
+      if (foundToolOption == NULL) {
+        fprintf(stderr, "Unknown option '%s'\n", fullArg);
         print_usage_and_exit(argc, argv);
       }
-    }
-    SToolOption* toolOption = &g_toolOptions[optionIndex];
-    if (toolOption->hasArgument) {
-      if (optarg != NULL) {
-        optionStringValues[optionIndex] = optarg;
+      const bool hasArgument = foundToolOption->hasArgument;
+      const char* valueString;
+      if (hasArgument) {
+        if (argIndex == (argc - 1)) {
+          fprintf(stderr, "Missing argument for '%s'\n", fullArg);
+          print_usage_and_exit(argc, argv);
+        }
+        valueString = argv[argIndex + 1];
+      } else {
+        valueString = "1";
       }
-    } else {
-      optionStringValues[optionIndex] = "1";
+      optionStringValues[foundIndex] = valueString;
+      if (hasArgument) {
+        argIndex += 2;
+      } else {
+        argIndex += 1;
+      }
     }
   }
 
   for (int index = 0; index < g_toolOptionsLength; index += 1) {
     const char* optionStringValue = optionStringValues[index];
     SToolOption* toolOption = &g_toolOptions[index];
-    if ((toolOption->defaultValue == NULL) && (optionStringValue == NULL)) {
+    if (toolOption->isRequired && (optionStringValue == NULL)) {
       fprintf(stderr, "Missing option --%s/-%c\n", toolOption->longName, toolOption->shortName);
       print_usage_and_exit(argc, argv);
     }
@@ -204,6 +205,9 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
     } else if (strcmp("threshold", longName) == 0) {
       const float optionFloatValue = atof(optionStringValue);
       outValues->threshold = optionFloatValue;
+    } else if (strcmp("layer", longName) == 0) {
+      const int optionIntValue = atoi(optionStringValue);
+      outValues->layerOffset = -optionIntValue;
     } else {
       assert(false); // Should never get here
     }
@@ -237,13 +241,13 @@ void print_usage_and_exit(int argc, const char* argv[]) {
   exit(1);
 }
 
-void do_classify_image(void* network, const char* inputFilename, int doMultisample, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration) {
+void do_classify_image(void* network, const char* inputFilename, int doMultisample, int layerOffset, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration) {
   void* input = jpcnn_create_image_buffer_from_file(inputFilename);
   int predictionsLabelsLength;
   int actualPredictionsLength;
   struct timeval start;
   gettimeofday(&start, NULL);
-  jpcnn_classify_image(network, input, doMultisample, predictions, &actualPredictionsLength, predictionsLabels, &predictionsLabelsLength);
+  jpcnn_classify_image(network, input, doMultisample, layerOffset, predictions, &actualPredictionsLength, predictionsLabels, &predictionsLabelsLength);
   struct timeval end;
   gettimeofday(&end, NULL);
   jpcnn_destroy_image_buffer(input);
@@ -312,6 +316,7 @@ void classify_images_in_directory(void* network, const char* directoryName, SToo
     do_classify_image(network,
       fullPath,
       argValues->doMultisample,
+      argValues->layerOffset,
       &predictions,
       &predictionsLength,
       &predictionsLabels,
@@ -390,6 +395,7 @@ int main(int argc, const char * argv[]) {
       do_classify_image(network,
         argValues.inputImageFilename,
         argValues.doMultisample,
+        argValues.layerOffset,
         &predictions,
         &predictionsLength,
         &predictionsLabels,
@@ -418,6 +424,7 @@ int main(int argc, const char * argv[]) {
       classify_images_in_directory(network, argValues.negativeDirectory, &argValues, &training_callback, cookie);
 
       SLibSvmProblem* problem = create_svm_problem_from_training_info(trainingInfo);
+      fprintf(stderr, "featuresPerItem=%d\n", trainingInfo->featuresPerItem);
       const char* parameterCheckError = svm_check_parameter(problem->svmProblem, problem->svmParameters);
       if (parameterCheckError != NULL) {
         fprintf(stderr, "libsvm parameter check error: %s\n", parameterCheckError);

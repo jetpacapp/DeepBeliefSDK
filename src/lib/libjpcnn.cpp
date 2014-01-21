@@ -98,19 +98,24 @@ void* jpcnn_create_image_buffer_from_uint8_data(unsigned char* pixelData, int wi
   return (void*)(image);
 }
 
-void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSample, float** outPredictionsValues, int* outPredictionsLength, char*** outPredictionsNames, int* outPredictionsNamesLength) {
+void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSample, int layerOffset, float** outPredictionsValues, int* outPredictionsLength, char*** outPredictionsNames, int* outPredictionsNamesLength) {
 
   Graph* graph = (Graph*)(networkHandle);
   Buffer* input = (Buffer*)(inputHandle);
 
   PrepareInput prepareInput(graph->_dataMean, !doMultiSample);
   Buffer* rescaledInput = prepareInput.run(input);
-  Buffer* predictions = graph->run(rescaledInput);
+  Buffer* predictions = graph->run(rescaledInput, layerOffset);
 
   *outPredictionsValues = predictions->_data;
   *outPredictionsLength = predictions->_dims.elementCount();
-  *outPredictionsNames = graph->_labelNames;
-  *outPredictionsNamesLength = graph->_labelNamesLength;
+  if (layerOffset == 0) {
+    *outPredictionsNames = graph->_labelNames;
+    *outPredictionsNamesLength = graph->_labelNamesLength;
+  } else {
+    *outPredictionsNames = NULL;
+    *outPredictionsNamesLength = predictions->_dims.removeDimensions(1).elementCount();
+  }
 }
 
 }
