@@ -77,27 +77,27 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode train"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/food_training"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/nofood_training"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode test"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/food_testing"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_food/nofood_testing"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--threshold 0.5"

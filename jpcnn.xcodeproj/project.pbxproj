@@ -29,7 +29,6 @@
 		594BBB131887154A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB121887154A007F9A2A /* UIKit.framework */; };
 		5962AD9D188A09F2009E64DD /* liblibjpcnn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */; };
 		5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
-		598241B7188DE0FB003F2C0A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241B6188DE0FB003F2C0A /* main.cpp */; };
 		598241B8188DE166003F2C0A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241B6188DE0FB003F2C0A /* main.cpp */; };
 		59824204188DE27D003F2C0A /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241BB188DE27D003F2C0A /* basenode.cpp */; };
 		59824206188DE27D003F2C0A /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241BE188DE27D003F2C0A /* buffer.cpp */; };
@@ -553,7 +552,6 @@
 				5982422D188DE27D003F2C0A /* matrix_max.cpp in Sources */,
 				59824208188DE27D003F2C0A /* convnode.cpp in Sources */,
 				5982421C188DE27D003F2C0A /* prepareinput.cpp in Sources */,
-				598241B7188DE0FB003F2C0A /* main.cpp in Sources */,
 				5982420A188DE27D003F2C0A /* dropoutnode.cpp in Sources */,
 				59824234188DE27D003F2C0A /* binary_format.cpp in Sources */,
 				59824231188DE27D003F2C0A /* stb_image.cpp in Sources */,

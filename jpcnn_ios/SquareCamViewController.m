@@ -651,7 +651,7 @@ bail:
   int predictionsLength;
   char** predictionsLabels;
   int predictionsLabelsLength;
-  jpcnn_classify_image(network, cnnInput, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+  jpcnn_classify_image(network, cnnInput, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
   jpcnn_destroy_image_buffer(cnnInput);
 
   NSString* predictionText = @"";
