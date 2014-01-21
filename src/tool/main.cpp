@@ -17,18 +17,21 @@
 
 #include "libjpcnn.h"
 
+#include "svmutils.h"
+
 #define STATIC_ARRAY_LEN(x) (sizeof(x) / sizeof(x[0]))
 
-enum EToolMode {eSingleImage, eLibSvmTrain};
+enum EToolMode {eSingleImage, eLibSvmTrain, eLibSvmTest, eLibSvmPredict};
 typedef struct SToolArgumentValuesStruct {
   const char* networkFilename;
   const char* inputImageFilename;
-  const char* outputFilename;
+  const char* modelFilename;
   const char* positiveDirectory;
   const char* negativeDirectory;
   int doMultisample;
   EToolMode mode;
   int doTime;
+  float threshold;
 } SToolArgumentValues;
 
 typedef struct SToolOptionStruct {
@@ -40,23 +43,45 @@ typedef struct SToolOptionStruct {
   const char* description;
 } SToolOption;
 
-static SToolOption g_toolOptions[] = {
-  {"network", 'n', 1, 1, NULL, "The path to the neural network parameter file."},
-  {"mode", 'm', 1, 1, NULL, "Which operation to perform. Can be 'single'/'s' to analyze one image or 'train'/'t' to produce a suitable training file for libSVM from folders of positive and negative images."},
-  {"input", 'i', 0, 1, NULL, "The path to a single input image."},
-  {"positive", 'p', 0, 1, NULL, "The path to a folder of positive images."},
-  {"negative", 'e', 0, 1, NULL, "The path to a folder of negative images."},
-  {"multisample", 's', 0, 0, "0", "Whether to use a higher-quality but slower strategy of running the detection against ten different transforms of the image."},
-  {"time", 't', 0, 0, "0", "Whether to print a the time taken by the classification algorithm to stderr."},
-  {"output", 'o', 0, 1, NULL, "The file to write the output text to (defaults to stdout if not set)."},
-};
-const int g_toolOptionsLength = STATIC_ARRAY_LEN(g_toolOptions);
+typedef void (*ClassifyImagesFunctionPtr)(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath);
+
+typedef struct STrainingCookieStruct {
+  float label;
+  SLibSvmTrainingInfo* trainingInfo;
+} STrainingCookie;
+
+typedef struct STestingCookieStruct {
+  float expectedLabel;
+  struct svm_model* model;
+  float threshold;
+  int truePositiveCount;
+  int falsePositiveCount;
+  int trueNegativeCount;
+  int falseNegativeCount;
+  int total;
+} STestingCookie;
 
 static void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* outValues);
 static void print_usage_and_exit(int argc, const char* argv[]);
 static void do_classify_image(void* network, const char* inputFilename, int doMultisample, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration);
 static int has_image_suffix(const char* basename);
-static void classify_images_in_directory(void* network, const char* directoryName, const char* outputPrefix, FILE* outputFile, SToolArgumentValues* argValues);
+static void classify_images_in_directory(void* network, const char* directoryName, SToolArgumentValues* argValues, ClassifyImagesFunctionPtr callback, void* callbackCookie);
+static void training_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath);
+static void testing_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath);
+static void prediction_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath);
+
+static SToolOption g_toolOptions[] = {
+  {"network", 'n', 1, 1, NULL, "The path to the neural network parameter file."},
+  {"mode", 'm', 1, 1, NULL, "Which operation to perform. Can be 'single'/'s' to analyze one image, 'train'/'t' to produce a prediction model from folders of positive and negative images, 'test'/'e' to load a previously-created prediction model and run it against known positive and negative images, or 'predict'/'p' to run a prediction model against a folder of images."},
+  {"input", 'i', 0, 1, NULL, "The path to a single input image."},
+  {"positive", 'p', 0, 1, NULL, "The path to a folder of positive images."},
+  {"negative", 'e', 0, 1, NULL, "The path to a folder of negative images."},
+  {"multisample", 's', 0, 0, "0", "Whether to use a higher-quality but slower strategy of running the detection against ten different transforms of the image."},
+  {"time", 't', 0, 0, "0", "Whether to print the time taken by the classification algorithm to stderr."},
+  {"model", 'o', 0, 1, NULL, "The prediction model file."},
+  {"threshold", 'h', 0, 1, "0.5", "Tunes the sensitivity of the prediction, with extreme values of 0.0 (accepts everything) to 1.0 (accepts nothing)."},
+};
+const int g_toolOptionsLength = STATIC_ARRAY_LEN(g_toolOptions);
 
 void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* outValues) {
 
@@ -122,7 +147,9 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
     }
     SToolOption* toolOption = &g_toolOptions[optionIndex];
     if (toolOption->hasArgument) {
-      optionStringValues[optionIndex] = optarg;
+      if (optarg != NULL) {
+        optionStringValues[optionIndex] = optarg;
+      }
     } else {
       optionStringValues[optionIndex] = "1";
     }
@@ -131,7 +158,7 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
   for (int index = 0; index < g_toolOptionsLength; index += 1) {
     const char* optionStringValue = optionStringValues[index];
     SToolOption* toolOption = &g_toolOptions[index];
-    if (toolOption->isRequired &&(optionStringValue == NULL)) {
+    if ((toolOption->defaultValue == NULL) && (optionStringValue == NULL)) {
       fprintf(stderr, "Missing option --%s/-%c\n", toolOption->longName, toolOption->shortName);
       print_usage_and_exit(argc, argv);
     }
@@ -150,14 +177,20 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
       } else if ((strcasecmp("train", optionStringValue) == 0) ||
         (strcasecmp("t", optionStringValue) == 0)) {
         outValues->mode = eLibSvmTrain;
+      } else if ((strcasecmp("test", optionStringValue) == 0) ||
+        (strcasecmp("e", optionStringValue) == 0)) {
+        outValues->mode = eLibSvmTest;
+      } else if ((strcasecmp("predict", optionStringValue) == 0) ||
+        (strcasecmp("p", optionStringValue) == 0)) {
+        outValues->mode = eLibSvmPredict;
       } else {
-        fprintf(stderr, "Unknown argument to --mode: '%s'\n", optionStringValue);
+        fprintf(stderr, "Unknown argument to --mode/-m: '%s'\n", optionStringValue);
         print_usage_and_exit(argc, argv);
       }
     } else if (strcmp("input", longName) == 0) {
       outValues->inputImageFilename = optionStringValue;
-    } else if (strcmp("output", longName) == 0) {
-      outValues->outputFilename = optionStringValue;
+    } else if (strcmp("model", longName) == 0) {
+      outValues->modelFilename = optionStringValue;
     } else if (strcmp("positive", longName) == 0) {
       outValues->positiveDirectory = optionStringValue;
     } else if (strcmp("negative", longName) == 0) {
@@ -168,6 +201,9 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
     } else if (strcmp("time", longName) == 0) {
       const int optionIntValue = atoi(optionStringValue);
       outValues->doTime = optionIntValue;
+    } else if (strcmp("threshold", longName) == 0) {
+      const float optionFloatValue = atof(optionStringValue);
+      outValues->threshold = optionFloatValue;
     } else {
       assert(false); // Should never get here
     }
@@ -247,7 +283,7 @@ int has_image_suffix(const char* basename) {
   return 0;
 }
 
-void classify_images_in_directory(void* network, const char* directoryName, const char* outputPrefix, FILE* outputFile, SToolArgumentValues* argValues) {
+void classify_images_in_directory(void* network, const char* directoryName, SToolArgumentValues* argValues, ClassifyImagesFunctionPtr callback, void* callbackCookie) {
   DIR* dir = opendir(directoryName);
   if (dir == NULL) {
     fprintf(stderr, "Couldn't open image directory '%s'\n", directoryName);
@@ -284,12 +320,8 @@ void classify_images_in_directory(void* network, const char* directoryName, cons
     durationTotal += duration;
     filesRead += 1;
 
-    fprintf(outputFile, "%s", outputPrefix);
-    for (int index = 0; index < predictionsLength; index += 1) {
-      const float predictionValue = predictions[index];
-      fprintf(outputFile, " %d:%f", (index + 1), predictionValue);
-    }
-    fprintf(outputFile, "\n");
+    (*callback)(callbackCookie, predictions, predictionsLength, basename, directoryName, fullPath);
+
     free(fullPath);
   }
   if (filesRead == 0) {
@@ -302,6 +334,45 @@ void classify_images_in_directory(void* network, const char* directoryName, cons
   }
 }
 
+void training_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath) {
+  STrainingCookie* cookieData = (STrainingCookie*)(cookie);
+  add_features_to_training_info(cookieData->trainingInfo, cookieData->label, predictions, predictionsLength);
+}
+
+void testing_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath) {
+  STestingCookie* cookieData = (STestingCookie*)(cookie);
+  struct svm_model* model = cookieData->model;
+  struct svm_node* nodes = create_node_list(predictions, predictionsLength);
+  double probabilityEstimates[2];
+  const double actualPrediction = svm_predict_probability(model, nodes, probabilityEstimates);
+  const float threshold = cookieData->threshold;
+  float predictedLabel;
+  if (probabilityEstimates[0] > threshold) {
+    predictedLabel = 1.0f;
+  } else {
+    predictedLabel = 0.0f;
+  }
+  const float expectedLabel = cookieData->expectedLabel;
+  if (expectedLabel == 1.0f) {
+    if (predictedLabel == 1.0f) {
+      cookieData->truePositiveCount += 1;
+    } else {
+      cookieData->falseNegativeCount += 1;
+    }
+  } else {
+    if (predictedLabel == 0.0f) {
+      cookieData->trueNegativeCount += 1;
+    } else {
+      cookieData->falsePositiveCount += 1;
+    }
+  }
+  cookieData->total += 1;
+}
+
+void prediction_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath) {
+
+}
+
 int main(int argc, const char * argv[]) {
 
   SToolArgumentValues argValues;
@@ -309,48 +380,103 @@ int main(int argc, const char * argv[]) {
 
   void* network = jpcnn_create_network(argValues.networkFilename);
 
-  FILE* outputFile;
-  if (argValues.outputFilename) {
-    outputFile = fopen((char*)(argValues.outputFilename), "wb");
-    if (outputFile == NULL) {
-      fprintf(stderr, "Couldn't open output file '%s'\n", argValues.outputFilename);
-      print_usage_and_exit(argc, argv);
-    }
-  } else {
-    outputFile = stdout;
-  }
+  switch (argValues.mode) {
+    case eSingleImage: {
+      float* predictions;
+      int predictionsLength;
+      char** predictionsLabels;
+      long duration;
 
-  if (argValues.mode == eSingleImage) {
-    float* predictions;
-    int predictionsLength;
-    char** predictionsLabels;
-    long duration;
+      do_classify_image(network,
+        argValues.inputImageFilename,
+        argValues.doMultisample,
+        &predictions,
+        &predictionsLength,
+        &predictionsLabels,
+        &duration);
 
-    do_classify_image(network,
-      argValues.inputImageFilename,
-      argValues.doMultisample,
-      &predictions,
-      &predictionsLength,
-      &predictionsLabels,
-      &duration);
+      for (int index = 0; index < predictionsLength; index += 1) {
+        const float predictionValue = predictions[index];
+        char* label = predictionsLabels[index];
+        fprintf(stdout, "%f\t%s\n", predictionValue, label);
+      }
+      if (argValues.doTime) {
+        fprintf(stderr, "Classification took %ld milliseconds\n", duration);
+      }
+    } break;
 
-    for (int index = 0; index < predictionsLength; index += 1) {
-      const float predictionValue = predictions[index];
-      char* label = predictionsLabels[index];
-      fprintf(stdout, "%f\t%s\n", predictionValue, label);
-    }
-    if (argValues.doTime) {
-      fprintf(stderr, "Classification took %ld milliseconds\n", duration);
-    }
-  } else if (argValues.mode == eLibSvmTrain) {
-    classify_images_in_directory(network, argValues.positiveDirectory, "1", outputFile, &argValues);
-    classify_images_in_directory(network, argValues.negativeDirectory, "0", outputFile, &argValues);
-  } else {
-    assert(false); // Should never get here
-  }
+    case eLibSvmTrain: {
+      SLibSvmTrainingInfo* trainingInfo = create_training_info();
+      STrainingCookie cookieData;
+      void* cookie = (void*)(&cookieData);
+      cookieData.trainingInfo = trainingInfo;
 
-  if (argValues.outputFilename) {
-    fclose(outputFile);
+      cookieData.label = 1.0f;
+      classify_images_in_directory(network, argValues.positiveDirectory, &argValues, &training_callback, cookie);
+
+      cookieData.label = 0.0f;
+      classify_images_in_directory(network, argValues.negativeDirectory, &argValues, &training_callback, cookie);
+
+      SLibSvmProblem* problem = create_svm_problem_from_training_info(trainingInfo);
+      const char* parameterCheckError = svm_check_parameter(problem->svmProblem, problem->svmParameters);
+      if (parameterCheckError != NULL) {
+        fprintf(stderr, "libsvm parameter check error: %s\n", parameterCheckError);
+        print_usage_and_exit(argc, argv);
+      }
+      struct svm_model* model = svm_train(problem->svmProblem, problem->svmParameters);
+      const int saveResult = svm_save_model(argValues.modelFilename, model);
+      if (saveResult != 0) {
+        fprintf(stderr, "Couldn't save libsvm model file to '%s'\n", argValues.modelFilename);
+        print_usage_and_exit(argc, argv);
+      }
+      svm_free_and_destroy_model(&model);
+      destroy_svm_problem(problem);
+      destroy_training_info(trainingInfo);
+    } break;
+
+    case eLibSvmTest: {
+      struct svm_model* model = svm_load_model(argValues.modelFilename);
+      if (model == NULL) {
+        fprintf(stderr, "Couldn't load libsvm model file from '%s'\n", argValues.modelFilename);
+        print_usage_and_exit(argc, argv);
+      }
+      STestingCookie cookieData;
+      void* cookie = (void*)(&cookieData);
+      cookieData.model = model;
+      cookieData.threshold = argValues.threshold;
+      cookieData.truePositiveCount = 0;
+      cookieData.falsePositiveCount = 0;
+      cookieData.trueNegativeCount = 0;
+      cookieData.falseNegativeCount = 0;
+      cookieData.total = 0;
+
+      cookieData.expectedLabel = 1.0f;
+      classify_images_in_directory(network, argValues.positiveDirectory, &argValues, testing_callback, cookie);
+
+      cookieData.expectedLabel = 0.0f;
+      classify_images_in_directory(network, argValues.negativeDirectory, &argValues, testing_callback, cookie);
+
+      const int truePositives = cookieData.truePositiveCount;
+      const int falsePositives = cookieData.falsePositiveCount;
+      const int trueNegatives = cookieData.trueNegativeCount;
+      const int falseNegatives = cookieData.falseNegativeCount;
+      const int positivesTotal = (truePositives + falseNegatives);
+      const int negativesTotal = (trueNegatives + falsePositives);
+
+      fprintf(stderr, "True positives = %.2f%% (%d/%d)\n", ((truePositives * 100.0f) / positivesTotal), truePositives, positivesTotal);
+      fprintf(stderr, "True negatives = %.2f%% (%d/%d)\n", ((trueNegatives * 100.0f) / negativesTotal), trueNegatives, negativesTotal);
+      fprintf(stderr, "False positives = %.2f%% (%d/%d)\n", ((falsePositives * 100.0f) / negativesTotal), falsePositives, negativesTotal);
+      fprintf(stderr, "False negatives = %.2f%% (%d/%d)\n", ((falseNegatives * 100.0f) / positivesTotal), falseNegatives, positivesTotal);
+
+    } break;
+
+    case eLibSvmPredict: {
+
+    } break;
+
+    default: {
+      assert(false); // Should never get here
+    } break;
   }
 
   jpcnn_destroy_network(network);

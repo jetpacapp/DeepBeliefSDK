@@ -18,8 +18,8 @@ all: jpcnn
 libjpcnn.so: $(LIBOBJS)
 	g++ -shared $(LDFLAGS) -o libjpcnn.so $(LIBOBJS) $(LDLIBS) 
 
-main.o: src/main.cpp
-	$(CXX) $(CPPFLAGS) -c src/main.cpp -o main.o
+main.o: src/tool/main.cpp
+	$(CXX) $(CPPFLAGS) -c src/tool/main.cpp -o main.o
 
 jpcnn: libjpcnn.so main.o
 	g++ -o jpcnn -L. -ljpcnn main.o

@@ -45,7 +45,7 @@
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
       customWorkingDirectory = "/Users/petewarden/projects/jpcnn"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
@@ -64,7 +64,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--output /Users/petewarden/jpcnnoutput_high.txt"
+            argument = "--model /Users/petewarden/dogs_low_new.model"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -73,19 +73,35 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--multisample"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode train"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/dogs_training"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/nodogs_training"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--mode test"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/dogs"
+            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/dogs_testing"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/nodogs"
+            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_dogs/nodogs_testing"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--threshold 0.5"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
