@@ -13,7 +13,8 @@
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
-#include <dirent.h> 
+#include <dirent.h>
+#include <errno.h>
 
 #include "libjpcnn.h"
 
@@ -28,6 +29,8 @@ typedef struct SToolArgumentValuesStruct {
   const char* modelFilename;
   const char* positiveDirectory;
   const char* negativeDirectory;
+  const char* inputDirectory;
+  const char* outputDirectory;
   int doMultisample;
   EToolMode mode;
   int doTime;
@@ -62,6 +65,11 @@ typedef struct STestingCookieStruct {
   int total;
 } STestingCookie;
 
+typedef struct SPredictionCookieStruct {
+  const char* outputDirectory;
+  struct svm_model* model;
+} SPredictionCookie;
+
 static void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* outValues);
 static void print_usage_and_exit(int argc, const char* argv[]);
 static void do_classify_image(void* network, const char* inputFilename, int doMultisample, int layerOffset, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration);
@@ -82,6 +90,8 @@ static SToolOption g_toolOptions[] = {
   {"model", 'o', 0, 1, NULL, "The prediction model file."},
   {"threshold", 'h', 0, 1, "0.5", "Tunes the sensitivity of the prediction, with extreme values of 0.0 (accepts everything) to 1.0 (accepts nothing)."},
   {"layer", 'l', 0, 1, "0", "If specified, use a lower layer from the neural network."},
+  {"inputdir", 'i', 0, 1, "", "The path to a folder containing images to run the predict mode analysis against."},
+  {"outputdir", 'i', 0, 1, "", "The path to a folder that will be filled with symbolic links to the predict mode input files, with the predicted value as the sortable prefix to the file name."},
 };
 const int g_toolOptionsLength = STATIC_ARRAY_LEN(g_toolOptions);
 
@@ -208,6 +218,10 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
     } else if (strcmp("layer", longName) == 0) {
       const int optionIntValue = atoi(optionStringValue);
       outValues->layerOffset = -optionIntValue;
+    } else if (strcmp("inputdir", longName) == 0) {
+      outValues->inputDirectory = optionStringValue;
+    } else if (strcmp("outputdir", longName) == 0) {
+      outValues->outputDirectory = optionStringValue;
     } else {
       assert(false); // Should never get here
     }
@@ -360,7 +374,7 @@ void testing_callback(void* cookie, float* predictions, int predictionsLength, c
   struct svm_model* model = cookieData->model;
   struct svm_node* nodes = create_node_list(predictions, predictionsLength);
   double probabilityEstimates[2];
-  const double actualPrediction = svm_predict_probability(model, nodes, probabilityEstimates);
+  svm_predict_probability(model, nodes, probabilityEstimates);
   const float threshold = cookieData->threshold;
   float predictedLabel;
   if (probabilityEstimates[0] > threshold) {
@@ -386,7 +400,34 @@ void testing_callback(void* cookie, float* predictions, int predictionsLength, c
 }
 
 void prediction_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath) {
+  SPredictionCookie* cookieData = (SPredictionCookie*)(cookie);
+  struct svm_model* model = cookieData->model;
+  struct svm_node* nodes = create_node_list(predictions, predictionsLength);
+  double probabilityEstimates[2];
+  svm_predict_probability(model, nodes, probabilityEstimates);
+  const double predictionValue = probabilityEstimates[0];
+  const char* outputDirectory = cookieData->outputDirectory;
+  const size_t outputDirectoryNameLength = strlen(outputDirectory);
+  // Ack, fixed-length strings ahead. We're creating this one based on a fixed
+  // precision number and a suffix, and using snprintf, but still icky.
+  const char* suffix = strrchr(basename, '.');
+  if (!suffix || suffix == basename) {
+    suffix = "";
+  }
+  const size_t outnameMaxLength = 128;
+  char outname[outnameMaxLength];
+  snprintf(outname, outnameMaxLength, "%1.8f%s", predictionValue, suffix);
 
+  const size_t outnameLength = strlen(outname);
+  const size_t outPathLength = outputDirectoryNameLength + 1 + outnameLength;
+  char* outPath = (char*)(malloc(outPathLength + 1));
+  snprintf(outPath, (outPathLength + 1), "%s/%s", outputDirectory, outname);
+
+  const int symlinkResult = symlink(fullPath, outPath);
+  if (symlinkResult != 0) {
+    fprintf(stderr, "symlink failed for '%s' -> '%s' with error number %d\n", outPath, fullPath, errno);
+    return;
+  }
 }
 
 int main(int argc, const char * argv[]) {
@@ -489,7 +530,16 @@ int main(int argc, const char * argv[]) {
     } break;
 
     case eLibSvmPredict: {
-
+      struct svm_model* model = svm_load_model(argValues.modelFilename);
+      if (model == NULL) {
+        fprintf(stderr, "Couldn't load libsvm model file from '%s'\n", argValues.modelFilename);
+        print_usage_and_exit(argc, argv);
+      }
+      SPredictionCookie cookieData;
+      void* cookie = (void*)(&cookieData);
+      cookieData.outputDirectory = argValues.outputDirectory;
+      cookieData.model = model;
+      classify_images_in_directory(network, argValues.inputDirectory, &argValues, prediction_callback, cookie);
     } break;
 
     default: {
