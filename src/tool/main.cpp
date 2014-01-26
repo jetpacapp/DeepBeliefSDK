@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "libjpcnn.h"
 

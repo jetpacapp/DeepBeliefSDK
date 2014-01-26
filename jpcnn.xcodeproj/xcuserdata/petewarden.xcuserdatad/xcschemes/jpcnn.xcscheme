@@ -64,8 +64,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--model /Users/petewarden/mountains_low_layer.model"
-            isEnabled = "YES">
+            argument = "--model /Users/petewarden/mountains_apl_low_layer.model"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-t"
@@ -80,11 +80,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_mountains/mountains_training"
+            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/positive_training"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_mountains/notmountains_training"
+            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/negative_training"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -92,24 +92,24 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/turked_mountains/mountains_testing"
+            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/positive_testing"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/turked_mountains/notmountains_testing"
+            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/negative_testing"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode predict"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--inputdir /Users/petewarden/projects/jetpacdata/image_analysis/turked_mountains/allsorts"
-            isEnabled = "YES">
+            argument = "--inputdir /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/prediction_input"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--outputdir /Users/petewarden/projects/jetpacdata/image_analysis/turked_mountains/allsorts_predicted"
-            isEnabled = "YES">
+            argument = "--outputdir /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/prediction_output"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--threshold 0.5"
@@ -117,11 +117,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--layer 2"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--mode single"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
