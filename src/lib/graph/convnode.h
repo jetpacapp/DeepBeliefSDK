@@ -21,6 +21,7 @@ public:
   ~ConvNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual char* debugString();
 
   uint32_t _kernelCount;
   uint32_t _kernelWidth;

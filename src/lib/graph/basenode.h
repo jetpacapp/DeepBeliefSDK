@@ -24,10 +24,13 @@ public:
 
   void setClassName(const char* name);
   void setName(const char* name);
+  virtual char* debugString();
+  virtual char* debugStringWithMessage(const char* subclassMessage);
 
   Buffer* _output;
   char* _className;
   char* _name;
+  char* _debugString;
 };
 
 #endif // INCLUDE_BASENODE_H

@@ -37,6 +37,7 @@ typedef struct SToolArgumentValuesStruct {
   int doTime;
   float threshold;
   int layerOffset;
+  int doDebugLogging;
 } SToolArgumentValues;
 
 typedef struct SToolOptionStruct {
@@ -93,6 +94,7 @@ static SToolOption g_toolOptions[] = {
   {"layer", 'l', 0, 1, "0", "If specified, use a lower layer from the neural network."},
   {"inputdir", 'i', 0, 1, "", "The path to a folder containing images to run the predict mode analysis against."},
   {"outputdir", 'i', 0, 1, "", "The path to a folder that will be filled with symbolic links to the predict mode input files, with the predicted value as the sortable prefix to the file name."},
+  {"debug", 'd', 0, 0, "0", "Whether to log extra debug information."},
 };
 const int g_toolOptionsLength = STATIC_ARRAY_LEN(g_toolOptions);
 
@@ -223,6 +225,9 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
       outValues->inputDirectory = optionStringValue;
     } else if (strcmp("outputdir", longName) == 0) {
       outValues->outputDirectory = optionStringValue;
+    } else if (strcmp("debug", longName) == 0) {
+      const int optionIntValue = atoi(optionStringValue);
+      outValues->doDebugLogging = optionIntValue;
     } else {
       assert(false); // Should never get here
     }
@@ -437,6 +442,10 @@ int main(int argc, const char * argv[]) {
   parse_command_line_args(argc, argv, &argValues);
 
   void* network = jpcnn_create_network(argValues.networkFilename);
+
+  if (argValues.doDebugLogging) {
+    jpcnn_print_network(network);
+  }
 
   switch (argValues.mode) {
     case eSingleImage: {

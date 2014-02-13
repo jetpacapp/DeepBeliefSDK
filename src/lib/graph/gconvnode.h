@@ -21,6 +21,7 @@ public:
   ~GConvNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual char* debugString();
 
   int _subnodesCount;
   BaseNode** _subnodes;

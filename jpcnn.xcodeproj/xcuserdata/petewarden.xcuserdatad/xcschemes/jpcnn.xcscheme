@@ -64,8 +64,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--model /Users/petewarden/mountains_apl_low_layer.model"
-            isEnabled = "NO">
+            argument = "--model /Users/petewarden/water_apl_low_layer.model"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-t"
@@ -80,11 +80,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/positive_training"
+            argument = "--positive /Users/petewarden/projects/jpcnn_folder/training/water_positive"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/negative_training"
+            argument = "--negative /Users/petewarden/projects/jpcnn_folder/training/water_negative"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -92,11 +92,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/positive_testing"
+            argument = "--positive /Users/petewarden/projects/jpcnn_folder/testing/water_positive"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/negative_testing"
+            argument = "--negative /Users/petewarden/projects/jpcnn_folder/testing/water_negative"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -104,11 +104,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--inputdir /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/prediction_input"
+            argument = "--inputdir /Users/petewarden/projects/jpcnn_folder/prediction/input"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--outputdir /Users/petewarden/projects/jetpacdata/image_analysis/appledemo/prediction_output"
+            argument = "--outputdir /Users/petewarden/projects/jpcnn_folder/prediction/output"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -125,6 +125,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--debug"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

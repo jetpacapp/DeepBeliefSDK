@@ -59,6 +59,15 @@ Buffer* ConvNode::run(Buffer* input) {
   return _output;
 }
 
+char* ConvNode::debugString() {
+  char additionalInfo[MAX_DEBUG_STRING_LEN];
+  snprintf(additionalInfo, sizeof(additionalInfo),
+    "_kernelWidth=%d, _kernelCount=%d, _marginSize=%d, _sampleStride=%d, _kernels->_dims=%s, _bias->_dims=%s",
+    _kernelWidth, _kernelCount, _marginSize, _sampleStride,
+    _kernels->_dims.debugString(), _bias->_dims.debugString());
+  return this->debugStringWithMessage(additionalInfo);
+}
+
 BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "conv") == 0);

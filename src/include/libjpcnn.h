@@ -18,6 +18,7 @@ void* jpcnn_create_image_buffer_from_file(const char* filename);
 void jpcnn_destroy_image_buffer(void* imageHandle);
 void* jpcnn_create_image_buffer_from_uint8_data(unsigned char* pixelData, int width, int height, int channels, int rowBytes, int reverseOrder, int doRotate);
 void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSample, int layerOffset, float** outPredictionsValues, int* outPredictionsLength, char*** outPredictionsNames, int* outPredictionsNamesLength);
+void jpcnn_print_network(void* networkHandle);
 
 #ifdef __cplusplus
 }

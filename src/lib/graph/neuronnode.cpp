@@ -47,6 +47,14 @@ Buffer* NeuronNode::run(Buffer* input) {
   return _output;
 }
 
+char* NeuronNode::debugString() {
+  char additionalInfo[MAX_DEBUG_STRING_LEN];
+  snprintf(additionalInfo, sizeof(additionalInfo),
+    "_outputsCount=%d, _useBias=%d, _weights->_dims=%s",
+    _outputsCount, _useBias, _weights->_dims.debugString());
+  return this->debugStringWithMessage(additionalInfo);
+}
+
 BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "neuron") == 0);

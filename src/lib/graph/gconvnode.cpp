@@ -66,6 +66,22 @@ Buffer* GConvNode::run(Buffer* input) {
   return _output;
 }
 
+char* GConvNode::debugString() {
+  char additionalInfoBuffers[2][MAX_DEBUG_STRING_LEN];
+  for (int index = 0; index < _subnodesCount; index += 1) {
+    char* sourceBuffer = additionalInfoBuffers[index % 2];
+    char* destBuffer = additionalInfoBuffers[(index + 1) % 2];
+    BaseNode* subnode = _subnodes[index];
+    if (index == 0) {
+      snprintf(destBuffer, MAX_DEBUG_STRING_LEN, "_subnodes = %s", subnode->debugString());
+    } else {
+      snprintf(destBuffer, MAX_DEBUG_STRING_LEN, "%s %s", sourceBuffer, subnode->debugString());
+    }
+  }
+  char* sourceBuffer = additionalInfoBuffers[_subnodesCount % 2];
+  return this->debugStringWithMessage(sourceBuffer);
+}
+
 BaseNode* new_gconvnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "gconv") == 0);

@@ -92,6 +92,14 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
   return currentInput;
 }
 
+void Graph::printDebugOutput() {
+  fprintf(stderr, "************************\nJPCNN Network with %d layers\n", _layersLength);
+  for (int index = 0; index < _layersLength; index += 1) {
+    BaseNode* layer = _layers[index];
+    fprintf(stderr, "%s\n", layer->debugString());
+  }
+  fprintf(stderr, "************************\n");
+}
 
 Graph* new_graph_from_file(const char* filename, int useMemoryMap) {
 

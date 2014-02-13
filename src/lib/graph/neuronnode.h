@@ -21,6 +21,7 @@ public:
   ~NeuronNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual char* debugString();
 
   int _outputsCount;
   Buffer* _weights;

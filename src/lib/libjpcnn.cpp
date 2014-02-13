@@ -118,4 +118,13 @@ void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSam
   }
 }
 
+void jpcnn_print_network(void* networkHandle) {
+  Graph* graph = (Graph*)(networkHandle);
+  if (graph == NULL) {
+    fprintf(stderr, "jpcnn_print_network() - networkHandle is NULL\n");
+    return;
+  }
+  graph->printDebugOutput();
+}
+
 }
