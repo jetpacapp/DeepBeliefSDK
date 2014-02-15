@@ -103,6 +103,10 @@ void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSam
   Graph* graph = (Graph*)(networkHandle);
   Buffer* input = (Buffer*)(inputHandle);
 
+  if (graph->_dataMean == NULL) {
+
+  }
+
   PrepareInput prepareInput(graph->_dataMean, !doMultiSample);
   Buffer* rescaledInput = prepareInput.run(input);
   Buffer* predictions = graph->run(rescaledInput, layerOffset);

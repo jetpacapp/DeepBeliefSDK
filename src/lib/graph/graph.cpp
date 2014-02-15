@@ -117,6 +117,7 @@ Graph* new_graph_from_file(const char* filename, int useMemoryMap) {
   SBinaryTag* dataMeanTag = get_tag_from_dict(graphDict, "data_mean");
   assert(dataMeanTag != NULL);
   result->_dataMean = buffer_from_tag_dict(dataMeanTag, useMemoryMap);
+  assert(result->_dataMean != NULL);
 
   SBinaryTag* layersTag = get_tag_from_dict(graphDict, "layers");
   assert(layersTag != NULL);

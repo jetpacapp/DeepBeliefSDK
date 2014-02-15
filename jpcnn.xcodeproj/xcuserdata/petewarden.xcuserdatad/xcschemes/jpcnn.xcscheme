@@ -61,11 +61,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--network data/example_networks/imagenet.ntwk"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--network data/example_networks/binary_21.31.ntwk"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--model /Users/petewarden/water_apl_low_layer.model"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-t"

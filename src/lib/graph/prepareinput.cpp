@@ -27,6 +27,7 @@ static void crop_and_flip_image(Buffer* destBuffer, Buffer* sourceBuffer, int of
 
 PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly) {
   Dimensions expectedDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
+  assert(dataMean != NULL);
   assert(expectedDims == dataMean->_dims);
   _dataMean = dataMean;
   _useCenterOnly = useCenterOnly;
