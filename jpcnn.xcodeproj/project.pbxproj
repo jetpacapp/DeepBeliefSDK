@@ -707,7 +707,6 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"USE_ACCELERATE_GEMM=1",
 					USE_OS_IMAGE_LOAD,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -797,10 +796,7 @@
 		59D2FBC1187F8D2A00427417 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_ACCELERATE_GEMM=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;

@@ -26,10 +26,10 @@ static void rescale_image_to_fit(Buffer* input, Buffer* output, bool doFlip);
 static void crop_and_flip_image(Buffer* destBuffer, Buffer* sourceBuffer, int offsetX, int offsetY, bool doFlipHorizontal);
 
 PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly) {
-  Dimensions expectedDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
   assert(dataMean != NULL);
-  assert(expectedDims == dataMean->_dims);
   _dataMean = dataMean;
+  Dimensions expectedDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
+  _dataMean->reshape(expectedDims);
   _useCenterOnly = useCenterOnly;
   setClassName("PrepareInput");
 }

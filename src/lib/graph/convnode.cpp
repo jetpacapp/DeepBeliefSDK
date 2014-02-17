@@ -85,6 +85,7 @@ BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   if (result->_useBias) {
     SBinaryTag* biasTag = get_tag_from_dict(tag, "bias");
     result->_bias = buffer_from_tag_dict(biasTag, skipCopy);
+    assert(result->_bias->_dims.elementCount() > 0);
   }
 
   result->_marginSize = get_uint_from_dict(tag, "padding");

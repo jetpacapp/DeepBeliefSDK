@@ -28,6 +28,16 @@ public:
   char* _name;
 
   jpfloat_t* dataEnd();
+
+  // You must call canReshapeTo() to make sure the dimensions match before
+  // calling reshape()
+  bool canReshapeTo(const Dimensions& newDims);
+  void reshape(const Dimensions& newDims);
+
+  // Creates a new buffer object that shares the underlying data array,
+  // but has independent shape and other meta-data.
+  Buffer* view();
+
   char* debugString();
   void saveDebugImage();
   void setName(const char*);

@@ -77,6 +77,26 @@ void Buffer::saveDebugImage() {
   buffer_save_to_image_file(this, this->_name);
 }
 
+bool Buffer::canReshapeTo(const Dimensions& newDims) {
+  const int oldElementCount = _dims.elementCount();
+  const int newElementCount = newDims.elementCount();
+  const bool canReshape = (oldElementCount == newElementCount);
+  return canReshape;
+}
+
+void Buffer::reshape(const Dimensions& newDims) {
+  assert(canReshapeTo(newDims));
+  _dims = newDims;
+}
+
+Buffer* Buffer::view() {
+  Buffer* result = new Buffer(_dims, _data);
+  char copyName[MAX_DEBUG_STRING_LEN];
+  snprintf(copyName, MAX_DEBUG_STRING_LEN, "%s (view)", _name);
+  result->setName(copyName);
+  return result;
+}
+
 Buffer* buffer_from_image_file(const char* filename)
 {
   int inputWidth;

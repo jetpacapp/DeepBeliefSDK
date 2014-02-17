@@ -33,16 +33,23 @@ Buffer* NeuronNode::run(Buffer* input) {
     delete _output;
   }
 
-  Dimensions inputDims = input->_dims;
-  const int inputChannels = inputDims[inputDims._length - 1];
+  const Dimensions inputDims = input->_dims;
+  const int numberOfImages = inputDims[0];
+  const Dimensions inputImageDims = inputDims.removeDimensions(1);
+  const int elementCount = inputImageDims.elementCount();
+  Dimensions flattenedDimensions(numberOfImages, elementCount);
+  Buffer* flattenedInput = input->view();
+  flattenedInput->reshape(flattenedDimensions);
 
-  Dimensions expectedWeightsDimensions(inputChannels, _outputsCount);
+  Dimensions expectedWeightsDimensions(elementCount, _outputsCount);
   assert(expectedWeightsDimensions == _weights->_dims);
 
-  _output = matrix_dot(input, _weights);
+  _output = matrix_dot(flattenedInput, _weights);
   _output->setName(_name);
 
   matrix_add_inplace(_output, _bias, 1.0);
+
+  delete flattenedInput;
 
   return _output;
 }
