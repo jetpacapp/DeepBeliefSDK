@@ -129,6 +129,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--input data/dog.raw"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

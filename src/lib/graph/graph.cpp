@@ -17,7 +17,7 @@
 #include "basenode.h"
 #include "nodefactory.h"
 
-//#define CHECK_RESULTS
+#define CHECK_RESULTS
 #ifdef CHECK_RESULTS
 #define FN_LEN (1024)
 #endif // CHECK_RESULTS
@@ -66,20 +66,34 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
 #ifdef CHECK_RESULTS
     char expectedInputFilename[FN_LEN];
     snprintf(expectedInputFilename, FN_LEN,
-      "data/lena_blobs/%03d_input_%s.blob",
+      "data/dog_blobs/%03d_input_%s.blob",
       ((index * 2) + 1), layer->_name);
     Buffer* expectedInput = buffer_from_dump_file(expectedInputFilename);
+    const Dimensions& currentInputDims = currentInput->_dims;
+    if (expectedInput->canReshapeTo(currentInputDims)) {
+      expectedInput->reshape(currentInputDims);
+    }
     if (!buffer_are_all_close(currentInput, expectedInput)) {
       fprintf(stderr, "Inputs don't match for %s\n", layer->_name);
+    } else {
+      fprintf(stderr, "!!!!!Inputs match for %s\n", layer->_name);
     }
 #endif // CHECK_RESULTS
+    fprintf(stderr, "input=\n");
+    //currentInput->printContents();
     Buffer* currentOutput = layer->run(currentInput);
+    currentOutput->setName(layer->_name);
+    //currentOutput->printContents();
 #ifdef CHECK_RESULTS
     char expectedOutputFilename[FN_LEN];
     snprintf(expectedOutputFilename, FN_LEN,
-      "data/lena_blobs/%03d_output_%s.blob",
+      "data/dog_blobs/%03d_output_%s.blob",
       ((index * 2) + 2), layer->_name);
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
+    const Dimensions& currentOutputDims = currentOutput->_dims;
+    if (expectedOutput->canReshapeTo(currentOutputDims)) {
+      expectedOutput->reshape(currentOutputDims);
+    }
     if (!buffer_are_all_close(currentOutput, expectedOutput)) {
       fprintf(stderr, "!!!Outputs don't match for %s\n", layer->_name);
     } else {

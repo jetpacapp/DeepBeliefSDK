@@ -85,6 +85,7 @@
 		59824258188E039E003F2C0A /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824252188DE333003F2C0A /* svmutils.cpp */; };
 		5982425D188F2631003F2C0A /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5982425C188F2631003F2C0A /* ApplicationServices.framework */; };
 		5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
+		59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -182,6 +183,8 @@
 		5982425A188F1E0F003F2C0A /* os_image_load.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_image_load.h; sourceTree = "<group>"; };
 		5982425C188F2631003F2C0A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
+		59DD71FB18B29CC10054D561 /* os_image_save.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = os_image_save.cpp; sourceTree = "<group>"; };
+		59DD71FC18B29CC10054D561 /* os_image_save.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_image_save.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -388,6 +391,8 @@
 				59824202188DE27D003F2C0A /* binary_format.h */,
 				59824259188F1E0F003F2C0A /* os_image_load.cpp */,
 				5982425A188F1E0F003F2C0A /* os_image_load.h */,
+				59DD71FB18B29CC10054D561 /* os_image_save.cpp */,
+				59DD71FC18B29CC10054D561 /* os_image_save.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -581,6 +586,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */,
 				5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */,
 				59824238188DE2F0003F2C0A /* basenode.cpp in Sources */,
 				59824239188DE2F0003F2C0A /* buffer.cpp in Sources */,
@@ -707,7 +713,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					USE_OS_IMAGE_LOAD,
+					USE_OS_IMAGE,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -719,7 +725,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_ACCELERATE_GEMM=1",
-					USE_OS_IMAGE_LOAD,
+					USE_OS_IMAGE,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

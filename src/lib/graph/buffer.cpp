@@ -14,14 +14,16 @@
 #include <math.h>
 #include <assert.h>
 
-#ifdef USE_OS_IMAGE_LOAD
+#ifdef USE_OS_IMAGE
 #include "os_image_load.h"
-#else // USE_OS_IMAGE_LOAD
+#include "os_image_save.h"
+#else // USE_OS_IMAGE
 #include "stb_image.h"
-#endif // USE_OS_IMAGE_LOAD
+#endif // USE_OS_IMAGE
 #include "binary_format.h"
 
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
+static bool string_ends_with(const char* string, const char* suffix);
 
 Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(NULL)
 {
@@ -53,14 +55,178 @@ Buffer::~Buffer()
   }
 }
 
-char* Buffer::debugString()
-{
-  if (!_debugString)
-  {
+char* Buffer::debugString() {
+  if (!_debugString) {
     _debugString = (char*)(malloc(MAX_DEBUG_STRING_LEN));
   }
   snprintf(_debugString, MAX_DEBUG_STRING_LEN, "Buffer %s - %s", _name, _dims.debugString());
   return _debugString;
+}
+
+void Buffer::printContents(int maxElements) {
+  FILE* output = stderr;
+  fprintf(output, "%s : \n", debugString());
+  Dimensions dims = _dims;
+  const int elementCount = dims.elementCount();
+  if (elementCount < 5000) {
+    maxElements = -1;
+  }
+  bool isSingleImage = (dims[0] == 1);
+  if (isSingleImage) {
+    dims = dims.removeDimensions(1);
+  }
+  const int dimsLength = dims._length;
+  const jpfloat_t* const data = _data;
+  if (isSingleImage) {
+    fprintf(output, "[");
+  }
+  if (dimsLength == 1) {
+    const int width = dims[0];
+    int xLeft;
+    int xRight;
+    if (maxElements < 1) {
+      xLeft = -1;
+      xRight = -1;
+    } else {
+      xLeft = (maxElements / 2);
+      xRight = (width - (maxElements / 2));
+    }
+    fprintf(output, "[");
+    for (int x = 0; x < width; x += 1) {
+      if (x == xLeft) {
+        fprintf(output, "...");
+      }
+      if ((x >= xLeft) && (x < xRight)) {
+        continue;
+      }
+      if (x > 0) {
+        fprintf(output, ", ");
+      }
+      const jpfloat_t value = *(data + dims.offset(x));
+      fprintf(output, "%.10f", value);
+    }
+    fprintf(output, "]");
+  } else if (dimsLength == 2) {
+    const int height = _dims[0];
+    const int width = _dims[1];
+
+    int yTop;
+    int yBottom;
+    if (maxElements < 1) {
+      yTop = -1;
+      yBottom = -1;
+    } else {
+      yTop = (maxElements / 2);
+      yBottom = (height - (maxElements / 2));
+    }
+
+    int xLeft;
+    int xRight;
+    if (maxElements < 1) {
+      xLeft = -1;
+      xRight = -1;
+    } else {
+      xLeft = (maxElements / 2);
+      xRight = (width - (maxElements / 2));
+    }
+
+    fprintf(output, "[");
+    for (int y = 0; y < height; y += 1) {
+      if (y == yTop) {
+        fprintf(output, "...\n");
+      }
+      if ((y >= yTop) && (y < yBottom)) {
+        continue;
+      }
+      fprintf(output, "[");
+      for (int x = 0; x < width; x += 1) {
+        if (x == xLeft) {
+          fprintf(output, "...");
+        }
+        if ((x >= xLeft) && (x < xRight)) {
+          continue;
+        }
+        if (x > 0) {
+          fprintf(output, ", ");
+        }
+        const jpfloat_t value = *(data + dims.offset(y, x));
+        fprintf(output, "%.10f", value);
+      }
+      if (y < (height - 1)) {
+        fprintf(output, "],\n");
+      } else {
+        fprintf(output, "]");
+      }
+    }
+    fprintf(output, "]");
+  } else if (dimsLength == 3) {
+    const int height = _dims[0];
+    const int width = _dims[1];
+    const int channels = _dims[2];
+
+    int yTop;
+    int yBottom;
+    if (maxElements < 1) {
+      yTop = -1;
+      yBottom = -1;
+    } else {
+      yTop = (maxElements / 2);
+      yBottom = (height - (maxElements / 2));
+    }
+
+    int xLeft;
+    int xRight;
+    if (maxElements < 1) {
+      xLeft = -1;
+      xRight = -1;
+    } else {
+      xLeft = (maxElements / 2);
+      xRight = (width - (maxElements / 2));
+    }
+
+    fprintf(output, "[");
+    for (int y = 0; y < height; y += 1) {
+      if (y == yTop) {
+        fprintf(output, "...\n");
+      }
+      if ((y >= yTop) && (y < yBottom)) {
+        continue;
+      }
+      fprintf(output, "[");
+      for (int x = 0; x < width; x += 1) {
+        if (x == xLeft) {
+          fprintf(output, "...");
+        }
+        if ((x >= xLeft) && (x < xRight)) {
+          continue;
+        }
+        if (x > 0) {
+          fprintf(output, ", ");
+        }
+        fprintf(output, "(");
+        for (int channel = 0; channel < channels; channel += 1) {
+          const jpfloat_t value = *(data + dims.offset(y, x, channel));
+          if (channel > 0) {
+            fprintf(output, ", ");
+          }
+          fprintf(output, "%.10f", value);
+        }
+        fprintf(output, ")");
+      }
+      if (y < (height - 1)) {
+        fprintf(output, "],\n");
+      } else {
+        fprintf(output, "]");
+      }
+    }
+    fprintf(output, "]");
+  } else {
+    fprintf(output, "Printing of buffers with %d dimensions is not supported\n", dimsLength);
+  }
+  if (isSingleImage) {
+    fprintf(output, "]");
+  }
+  fprintf(output, "\n");
 }
 
 void Buffer::setName(const char* name) {
@@ -97,22 +263,89 @@ Buffer* Buffer::view() {
   return result;
 }
 
+void Buffer::copyDataFrom(const Buffer* other) {
+  const Dimensions& myDims = _dims;
+  const Dimensions& otherDims = other->_dims;
+  const size_t myElementCount = myDims.elementCount();
+  const size_t otherElementCount = otherDims.elementCount();
+  assert(myElementCount == otherElementCount);
+  jpfloat_t* myData = _data;
+  const jpfloat_t* otherData = other->_data;
+  const size_t myByteCount = (myElementCount * sizeof(jpfloat_t));
+  memcpy(myData, otherData, myByteCount);
+}
+
 Buffer* buffer_from_image_file(const char* filename)
 {
   int inputWidth;
   int inputHeight;
   int inputChannels;
-#ifdef USE_OS_IMAGE_LOAD
-  uint8_t* imageData = os_image_load_from_file(filename, &inputWidth, &inputHeight, &inputChannels, 0);
-#else // USE_OS_IMAGE_LOAD
-  FILE* inputFile = fopen(filename, "rb");
-  if (!inputFile) {
-    fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
-    return NULL;
+
+  const bool isRaw = string_ends_with(filename, ".raw");
+
+  uint8_t* imageData;
+  if (isRaw) {
+    FILE* inputFile = fopen(filename, "rb");
+    if (!inputFile) {
+      fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
+      return NULL;
+    }
+    fseek(inputFile, 0, 2);
+    const size_t bytesInFile = ftell(inputFile);
+    fseek(inputFile, 0, 0);
+    const int imageSize = 256;
+    const size_t bytesPerImage = (imageSize * imageSize * 3);
+    const size_t bytesPerImagePlusLabel = (bytesPerImage + 4);
+    const size_t imageCount = (bytesInFile / bytesPerImagePlusLabel);
+    if ((imageCount * bytesPerImagePlusLabel) != bytesInFile) {
+      fprintf(stderr, "Bad file size %zu for %s - expected %zux%dx%dx3 + %zux4\n",
+        bytesInFile, filename, imageCount, imageSize, imageSize, imageCount);
+      return NULL;
+    }
+    uint8_t* fileData = (uint8_t*)(malloc(bytesInFile));
+    fread(fileData, bytesInFile, 1, inputFile);
+    fclose(inputFile);
+
+    uint8_t* channeledImageData = (fileData + (imageCount * 4));
+    const size_t bytesPerChannel = (imageSize * imageSize);
+    uint8_t* inputRed = (channeledImageData + (0 * bytesPerChannel));
+    uint8_t* inputGreen = (channeledImageData + (1 * bytesPerChannel));
+    uint8_t* inputBlue = (channeledImageData + (2 * bytesPerChannel));
+
+    uint8_t* outputImageData = (uint8_t*)(malloc(bytesPerImage));
+    uint8_t* output = outputImageData;
+    uint8_t* outputEnd = (outputImageData + bytesPerImage);
+    while (output < outputEnd) {
+      *output = *inputRed;
+      inputRed += 1;
+      output += 1;
+      *output = *inputGreen;
+      inputGreen += 1;
+      output += 1;
+      *output = *inputBlue;
+      inputBlue += 1;
+      output += 1;
+    }
+    free(fileData);
+
+    imageData = outputImageData;
+    inputWidth = imageSize;
+    inputHeight = imageSize;
+    inputChannels = 3;
+
+  } else {
+#ifdef USE_OS_IMAGE
+    imageData = os_image_load_from_file(filename, &inputWidth, &inputHeight, &inputChannels, 0);
+#else // USE_OS_IMAGE
+    FILE* inputFile = fopen(filename, "rb");
+    if (!inputFile) {
+      fprintf(stderr, "jpcnn couldn't open '%s'\n", filename);
+      return NULL;
+    }
+    imageData = stbi_load_from_file(inputFile, &inputWidth, &inputHeight, &inputChannels, 0);
+    fclose(inputFile);
+#endif // USE_OS_IMAGE
   }
-  uint8_t* imageData = stbi_load_from_file(inputFile, &inputWidth, &inputHeight, &inputChannels, 0);
-  fclose(inputFile);
-#endif // USE_OS_IMAGE_LOAD
   if (!imageData) {
     fprintf(stderr, "jpcnn couldn't read '%s'\n", filename);
     return NULL;
@@ -132,11 +365,15 @@ Buffer* buffer_from_image_file(const char* filename)
     imageCurrent += 1;
   }
 
-#ifdef USE_OS_IMAGE_LOAD
-  os_image_free(imageData);
-#else // USE_OS_IMAGE_LOAD
-  stbi_image_free(imageData);
-#endif // USE_OS_IMAGE_LOAD
+  if (isRaw) {
+    free(imageData);
+  } else {
+#ifdef USE_OS_IMAGE
+    os_image_free(imageData);
+#else // USE_OS_IMAGE
+    stbi_image_free(imageData);
+#endif // USE_OS_IMAGE
+  }
 
   return buffer;
 }
@@ -203,13 +440,19 @@ void buffer_save_to_image_file(Buffer* buffer, const char* basename) {
   const Dimensions dims = buffer->_dims;
   assert((dims._length == 4) || (dims._length == 3));
 
+#ifdef USE_OS_IMAGE
+  const char* imageSuffix = "png";
+#else // USE_OS_IMAGE
+  const char* imageSuffix = "ppm";
+#endif // USE_OS_IMAGE
+
   if (dims._length == 3) {
-    snprintf(filename, maxFilenameLength, "%s.ppm", basename);
+    snprintf(filename, maxFilenameLength, "%s.%s", basename, imageSuffix);
     buffer_do_save_to_image_file(buffer, filename);
   } else {
     for (int index = 0; index < dims[0]; index += 1) {
       Buffer* view = buffer_view_at_top_index(buffer, index);
-      snprintf(filename, maxFilenameLength, "%s_%02d.ppm", basename, index);
+      snprintf(filename, maxFilenameLength, "%s_%02d.%s", basename, index, imageSuffix);
       buffer_do_save_to_image_file(view, filename);
     }
   }
@@ -225,6 +468,31 @@ void buffer_do_save_to_image_file(Buffer* buffer, const char* filename) {
   const int channels = MIN(dims[2], 3);
 
   const jpfloat_t* const data = buffer->_data;
+
+#ifdef USE_OS_IMAGE
+
+  const size_t bytesPerRow = (width * channels);
+  const size_t bytesPerImage = (height * bytesPerRow);
+  uint8_t* pixelData = (uint8_t*)(malloc(bytesPerImage));
+  for (int y = 0; y < height; y += 1) {
+    uint8_t* rowData = (pixelData + (y * bytesPerRow));
+    for (int x = 0; x < width; x += 1) {
+      uint8_t* pixelData = (rowData + (x * channels));
+      for (int channel = 0; channel < 3; channel += 1) {
+        int value;
+        if (channel >= channels) {
+          value = 0;
+        } else {
+          value = (int)(*(data + dims.offset(y, x, channel)));
+        }
+        pixelData[channel] = value;
+      }
+    }
+  }
+
+  os_image_save_to_file(filename, pixelData, width, height, channels);
+
+#else // USE_OS_IMAGE
 
   FILE* outputFile = fopen(filename, "w");
   if (!outputFile) {
@@ -252,6 +520,8 @@ void buffer_do_save_to_image_file(Buffer* buffer, const char* filename) {
     }
   }
   fclose(outputFile);
+
+#endif // USE_OS_IMAGE
 }
 
 bool buffer_are_all_close(Buffer* a, Buffer* b, jpfloat_t tolerance) {
@@ -322,3 +592,87 @@ Buffer* buffer_view_at_top_index(Buffer* input, int index) {
   return output;
 }
 
+Buffer* convert_from_channeled_rgb_image(Buffer* input) {
+  const Dimensions dims = input->_dims;
+  assert(dims._length == 3);
+  const int width = dims[1];
+  const int height = dims[0];
+  const int channels = dims[2];
+  assert(channels == 3);
+
+  Buffer* result = new Buffer(dims);
+
+  jpfloat_t* inputData = input->_data;
+  jpfloat_t* outputData = result->_data;
+
+  const size_t bytesPerChannel = (width * height);
+  const size_t bytesPerImage = (bytesPerChannel * channels);
+  jpfloat_t* inputRed = (inputData + (0 * bytesPerChannel));
+  jpfloat_t* inputGreen = (inputData + (1 * bytesPerChannel));
+  jpfloat_t* inputBlue = (inputData + (2 * bytesPerChannel));
+
+  jpfloat_t* output = outputData;
+  jpfloat_t* outputEnd = (outputData + bytesPerImage);
+  while (output < outputEnd) {
+    *output = *inputRed;
+    inputRed += 1;
+    output += 1;
+    *output = *inputGreen;
+    inputGreen += 1;
+    output += 1;
+    *output = *inputBlue;
+    inputBlue += 1;
+    output += 1;
+  }
+
+  return result;
+}
+
+Buffer* convert_to_channeled_rgb_image(Buffer* input) {
+  const Dimensions dims = input->_dims;
+  assert(dims._length == 3);
+  const int width = dims[1];
+  const int height = dims[0];
+  const int channels = dims[2];
+  assert(channels == 3);
+
+  Buffer* result = new Buffer(dims);
+
+  jpfloat_t* inputData = input->_data;
+  jpfloat_t* outputData = result->_data;
+
+  const size_t bytesPerChannel = (width * height);
+  const size_t bytesPerImage = (bytesPerChannel * channels);
+  jpfloat_t* outputRed = (outputData + (0 * bytesPerChannel));
+  jpfloat_t* outputGreen = (outputData + (1 * bytesPerChannel));
+  jpfloat_t* outputBlue = (outputData + (2 * bytesPerChannel));
+
+  jpfloat_t* currentInput = inputData;
+  jpfloat_t* inputEnd = (inputData + bytesPerImage);
+  while (currentInput < inputEnd) {
+    *outputRed = *currentInput;
+    outputRed += 1;
+    currentInput += 1;
+    *outputGreen = *currentInput;
+    outputGreen += 1;
+    currentInput += 1;
+    *outputBlue = *currentInput;
+    outputBlue += 1;
+    currentInput += 1;
+  }
+
+  return result;
+}
+
+bool string_ends_with(const char* string, const char* suffix) {
+  if (!string || !suffix) {
+    return false;
+  }
+  size_t stringLength = strlen(string);
+  size_t suffixLength = strlen(suffix);
+  if (suffixLength >  stringLength) {
+    return false;
+  }
+  const char* stringSuffixStart = (string + (stringLength - suffixLength));
+  return (strncmp(stringSuffixStart, suffix, suffixLength) == 0);
+}

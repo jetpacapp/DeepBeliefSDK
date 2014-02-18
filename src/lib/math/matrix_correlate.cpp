@@ -42,8 +42,13 @@ Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
   const int pixelsPerKernel = (kernelWidth * kernelWidth);
   const int valuesPerKernel = (pixelsPerKernel * inputChannels);
 
+#ifdef USE_CUDACONVNET_DEFS
+  const int patchesAcross = (int)(ceilf((inputWidth - kernelWidth) / stride) + 1);
+  const int patchesDown = (int)(ceilf((inputHeight - kernelWidth) / stride) + 1);
+#else // USE_CUDACONVNET_DEFS
   const int patchesAcross = (int)(floorf((inputWidth - kernelWidth) / stride) + 1);
   const int patchesDown = (int)(floorf((inputHeight - kernelWidth) / stride) + 1);
+#endif // USE_CUDACONVNET_DEFS
   const Dimensions outputDims(imageCount, (patchesDown * patchesAcross), valuesPerKernel);
   Buffer* output = new Buffer(outputDims);
 
@@ -149,8 +154,8 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   Dimensions expectedKernelsDims(valuesPerKernel, kernelCount);
   assert(expectedKernelsDims == kernels->_dims);
 
-  const int outputWidth = (int)(floorf((inputWidth - kernelWidth) / stride) + 1);
-  const int outputHeight = (int)(floorf((inputHeight - kernelWidth) / stride) + 1);
+  const int outputWidth = (int)(floorf(((inputWidth - kernelWidth) / (jpfloat_t)stride)) + 1);
+  const int outputHeight = (int)(floorf(((inputHeight - kernelWidth) / (jpfloat_t)stride)) + 1);
   const int outputChannels = kernelCount;
   const Dimensions outputDims(imageCount, outputHeight, outputWidth, outputChannels);
   Buffer* output = new Buffer(outputDims);
@@ -164,8 +169,14 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
           jpfloat_t accumulated = 0.0f;
           for (int kernelY = 0; kernelY < kernelWidth; kernelY += 1) {
             const int inputY = (inputOriginY + kernelY);
+            if (inputY >= inputHeight) {
+              continue;
+            }
             for (int kernelX = 0; kernelX < kernelWidth; kernelX += 1) {
               const int inputX = (inputOriginX + kernelX);
+              if (inputX >= inputWidth) {
+                continue;
+              }
               for (int kernelChannel = 0; kernelChannel < inputChannels; kernelChannel += 1) {
                 const int kernelsOffset = (
                   (kernelY * kernelWidth * inputChannels * kernelCount) +
@@ -173,13 +184,16 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
                   (kernelChannel * kernelCount) +
                   outputChannel);
                 const jpfloat_t kernelValue = *(kernels->_data + kernelsOffset);
+                assert(!isnan(kernelValue));
                 const int inputOffset = inputDims.offset(imageIndex, inputY, inputX, kernelChannel);
                 const jpfloat_t inputValue = *(input->_data + inputOffset);
+                assert(!isnan(inputValue));
                 accumulated += (kernelValue * inputValue);
               }
             }
           }
           const int outputOffset = outputDims.offset(imageIndex, outputY, outputX, outputChannel);
+          assert(!isnan(accumulated));
           *(output->_data + outputOffset) = accumulated;
         }
       }

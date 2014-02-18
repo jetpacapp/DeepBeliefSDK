@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
 //
 
-#ifdef USE_OS_IMAGE_LOAD
+#ifdef USE_OS_IMAGE
 
 #include "os_image_load.h"
 
@@ -70,4 +70,4 @@ void os_image_free(unsigned char* data) {
   free(data);
 }
 
-#endif // USE_OS_IMAGE_LOAD
+#endif // USE_OS_IMAGE

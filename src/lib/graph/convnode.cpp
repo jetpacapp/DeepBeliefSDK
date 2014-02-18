@@ -47,6 +47,8 @@ Buffer* ConvNode::run(Buffer* input) {
     inputWithMargin = matrix_insert_margin(input, _marginSize, _marginSize);
   }
 
+  //_kernels->printContents();
+
   _output = matrix_correlate(inputWithMargin, _kernels, _kernelWidth, _kernelCount, _sampleStride);
   _output->setName(_name);
 

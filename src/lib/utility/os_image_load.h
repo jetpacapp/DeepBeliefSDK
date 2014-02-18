@@ -9,8 +9,8 @@
 #ifndef INCLUDE_OS_IMAGE_LOAD_H
 #define INCLUDE_OS_IMAGE_LOAD_H
 
-#ifndef USE_OS_IMAGE_LOAD
-#error "os_image_load.h has been included, but USE_OS_IMAGE_LOAD was not defined!"
+#ifndef USE_OS_IMAGE
+#error "os_image_load.h has been included, but USE_OS_IMAGE was not defined!"
 #endif
 
 extern unsigned char* os_image_load_from_file(const char* filename, int* outWidth, int* outHeight, int* outChannels, int unused);

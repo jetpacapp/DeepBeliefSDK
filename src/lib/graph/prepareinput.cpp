@@ -15,8 +15,13 @@
 #include "buffer.h"
 #include "matrix_ops.h"
 
+#ifdef USE_CUDACONVNET_DEFS
+const int kOutputWidth = 224;
+const int kOutputHeight = 224;
+#else // USE_CUDACONVNET_DEFS
 const int kOutputWidth = 227;
 const int kOutputHeight = 227;
+#endif // USE_CUDACONVNET_DEFS
 const int kOutputChannels = 3;
 
 const int kRescaledWidth = 256;
@@ -27,15 +32,29 @@ static void crop_and_flip_image(Buffer* destBuffer, Buffer* sourceBuffer, int of
 
 PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly) {
   assert(dataMean != NULL);
-  _dataMean = dataMean;
   Dimensions expectedDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
-  _dataMean->reshape(expectedDims);
+  dataMean->reshape(expectedDims);
+  Dimensions outputDims(kOutputHeight, kOutputWidth, kOutputChannels);
+  _dataMean = new Buffer(outputDims);
+  const int deltaX = (kRescaledWidth - kOutputWidth);
+  const int deltaY = (kRescaledHeight - kOutputHeight);
+  const int marginX = (deltaX / 2);
+  const int marginY = (deltaY / 2);
+#ifdef USE_CUDACONVNET_DEFS
+  Buffer* fromChanneled = convert_from_channeled_rgb_image(dataMean);
+  crop_and_flip_image(_dataMean, fromChanneled, marginX, marginY, false);
+  delete fromChanneled;
+#else // USE_CUDACONVNET_DEFS
+  crop_and_flip_image(_dataMean, dataMean, marginX, marginY, false);
+#endif // USE_CUDACONVNET_DEFS
+  _dataMean->setName("_dataMean");
+  //_dataMean->printContents();
   _useCenterOnly = useCenterOnly;
   setClassName("PrepareInput");
 }
 
 PrepareInput::~PrepareInput() {
-  // Do nothing
+  delete _dataMean;
 }
 
 Buffer* PrepareInput::run(Buffer* input) {
@@ -44,11 +63,17 @@ Buffer* PrepareInput::run(Buffer* input) {
   }
 
   Dimensions rescaledDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
+
   Buffer* rescaled = new Buffer(rescaledDims);
   rescaled->setName("rescaled");
 
+  input->setName("input");
+  //input->printContents();
+
   rescale_image_to_fit(input, rescaled, true);
-  matrix_add_inplace(rescaled, _dataMean, -1.0f);
+
+  rescaled->setName("rescaled");
+  //rescaled->printContents();
 
   const int deltaX = (kRescaledWidth - kOutputWidth);
   const int deltaY = (kRescaledHeight - kOutputHeight);
@@ -66,6 +91,17 @@ Buffer* PrepareInput::run(Buffer* input) {
 
     Buffer* blitDestination = buffer_view_at_top_index(_output, 0);
     crop_and_flip_image(blitDestination, rescaled, sourceX, sourceY, false);
+
+    blitDestination->setName("premean data");
+    //blitDestination->printContents();
+    matrix_add_inplace(blitDestination, _dataMean, -1.0f);
+    blitDestination->setName("postmean data");
+    //blitDestination->printContents();
+
+#ifdef USE_CUDACONVNET_DEFS
+    Buffer* channeledOutput = convert_to_channeled_rgb_image(blitDestination);
+    blitDestination->copyDataFrom(channeledOutput);
+#endif // USE_CUDACONVNET_DEFS
 
   } else {
 
@@ -107,6 +143,13 @@ void rescale_image_to_fit(Buffer* input, Buffer* output, bool doFlip) {
   const int outputWidth = outputDims[1];
   const int outputHeight = outputDims[0];
   const int outputChannels = outputDims[2];
+
+  if (inputDims == outputDims) {
+    const int elementCount = inputDims.elementCount();
+    const size_t bytesInBuffer = (elementCount * sizeof(jpfloat_t));
+    memcpy(output->_data, input->_data, bytesInBuffer);
+    return;
+  }
 
   const float flipBias = (doFlip) ? inputHeight : 0.0f;
   const float flipScale = (doFlip) ? -1.0f : 1.0f;

@@ -79,7 +79,11 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
     const jpfloat_t inputValue = *inputData;
     const jpfloat_t magnitudeValue = *magnitudeData;
 
-    *outputData = (pow(magnitudeValue, -beta) * inputValue);
+    jpfloat_t outputValue = (pow(magnitudeValue, -beta) * inputValue);
+    if (isnan(outputValue)) {
+      outputValue = 0.0;
+    }
+    *outputData = outputValue;
 
     inputData += 1;
     magnitudeData += 1;
