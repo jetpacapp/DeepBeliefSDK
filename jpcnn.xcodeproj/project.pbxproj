@@ -718,6 +718,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					USE_OS_IMAGE,
+					USE_ACCELERATE_GEMM,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

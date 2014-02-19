@@ -62,15 +62,46 @@ Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
   for (int imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
     for (int patchY = 0; patchY < patchesDown; patchY += 1) {
       const int inputOriginY = (patchY * stride);
+      const int inputEndY = (inputOriginY + kernelWidth);
       for (int patchX = 0; patchX < patchesAcross; patchX += 1) {
         const int inputOriginX = (patchX * stride);
+        const int inputEndX = (inputOriginX + kernelWidth);
         const int inputPatchOffset = inputDims.offset(imageIndex, inputOriginY, inputOriginX, 0);
         const jpfloat_t* const inputPatchStart = (inputStart + inputPatchOffset);
         const jpfloat_t* inputData = inputPatchStart;
-        for (int row = 0; row < kernelWidth; row += 1) {
-          memcpy(outputData, inputData, bytesPerKernelRow);
-          outputData += valuesPerKernelRow;
-          inputData += valuesPerInputRow;
+        if ((inputEndY <= inputHeight) && (inputEndX <= inputWidth)) {
+          for (int row = 0; row < kernelWidth; row += 1) {
+            memcpy(outputData, inputData, bytesPerKernelRow);
+            outputData += valuesPerKernelRow;
+            inputData += valuesPerInputRow;
+          }
+        } else {
+          size_t bytesToCopy;
+          if (inputEndX > inputWidth) {
+            bytesToCopy = ((inputEndX - inputWidth) * inputChannels * sizeof(jpfloat_t));
+          } else {
+            bytesToCopy = bytesPerKernelRow;
+          }
+          const size_t bytesToZero = (bytesPerKernelRow - bytesToCopy);
+          int rowsToCopy;
+          if (inputEndY > inputHeight) {
+            rowsToCopy = (kernelWidth - (inputEndY - inputHeight));
+          } else {
+            rowsToCopy = kernelWidth;
+          }
+          for (int row = 0; row < kernelWidth; row += 1) {
+            if (row < rowsToCopy) {
+              memcpy(outputData, inputData, bytesToCopy);
+              if (bytesToZero > 0) {
+                memset(outputData + bytesToCopy, 0, bytesToZero);
+              }
+              outputData += valuesPerKernelRow;
+              inputData += valuesPerInputRow;
+            } else {
+              memset(outputData, 0, bytesPerKernelRow);
+              outputData += valuesPerKernelRow;
+            }
+          }
         }
       }
     }

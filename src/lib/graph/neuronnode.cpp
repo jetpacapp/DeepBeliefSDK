@@ -87,6 +87,6 @@ BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   if (get_tag_from_dict(tag, "dropout") != NULL) {
     result->_dropout = get_float_from_dict(tag, "dropout");
   }
-  
+
   return result;
 }
