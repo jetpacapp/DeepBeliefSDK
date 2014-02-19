@@ -17,7 +17,7 @@
 #include "basenode.h"
 #include "nodefactory.h"
 
-#define CHECK_RESULTS
+//#define CHECK_RESULTS
 #ifdef CHECK_RESULTS
 #define FN_LEN (1024)
 #endif // CHECK_RESULTS
@@ -70,6 +70,9 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       ((index * 2) + 1), layer->_name);
     Buffer* expectedInput = buffer_from_dump_file(expectedInputFilename);
     const Dimensions& currentInputDims = currentInput->_dims;
+#ifdef USE_CUDACONVNET_DEFS
+    expectedInput->convertFromChannelMajor(currentInputDims);
+#endif // USE_CUDACONVNET_DEFS
     if (expectedInput->canReshapeTo(currentInputDims)) {
       expectedInput->reshape(currentInputDims);
     }
@@ -91,6 +94,9 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       ((index * 2) + 2), layer->_name);
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
     const Dimensions& currentOutputDims = currentOutput->_dims;
+#ifdef USE_CUDACONVNET_DEFS
+    expectedOutput->convertFromChannelMajor(currentOutputDims);
+#endif // USE_CUDACONVNET_DEFS
     if (expectedOutput->canReshapeTo(currentOutputDims)) {
       expectedOutput->reshape(currentOutputDims);
     }

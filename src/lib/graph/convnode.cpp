@@ -47,8 +47,6 @@ Buffer* ConvNode::run(Buffer* input) {
     inputWithMargin = matrix_insert_margin(input, _marginSize, _marginSize);
   }
 
-  //_kernels->printContents();
-
   _output = matrix_correlate(inputWithMargin, _kernels, _kernelWidth, _kernelCount, _sampleStride);
   _output->setName(_name);
 
@@ -68,6 +66,39 @@ char* ConvNode::debugString() {
     _kernelWidth, _kernelCount, _marginSize, _sampleStride,
     _kernels->_dims.debugString(), _bias->_dims.debugString());
   return this->debugStringWithMessage(additionalInfo);
+}
+
+void ConvNode::saveDebugImage() {
+
+  const jpfloat_t offset = 127.0f;
+  const jpfloat_t scale = (_kernelWidth * _kernelWidth) * 16.0f;
+
+  const int outputChannels = _kernelCount;
+  const int inputChannels = 3;
+  for (int outputChannel = 0; outputChannel < outputChannels; outputChannel += 1) {
+    const Dimensions kernelDims(_kernelWidth, _kernelWidth, inputChannels);
+    Buffer* kernelImage = new Buffer(kernelDims);
+    const size_t maxNameLength = 1024;
+    char name[maxNameLength];
+    snprintf(name, maxNameLength, "%s_%03d", _name, outputChannel);
+    kernelImage->setName(name);
+    for (int kernelY = 0; kernelY < _kernelWidth; kernelY += 1) {
+      for (int kernelX = 0; kernelX < _kernelWidth; kernelX += 1) {
+        for (int kernelChannel = 0; kernelChannel < inputChannels; kernelChannel += 1) {
+          const int kernelsOffset = (
+            (kernelY * _kernelWidth * inputChannels * _kernelCount) +
+            (kernelX * inputChannels * _kernelCount) +
+            (kernelChannel * _kernelCount) +
+            outputChannel);
+          const jpfloat_t kernelValue = *(_kernels->_data + kernelsOffset);
+          jpfloat_t* imageData = kernelImage->_data + kernelDims.offset(kernelY, kernelX, kernelChannel);
+          *imageData = fmin(255.0f, fmax(0.0f, (offset + (kernelValue * scale))));
+        }
+      }
+    }
+    kernelImage->saveDebugImage();
+    delete kernelImage;
+  }
 }
 
 BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy) {

@@ -99,8 +99,8 @@ Buffer* PrepareInput::run(Buffer* input) {
     //blitDestination->printContents();
 
 #ifdef USE_CUDACONVNET_DEFS
-    Buffer* channeledOutput = convert_to_channeled_rgb_image(blitDestination);
-    blitDestination->copyDataFrom(channeledOutput);
+    //Buffer* channeledOutput = convert_to_channeled_rgb_image(blitDestination);
+    //blitDestination->copyDataFrom(channeledOutput);
 #endif // USE_CUDACONVNET_DEFS
 
   } else {

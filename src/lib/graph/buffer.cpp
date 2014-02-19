@@ -107,8 +107,8 @@ void Buffer::printContents(int maxElements) {
     }
     fprintf(output, "]");
   } else if (dimsLength == 2) {
-    const int height = _dims[0];
-    const int width = _dims[1];
+    const int height = dims[0];
+    const int width = dims[1];
 
     int yTop;
     int yBottom;
@@ -160,9 +160,9 @@ void Buffer::printContents(int maxElements) {
     }
     fprintf(output, "]");
   } else if (dimsLength == 3) {
-    const int height = _dims[0];
-    const int width = _dims[1];
-    const int channels = _dims[2];
+    const int height = dims[0];
+    const int width = dims[1];
+    const int channels = dims[2];
 
     int yTop;
     int yBottom;
@@ -273,6 +273,44 @@ void Buffer::copyDataFrom(const Buffer* other) {
   const jpfloat_t* otherData = other->_data;
   const size_t myByteCount = (myElementCount * sizeof(jpfloat_t));
   memcpy(myData, otherData, myByteCount);
+}
+
+void Buffer::convertFromChannelMajor(const Dimensions& expectedDims) {
+  if (expectedDims._length < 4) {
+    // No channels in the lower dimensional images, so skip any conversion
+    return;
+  }
+  assert(canReshapeTo(expectedDims));
+  const int imageCount = expectedDims[0];
+  const int height = expectedDims[1];
+  const int width = expectedDims[2];
+  const int channels = expectedDims[3];
+
+  Dimensions oldDims(imageCount, channels, height, width);
+
+  const int elementCount = expectedDims.elementCount();
+  const size_t byteCount = (elementCount * sizeof(jpfloat_t));
+  jpfloat_t* newData = (jpfloat_t*)(malloc(byteCount));
+  jpfloat_t* oldData = _data;
+
+  for (int imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    for (int y = 0; y < height; y += 1) {
+      for (int x = 0; x < width; x += 1) {
+        for (int channel = 0; channel < channels; channel += 1) {
+          jpfloat_t* source = (oldData + oldDims.offset(imageIndex, channel, y, x));
+          jpfloat_t* dest = (newData + expectedDims.offset(imageIndex, y, x, channel));
+          *dest = *source;
+        }
+      }
+    }
+  }
+
+  if (_doesOwnData) {
+    free(_data);
+  }
+
+  _data = newData;
+  _doesOwnData = true;
 }
 
 Buffer* buffer_from_image_file(const char* filename)

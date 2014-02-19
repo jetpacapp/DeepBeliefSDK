@@ -23,6 +23,8 @@ public:
   virtual Buffer* run(Buffer* input);
   virtual char* debugString();
 
+  void saveDebugImage();
+
   uint32_t _kernelCount;
   uint32_t _kernelWidth;
   uint32_t _sampleStride;

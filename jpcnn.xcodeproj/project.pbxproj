@@ -85,6 +85,7 @@
 		59824258188E039E003F2C0A /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824252188DE333003F2C0A /* svmutils.cpp */; };
 		5982425D188F2631003F2C0A /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5982425C188F2631003F2C0A /* ApplicationServices.framework */; };
 		5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
+		59DA425C18B4562A00462234 /* matrix_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 591A037618B4559A0014C655 /* matrix_scale.cpp */; };
 		59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +102,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		591A037618B4559A0014C655 /* matrix_scale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_scale.cpp; sourceTree = "<group>"; };
 		594BBA6D1884A94A007F9A2A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		594BBA821886FE8A007F9A2A /* Deep Belief.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Deep Belief.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		594BBA841886FE8A007F9A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -370,6 +372,7 @@
 				598241F3188DE27D003F2C0A /* matrix_margin.cpp */,
 				598241F5188DE27D003F2C0A /* matrix_max.cpp */,
 				598241F7188DE27D003F2C0A /* matrix_ops.h */,
+				591A037618B4559A0014C655 /* matrix_scale.cpp */,
 				598241F8188DE27D003F2C0A /* matrix_softmax.cpp */,
 			);
 			path = math;
@@ -586,6 +589,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59DA425C18B4562A00462234 /* matrix_scale.cpp in Sources */,
 				59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */,
 				5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */,
 				59824238188DE2F0003F2C0A /* basenode.cpp in Sources */,

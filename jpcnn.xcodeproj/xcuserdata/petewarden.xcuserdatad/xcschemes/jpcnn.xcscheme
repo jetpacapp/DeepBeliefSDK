@@ -132,7 +132,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--input data/dog.raw"
+            argument = "--input data/lena.raw"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

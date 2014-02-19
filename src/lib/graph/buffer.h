@@ -35,6 +35,7 @@ public:
   void reshape(const Dimensions& newDims);
 
   void copyDataFrom(const Buffer* other);
+  void convertFromChannelMajor(const Dimensions& expectedDims);
 
   // Creates a new buffer object that shares the underlying data array,
   // but has independent shape and other meta-data.

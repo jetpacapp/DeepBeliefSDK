@@ -15,7 +15,7 @@
 #include "binary_format.h"
 #include "matrix_ops.h"
 
-NeuronNode::NeuronNode() : BaseNode(), _weights(NULL), _bias(NULL) {
+NeuronNode::NeuronNode() : BaseNode(), _weights(NULL), _bias(NULL), _dropout(0.0f) {
   setClassName("NeuronNode");
 }
 
@@ -49,6 +49,11 @@ Buffer* NeuronNode::run(Buffer* input) {
 
   matrix_add_inplace(_output, _bias, 1.0);
 
+  if (_dropout > 0.0f) {
+    const float scale = (1.0f - _dropout);
+    matrix_scale_inplace(_output, scale);
+  }
+
   delete flattenedInput;
 
   return _output;
@@ -78,6 +83,8 @@ BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy) {
     SBinaryTag* biasTag = get_tag_from_dict(tag, "bias");
     result->_bias = buffer_from_tag_dict(biasTag, skipCopy);
   }
-  
+
+  result->_dropout = get_float_from_dict(tag, "dropout");
+
   return result;
 }

@@ -24,6 +24,7 @@ Buffer* matrix_join_channels(Buffer** inputs, int inputsCount);
 Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloat_t alpha, jpfloat_t beta);
 Buffer* matrix_max(Buffer* input, jpfloat_t maxValue);
 Buffer* matrix_max_patch(Buffer* input, int patchWidth, int stride);
+void matrix_scale_inplace(Buffer* output, jpfloat_t scale);
 Buffer* matrix_softmax(Buffer* input);
 
 #endif // INCLUDE_MATRIX_OPS_H
