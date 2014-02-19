@@ -42,13 +42,8 @@ Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
   const int pixelsPerKernel = (kernelWidth * kernelWidth);
   const int valuesPerKernel = (pixelsPerKernel * inputChannels);
 
-#ifdef USE_CUDACONVNET_DEFS
   const int patchesAcross = (int)(ceilf((inputWidth - kernelWidth) / (jpfloat_t)stride) + 1);
   const int patchesDown = (int)(ceilf((inputHeight - kernelWidth) / (jpfloat_t)stride) + 1);
-#else // USE_CUDACONVNET_DEFS
-  const int patchesAcross = (int)(floorf((inputWidth - kernelWidth) / (jpfloat_t)stride) + 1);
-  const int patchesDown = (int)(floorf((inputHeight - kernelWidth) / (jpfloat_t)stride) + 1);
-#endif // USE_CUDACONVNET_DEFS
   const Dimensions outputDims(imageCount, (patchesDown * patchesAcross), valuesPerKernel);
   Buffer* output = new Buffer(outputDims);
 
@@ -125,13 +120,8 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   Dimensions expectedKernelsDims(valuesPerKernel, kernelCount);
   assert(expectedKernelsDims == kernels->_dims);
 
-#ifdef USE_CUDACONVNET_DEFS
   const int outputWidth = (int)(ceilf((inputWidth - kernelWidth) / (jpfloat_t)stride) + 1);
   const int outputHeight = (int)(ceilf((inputHeight - kernelWidth) / (jpfloat_t)stride) + 1);
-#else // USE_CUDACONVNET_DEFS
-  const int outputWidth = (int)(floorf((inputWidth - kernelWidth) / (jpfloat_t)stride) + 1);
-  const int outputHeight = (int)(floorf((inputHeight - kernelWidth) / (jpfloat_t)stride) + 1);
-#endif // USE_CUDACONVNET_DEFS
   const int outputChannels = kernelCount;
   const Dimensions outputDims(imageCount, outputHeight, outputWidth, outputChannels);
   Buffer* output = new Buffer(outputDims);
@@ -190,13 +180,8 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   Dimensions expectedKernelsDims(valuesPerKernel, kernelCount);
   assert(expectedKernelsDims == kernels->_dims);
 
-#ifdef USE_CUDACONVNET_DEFS
   const int outputWidth = (int)(ceilf((inputWidth - kernelWidth) / (jpfloat_t)stride) + 1);
   const int outputHeight = (int)(ceilf((inputHeight - kernelWidth) / (jpfloat_t)stride) + 1);
-#else // USE_CUDACONVNET_DEFS
-  const int outputWidth = (int)(floorf((inputWidth - kernelWidth) / (jpfloat_t)stride) + 1);
-  const int outputHeight = (int)(floorf((inputHeight - kernelWidth) / (jpfloat_t)stride) + 1);
-#endif // USE_CUDACONVNET_DEFS
   const int outputChannels = kernelCount;
   const Dimensions outputDims(imageCount, outputHeight, outputWidth, outputChannels);
   Buffer* output = new Buffer(outputDims);

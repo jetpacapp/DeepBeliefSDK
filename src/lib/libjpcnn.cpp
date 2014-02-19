@@ -20,7 +20,7 @@
 extern "C" {
 
 void* jpcnn_create_network(const char* filename) {
-  Graph* graph = new_graph_from_file(filename, false);
+  Graph* graph = new_graph_from_file(filename, false, true);
   return (void*)(graph);
 }
 
@@ -103,13 +103,21 @@ void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSam
   Graph* graph = (Graph*)(networkHandle);
   Buffer* input = (Buffer*)(inputHandle);
 
-#ifdef USE_CUDACONVNET_DEFS
-  const bool doFlip = false;
-#else // USE_CUDACONVNET_DEFS
-  const bool doFlip = true;
-#endif // USE_CUDACONVNET_DEFS
+  bool doFlip;
+  int imageSize;
+  bool isMeanChanneled;
+  if (graph->_isHomebrewed) {
+    imageSize = 224;
+    doFlip = false;
+    isMeanChanneled = true;
+  } else {
+    imageSize = 227;
+    doFlip = true;
+    isMeanChanneled = false;
+  }
+  const int rescaledSize = 256;
 
-  PrepareInput prepareInput(graph->_dataMean, !doMultiSample, doFlip);
+  PrepareInput prepareInput(graph->_dataMean, !doMultiSample, doFlip, imageSize, rescaledSize, isMeanChanneled);
   Buffer* rescaledInput = prepareInput.run(input);
   Buffer* predictions = graph->run(rescaledInput, layerOffset);
 

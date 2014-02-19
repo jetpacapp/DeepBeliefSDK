@@ -16,7 +16,7 @@
 class PrepareInput : BaseNode {
 public:
 
-  PrepareInput(Buffer* dataMean, bool useCenterOnly=false, bool needsFlip=true);
+  PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip, int imageSize, int rescaledSize, bool isMeanChanneled);
   ~PrepareInput();
 
   Buffer* run(Buffer* input);
@@ -24,6 +24,8 @@ public:
   Buffer* _dataMean;
   bool _useCenterOnly;
   bool _needsFlip;
+  const int _imageSize;
+  const int _rescaledSize;
 };
 
 #endif // INCLUDE_PREPAREINPUT_H

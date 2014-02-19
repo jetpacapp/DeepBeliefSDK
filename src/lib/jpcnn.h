@@ -21,7 +21,4 @@
 
 typedef float jpfloat_t;
 
-// Whether to use the cuda-convnet constants for buffer sizes, etc
-#define USE_CUDACONVNET_DEFS
-
 #endif // INCLUDE_JPCNN_H

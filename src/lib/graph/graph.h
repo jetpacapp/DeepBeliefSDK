@@ -25,6 +25,7 @@ public:
   void printDebugOutput();
 
   bool _useMemoryMap;
+  bool _isHomebrewed;
   SBinaryTag* _fileTag;
 
   Buffer* _dataMean;
@@ -35,6 +36,6 @@ public:
   int _labelNamesLength;
 };
 
-Graph* new_graph_from_file(const char* filename, int useMemoryMap);
+Graph* new_graph_from_file(const char* filename, int useMemoryMap, int isHomebrewed);
 
 #endif // INCLUDE_GRAPH_H

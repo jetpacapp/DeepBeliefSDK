@@ -24,6 +24,7 @@
 
 Graph::Graph() :
   _useMemoryMap(false),
+  _isHomebrewed(false),
   _fileTag(NULL),
   _dataMean(NULL),
   _preparationNode(NULL),
@@ -70,9 +71,9 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       ((index * 2) + 1), layer->_name);
     Buffer* expectedInput = buffer_from_dump_file(expectedInputFilename);
     const Dimensions& currentInputDims = currentInput->_dims;
-#ifdef USE_CUDACONVNET_DEFS
-    expectedInput->convertFromChannelMajor(currentInputDims);
-#endif // USE_CUDACONVNET_DEFS
+    if (_isHomebrewed) {
+      expectedInput->convertFromChannelMajor(currentInputDims);
+    }
     if (expectedInput->canReshapeTo(currentInputDims)) {
       expectedInput->reshape(currentInputDims);
     }
@@ -93,9 +94,9 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       ((index * 2) + 2), layer->_name);
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
     const Dimensions& currentOutputDims = currentOutput->_dims;
-#ifdef USE_CUDACONVNET_DEFS
-    expectedOutput->convertFromChannelMajor(currentOutputDims);
-#endif // USE_CUDACONVNET_DEFS
+    if (_isHomebrewed) {
+      expectedOutput->convertFromChannelMajor(currentOutputDims);
+    }
     if (expectedOutput->canReshapeTo(currentOutputDims)) {
       expectedOutput->reshape(currentOutputDims);
     }
@@ -120,7 +121,7 @@ void Graph::printDebugOutput() {
   fprintf(stderr, "************************\n");
 }
 
-Graph* new_graph_from_file(const char* filename, int useMemoryMap) {
+Graph* new_graph_from_file(const char* filename, int useMemoryMap, int isHomebrewed) {
 
   SBinaryTag* graphDict = read_tag_from_file(filename, useMemoryMap);
   if (graphDict == NULL) {
@@ -131,6 +132,7 @@ Graph* new_graph_from_file(const char* filename, int useMemoryMap) {
   Graph* result = new Graph();
 
   result->_useMemoryMap = useMemoryMap;
+  result->_isHomebrewed = isHomebrewed;
   result->_fileTag = graphDict;
 
   SBinaryTag* dataMeanTag = get_tag_from_dict(graphDict, "data_mean");
