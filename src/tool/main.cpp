@@ -465,6 +465,9 @@ int main(int argc, const char * argv[]) {
 
       for (int index = 0; index < predictionsLength; index += 1) {
         const float predictionValue = predictions[index];
+        if (predictionValue < 0.01f) {
+          continue;
+        }
         char* label = predictionsLabels[index];
         fprintf(stdout, "%f\t%s\n", predictionValue, label);
       }

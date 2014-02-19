@@ -350,9 +350,12 @@ Buffer* buffer_from_image_file(const char* filename)
     uint8_t* inputGreen = (channeledImageData + (1 * bytesPerChannel));
     uint8_t* inputBlue = (channeledImageData + (2 * bytesPerChannel));
 
-    uint8_t* outputImageData = (uint8_t*)(malloc(bytesPerImage));
+    const int outputChannels = 4;
+    const size_t bytesPerOutputImage = (bytesPerChannel * outputChannels);
+
+    uint8_t* outputImageData = (uint8_t*)(malloc(bytesPerOutputImage));
     uint8_t* output = outputImageData;
-    uint8_t* outputEnd = (outputImageData + bytesPerImage);
+    uint8_t* outputEnd = (outputImageData + bytesPerOutputImage);
     while (output < outputEnd) {
       *output = *inputRed;
       inputRed += 1;
@@ -363,13 +366,17 @@ Buffer* buffer_from_image_file(const char* filename)
       *output = *inputBlue;
       inputBlue += 1;
       output += 1;
+      if (outputChannels > 3) {
+        *output = 255;
+        output += 1;
+      }
     }
     free(fileData);
 
     imageData = outputImageData;
     inputWidth = imageSize;
     inputHeight = imageSize;
-    inputChannels = 3;
+    inputChannels = outputChannels;
 
   } else {
 #ifdef USE_OS_IMAGE

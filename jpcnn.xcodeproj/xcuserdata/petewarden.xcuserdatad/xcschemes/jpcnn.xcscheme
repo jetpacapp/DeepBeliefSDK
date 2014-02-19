@@ -61,11 +61,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--network data/example_networks/imagenet.ntwk"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--network data/example_networks/homebrewed.ntwk"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--model /Users/petewarden/water_apl_low_layer.model"
@@ -129,15 +129,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--input data/dog.raw"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--input data/lena.raw"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "--debug"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

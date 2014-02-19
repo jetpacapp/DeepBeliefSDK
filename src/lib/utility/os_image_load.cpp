@@ -24,6 +24,10 @@ unsigned char* os_image_load_from_file(const char* filename, int* outWidth, int*
   fstat(fileHandle, &statBuffer);
   const size_t bytesInFile = (size_t)(statBuffer.st_size);
   uint8_t* fileData = (uint8_t*)(mmap(NULL, bytesInFile, PROT_READ, MAP_SHARED, fileHandle, 0));
+  if (fileData == MAP_FAILED) {
+    fprintf(stderr, "Couldn't open file '%s' with mmap\n", filename);
+    return NULL;
+  }
   CFDataRef fileDataRef = CFDataCreateWithBytesNoCopy(NULL, fileData, bytesInFile, kCFAllocatorNull);
   CGDataProviderRef imageProvider = CGDataProviderCreateWithCFData(fileDataRef);
 

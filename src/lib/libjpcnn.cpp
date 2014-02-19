@@ -103,7 +103,13 @@ void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSam
   Graph* graph = (Graph*)(networkHandle);
   Buffer* input = (Buffer*)(inputHandle);
 
-  PrepareInput prepareInput(graph->_dataMean, !doMultiSample);
+#ifdef USE_CUDACONVNET_DEFS
+  const bool doFlip = false;
+#else // USE_CUDACONVNET_DEFS
+  const bool doFlip = true;
+#endif // USE_CUDACONVNET_DEFS
+
+  PrepareInput prepareInput(graph->_dataMean, !doMultiSample, doFlip);
   Buffer* rescaledInput = prepareInput.run(input);
   Buffer* predictions = graph->run(rescaledInput, layerOffset);
 

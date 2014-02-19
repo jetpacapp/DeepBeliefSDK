@@ -16,13 +16,14 @@
 class PrepareInput : BaseNode {
 public:
 
-  PrepareInput(Buffer* dataMean, bool useCenterOnly=false);
+  PrepareInput(Buffer* dataMean, bool useCenterOnly=false, bool needsFlip=true);
   ~PrepareInput();
 
   Buffer* run(Buffer* input);
 
   Buffer* _dataMean;
   bool _useCenterOnly;
+  bool _needsFlip;
 };
 
 #endif // INCLUDE_PREPAREINPUT_H

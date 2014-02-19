@@ -30,7 +30,7 @@ const int kRescaledHeight = 256;
 static void rescale_image_to_fit(Buffer* input, Buffer* output, bool doFlip);
 static void crop_and_flip_image(Buffer* destBuffer, Buffer* sourceBuffer, int offsetX, int offsetY, bool doFlipHorizontal);
 
-PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly) {
+PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip) {
   assert(dataMean != NULL);
   Dimensions expectedDims(kRescaledHeight, kRescaledWidth, kOutputChannels);
   dataMean->reshape(expectedDims);
@@ -50,6 +50,7 @@ PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly) {
   _dataMean->setName("_dataMean");
   //_dataMean->printContents();
   _useCenterOnly = useCenterOnly;
+  _needsFlip = needsFlip;
   setClassName("PrepareInput");
 }
 
@@ -70,10 +71,11 @@ Buffer* PrepareInput::run(Buffer* input) {
   input->setName("input");
   //input->printContents();
 
-  rescale_image_to_fit(input, rescaled, true);
+  rescale_image_to_fit(input, rescaled, _needsFlip);
 
   rescaled->setName("rescaled");
   //rescaled->printContents();
+  rescaled->saveDebugImage();
 
   const int deltaX = (kRescaledWidth - kOutputWidth);
   const int deltaY = (kRescaledHeight - kOutputHeight);
@@ -144,7 +146,7 @@ void rescale_image_to_fit(Buffer* input, Buffer* output, bool doFlip) {
   const int outputHeight = outputDims[0];
   const int outputChannels = outputDims[2];
 
-  if (inputDims == outputDims) {
+  if ((inputDims == outputDims) && !doFlip) {
     const int elementCount = inputDims.elementCount();
     const size_t bytesInBuffer = (elementCount * sizeof(jpfloat_t));
     memcpy(output->_data, input->_data, bytesInBuffer);

@@ -82,7 +82,6 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       fprintf(stderr, "!!!!!Inputs match for %s\n", layer->_name);
     }
 #endif // CHECK_RESULTS
-    fprintf(stderr, "input=\n");
     //currentInput->printContents();
     Buffer* currentOutput = layer->run(currentInput);
     currentOutput->setName(layer->_name);
