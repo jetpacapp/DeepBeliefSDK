@@ -54,6 +54,7 @@ void os_image_save_to_file(const char* filename, unsigned char* data, int width,
   }
 
   CFRelease(destination);
+  CFRelease(url);
   CGImageRelease(imageRef);
 }
 

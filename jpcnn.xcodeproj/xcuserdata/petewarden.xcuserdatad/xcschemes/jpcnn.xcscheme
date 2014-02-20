@@ -45,7 +45,7 @@
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
       customWorkingDirectory = "/Users/petewarden/projects/jpcnn"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
@@ -68,8 +68,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--model /Users/petewarden/water_apl_low_layer.model"
-            isEnabled = "NO">
+            argument = "--model /Users/petewarden/dogs_homebrew.model"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-t"
@@ -84,24 +84,24 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jpcnn_folder/training/water_positive"
+            argument = "--positive /Users/petewarden/vagrant/jetpacdata/image_analysis/turked_dogs/dogs_training"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jpcnn_folder/training/water_negative"
+            argument = "--negative /Users/petewarden/vagrant/jetpacdata/image_analysis/turked_dogs/nodogs_training"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode test"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--positive /Users/petewarden/projects/jpcnn_folder/testing/water_positive"
-            isEnabled = "NO">
+            argument = "--positive /Users/petewarden/vagrant/jetpacdata/image_analysis/turked_dogs/dogs_testing"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--negative /Users/petewarden/projects/jpcnn_folder/testing/water_negative"
-            isEnabled = "NO">
+            argument = "--negative /Users/petewarden/vagrant/jetpacdata/image_analysis/turked_dogs/nodogs_testing"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode predict"
@@ -117,19 +117,19 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--threshold 0.5"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--layer 2"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode single"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/dog.raw"

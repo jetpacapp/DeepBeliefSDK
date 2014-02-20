@@ -42,6 +42,9 @@ unsigned char* os_image_load_from_file(const char* filename, int* outWidth, int*
     (strcasecmp(suffix, ".jpeg") == 0)) {
     image = CGImageCreateWithJPEGDataProvider(imageProvider, NULL, true, kCGRenderingIntentDefault);
   } else {
+    munmap(fileData, bytesInFile);
+    CFRelease(imageProvider);
+    CFRelease(fileDataRef);
     fprintf(stderr, "Unknown suffix for file '%s'\n", filename);
     return NULL;
   }
@@ -60,8 +63,11 @@ unsigned char* os_image_load_from_file(const char* filename, int* outWidth, int*
   CGColorSpaceRelease(colorSpace);
   CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
   CGContextRelease(context);
+  CFRelease(image);
 
   munmap(fileData, bytesInFile);
+  CFRelease(imageProvider);
+  CFRelease(fileDataRef);
 
   *outWidth = width;
   *outHeight = height;

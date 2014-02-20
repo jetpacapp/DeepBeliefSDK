@@ -432,8 +432,8 @@ void prediction_callback(void* cookie, float* predictions, int predictionsLength
   const int symlinkResult = symlink(fullPath, outPath);
   if (symlinkResult != 0) {
     fprintf(stderr, "symlink failed for '%s' -> '%s' with error number %d\n", outPath, fullPath, errno);
-    return;
   }
+  free(outPath);
 }
 
 int main(int argc, const char * argv[]) {
