@@ -2752,7 +2752,8 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 		else
 			while(p->index != -1)
 			{
-				fprintf(fp,"%d:%.8g ",p->index,p->value);
+        if (p->value != 0.0)
+          fprintf(fp,"%d:%.8g ",p->index,p->value);
 				p++;
 			}
 		fprintf(fp, "\n");
