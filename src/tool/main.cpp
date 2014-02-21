@@ -19,8 +19,6 @@
 
 #include "libjpcnn.h"
 
-#include "svmutils.h"
-
 #define STATIC_ARRAY_LEN(x) (sizeof(x) / sizeof(x[0]))
 
 enum EToolMode {eSingleImage, eLibSvmTrain, eLibSvmTest, eLibSvmPredict};
@@ -53,12 +51,12 @@ typedef void (*ClassifyImagesFunctionPtr)(void* cookie, float* predictions, int 
 
 typedef struct STrainingCookieStruct {
   float label;
-  SLibSvmTrainingInfo* trainingInfo;
+  void* trainer;
 } STrainingCookie;
 
 typedef struct STestingCookieStruct {
   float expectedLabel;
-  struct svm_model* model;
+  void* predictor;
   float threshold;
   int truePositiveCount;
   int falsePositiveCount;
@@ -69,7 +67,7 @@ typedef struct STestingCookieStruct {
 
 typedef struct SPredictionCookieStruct {
   const char* outputDirectory;
-  struct svm_model* model;
+  void* predictor;
 } SPredictionCookie;
 
 static void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* outValues);
@@ -372,18 +370,16 @@ void classify_images_in_directory(void* network, const char* directoryName, SToo
 
 void training_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath) {
   STrainingCookie* cookieData = (STrainingCookie*)(cookie);
-  add_features_to_training_info(cookieData->trainingInfo, cookieData->label, predictions, predictionsLength);
+  jpcnn_train(cookieData->trainer, cookieData->label, predictions, predictionsLength);
 }
 
 void testing_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath) {
   STestingCookie* cookieData = (STestingCookie*)(cookie);
-  struct svm_model* model = cookieData->model;
-  struct svm_node* nodes = create_node_list(predictions, predictionsLength);
-  double probabilityEstimates[2];
-  svm_predict_probability(model, nodes, probabilityEstimates);
+  void* predictor = cookieData->predictor;
+  const float predictedValue = jpcnn_predict(predictor, predictions, predictionsLength);
   const float threshold = cookieData->threshold;
   float predictedLabel;
-  if (probabilityEstimates[0] > threshold) {
+  if (predictedValue > threshold) {
     predictedLabel = 1.0f;
   } else {
     predictedLabel = 0.0f;
@@ -407,11 +403,8 @@ void testing_callback(void* cookie, float* predictions, int predictionsLength, c
 
 void prediction_callback(void* cookie, float* predictions, int predictionsLength, const char* basename, const char* directoryName, const char* fullPath) {
   SPredictionCookie* cookieData = (SPredictionCookie*)(cookie);
-  struct svm_model* model = cookieData->model;
-  struct svm_node* nodes = create_node_list(predictions, predictionsLength);
-  double probabilityEstimates[2];
-  svm_predict_probability(model, nodes, probabilityEstimates);
-  const double predictionValue = probabilityEstimates[0];
+  void* predictor = cookieData->predictor;
+  const float predictedValue = jpcnn_predict(predictor, predictions, predictionsLength);
   const char* outputDirectory = cookieData->outputDirectory;
   const size_t outputDirectoryNameLength = strlen(outputDirectory);
   // Ack, fixed-length strings ahead. We're creating this one based on a fixed
@@ -422,7 +415,7 @@ void prediction_callback(void* cookie, float* predictions, int predictionsLength
   }
   const size_t outnameMaxLength = 128;
   char outname[outnameMaxLength];
-  snprintf(outname, outnameMaxLength, "%1.8f%s", predictionValue, suffix);
+  snprintf(outname, outnameMaxLength, "%1.8f%s", predictedValue, suffix);
 
   const size_t outnameLength = strlen(outname);
   const size_t outPathLength = outputDirectoryNameLength + 1 + outnameLength;
@@ -477,10 +470,10 @@ int main(int argc, const char * argv[]) {
     } break;
 
     case eLibSvmTrain: {
-      SLibSvmTrainingInfo* trainingInfo = create_training_info();
+      void* trainer = jpcnn_create_trainer();
       STrainingCookie cookieData;
       void* cookie = (void*)(&cookieData);
-      cookieData.trainingInfo = trainingInfo;
+      cookieData.trainer = trainer;
 
       cookieData.label = 1.0f;
       classify_images_in_directory(network, argValues.positiveDirectory, &argValues, &training_callback, cookie);
@@ -488,33 +481,25 @@ int main(int argc, const char * argv[]) {
       cookieData.label = 0.0f;
       classify_images_in_directory(network, argValues.negativeDirectory, &argValues, &training_callback, cookie);
 
-      SLibSvmProblem* problem = create_svm_problem_from_training_info(trainingInfo);
-      fprintf(stderr, "featuresPerItem=%d\n", trainingInfo->featuresPerItem);
-      const char* parameterCheckError = svm_check_parameter(problem->svmProblem, problem->svmParameters);
-      if (parameterCheckError != NULL) {
-        fprintf(stderr, "libsvm parameter check error: %s\n", parameterCheckError);
+      void* predictor = jpcnn_create_predictor_from_trainer(trainer);
+      const int saveResult = jpcnn_save_predictor(argValues.modelFilename, predictor);
+      if (!saveResult) {
+        fprintf(stderr, "Couldn't save predictor file to '%s'\n", argValues.modelFilename);
         print_usage_and_exit(argc, argv);
       }
-      struct svm_model* model = svm_train(problem->svmProblem, problem->svmParameters);
-      const int saveResult = svm_save_model(argValues.modelFilename, model);
-      if (saveResult != 0) {
-        fprintf(stderr, "Couldn't save libsvm model file to '%s'\n", argValues.modelFilename);
-        print_usage_and_exit(argc, argv);
-      }
-      svm_free_and_destroy_model(&model);
-      destroy_svm_problem(problem);
-      destroy_training_info(trainingInfo);
+      jpcnn_destroy_trainer(trainer);
+      jpcnn_destroy_predictor(predictor);
     } break;
 
     case eLibSvmTest: {
-      struct svm_model* model = svm_load_model(argValues.modelFilename);
-      if (model == NULL) {
-        fprintf(stderr, "Couldn't load libsvm model file from '%s'\n", argValues.modelFilename);
+      void* predictor = jpcnn_load_predictor(argValues.modelFilename);
+      if (predictor == NULL) {
+        fprintf(stderr, "Couldn't load predictor file from '%s'\n", argValues.modelFilename);
         print_usage_and_exit(argc, argv);
       }
       STestingCookie cookieData;
       void* cookie = (void*)(&cookieData);
-      cookieData.model = model;
+      cookieData.predictor = predictor;
       cookieData.threshold = argValues.threshold;
       cookieData.truePositiveCount = 0;
       cookieData.falsePositiveCount = 0;
@@ -540,19 +525,21 @@ int main(int argc, const char * argv[]) {
       fprintf(stderr, "False positives = %.2f%% (%d/%d)\n", ((falsePositives * 100.0f) / negativesTotal), falsePositives, negativesTotal);
       fprintf(stderr, "False negatives = %.2f%% (%d/%d)\n", ((falseNegatives * 100.0f) / positivesTotal), falseNegatives, positivesTotal);
 
+      jpcnn_destroy_predictor(predictor);
     } break;
 
     case eLibSvmPredict: {
-      struct svm_model* model = svm_load_model(argValues.modelFilename);
-      if (model == NULL) {
-        fprintf(stderr, "Couldn't load libsvm model file from '%s'\n", argValues.modelFilename);
+      void* predictor = jpcnn_load_predictor(argValues.modelFilename);
+      if (predictor == NULL) {
+        fprintf(stderr, "Couldn't load predictor file from '%s'\n", argValues.modelFilename);
         print_usage_and_exit(argc, argv);
       }
       SPredictionCookie cookieData;
       void* cookie = (void*)(&cookieData);
       cookieData.outputDirectory = argValues.outputDirectory;
-      cookieData.model = model;
+      cookieData.predictor = predictor;
       classify_images_in_directory(network, argValues.inputDirectory, &argValues, prediction_callback, cookie);
+      jpcnn_destroy_predictor(predictor);
     } break;
 
     default: {

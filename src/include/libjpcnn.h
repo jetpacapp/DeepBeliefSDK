@@ -20,6 +20,15 @@ void* jpcnn_create_image_buffer_from_uint8_data(unsigned char* pixelData, int wi
 void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSample, int layerOffset, float** outPredictionsValues, int* outPredictionsLength, char*** outPredictionsNames, int* outPredictionsNamesLength);
 void jpcnn_print_network(void* networkHandle);
 
+void* jpcnn_create_trainer();
+void jpcnn_destroy_trainer(void* trainerHandle);
+void jpcnn_train(void* trainerHandle, float expectedLabel, float* predictions, int predictionsLength);
+void* jpcnn_create_predictor_from_trainer(void* trainerHandle);
+void jpcnn_destroy_predictor(void* predictorHandle);
+int jpcnn_save_predictor(const char* filename, void* predictorHandle);
+void* jpcnn_load_predictor(const char* filename);
+float jpcnn_predict(void* predictorHandle, float* predictions, int predictionsLength);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
