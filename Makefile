@@ -3,7 +3,7 @@ CXX=g++
 RM=rm -f
 CPPFLAGS=
 
-LIBCPPFLAGS=-O3 -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./src/lib/third_party -I ./src/lib/utility -I ./src/lib -I ./src/include
+LIBCPPFLAGS=-O3 -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./src/lib/third_party -I ./src/lib/utility -I ./src/lib/svm -I ./src/lib -I ./src/include
 LIBLDFLAG=
 LIBLDLIBS=
 
