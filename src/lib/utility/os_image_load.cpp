@@ -43,6 +43,7 @@ unsigned char* os_image_load_from_file(const char* filename, int* outWidth, int*
     image = CGImageCreateWithJPEGDataProvider(imageProvider, NULL, true, kCGRenderingIntentDefault);
   } else {
     munmap(fileData, bytesInFile);
+    close(fileHandle);
     CFRelease(imageProvider);
     CFRelease(fileDataRef);
     fprintf(stderr, "Unknown suffix for file '%s'\n", filename);
@@ -66,6 +67,7 @@ unsigned char* os_image_load_from_file(const char* filename, int* outWidth, int*
   CFRelease(image);
 
   munmap(fileData, bytesInFile);
+  close(fileHandle);
   CFRelease(imageProvider);
   CFRelease(fileDataRef);
 
