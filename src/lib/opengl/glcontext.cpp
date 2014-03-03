@@ -151,14 +151,25 @@ void GLContext::runProgram() {
   CHECK_GL_ERROR();
 }
 
-void GLContext::copyOutputToHost() {
-  Buffer* hostBuffer = _output->_hostBuffer;
+void GLContext::copyOutputToHost(Buffer* hostBuffer) {
   const Dimensions& outputDims = hostBuffer->_dims;
+  assert(hostBuffer->_dims == outputDims);
   const int width = outputDims[1];
   const int height = outputDims[0];
+  const int channels = outputDims[2];
 //  jpfloat_t* outputData = hostBuffer->_data;
-  jpfloat_t* outputData = (jpfloat_t*)(malloc(width * height * sizeof(jpfloat_t)));
-  glReadPixels(0, 0, width, height, GL_RED, GL_FLOAT, outputData);
-  memcpy(hostBuffer->_data, outputData, (width * height * sizeof(jpfloat_t)));
+  jpfloat_t* outputData = (jpfloat_t*)(malloc(width * height * channels * sizeof(jpfloat_t)));
+  GLint channelFormat;
+  if (channels == 1) {
+    channelFormat = GL_RED;
+  } else if (channels == 3) {
+    channelFormat = GL_RGB;
+  } else if (channels == 4) {
+    channelFormat = GL_RGBA;
+  } else {
+    assert(false); // Bad number of channels
+  }
+  glReadPixels(0, 0, width, height, channelFormat, GL_FLOAT, outputData);
+  memcpy(hostBuffer->_data, outputData, (width * height * channels * sizeof(jpfloat_t)));
   CHECK_GL_ERROR();
 }

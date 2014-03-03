@@ -23,6 +23,7 @@
 
 class GLProgram;
 class GLBuffer;
+class Buffer;
 
 class GLContext {
 public:
@@ -33,7 +34,7 @@ public:
   void setInputBuffer(GLBuffer* buffer, int index);
   void setOutputBuffer(GLBuffer* buffer);
   void runProgram();
-  void copyOutputToHost();
+  void copyOutputToHost(Buffer* hostBuffer);
 
   GLProgram* _program;
   GLBuffer** _inputs;

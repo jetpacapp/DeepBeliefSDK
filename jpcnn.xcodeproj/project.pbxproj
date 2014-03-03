@@ -82,6 +82,8 @@
 		59602FDC18C3C3A600D6EEE2 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
 		59602FDD18C3C90F00D6EEE2 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
 		59602FDE18C3C91C00D6EEE2 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
+		59602FE018C51B9E00D6EEE2 /* offset.h in Headers */ = {isa = PBXBuildFile; fileRef = 59602FDF18C51B9E00D6EEE2 /* offset.h */; };
+		59602FE218C51BA700D6EEE2 /* dimensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 59602FE118C51BA700D6EEE2 /* dimensions.h */; };
 		5962AD9D188A09F2009E64DD /* liblibjpcnn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */; };
 		5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
 		598241B8188DE166003F2C0A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241B6188DE0FB003F2C0A /* main.cpp */; };
@@ -210,6 +212,8 @@
 		59602FAC18C158C100D6EEE2 /* glgemm_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = glgemm_test; sourceTree = BUILT_PRODUCTS_DIR; };
 		59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cstring_helpers.cpp; sourceTree = "<group>"; };
 		59602FDB18C3C3A600D6EEE2 /* cstring_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cstring_helpers.h; sourceTree = "<group>"; };
+		59602FDF18C51B9E00D6EEE2 /* offset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = offset.h; sourceTree = "<group>"; };
+		59602FE118C51BA700D6EEE2 /* dimensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dimensions.h; sourceTree = "<group>"; };
 		5962AD80188A0987009E64DD /* liblibjpcnn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibjpcnn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		598241B6188DE0FB003F2C0A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		598241BB188DE27D003F2C0A /* basenode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = basenode.cpp; sourceTree = "<group>"; };
@@ -218,7 +222,6 @@
 		598241BF188DE27D003F2C0A /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
 		598241C1188DE27D003F2C0A /* convnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = convnode.cpp; sourceTree = "<group>"; };
 		598241C2188DE27D003F2C0A /* convnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convnode.h; sourceTree = "<group>"; };
-		598241C4188DE27D003F2C0A /* dimensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dimensions.h; sourceTree = "<group>"; };
 		598241C5188DE27D003F2C0A /* dropoutnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dropoutnode.cpp; sourceTree = "<group>"; };
 		598241C6188DE27D003F2C0A /* dropoutnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dropoutnode.h; sourceTree = "<group>"; };
 		598241C8188DE27D003F2C0A /* flatnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flatnode.cpp; sourceTree = "<group>"; };
@@ -448,7 +451,6 @@
 				598241BF188DE27D003F2C0A /* buffer.h */,
 				598241C1188DE27D003F2C0A /* convnode.cpp */,
 				598241C2188DE27D003F2C0A /* convnode.h */,
-				598241C4188DE27D003F2C0A /* dimensions.h */,
 				598241C5188DE27D003F2C0A /* dropoutnode.cpp */,
 				598241C6188DE27D003F2C0A /* dropoutnode.h */,
 				598241C8188DE27D003F2C0A /* flatnode.cpp */,
@@ -478,6 +480,7 @@
 		598241E8188DE27D003F2C0A /* math */ = {
 			isa = PBXGroup;
 			children = (
+				59602FE118C51BA700D6EEE2 /* dimensions.h */,
 				598241E9188DE27D003F2C0A /* matrix_add.cpp */,
 				598241EB188DE27D003F2C0A /* matrix_channels.cpp */,
 				598241ED188DE27D003F2C0A /* matrix_correlate.cpp */,
@@ -489,6 +492,7 @@
 				598241F7188DE27D003F2C0A /* matrix_ops.h */,
 				591A037618B4559A0014C655 /* matrix_scale.cpp */,
 				598241F8188DE27D003F2C0A /* matrix_softmax.cpp */,
+				59602FDF18C51B9E00D6EEE2 /* offset.h */,
 			);
 			path = math;
 			sourceTree = "<group>";
@@ -565,6 +569,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59602FE018C51B9E00D6EEE2 /* offset.h in Headers */,
+				59602FE218C51BA700D6EEE2 /* dimensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,6 +18,8 @@
 #include <mkl_cblas.h>
 #endif // USE_MKL_GEMM
 
+//#define USE_NAIVE
+
 #include "glgemm.h"
 
 static void naive_cblas_sgemm(
@@ -64,15 +66,15 @@ void matrix_gemm(
     ldc);
 #endif // DO_LOG_OPERATIONS
 
+#ifdef USE_NAIVE
   CBLAS_ORDER order = CblasColMajor;
   CBLAS_TRANSPOSE transposeA = CblasNoTrans;
   CBLAS_TRANSPOSE transposeB = CblasNoTrans;
 
-//  naive_cblas_sgemm(
-  gl_gemm(
-//    order,
-//    transposeA,
-//    transposeB,
+  naive_cblas_sgemm(
+    order,
+    transposeA,
+    transposeB,
     m,
     n,
     k,
@@ -85,6 +87,21 @@ void matrix_gemm(
     c,
     ldc
   );
+#else
+  gl_gemm(
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc
+  );
+#endif // USE_NAIVE
 
 }
 

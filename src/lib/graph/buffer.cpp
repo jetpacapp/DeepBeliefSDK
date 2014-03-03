@@ -21,9 +21,9 @@
 #include "stb_image.h"
 #endif // USE_OS_IMAGE
 #include "binary_format.h"
+#include "cstring_helpers.h"
 
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
-static bool string_ends_with(const char* string, const char* suffix);
 
 Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(NULL)
 {
@@ -722,15 +722,34 @@ Buffer* convert_to_channeled_rgb_image(Buffer* input) {
   return result;
 }
 
-bool string_ends_with(const char* string, const char* suffix) {
-  if (!string || !suffix) {
-    return false;
+Buffer* extract_subregion(Buffer* input, const Offset& origin, const Dimensions& size) {
+  const Dimensions& inputDims = input->_dims;
+  assert(origin._length == size._length);
+  assert(origin._length == 3); // We only handle this case right now
+  assert(origin[2] == 0);
+  assert(size[2] == inputDims[2]);
+
+  const int inputWidth = inputDims[1];
+  const int inputChannels = inputDims[2];
+
+  const int regionWidth = size[1];
+  const int regionChannels = size[2];
+
+  Buffer* output = new Buffer(size);
+
+  const size_t elementsPerInputRow = (inputWidth * inputChannels);
+  const size_t elementsPerRegionRow = (regionWidth * regionChannels);
+  const size_t bytesPerRegionRow = (elementsPerRegionRow * sizeof(jpfloat_t));
+
+  const size_t inputOffset = inputDims.offset(origin[0], origin[1], origin[2]);
+  const jpfloat_t* inputData = (input->_data + inputOffset);
+  jpfloat_t* regionData = output->_data;
+  jpfloat_t* const regionEnd = (output->_data + size.elementCount());
+  while (regionData < regionEnd) {
+    memcpy(regionData, inputData, bytesPerRegionRow);
+    inputData += elementsPerInputRow;
+    regionData += elementsPerRegionRow;
   }
-  size_t stringLength = strlen(string);
-  size_t suffixLength = strlen(suffix);
-  if (suffixLength >  stringLength) {
-    return false;
-  }
-  const char* stringSuffixStart = (string + (stringLength - suffixLength));
-  return (strncmp(stringSuffixStart, suffix, suffixLength) == 0);
+
+  return output;
 }

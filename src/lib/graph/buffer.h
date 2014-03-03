@@ -12,6 +12,7 @@
 #include "jpcnn.h"
 #include "dimensions.h"
 #include "binary_format.h"
+#include "offset.h"
 
 class Buffer
 {
@@ -58,5 +59,6 @@ extern bool buffer_are_all_close(Buffer* a, Buffer* b, jpfloat_t tolerance=0.000
 extern Buffer* buffer_view_at_top_index(Buffer* input, int index);
 extern Buffer* convert_from_channeled_rgb_image(Buffer* input);
 extern Buffer* convert_to_channeled_rgb_image(Buffer* input);
+extern Buffer* extract_subregion(Buffer* input, const Offset& origin, const Dimensions& size);
 
 #endif // INCLUDE_BUFFER_H

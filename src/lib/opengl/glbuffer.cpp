@@ -21,7 +21,7 @@ GLBuffer::GLBuffer(GLContext* context, const Dimensions& dims) {
   const int channels = dims[2];
   assert((channels == 1) || (channels == 3) || (channels == 4));
   _context = context;
-  _hostBuffer = new Buffer(dims);
+  _hostBuffer = new Buffer(dims, NULL);
   copyHostBufferToGPU();
 }
 

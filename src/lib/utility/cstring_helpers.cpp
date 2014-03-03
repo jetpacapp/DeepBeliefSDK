@@ -20,3 +20,16 @@ char* malloc_and_copy_string(const char* input) {
   strncpy(result, input, inputByteCount);
   return result;
 }
+
+bool string_ends_with(const char* string, const char* suffix) {
+  if (!string || !suffix) {
+    return false;
+  }
+  size_t stringLength = strlen(string);
+  size_t suffixLength = strlen(suffix);
+  if (suffixLength >  stringLength) {
+    return false;
+  }
+  const char* stringSuffixStart = (string + (stringLength - suffixLength));
+  return (strncmp(stringSuffixStart, suffix, suffixLength) == 0);
+}
