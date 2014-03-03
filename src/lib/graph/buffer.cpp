@@ -29,7 +29,7 @@ Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(
 {
   const int elementCount = _dims.elementCount();
   const size_t byteCount = (elementCount * sizeof(jpfloat_t));
-  _data = (jpfloat_t*)(malloc(byteCount));
+  _data = (jpfloat_t*)(malloc(byteCount * 1));
   _doesOwnData = true;
   setName("None");
 }
@@ -311,6 +311,19 @@ void Buffer::convertFromChannelMajor(const Dimensions& expectedDims) {
 
   _data = newData;
   _doesOwnData = true;
+}
+
+void Buffer::populateWithRandomValues(jpfloat_t min, jpfloat_t max) {
+  const int elementCount = _dims.elementCount();
+  jpfloat_t* dataStart = _data;
+  jpfloat_t* dataEnd = (_data + elementCount);
+  jpfloat_t* data = dataStart;
+  while (data < dataEnd) {
+    // rand() is awful, but as long as we're using this for debugging
+    // it should be good enough, and avoids dependencies.
+    *data = (((max - min) * ((float)rand() / RAND_MAX)) + min);
+    data += 1;
+  }
 }
 
 Buffer* buffer_from_image_file(const char* filename)

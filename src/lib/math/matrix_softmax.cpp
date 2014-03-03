@@ -16,6 +16,10 @@
 
 Buffer* matrix_softmax(Buffer* input) {
 
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_softmax(input=[%s])\n", input->debugString());
+#endif // DO_LOG_OPERATIONS
+
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, # of values)
   assert(inputDims._length == 2);
@@ -63,6 +67,11 @@ Buffer* matrix_softmax(Buffer* input) {
       outputData += 1;
     }
   }
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_soft_max() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
 
   return output;
 }

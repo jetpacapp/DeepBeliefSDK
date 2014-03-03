@@ -14,6 +14,12 @@
 #include "buffer.h"
 
 Buffer* matrix_extract_channels(Buffer* input, int startChannel, int endChannel) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_extract_channels(input=[%s], startChannel=%d, endChannel=%d)\n",
+    input->debugString(),
+    startChannel,
+    endChannel);
+#endif // DO_LOG_OPERATIONS
 
   const Dimensions inputDims = input->_dims;
   const int inputChannels = inputDims._dims[inputDims._length - 1];
@@ -39,10 +45,30 @@ Buffer* matrix_extract_channels(Buffer* input, int startChannel, int endChannel)
     outputData += outputChannels;
   }
 
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_extract_channels() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
+
   return output;
 }
 
 Buffer* matrix_join_channels(Buffer** inputs, int inputsCount) {
+#ifdef DO_LOG_OPERATIONS
+  char inputsDebugString[MAX_DEBUG_STRING_LEN] = "";
+  for (int index = 0; index < inputsCount; index += 1) {
+    const char* separator;
+    if (index == (inputsCount - 1)) {
+      separator = "";
+    } else {
+      separator = ", ";
+    }
+    snprintf(inputsDebugString, MAX_DEBUG_STRING_LEN, "%s(%s)%s",
+      inputsDebugString, separator, inputs[index]->debugString());
+  }
+  fprintf(stderr, "matrix_join_channels(inputs=[%s], inputsCount=%d)\n",
+    inputsDebugString, inputsCount);
+#endif // DO_LOG_OPERATIONS
 
   Buffer* firstInput = inputs[0];
   const Dimensions inputDims = firstInput->_dims;
@@ -73,6 +99,11 @@ Buffer* matrix_join_channels(Buffer** inputs, int inputsCount) {
   }
 
   free(inputDatas);
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_join_channels() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
 
   return output;
 }

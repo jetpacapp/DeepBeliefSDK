@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>glgemm_test.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>jpcnn.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -33,6 +38,11 @@
 			<true/>
 		</dict>
 		<key>594BBAA41886FE8A007F9A2A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>59602FAB18C158C100D6EEE2</key>
 		<dict>
 			<key>primary</key>
 			<true/>

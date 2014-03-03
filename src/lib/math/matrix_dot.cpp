@@ -12,17 +12,12 @@
 
 #include "buffer.h"
 
-#ifdef USE_ACCELERATE_GEMM
-#include <Accelerate/Accelerate.h>
-#define USE_GEMM
-#endif
-
-#ifdef USE_MKL_GEMM
-#include <mkl_cblas.h>
-#define USE_GEMM
-#endif // USE_MKL_GEMM
-
 Buffer* matrix_dot(Buffer* input, Buffer* weights) {
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_dot(input=[%s], weights=[%s])\n",
+    input->debugString(), weights->debugString());
+#endif // DO_LOG_OPERATIONS
 
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, # of values)
@@ -42,9 +37,6 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
 
 #ifdef USE_GEMM
 
-  CBLAS_ORDER order = CblasColMajor;
-  CBLAS_TRANSPOSE transposeA = CblasNoTrans;
-  CBLAS_TRANSPOSE transposeB = CblasNoTrans;
   const int m = outputChannels;
   const int n = input->_dims[0];
   const int k = input->_dims[1];
@@ -54,10 +46,7 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
 
-  cblas_sgemm(
-    order,
-    transposeA,
-    transposeB,
+  matrix_gemm(
     m,
     n,
     k,
@@ -98,6 +87,11 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
     }
   }
 #endif // USE_GEMM
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_dot() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
 
   return output;
 }

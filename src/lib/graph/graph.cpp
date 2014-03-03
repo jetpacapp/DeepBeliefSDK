@@ -60,6 +60,10 @@ Graph::~Graph() {
 
 Buffer* Graph::run(Buffer* input, int layerOffset) {
 
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "Graph::run() input=%s\n", input->debugString());
+#endif // DO_LOG_OPERATIONS
+
   Buffer* currentInput = input;
   const int howManyLayers = (_layersLength + layerOffset);
   for (int index = 0; index < howManyLayers; index += 1) {
@@ -83,10 +87,14 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       fprintf(stderr, "!!!!!Inputs match for %s\n", layer->_name);
     }
 #endif // CHECK_RESULTS
-    //currentInput->printContents();
+
     Buffer* currentOutput = layer->run(currentInput);
     currentOutput->setName(layer->_name);
-    //currentOutput->printContents();
+
+#ifdef DO_LOG_OPERATIONS
+    fprintf(stderr, "Graph::run() currentOutput=%s\n", currentOutput->debugString());
+#endif // DO_LOG_OPERATIONS
+
 #ifdef CHECK_RESULTS
     char expectedOutputFilename[FN_LEN];
     snprintf(expectedOutputFilename, FN_LEN,

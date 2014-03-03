@@ -27,4 +27,17 @@ Buffer* matrix_max_patch(Buffer* input, int patchWidth, int stride);
 void matrix_scale_inplace(Buffer* output, jpfloat_t scale);
 Buffer* matrix_softmax(Buffer* input);
 
+void matrix_gemm(
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  jpfloat_t *a,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc);
+
 #endif // INCLUDE_MATRIX_OPS_H

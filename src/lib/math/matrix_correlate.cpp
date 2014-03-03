@@ -15,21 +15,16 @@
 #include "buffer.h"
 #include "dimensions.h"
 
-#ifdef USE_ACCELERATE_GEMM
-#include <Accelerate/Accelerate.h>
-#define USE_GEMM
-#endif
-
-#ifdef USE_MKL_GEMM
-#include <mkl_cblas.h>
-#define USE_GEMM
-#endif // USE_MKL_GEMM
-
 #ifdef USE_GEMM
 
 static Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride);
 
 Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "patches_into_rows(input=[%s], kernelWidth=%d, stride=%d)\n",
+    input->debugString(), kernelWidth, stride);
+#endif // DO_LOG_OPERATIONS
+
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
@@ -102,10 +97,20 @@ Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
     }
   }
 
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "patches_into_rows() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
+
   return output;
 }
 
 Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_correlate[GEMM](input=[%s], kernels=[%s], kernelWidth=%d, kernelCount=%d, stride=%d)\n",
+    input->debugString(), kernels->debugString(), kernelWidth, kernelCount, stride);
+#endif // DO_LOG_OPERATIONS
+
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
@@ -128,9 +133,6 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
 
   Buffer* patches = patches_into_rows(input, kernelWidth, stride);
 
-  CBLAS_ORDER order = CblasColMajor;
-  CBLAS_TRANSPOSE transposeA = CblasNoTrans;
-  CBLAS_TRANSPOSE transposeB = CblasNoTrans;
   const int m = kernelCount;
   const int n = (patches->_dims[1] * patches->_dims[0]);
   const int k = patches->_dims[2];
@@ -140,10 +142,7 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
 
-  cblas_sgemm(
-    order,
-    transposeA,
-    transposeB,
+  matrix_gemm(
     m,
     n,
     k,
@@ -159,12 +158,21 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
 
   delete patches;
 
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_correlate[GEMM]() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
+
   return output;
 }
 
 #else // Use the naive algorithm
 
 Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_correlate(input=[%s], kernels=[%s], kernelWidth=%d, kernelCount=%d, stride=%d)\n",
+    input->debugString(), kernels->debugString(), kernelWidth, kernelCount, stride);
+#endif // DO_LOG_OPERATIONS
 
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, height, width, # of channels)
@@ -225,6 +233,11 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
       }
     }
   }
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_correlate() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
 
   return output;
 }

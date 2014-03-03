@@ -42,7 +42,6 @@ PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip,
     crop_and_flip_image(_dataMean, dataMean, marginX, marginY, false);
   }
   _dataMean->setName("_dataMean");
-  //_dataMean->printContents();
   setClassName("PrepareInput");
 }
 
@@ -59,15 +58,8 @@ Buffer* PrepareInput::run(Buffer* input) {
 
   Buffer* rescaled = new Buffer(rescaledDims);
   rescaled->setName("rescaled");
-
   input->setName("input");
-  //input->printContents();
-
   rescale_image_to_fit(input, rescaled, _needsFlip);
-
-  rescaled->setName("rescaled");
-  //rescaled->printContents();
-  rescaled->saveDebugImage();
 
   const int deltaX = (_rescaledSize - _imageSize);
   const int deltaY = (_rescaledSize - _imageSize);
@@ -86,11 +78,7 @@ Buffer* PrepareInput::run(Buffer* input) {
     Buffer* blitDestination = buffer_view_at_top_index(_output, 0);
     crop_and_flip_image(blitDestination, rescaled, sourceX, sourceY, false);
 
-    blitDestination->setName("premean data");
-    //blitDestination->printContents();
     matrix_add_inplace(blitDestination, _dataMean, -1.0f);
-    blitDestination->setName("postmean data");
-    //blitDestination->printContents();
 
   } else {
 

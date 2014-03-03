@@ -21,6 +21,11 @@
 #include "buffer.h"
 
 Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloat_t alpha, jpfloat_t beta) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_local_response(input=[%s], windowSize=%d, k=%f, alpha=%f, beta=%f)\n",
+    input->debugString(), windowSize, k, alpha, beta);
+#endif // DO_LOG_OPERATIONS
+
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
@@ -91,6 +96,11 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
   }
 
   delete magnitude;
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_local_response() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
 
   return output;
 }

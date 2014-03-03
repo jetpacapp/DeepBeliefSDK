@@ -13,6 +13,12 @@
 #include "buffer.h"
 
 void matrix_add_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_add_inplace(output=[%s], input=[%s], inputScale=[%f])\n",
+    output->debugString(),
+    input->debugString(),
+    inputScale);
+#endif // DO_LOG_OPERATIONS
   assert((output->_dims.elementCount() % input->_dims.elementCount()) == 0);
   jpfloat_t* const outputDataStart = output->_data;
   jpfloat_t* const outputDataEnd = (outputDataStart + output->_dims.elementCount());

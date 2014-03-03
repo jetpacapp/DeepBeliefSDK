@@ -21,4 +21,10 @@
 
 typedef float jpfloat_t;
 
+// Define this if you want details of the operations being
+// being performed printed to stderr
+#define DO_LOG_OPERATIONS
+
+#define USE_GEMM
+
 #endif // INCLUDE_JPCNN_H

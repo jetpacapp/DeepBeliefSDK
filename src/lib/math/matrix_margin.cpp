@@ -17,6 +17,11 @@
 
 Buffer* matrix_insert_margin(Buffer* input, int marginWidth, int marginHeight) {
 
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_insert_margin(input=[%s], marginWidth=%d, marginHeight=%d)\n",
+    input->debugString(), marginWidth, marginHeight);
+#endif // DO_LOG_OPERATIONS
+
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
@@ -59,6 +64,11 @@ Buffer* matrix_insert_margin(Buffer* input, int marginWidth, int marginHeight) {
       }
     }
   }
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_insert_margin() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
 
   return output;
 }

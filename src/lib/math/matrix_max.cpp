@@ -15,6 +15,11 @@
 #include "buffer.h"
 
 Buffer* matrix_max(Buffer* input, jpfloat_t maxValue) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_max(input=[%s], maxValue=%f)\n",
+    input->debugString(), maxValue);
+#endif // DO_LOG_OPERATIONS
+
   const Dimensions inputDims = input->_dims;
   Buffer* output = new Buffer(inputDims);
 
@@ -30,10 +35,20 @@ Buffer* matrix_max(Buffer* input, jpfloat_t maxValue) {
     inputData += 1;
   }
 
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_max() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
+
   return output;
 }
 
 Buffer* matrix_max_patch(Buffer* input, int patchWidth, int stride) {
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_max_patch(input=[%s], patchWidth=%d, stride=%d)\n",
+    input->debugString(), patchWidth, stride);
+#endif // DO_LOG_OPERATIONS
+
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, height, width, # of channels)
   assert(inputDims._length == 4);
@@ -71,6 +86,11 @@ Buffer* matrix_max_patch(Buffer* input, int patchWidth, int stride) {
       }
     }
   }
+
+#ifdef DO_LOG_OPERATIONS
+  fprintf(stderr, "matrix_max_patch() result=[%s]\n",
+    output->debugString());
+#endif // DO_LOG_OPERATIONS
 
   return output;
 }

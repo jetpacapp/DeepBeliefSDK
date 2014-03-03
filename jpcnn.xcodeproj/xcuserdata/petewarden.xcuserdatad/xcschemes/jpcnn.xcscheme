@@ -45,7 +45,7 @@
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
       customWorkingDirectory = "/Users/petewarden/projects/jpcnn"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
@@ -93,15 +93,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode test"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--positive /Users/petewarden/vagrant/jetpacdata/image_analysis/turked_dogs/dogs_testing"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--negative /Users/petewarden/vagrant/jetpacdata/image_analysis/turked_dogs/nodogs_testing"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode predict"
@@ -121,11 +121,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--layer 2"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--mode single"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
@@ -133,7 +133,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/dog.raw"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--debug"
