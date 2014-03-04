@@ -84,6 +84,8 @@
 		59602FDE18C3C91C00D6EEE2 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
 		59602FE018C51B9E00D6EEE2 /* offset.h in Headers */ = {isa = PBXBuildFile; fileRef = 59602FDF18C51B9E00D6EEE2 /* offset.h */; };
 		59602FE218C51BA700D6EEE2 /* dimensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 59602FE118C51BA700D6EEE2 /* dimensions.h */; };
+		59602FE618C52ECA00D6EEE2 /* jpcnn.js in Sources */ = {isa = PBXBuildFile; fileRef = 59602FE418C52ECA00D6EEE2 /* jpcnn.js */; };
+		59602FE718C52ECA00D6EEE2 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 59602FE518C52ECA00D6EEE2 /* test.html */; };
 		5962AD9D188A09F2009E64DD /* liblibjpcnn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */; };
 		5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
 		598241B8188DE166003F2C0A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241B6188DE0FB003F2C0A /* main.cpp */; };
@@ -214,6 +216,8 @@
 		59602FDB18C3C3A600D6EEE2 /* cstring_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cstring_helpers.h; sourceTree = "<group>"; };
 		59602FDF18C51B9E00D6EEE2 /* offset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = offset.h; sourceTree = "<group>"; };
 		59602FE118C51BA700D6EEE2 /* dimensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dimensions.h; sourceTree = "<group>"; };
+		59602FE418C52ECA00D6EEE2 /* jpcnn.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jpcnn.js; sourceTree = "<group>"; };
+		59602FE518C52ECA00D6EEE2 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
 		5962AD80188A0987009E64DD /* liblibjpcnn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibjpcnn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		598241B6188DE0FB003F2C0A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		598241BB188DE27D003F2C0A /* basenode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = basenode.cpp; sourceTree = "<group>"; };
@@ -419,6 +423,15 @@
 			path = opengl;
 			sourceTree = "<group>";
 		};
+		59602FE318C52ECA00D6EEE2 /* js */ = {
+			isa = PBXGroup;
+			children = (
+				59602FE418C52ECA00D6EEE2 /* jpcnn.js */,
+				59602FE518C52ECA00D6EEE2 /* test.html */,
+			);
+			path = js;
+			sourceTree = "<group>";
+		};
 		598241B5188DE0FB003F2C0A /* tool */ = {
 			isa = PBXGroup;
 			children = (
@@ -556,6 +569,7 @@
 			isa = PBXGroup;
 			children = (
 				59824236188DE285003F2C0A /* include */,
+				59602FE318C52ECA00D6EEE2 /* js */,
 				598241B9188DE27D003F2C0A /* lib */,
 				598241B5188DE0FB003F2C0A /* tool */,
 			);
@@ -682,6 +696,7 @@
 			files = (
 				594BBAFD18871401007F9A2A /* MainStoryboard_iPad.storyboard in Resources */,
 				594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */,
+				59602FE718C52ECA00D6EEE2 /* test.html in Resources */,
 				594BBAFE18871401007F9A2A /* MainStoryboard_iPhone.storyboard in Resources */,
 				594BBB0318871401007F9A2A /* squarePNG.png in Resources */,
 				594BBAEB1887024B007F9A2A /* lena.png in Resources */,
@@ -695,6 +710,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59602FE618C52ECA00D6EEE2 /* jpcnn.js in Sources */,
 				59824204188DE27D003F2C0A /* basenode.cpp in Sources */,
 				5982422F188DE27D003F2C0A /* matrix_softmax.cpp in Sources */,
 				59824220188DE27D003F2C0A /* libjpcnn.cpp in Sources */,

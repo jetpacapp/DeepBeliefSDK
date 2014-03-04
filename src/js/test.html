@@ -1,0 +1,130 @@
+<html>
+  <head>
+    <title>Jetpac Deep Belief Demo</title>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="jpcnn.js"></script>
+  </head>
+  <body>
+    <h2>HTML5 Photo Booth</h2>
+
+    <p><a href="#" onclick="testDogImage()">Take a picture!</a></p>
+    <div id="filmroll"></div>
+
+    <video style="visibility: hidden;" id="live" autoplay></video>
+    <canvas id="snapshot" style="display:none"></canvas>
+
+    <script type="text/javascript">
+      var video = document.getElementById("live");
+
+      var network = new Network('data/example_networks/homebrewed.ntwk');
+
+//      navigator.webkitGetUserMedia({video: true},
+//          function(stream) {
+//            video.src = window.webkitURL.createObjectURL(stream)
+//          },
+//          function(err) {
+//            console.log("Unable to get video stream!")
+//          }
+//      );
+
+testDogImage();
+
+      function testDogImage() {
+        dogImage = document.createElement('img');
+        dogImage.onload = function() {
+          classifyImage(dogImage, dogImage.width, dogImage.height);
+        };
+        dogImage.src = 'data/dog.jpg';
+      }
+
+      function classifyImage(image, width, height) {
+
+        var destSize = 256;
+
+        var canvasElement = document.createElement("canvas");
+        canvasElement.width = destSize;
+        canvasElement.height = destSize;
+
+        var sourceX;
+        var sourceY;
+        var sourceSize;
+        if (width > height) {
+          sourceSize = height;
+          sourceX = ((width - height) / 2);
+          sourceY = 0;
+        } else {
+          sourceSize = width;
+          sourceX = 0;
+          sourceY = ((height - width) / 2);
+        }
+
+        var canvas = canvasElement.getContext("2d");
+        canvas.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, destSize, destSize);
+
+        var imageData = canvas.getImageData(0, 0, destSize, destSize);
+
+        var inputBuffer = new Buffer([destSize, destSize, 3]);
+        for (var y = 0; y < destSize; y += 1) {
+          for (var x = 0; x < destSize; x += 1) {
+            var imageOffset = (y * destSize * 4) + (x * 4);
+            var bufferOffset = (y * destSize * 3) + (x * 3);
+            inputBuffer._data[bufferOffset + 0] = imageData.data[imageOffset + 0];
+            inputBuffer._data[bufferOffset + 1] = imageData.data[imageOffset + 1];
+            inputBuffer._data[bufferOffset + 2] = imageData.data[imageOffset + 2];
+          }
+        }
+        inputBuffer.setName('inputBuffer');
+        console.log(inputBuffer);
+
+        var results = network.classifyImage(inputBuffer, false, 0);
+
+        _.each(results, function(prediction) {
+          if (prediction.value > 0.01) {
+            console.log(prediction);
+          }
+        });
+
+      }
+
+      function snap() {
+        var live = document.getElementById("live");
+        var snapshot = document.getElementById("snapshot");
+        var filmroll = document.getElementById("filmroll");
+
+        var sourceWidth = live.clientWidth;
+        var sourceHeight = live.clientHeight;
+
+        var destSize = 256;
+
+        snapshot.width = destSize;
+        snapshot.height = destSize;
+
+        var sourceX;
+        var sourceY;
+        var sourceSize;
+        if (sourceWidth > sourceHeight) {
+          sourceSize = sourceHeight;
+          sourceX = ((sourceWidth - sourceHeight) / 2);
+          sourceY = 0;
+        } else {
+          sourceSize = sourceWidth;
+          sourceX = 0;
+          sourceY = ((sourceHeight - sourceWidth) / 2);
+        }
+        // Draw a frame of the live video onto the canvas
+        var canvas = snapshot.getContext("2d");
+        canvas.drawImage(live, sourceX, sourceY, sourceSize, sourceSize, destSize, destSize);
+
+        // Create an image element with the canvas image data
+        img = document.createElement("img");
+        img.src = snapshot.toDataURL("image/png");
+        img.style.padding = 5;
+        img.width = snapshot.width / 2;
+        img.height = snapshot.height / 2;
+
+        // Add the new image to the film roll
+        filmroll.appendChild(img);
+      }
+    </script>
+  </body>
+</html>
