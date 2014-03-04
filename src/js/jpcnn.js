@@ -147,12 +147,114 @@ Buffer.prototype.valueAt = function() {
 };
 
 Network = function(filename) {
+  this._isLoaded = false;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', filename, true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function (myThis) {
+    var myNetwork = myThis;
+    return function(e) {
+      if (this.status == 200) {
+      var blob = new Blob([this.response]);
+      myNetwork.initializeFromBlob(blob);
+      }
+    };
+  }(this);
+  xhr.onerror = function(e) {
+    alert("Error " + e.target.status + " occurred while receiving the document.");
+  };
+  xhr.send();
 };
 Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
-  input.showDebugImage();
+//  input.showDebugImage();
   var result = [{
     'value': 0.1,
     'label': 'sombrero',
   }];
   return result;
+};
+Network.prototype.initializeFromBlob = function(blob) {
+  var fileReader = new FileReader();
+  fileReader.onload = function(myThis) {
+    var myNetwork = myThis;
+    return function() {
+      myNetwork.initializeFromArrayBuffer(this.result)
+    };
+  }(this);
+  fileReader.readAsArrayBuffer(blob);
+};
+Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
+  this.binaryFormat = new BinaryFormat(arrayBuffer);
+  var rootTag = this.binaryFormat.firstTag();
+  console.log(rootTag.toString());
+};
+
+BinaryFormat = function(arrayBuffer) {
+  this.arrayBuffer = arrayBuffer;
+  this.cursor = 0;
+};
+JP_CHAR = 0x52414843; // 'CHAR'
+JP_UINT = 0x544E4955; // 'UINT'
+JP_FL32 = 0x32334C46; // 'FL32'
+JP_FARY = 0x59524146; // 'FARY'
+JP_DICT = 0x54434944; // 'DICT'
+JP_LIST = 0x5453494C; // 'LIST'
+BinaryFormat.prototype.firstTag = function() {
+  console.log(this.arrayBuffer.byteLength);
+  var header = new Uint32Array(this.arrayBuffer, 0, 2);
+  console.log(header);
+  var type = header[0];
+  console.log(type);
+  var length = header[1];
+  var valuesBuffer = this.arrayBuffer.slice(8, length);
+  return new BinaryTag(type, length, valuesBuffer);
+};
+
+BinaryTag = function(type, length, valuesBuffer) {
+  var value;
+  if (type === JP_CHAR) {
+    var stringBytes = new Uint8Array(valuesBuffer, (length-1));
+    value = String.fromCharCode.apply(null, stringBytes);
+  } else if (type === JP_UINT) {
+    var array = new Uint8Array(valuesBuffer, 1);
+    value = array[0];
+  } else if (type === JP_FL32) {
+    var array = new Float32Array(valuesBuffer, 1);
+    value = array[0];
+  } else if (type === JP_FARY) {
+    var array = new Float32Array(valuesBuffer, (length / 4));
+    value = array;
+  } else if (type === JP_DICT) {
+    value = valuesBuffer;
+  } else if (type === JP_LIST) {
+    value = valuesBuffer;
+  } else {
+    console.log('Unknown type ' + type);
+    return null;
+  }
+  this.type = type;
+  this.length = length;
+  this.value = value;
+};
+BinaryTag.prototype.toString = function() {
+  var type = this.type;
+  var length = this.length;
+  var name;
+  if (type === JP_CHAR) {
+    name = 'CHAR';
+  } else if (type === JP_UINT) {
+    name = 'UINT';
+  } else if (type === JP_FL32) {
+    name = 'FL32';
+  } else if (type === JP_FARY) {
+    name = 'FARY';
+  } else if (type === JP_DICT) {
+    name = 'DICT';
+  } else if (type === JP_LIST) {
+    name = 'LIST';
+  } else {
+    console.log('Unknown type ' + type);
+    return null;
+  }
+  return 'Tag ' + name + ', length=' + this.length + ', value = ' + this.value;
 };
