@@ -16,7 +16,9 @@
     <script type="text/javascript">
       var video = document.getElementById("live");
 
-      var network = new Network('data/example_networks/homebrewed.ntwk');
+      var network = new Network('data/example_networks/homebrewed.ntwk', function() {
+        testDogImage();
+      });
 
 //      navigator.webkitGetUserMedia({video: true},
 //          function(stream) {
@@ -27,8 +29,7 @@
 //          }
 //      );
 
-testDogImage();
-
+      var dogImage;
       function testDogImage() {
         dogImage = document.createElement('img');
         dogImage.onload = function() {

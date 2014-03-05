@@ -8,8 +8,19 @@ Dimensions = function(input) {
   } else if (input instanceof Dimensions) {
     this._dims = input._dims;
   } else {
-    throw "Unknown input type to Dimensions() - " + input;
+    var argsAsArray = Array.prototype.slice.call(arguments, 0);
+    this._dims = argsAsArray;
   }
+
+  // See http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+  function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+  _.each(this._dims, function(dim) {
+    if (!isNumber(dim)) {
+      throw "Unknown input type to Dimensions() - " + input;
+    }
+  });
 };
 Dimensions.prototype.elementCount = function() {
   var result = 1;
@@ -19,6 +30,10 @@ Dimensions.prototype.elementCount = function() {
   return result;
 };
 Dimensions.prototype.offset = function(indices) {
+  if (!(indices instanceof Array)) {
+    var argsAsArray = Array.prototype.slice.call(arguments, 0);
+    indices = argsAsArray;
+  }
   var reverseIndices = _.clone(indices).reverse();
   var reverseDims = _.clone(this._dims).reverse();
   var size = 1;
@@ -31,11 +46,22 @@ Dimensions.prototype.offset = function(indices) {
   return total;
 };
 Dimensions.prototype.toString = function() {
-  return '(' + _dims.join(', ') + ')';
+  return '(' + this._dims.join(', ') + ')';
 };
 Dimensions.prototype.removeDimensions = function(howMany) {
-  return _dims.slice(howMany);
+  return new Dimensions(this._dims.slice(howMany));
 };
+Dimensions.prototype.areEqualTo = function(other) {
+  if (this._dims.length != other._dims.length) {
+    return false;
+  }
+  for (var index = 0; index < this._dims.length; index += 1) {
+    if (this._dims[index] != other._dims[index]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 Buffer = function(dims, data) {
   this._dims = new Dimensions(dims);
@@ -103,7 +129,7 @@ Buffer.prototype.showDebugImage = function() {
     window.open(dataURL, '_blank');
   } else if (dims.length == 4) {
     var imageCount = dims[0];
-    _.each(_.range(imageCount), function(imageIndex) {
+    for (var imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
       var width = dims[2];
       var height = dims[1];
       var channels = dims[3];
@@ -115,7 +141,7 @@ Buffer.prototype.showDebugImage = function() {
         for (var x = 0; x < width; x += 1) {
           var pixelColors = [0, 0, 0, 1];
           for (var channel = 0; channel < channels; channel += 1) {
-            var value = Math.floor(this.valueAt(imageCount, y, x, channel));
+            var value = Math.floor(this.valueAt(imageIndex, y, x, channel));
             pixelColors[channel] = value;
           }
           var color = 'rgba(' + pixelColors.join(',') + ')';
@@ -126,7 +152,7 @@ Buffer.prototype.showDebugImage = function() {
       var dataURL = canvas.toDataURL("image/png");
       console.log(dataURL);
       window.open(dataURL, '_blank');
-    });
+    }
   } else {
     console.log('Unknown image size');
   }
@@ -154,6 +180,16 @@ Buffer.prototype.valueAt = function() {
   var elementOffset = this._dims.offset(argsAsArray);
   return this._data[elementOffset];
 };
+Buffer.prototype.viewAtTopIndex = function(index) {
+  var inputDims = this._dims;
+  console.assert(inputDims._dims.length > 1);
+  console.assert(index < inputDims._dims[0]);
+  var outputDims = inputDims.removeDimensions(1);
+  var topStride = outputDims.elementCount();
+  var viewData = this._data.subarray((topStride * index), (topStride * (index + 1)));
+  var output = new Buffer(outputDims, viewData);
+  return output;
+};
 function bufferFromTagDict(tagDict) {
   console.assert(tagDict.type === JP_DICT);
   var bitsPerFloat = tagDict.getUintFromDict('float_bits');
@@ -178,10 +214,11 @@ function bufferFromTagDict(tagDict) {
   return buffer;
 }
 
-Network = function(filename) {
+Network = function(filename, onLoad) {
   this._isLoaded = false;
   this._isHomebrewed = true;
   this._fileTag = null;
+  this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
   xhr.responseType = 'arraybuffer';
@@ -201,6 +238,26 @@ Network = function(filename) {
 };
 Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
 //  input.showDebugImage();
+
+  var doFlip;
+  var imageSize;
+  var isMeanChanneled;
+  if (this._isHomebrewed) {
+    imageSize = 224;
+    doFlip = false;
+    isMeanChanneled = true;
+  } else {
+    imageSize = 227;
+    doFlip = true;
+    isMeanChanneled = false;
+  }
+  var rescaledSize = 256;
+
+  var prepareInput = new PrepareInputNode(this._dataMean, !doMultiSample, doFlip, imageSize, rescaledSize, isMeanChanneled);
+  var rescaledInput = prepareInput.run(input);
+  rescaledInput.showDebugImage();
+  var predictions = this.run(rescaledInput, layerOffset);
+
   var result = [{
     'value': 0.1,
     'label': 'sombrero',
@@ -241,6 +298,8 @@ Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
   _.each(labelNames, function(labelNameTag) {
     labelNames.push(labelNameTag.value);
   });
+
+  this._onLoad(this);
 
   console.log(this);
 };
@@ -518,8 +577,180 @@ function PrepareInputNode(dataMean, useCenterOnly, needsFlip, imageSize, rescale
   this._imageSize = imageSize;
   this._rescaledSize = rescaledSize;
   var expectedDims = new Dimensions(this._rescaledSize, this._rescaledSize, 3);
-  
+  dataMean.reshape(expectedDims);
+  var outputDims = new Dimensions(this._imageSize, this._imageSize, 3);
+  this._dataMean = new Buffer(outputDims);
+  var deltaX = (this._rescaledSize - this._imageSize);
+  var deltaY = (this._rescaledSize - this._imageSize);
+  var marginX = (deltaX / 2);
+  var marginY = (deltaY / 2);
+  if (isMeanChanneled) {
+    var fromChanneled = convertFromChanneledRGBImage(dataMean);
+    cropAndFlipImage(this._dataMean, fromChanneled, marginX, marginY, false);
+  } else {
+    cropAndFlipImage(this._dataMean, dataMean, marginX, marginY, false);
+  }
+  this._dataMean.setName('_dataMean');
 }
 PrepareInputNode.prototype.run = function(input) {
+  var rescaledDims = new Dimensions(this._rescaledSize, this._rescaledSize, 3);
+  console.assert(input._dims.areEqualTo(rescaledDims));
+  console.assert(!this._needsFlip);
 
+  input.setName("input");
+
+  var deltaX = (this._rescaledSize - this._imageSize);
+  var deltaY = (this._rescaledSize - this._imageSize);
+  var marginX = (deltaX / 2);
+  var marginY = (deltaY / 2);
+
+  if (this._useCenterOnly) {
+
+    var outputDims = new Dimensions(1, this._imageSize, this._imageSize, 3);
+    this._output = new Buffer(outputDims);
+    this._output.setName("prepareInput_output");
+
+    var sourceX = marginX;
+    var sourceY = marginY;
+
+    var blitDestination = this._output.viewAtTopIndex(0);
+    cropAndFlipImage(blitDestination, input, sourceX, sourceY, false);
+
+    matrixAddInplace(blitDestination, this._dataMean, -1.0);
+
+  } else {
+
+    var outputDims = new Dimensions(10, this._imageSize, this._imageSize, 3);
+    this._output = new Buffer(outputDims);
+    this._output.setName('prepareInput_output');
+
+    for (var flipPass = 0; flipPass < 2; flipPass += 1) {
+      var doFlip = (flipPass == 1);
+      var blitDestination = this._output.viewAtTopIndex(this._output, (flipPass * 5));
+      cropAndFlipImage(blitDestination, rescaled, marginX, marginY, doFlip);
+      for (var yIndex = 0; yIndex < 2; yIndex += 1) {
+        for (var xIndex = 0; xIndex < 2; xIndex += 1) {
+          var viewIndex = ((flipPass * 5) + (yIndex * 2) + xIndex + 1);
+          var blitDestination = bufferViewAtTopIndex(this._output, viewIndex);
+
+          var sourceX = (xIndex * deltaX);
+          var sourceY = (yIndex * deltaY);
+
+          cropAndFlipImage(blitDestination, input, sourceX, sourceY, doFlip);
+        }
+      }
+    }
+  }
+
+  return this._output;
 };
+
+function cropAndFlipImage(destBuffer, sourceBuffer, offsetX, offsetY, doFlipHorizontal) {
+
+  var destDims = destBuffer._dims;
+  var sourceDims = sourceBuffer._dims;
+  console.assert((destDims._dims.length == 3) && (sourceDims._dims.length == 3));
+
+  var destWidth = destDims._dims[1];
+  var destHeight = destDims._dims[0];
+  var destChannels = destDims._dims[2];
+
+  var sourceWidth = sourceDims._dims[1];
+  var sourceHeight = sourceDims._dims[0];
+  var sourceChannels = sourceDims._dims[2];
+  console.assert(destChannels == sourceChannels);
+
+  var sourceEndX = (offsetX + destWidth);
+  console.assert(sourceEndX <= sourceWidth);
+  var sourceEndY = (offsetY + destHeight);
+  console.assert(sourceEndY <= sourceHeight);
+
+  var destRowDims = destDims.removeDimensions(1);
+  var destRowElementCount = destRowDims.elementCount();
+
+  var destData = destBuffer._data;
+  var sourceData = sourceBuffer._data;
+
+  if (!doFlipHorizontal) {
+    for (var destY = 0; destY < destHeight; destY += 1) {
+      var sourceX = offsetX;
+      var sourceY = (destY + offsetY);
+      var sourceOffset = sourceDims.offset(sourceY, sourceX, 0);
+      var sourceRow = sourceData.subarray(sourceOffset, (sourceOffset + destRowElementCount));
+      var destOffset = destDims.offset(destY, 0, 0);
+      var destRow = destData.subarray(destOffset, (destOffset + destRowElementCount));
+      destRow.set(sourceRow);
+    }
+  } else {
+    for (var destY = 0; destY < destHeight; destY += 1) {
+      var sourceX = offsetX;
+      var sourceY = (destY + offsetY);
+      var sourceOffset = sourceDims.offset(sourceY, sourceX, 0);
+      var sourceRow = sourceData.subarray(sourceOffset, (sourceOffset + destRowElementCount));
+      var destOffset = destDims.offset(destY, 0, 0);
+      var destRow = destData.subarray(destOffset, destRowElementCount);
+      for (var destX = 0; destX < destWidth; destX += 1) {
+        var sourceX = ((destWidth - 1) - destX);
+        var sourcePixel = sourceRow.subarray((sourceX * sourceChannels), ((sourceX * sourceChannels) + destChannels));
+        var destPixel = sourceRow.subarray((destX * destChannels), ((destX * destChannels) + destChannels));
+        destPixel.set(sourcePixel);
+      }
+    }
+  }
+}
+
+function convertFromChanneledRGBImage(input) {
+  var dims = input._dims;
+  console.assert(dims._dims.length == 3);
+  var width = dims._dims[1];
+  var height = dims._dims[0];
+  var channels = dims._dims[2];
+  console.assert(channels == 3);
+
+  var result = new Buffer(dims);
+
+  var inputData = input._data;
+  var outputData = result._data;
+
+  var elementsPerChannel = (width * height);
+  var elementsPerImage = dims.elementCount();
+
+  var redOffset = (0 * elementsPerChannel);
+  var greenOffset = (1 * elementsPerChannel);
+  var blueOffset = (2 * elementsPerChannel);
+
+  var destOffset = 0;
+  while (destOffset < elementsPerImage) {
+    outputData[destOffset] = inputData[redOffset];
+    redOffset += 1;
+    destOffset += 1;
+    outputData[destOffset] = inputData[greenOffset];
+    greenOffset += 1;
+    destOffset += 1;
+    outputData[destOffset] = inputData[blueOffset];
+    blueOffset += 1;
+    destOffset += 1;
+  }
+
+  return result;
+}
+
+function matrixAddInplace(output, input, inputScale) {
+  console.assert((output._dims.elementCount() % input._dims.elementCount()) == 0);
+  var outputData = output._data;
+  var outputDataLength = output._dims.elementCount();
+  var inputData = input._data;
+  var inputDataLength = input._dims.elementCount();
+
+  var outputOffset = 0;
+  inputOffset = 0;
+  while (outputOffset < outputDataLength) {
+    var inputValue = inputData[inputOffset];
+    outputData[outputOffset] += (inputValue * inputScale);
+    outputOffset += 1;
+    inputOffset += 1;
+    if (inputOffset >= inputDataLength) {
+      inputOffset = 0;
+    }
+  }
+}
