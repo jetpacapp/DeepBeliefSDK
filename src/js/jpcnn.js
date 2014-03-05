@@ -222,10 +222,27 @@ Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
   var graphDict = this.binaryFormat.firstTag();
   console.log(graphDict.toString());
   this._fileTag = graphDict;
-  var dataMeanTag = graphDict.getTagFromDict("data_mean");
+  var dataMeanTag = graphDict.getTagFromDict('data_mean');
   console.assert(dataMeanTag != null);
   this._dataMean = bufferFromTagDict(dataMeanTag);
-  this._dataMean.view().reshape(new Dimensions([256, 256, 3])).showDebugImage();
+
+  var layersTag = graphDict.getTagFromDict('layers');
+  var layerSubTags = layersTag.getSubTags();
+  var layers = [];
+  _.each(layerSubTags, function(layerSubTag) {
+    var layerNode = nodeFromTag(layerSubTag);
+    layers.push(layerNode);
+  });
+  this._layers = layers;
+
+  var labelNamesTag = graphDict.getTagFromDict('label_names');
+  var labelNameSubTags = labelNamesTag.getSubTags();
+  var labelNames = [];
+  _.each(labelNames, function(labelNameTag) {
+    labelNames.push(labelNameTag.value);
+  });
+
+  console.log(this);
 };
 
 BinaryFormat = function(arrayBuffer) {
@@ -243,7 +260,6 @@ BinaryFormat.prototype.firstTag = function() {
 };
 
 function tagFromMemory(arrayBuffer, offset) {
-  var dataView = new DataView(arrayBuffer);
   var header = new Uint32Array(arrayBuffer, offset, 2);
   var type = header[0];
   var length = header[1];
@@ -253,12 +269,11 @@ function tagFromMemory(arrayBuffer, offset) {
 
 BinaryTag = function(type, length, valuesBuffer) {
   var value;
-  console.log(valuesBuffer.byteLength);
   if (type === JP_CHAR) {
     var stringBytes = new Uint8Array(valuesBuffer, 0, (length-1));
     value = '';
     var index = 0;
-    while (index < length) {
+    while (index < (length - 1)) {
       var charCode = stringBytes[index];
       if (charCode === 0) {
         break;
@@ -352,4 +367,159 @@ BinaryTag.prototype.getFloatFromDict = function(wantedKey) {
   var tag = this.getTagFromDict(wantedKey);
   console.assert(tag && tag.type == JP_FL32);
   return tag.value;
+};
+
+function nodeFromTag(tag) {
+  var classLookup = {
+    'conv': ConvNode,
+    'dropout': DropoutNode,
+    'flat': FlatNode,
+    'gconv': GConvNode,
+    'neuron': NeuronNode,
+    'normalize': NormalizeNode,
+    'pool': PoolNode,
+    'relu': ReluNode,
+    'max': MaxNode,
+  };
+  var tagClass = tag.getStringFromDict('class');
+  var jsClass = classLookup[tagClass];
+  var result = new jsClass(tag);
+  return result;
+}
+
+function ConvNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'conv', 'Wrong class name in tag');
+
+  var specDict = tag.getTagFromDict('spec');
+  this._kernelCount = specDict.getUintFromDict('num_kernels');
+  this._kernelWidth = specDict.getUintFromDict('ksize');
+  this._sampleStride = specDict.getUintFromDict('stride');
+
+  var kernelsTag = tag.getTagFromDict('kernels');
+  this._kernels = bufferFromTagDict(kernelsTag);
+
+  this._useBias = tag.getUintFromDict('has_bias');
+  if (this._useBias) {
+    var biasTag = tag.getTagFromDict('bias');
+    this._bias = bufferFromTagDict(biasTag);
+  }
+
+  this._marginSize = tag.getUintFromDict('padding');
+}
+ConvNode.prototype.run = function(input) {
+
+};
+
+function DropoutNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'dropout', 'Wrong class name in tag');
+}
+DropoutNode.prototype.run = function(input) {
+
+};
+
+function FlatNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'flat', 'Wrong class name in tag');
+}
+FlatNode.prototype.run = function(input) {
+
+};
+
+function GConvNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'gconv', 'Wrong class name in tag');
+
+  this._subnodesCount = tag.getUintFromDict('layers_count');
+  var subnodesTag = tag.getTagFromDict('layers');
+  var subnodeSubTags = subnodesTag.getSubTags();
+  var subnodes = [];
+  _.each(subnodeSubTags, function(subnodeSubTag) {
+    var subnode = nodeFromTag(subnodeSubTag);
+    subnodes.push(subnode);
+  });
+  this._subnodes = subnodes;
+
+  this._kernelCount = tag.getUintFromDict('kernels_count');
+}
+GConvNode.prototype.run = function(input) {
+
+};
+
+function NeuronNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'neuron', 'Wrong class name in tag');
+
+  var specDict = tag.getTagFromDict('spec');
+  this._outputsCount = specDict.getUintFromDict('num_output');
+
+  var weightsTag = tag.getTagFromDict('weight');
+  this._weights = bufferFromTagDict(weightsTag);
+
+  this._useBias = tag.getUintFromDict('has_bias');
+  if (this._useBias) {
+    var biasTag = tag.getTagFromDict('bias');
+    this._bias = bufferFromTagDict(biasTag);
+  }
+
+  if (tag.getTagFromDict('dropout')) {
+    this._dropout = tag.getFloatFromDict('dropout');
+  }
+}
+NeuronNode.prototype.run = function(input) {
+
+};
+
+function NormalizeNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'normalize', 'Wrong class name in tag');
+
+  this._windowSize = tag.getUintFromDict('size');
+  this._k = tag.getFloatFromDict('k');
+  this._alpha = tag.getFloatFromDict('alpha');
+  this._beta = tag.getFloatFromDict('beta');
+}
+NormalizeNode.prototype.run = function(input) {
+
+};
+
+function PoolNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'pool', 'Wrong class name in tag');
+
+  this._patchWidth = tag.getUintFromDict('psize');
+  this._stride = tag.getUintFromDict('stride');
+  this._mode = tag.getStringFromDict('mode');
+}
+PoolNode.prototype.run = function(input) {
+
+};
+
+function ReluNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'relu', 'Wrong class name in tag');
+}
+ReluNode.prototype.run = function(input) {
+
+};
+
+function MaxNode(tag) {
+  var className = tag.getStringFromDict('class');
+  console.assert(className === 'max', 'Wrong class name in tag');
+}
+MaxNode.prototype.run = function(input) {
+
+};
+
+function PrepareInputNode(dataMean, useCenterOnly, needsFlip, imageSize, rescaledSize, isMeanChanneled) {
+  this._useCenterOnly = useCenterOnly;
+  this._needsFlip = needsFlip;
+  this._imageSize = imageSize;
+  this._rescaledSize = rescaledSize;
+  var expectedDims = new Dimensions(this._rescaledSize, this._rescaledSize, 3);
+  
+}
+PrepareInputNode.prototype.run = function(input) {
+
 };
