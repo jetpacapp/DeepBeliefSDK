@@ -255,7 +255,6 @@ Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
 
   var prepareInput = new PrepareInputNode(this._dataMean, !doMultiSample, doFlip, imageSize, rescaledSize, isMeanChanneled);
   var rescaledInput = prepareInput.run(input);
-  rescaledInput.showDebugImage();
   var predictions = this.run(rescaledInput, layerOffset);
 
   var result = [{
@@ -304,8 +303,11 @@ Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
   console.log(this);
 };
 Network.prototype.run = function(input, layerOffset) {
+  if (_.isUndefined(layerOffset)) {
+    layerOffset = 0;
+  }
   var currentInput = input;
-  var howManyLayers = (this._layersLength + layerOffset);
+  var howManyLayers = (this._layers.length + layerOffset);
   for (var index = 0; index < howManyLayers; index += 1) {
     var layer = this._layers[index];
     var currentOutput = layer.run(currentInput);
@@ -478,7 +480,27 @@ function ConvNode(tag) {
   this._marginSize = tag.getUintFromDict('padding');
 }
 ConvNode.prototype.run = function(input) {
-  return input;
+  var inputDims = input._dims;
+  var inputChannels = inputDims._dims[inputDims._dims.length - 1];
+  var valuesPerKernel = (inputChannels * this._kernelWidth * this._kernelWidth);
+  var expectedKernelsDims = new Dimensions(valuesPerKernel, this._kernelCount);
+  console.assert(expectedKernelsDims.areEqualTo(this._kernels._dims));
+
+  var inputWithMargin;
+  if (this._marginSize == 0) {
+    inputWithMargin = input;
+  } else {
+    inputWithMargin = matrixInsertMargin(input, this._marginSize, this._marginSize);
+  }
+
+  this._output = matrixCorrelate(inputWithMargin, this._kernels, this._kernelWidth, this._kernelCount, this._sampleStride);
+  this._output.setName(this._name);
+
+  matrixAddInplace(this._output, this._bias, 1.0);
+
+  this._output.showDebugImage();
+
+  return this._output;
 };
 
 function DropoutNode(tag) {
@@ -762,6 +784,233 @@ function matrixAddInplace(output, input, inputScale) {
     inputOffset += 1;
     if (inputOffset >= inputDataLength) {
       inputOffset = 0;
+    }
+  }
+}
+
+function matrixInsertMargin(input, marginWidth, marginHeight) {
+
+  var inputDims = input._dims;
+  // We're expecting (# of images, height, width, # of channels)
+  console.assert(inputDims._dims.length == 4);
+
+  var imageCount = inputDims._dims[0];
+  var inputWidth = inputDims._dims[2];
+  var inputHeight = inputDims._dims[1];
+  var inputChannels = inputDims._dims[3];
+
+  var outputWidth = (inputWidth + (marginWidth * 2));
+  var outputHeight = (inputHeight + (marginHeight * 2));
+  var outputDims = new Dimensions(imageCount, outputHeight, outputWidth, inputChannels);
+  var output = new Buffer(outputDims);
+
+  var valuesPerInputRow = (inputWidth * inputChannels);
+  var valuesPerOutputRow = (outputWidth * inputChannels);
+
+  var valuesPerOutputMargin = (marginWidth * inputChannels);
+
+  var outputData = output._data;
+  var outputOffset = 0;
+  var inputData = input._data;
+  var inputOffset = 0;
+
+  for (var imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    for (var outputY = 0; outputY < outputHeight; outputY += 1) {
+      var inputOriginY = (outputY - marginHeight);
+      if ((inputOriginY < 0) || (inputOriginY >= inputHeight)) {
+        outputOffset += valuesPerOutputRow;
+      } else {
+        outputOffset += valuesPerOutputMargin;
+        var inputRow = inputData.subarray(inputOffset, (inputOffset + valuesPerInputRow));
+        outputData.set(inputRow, outputOffset);
+        outputOffset += valuesPerInputRow;
+        inputOffset += valuesPerInputRow;
+        outputOffset += valuesPerOutputMargin;
+      }
+    }
+  }
+
+  return output;
+}
+
+function patchesIntoRows(input, kernelWidth, stride) {
+
+  var inputDims = input._dims;
+  // We're expecting (# of images, height, width, # of channels)
+  console.assert(inputDims._dims.length == 4);
+
+  var imageCount = inputDims._dims[0];
+  var inputWidth = inputDims._dims[2];
+  var inputHeight = inputDims._dims[1];
+  var inputChannels = inputDims._dims[3];
+
+  var pixelsPerKernel = (kernelWidth * kernelWidth);
+  var valuesPerKernel = (pixelsPerKernel * inputChannels);
+
+  var patchesAcross = Math.round(Math.ceil((inputWidth - kernelWidth) / stride) + 1);
+  var patchesDown = Math.round(Math.ceil((inputHeight - kernelWidth) / stride) + 1);
+  var outputDims = new Dimensions(imageCount, (patchesDown * patchesAcross), valuesPerKernel);
+  var output = new Buffer(outputDims);
+
+  var inputData = input._data;
+  var outputData = output._data;
+  var outputOffset = 0;
+
+  var valuesPerInputRow = inputDims.removeDimensions(2).elementCount();
+  var valuesPerKernelRow = (kernelWidth * inputChannels);
+
+  for (var imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    for (var patchY = 0; patchY < patchesDown; patchY += 1) {
+      var inputOriginY = (patchY * stride);
+      var inputEndY = (inputOriginY + kernelWidth);
+      for (var patchX = 0; patchX < patchesAcross; patchX += 1) {
+        var inputOriginX = (patchX * stride);
+        var inputEndX = (inputOriginX + kernelWidth);
+        var inputOffset = inputDims.offset(imageIndex, inputOriginY, inputOriginX, 0);
+        if ((inputEndY <= inputHeight) && (inputEndX <= inputWidth)) {
+          for (var row = 0; row < kernelWidth; row += 1) {
+            var inputRow = inputData.subarray(inputOffset, (inputOffset + valuesPerKernelRow));
+            outputData.set(inputRow, outputOffset);
+            outputOffset += valuesPerKernelRow;
+            inputOffset += valuesPerInputRow;
+          }
+        } else {
+          var valuesToCopy;
+          if (inputEndX > inputWidth) {
+            valuesToCopy = ((inputEndX - inputWidth) * inputChannels);
+          } else {
+            valuesToCopy = valuesPerKernelRow;
+          }
+          var valuesToZero = (valuesPerKernelRow - valuesToCopy);
+          var rowsToCopy;
+          if (inputEndY > inputHeight) {
+            rowsToCopy = (kernelWidth - (inputEndY - inputHeight));
+          } else {
+            rowsToCopy = kernelWidth;
+          }
+          for (var row = 0; row < kernelWidth; row += 1) {
+            if (row < rowsToCopy) {
+              var inputRow = inputData.subarray(inputOffset, (inputOffset + valuesToCopy));
+              outputData.set(inputRow, outputOffset);
+              outputOffset += valuesPerKernelRow;
+              inputOffset += valuesPerInputRow;
+            } else {
+              outputOffset += valuesPerKernelRow;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return output;
+}
+
+function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
+
+  var inputDims = input._dims;
+  // We're expecting (# of images, height, width, # of channels)
+  console.assert(inputDims._dims.length == 4);
+
+  var imageCount = inputDims._dims[0];
+  var inputWidth = inputDims._dims[2];
+  var inputHeight = inputDims._dims[1];
+  var inputChannels = inputDims._dims[3];
+
+  var pixelsPerKernel = (kernelWidth * kernelWidth);
+  var valuesPerKernel = (pixelsPerKernel * inputChannels);
+  var expectedKernelsDims = new Dimensions(valuesPerKernel, kernelCount);
+  console.assert(expectedKernelsDims.areEqualTo(kernels._dims));
+
+  var outputWidth = Math.round(Math.ceil((inputWidth - kernelWidth) / stride) + 1);
+  var outputHeight = Math.round(Math.ceil((inputHeight - kernelWidth) / stride) + 1);
+  var outputChannels = kernelCount;
+  var outputDims = new Dimensions(imageCount, outputHeight, outputWidth, outputChannels);
+  var output = new Buffer(outputDims);
+
+  var patches = patchesIntoRows(input, kernelWidth, stride);
+
+  var m = kernelCount;
+  var n = (patches._dims._dims[1] * patches._dims._dims[0]);
+  var k = patches._dims._dims[2];
+  var alpha = 1.0;
+  var lda = m;
+  var ldb = k;
+  var ldc = m;
+  var beta = 0.0;
+
+  matrixGemm(
+    m,
+    n,
+    k,
+    alpha,
+    kernels._data,
+    lda,
+    patches._data,
+    ldb,
+    beta,
+    output._data,
+    ldc
+  );
+
+  return output;
+}
+
+function matrixGemm(
+  m,
+  n,
+  k,
+  alpha,
+  a,
+  lda,
+  b,
+  ldb,
+  beta,
+  c,
+  ldc) {
+
+  naiveGemm(
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc
+  );
+
+}
+
+function naiveGemm(
+  m,
+  n,
+  k,
+  alpha,
+  a,
+  lda,
+  b,
+  ldb,
+  beta,
+  c,
+  ldc) {
+
+  for (var i = 0; i < m; i++) {
+    for (var j = 0; j < n; j++) {
+      var total = 0.0;
+      for (var l = 0; l < k; l++) {
+        var aIndex = ((lda * l) + i);
+        var aValue = a[aIndex];
+        var bIndex = ((ldb * j) + l);
+        var bValue = b[bIndex];
+        total += (aValue * bValue);
+      }
+      var cIndex = ((ldc * j) + i);
+      var oldCValue = c[cIndex];
+      c[cIndex] = ((alpha * total) + (beta * oldCValue));
     }
   }
 }
