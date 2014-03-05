@@ -303,6 +303,17 @@ Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
 
   console.log(this);
 };
+Network.prototype.run = function(input, layerOffset) {
+  var currentInput = input;
+  var howManyLayers = (this._layersLength + layerOffset);
+  for (var index = 0; index < howManyLayers; index += 1) {
+    var layer = this._layers[index];
+    var currentOutput = layer.run(currentInput);
+    currentOutput.setName(layer._name + ' output');
+    currentInput = currentOutput;
+  }
+  return currentInput;
+};
 
 BinaryFormat = function(arrayBuffer) {
   this.arrayBuffer = arrayBuffer;
@@ -467,7 +478,7 @@ function ConvNode(tag) {
   this._marginSize = tag.getUintFromDict('padding');
 }
 ConvNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function DropoutNode(tag) {
@@ -475,7 +486,7 @@ function DropoutNode(tag) {
   console.assert(className === 'dropout', 'Wrong class name in tag');
 }
 DropoutNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function FlatNode(tag) {
@@ -483,7 +494,7 @@ function FlatNode(tag) {
   console.assert(className === 'flat', 'Wrong class name in tag');
 }
 FlatNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function GConvNode(tag) {
@@ -503,7 +514,7 @@ function GConvNode(tag) {
   this._kernelCount = tag.getUintFromDict('kernels_count');
 }
 GConvNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function NeuronNode(tag) {
@@ -527,7 +538,7 @@ function NeuronNode(tag) {
   }
 }
 NeuronNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function NormalizeNode(tag) {
@@ -540,7 +551,7 @@ function NormalizeNode(tag) {
   this._beta = tag.getFloatFromDict('beta');
 }
 NormalizeNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function PoolNode(tag) {
@@ -552,7 +563,7 @@ function PoolNode(tag) {
   this._mode = tag.getStringFromDict('mode');
 }
 PoolNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function ReluNode(tag) {
@@ -560,7 +571,7 @@ function ReluNode(tag) {
   console.assert(className === 'relu', 'Wrong class name in tag');
 }
 ReluNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function MaxNode(tag) {
@@ -568,7 +579,7 @@ function MaxNode(tag) {
   console.assert(className === 'max', 'Wrong class name in tag');
 }
 MaxNode.prototype.run = function(input) {
-
+  return input;
 };
 
 function PrepareInputNode(dataMean, useCenterOnly, needsFlip, imageSize, rescaledSize, isMeanChanneled) {
