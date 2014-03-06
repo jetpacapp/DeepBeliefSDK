@@ -4,12 +4,12 @@
 
 Dimensions = function(input) {
   if (input instanceof Array) {
-    this._dims = input;
+    this._dims = _.clone(input);
   } else if (input instanceof Dimensions) {
-    this._dims = input._dims;
+    this._dims = _.clone(input._dims);
   } else {
     var argsAsArray = Array.prototype.slice.call(arguments, 0);
-    this._dims = argsAsArray;
+    this._dims = _.clone(argsAsArray);
   }
 
   // See http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
@@ -96,7 +96,7 @@ Buffer.prototype.view = function() {
   return result;
 };
 Buffer.prototype.toString = function() {
-  // TO DO
+  return 'Buffer "' + this._name + '" ' + this._dims;
 };
 Buffer.prototype.printContents = function(maxElements) {
   // TO DO
@@ -310,6 +310,7 @@ Network.prototype.run = function(input, layerOffset) {
   var howManyLayers = (this._layers.length + layerOffset);
   for (var index = 0; index < howManyLayers; index += 1) {
     var layer = this._layers[index];
+    console.log('Running ' + layer.constructor.name)
     var currentOutput = layer.run(currentInput);
     currentOutput.setName(layer._name + ' output');
     currentInput = currentOutput;
@@ -516,7 +517,22 @@ function FlatNode(tag) {
   console.assert(className === 'flat', 'Wrong class name in tag');
 }
 FlatNode.prototype.run = function(input) {
-  return input;
+  var inputDims = input._dims;
+  // We're expecting (# of images, height, width, # of channels)
+  console.assert(inputDims._dims.length == 4);
+
+  var imageCount = inputDims._dims[0];
+  var inputWidth = inputDims._dims[2];
+  var inputHeight = inputDims._dims[1];
+  var inputChannels = inputDims._dims[3];
+
+  var outputElementCount = (inputHeight * inputWidth * inputChannels);
+  var outputDims = new Dimensions(imageCount, outputElementCount);
+
+  // Doesn't do a data copy, just returns a new view with a different shape.
+  this._output = new Buffer(outputDims, input._data);
+
+  return this._output;
 };
 
 function GConvNode(tag) {
@@ -536,7 +552,34 @@ function GConvNode(tag) {
   this._kernelCount = tag.getUintFromDict('kernels_count');
 }
 GConvNode.prototype.run = function(input) {
-  return input;
+  var inputDims = input._dims;
+
+  console.assert(inputDims._dims.length === 4);
+
+  var imageCount = inputDims._dims[0];
+  var inputWidth = inputDims._dims[2];
+  var inputHeight = inputDims._dims[1];
+  var inputChannels = inputDims._dims[3];
+
+  console.assert((inputChannels % this._subnodesCount) === 0);
+  var subnodeChannels = (inputChannels / this._subnodes.length);
+
+  var subnodeInputDimensions = new Dimensions(imageCount, inputHeight, inputWidth, subnodeChannels);
+  var subnodeOutputBuffers = [];
+
+  for (var index = 0; index < this._subnodes.length; index += 1) {
+    var startChannel = (index * subnodeChannels);
+    var endChannel = ((index + 1) * subnodeChannels);
+    var subnodeInputBuffer = matrixExtractChannels(input, startChannel, endChannel);
+
+    var subnode = this._subnodes[index];
+    var subnodeOutputBuffer = subnode.run(subnodeInputBuffer);
+    subnodeOutputBuffers.push(subnodeOutputBuffer);
+  }
+
+  this._output = matrixJoinChannels(subnodeOutputBuffers);
+
+  return this._output;
 };
 
 function NeuronNode(tag) {
@@ -560,7 +603,28 @@ function NeuronNode(tag) {
   }
 }
 NeuronNode.prototype.run = function(input) {
-  return input;
+  var inputDims = input._dims;
+  var numberOfImages = inputDims._dims[0];
+  var inputImageDims = inputDims.removeDimensions(1);
+  var elementCount = inputImageDims.elementCount();
+  var flattenedDimensions = new Dimensions(numberOfImages, elementCount);
+  var flattenedInput = input.view();
+  flattenedInput.reshape(flattenedDimensions);
+
+  var expectedWeightsDimensions = new Dimensions(elementCount, this._outputsCount);
+  console.assert(expectedWeightsDimensions.areEqualTo(this._weights._dims));
+
+  this._output = matrixDot(flattenedInput, this._weights);
+  this._output.setName(this._name);
+
+  matrixAddInplace(this._output, this._bias, 1.0);
+
+  if (this._dropout > 0.0) {
+    var scale = (1.0 - this._dropout);
+    matrixScaleInplace(this._output, scale);
+  }
+
+  return this._output;
 };
 
 function NormalizeNode(tag) {
@@ -573,7 +637,8 @@ function NormalizeNode(tag) {
   this._beta = tag.getFloatFromDict('beta');
 }
 NormalizeNode.prototype.run = function(input) {
-  return input;
+  this._output = matrixLocalResponse(input, this._windowSize, this._k, this._alpha, this._beta);
+  return this._output;
 };
 
 function PoolNode(tag) {
@@ -585,7 +650,8 @@ function PoolNode(tag) {
   this._mode = tag.getStringFromDict('mode');
 }
 PoolNode.prototype.run = function(input) {
-  return input;
+  this._output = matrixMaxPatch(input, this._patchWidth, this._stride);
+  return this._output;
 };
 
 function ReluNode(tag) {
@@ -593,7 +659,8 @@ function ReluNode(tag) {
   console.assert(className === 'relu', 'Wrong class name in tag');
 }
 ReluNode.prototype.run = function(input) {
-  return input;
+  this._output = matrixMax(input, 0.0);
+  return this._output;
 };
 
 function MaxNode(tag) {
@@ -601,7 +668,8 @@ function MaxNode(tag) {
   console.assert(className === 'max', 'Wrong class name in tag');
 }
 MaxNode.prototype.run = function(input) {
-  return input;
+  this._output = matrixSoftmax(input);
+  return this._output;
 };
 
 function PrepareInputNode(dataMean, useCenterOnly, needsFlip, imageSize, rescaledSize, isMeanChanneled) {
@@ -776,7 +844,7 @@ function matrixAddInplace(output, input, inputScale) {
   var inputDataLength = input._dims.elementCount();
 
   var outputOffset = 0;
-  inputOffset = 0;
+  var inputOffset = 0;
   while (outputOffset < outputDataLength) {
     var inputValue = inputData[inputOffset];
     outputData[outputOffset] += (inputValue * inputScale);
@@ -1014,3 +1082,311 @@ function naiveGemm(
     }
   }
 }
+
+function matrixExtractChannels(input, startChannel, endChannel) {
+
+  console.log('matrixExtractChannels(' + input + ', ' + startChannel + ', ' + endChannel + ')');
+
+  var inputDims = input._dims;
+  var inputChannels = inputDims._dims[inputDims._dims.length - 1];
+  var outputChannels = (endChannel - startChannel);
+
+  console.assert((inputChannels % outputChannels) == 0);
+
+  var outputDims = new Dimensions(inputDims);
+  outputDims._dims[outputDims._dims.length - 1] = outputChannels;
+  var output = new Buffer(outputDims);
+
+  var inputData = input._data;
+  var inputOffset = startChannel;
+  var inputElementCount = inputDims.elementCount();
+  var outputData = output._data;
+  var outputOffset = 0;
+
+  while (inputOffset < inputElementCount) {
+    var sourceRow = inputData.subarray(inputOffset, (inputOffset + outputChannels));
+    outputData.set(sourceRow, outputOffset);
+    inputOffset += inputChannels;
+    outputOffset += outputChannels;
+  }
+
+  console.log('output = ' + output);
+
+  return output;
+}
+
+function matrixJoinChannels(inputs) {
+  var inputsCount = inputs.length;
+  var firstInput = inputs[0];
+  var inputDims = firstInput._dims;
+  var inputChannels = inputDims._dims[inputDims._dims.length - 1];
+  var outputChannels = (inputChannels * inputsCount);
+
+  var outputDims = new Dimensions(inputDims);
+  outputDims._dims[outputDims._dims.length - 1] = outputChannels;
+  var output = new Buffer(outputDims);
+
+  var inputDatas = [];
+  for (var index = 0; index < inputsCount; index += 1) {
+    console.assert(inputs[index]._dims.areEqualTo(inputDims));
+    inputDatas.push({data: inputs[index]._data, offset: 0});
+  }
+
+  var outputData = output._data;
+  var outputOffset = 0;
+  var outputElementCount = outputDims.elementCount();
+
+  while (outputOffset < outputElementCount) {
+    for (var index = 0; index < inputsCount; index += 1) {
+      var input = inputDatas[index];
+      var sourceRow = input.data.subarray(input.offset, (input.offset + inputChannels));
+      outputData.set(sourceRow, outputOffset);
+      input.offset += inputChannels;
+      outputOffset += inputChannels;
+    }
+  }
+
+  return output;
+}
+
+function matrixDot(input, weights) {
+
+  var inputDims = input._dims;
+  // We're expecting (# of images, # of values)
+  console.assert(inputDims._dims.length == 2);
+
+  var imageCount = inputDims._dims[0];
+  var inputValuesCount = inputDims._dims[1];
+
+  var weightsDims = weights._dims;
+  // We're expecting (# of values in input, # of output channels)
+  console.assert(inputDims._dims.length == 2);
+  console.assert(weightsDims._dims[0] == inputValuesCount);
+  var outputChannels = weightsDims._dims[1];
+
+  var outputDims = new Dimensions(imageCount, outputChannels);
+  var output = new Buffer(outputDims);
+
+  var m = outputChannels;
+  var n = input._dims[0];
+  var k = input._dims[1];
+  var alpha = 1.0;
+  var lda = m;
+  var ldb = k;
+  var ldc = m;
+  var beta = 0.0;
+
+  matrixGemm(
+    m,
+    n,
+    k,
+    alpha,
+    weights._data,
+    lda,
+    input._data,
+    ldb,
+    beta,
+    output._data,
+    ldc
+  );
+
+  return output;
+}
+
+function matrixScaleInplace(output, scale) {
+  var outputData = output._data;
+  var outputDataLength = output._dims.elementCount();
+  var outputOffset = 0;
+  while (outputOffset < outputDataLength) {
+    outputData[outputOffset] *= scale;
+    outputOffset += 1;
+  }
+}
+
+function matrixLocalResponse(input, windowSize, k, alpha, beta) {
+
+  var inputDims = input._dims;
+  // We're expecting (# of images, height, width, # of channels)
+  console.assert(inputDims._dims.length == 4);
+
+  var inputChannels = inputDims._dims[3];
+
+  var magnitude = new Buffer(inputDims);
+
+  var magBuffer = new Buffer(new Dimensions(inputChannels));
+  var magBufferData = magBuffer._data;
+
+  var inputData = input._data;
+  var inputOffset = 0;
+  var inputElementCount = inputDims.elementCount();
+  var magnitudeData = magnitude._data;
+  var magnitudeOffset = 0;
+
+  var alphaOverSize = (alpha / windowSize);
+  var prereadCount = ((windowSize / 2) - 0);
+
+  while (inputOffset < inputElementCount) {
+
+    for (var channel = 0; channel < inputChannels; channel += 1) {
+      var inputValue = inputData[inputOffset + channel];
+      magBufferData[channel] = (inputValue * inputValue * alphaOverSize);
+    }
+
+    var averagedScale = 0;
+    for (var index = 0; index < prereadCount; index += 1) {
+      averagedScale += magBufferData[index];
+    }
+
+    for (var channel = 0; channel < inputChannels; channel += 1) {
+      var rightIndex = (channel + (windowSize / 2));
+      if (rightIndex < inputChannels) {
+        averagedScale += magBufferData[rightIndex];
+      }
+      magnitudeData[magnitudeOffset + channel] = (averagedScale + k);
+      var leftIndex = (channel - (windowSize / 2));
+      if (leftIndex >= 0) {
+        averagedScale -= magBufferData[leftIndex];
+      }
+    }
+
+    inputOffset += inputChannels;
+    magnitudeOffset += inputChannels;
+  }
+
+  var output = new Buffer(inputDims);
+
+  inputOffset = 0;
+  magnitudeOffset = 0;
+  var outputData = output._data;
+  while (inputOffset < inputElementCount) {
+
+    var inputValue = inputData[inputOffset];
+    var magnitudeValue = magnitudeData[magnitudeOffset];
+
+    var outputValue = (Math.pow(magnitudeValue, -beta) * inputValue);
+    if (isNaN(outputValue)) {
+      outputValue = 0.0;
+    }
+    outputData[inputOffset] = outputValue;
+
+    inputOffset += 1;
+    magnitudeOffset += 1;
+  }
+
+  return output;
+}
+
+function matrixMaxPatch(input, patchWidth, stride) {
+
+  var inputDims = input._dims;
+  // We're expecting (# of images, height, width, # of channels)
+  console.assert(inputDims._dims.length == 4);
+
+  var imageCount = inputDims._dims[0];
+  var inputWidth = inputDims._dims[2];
+  var inputHeight = inputDims._dims[1];
+  var inputChannels = inputDims._dims[3];
+
+  var outputWidth = Math.round(Math.floor((inputWidth - patchWidth) / stride) + 1);
+  var outputHeight = Math.round(Math.floor((inputHeight - patchWidth) / stride) + 1);
+  var outputChannels = inputChannels;
+  var outputDims = new Dimensions(imageCount, outputHeight, outputWidth, outputChannels);
+  var output = new Buffer(outputDims);
+
+  var inputData = input._data;
+  var outputData = output._data;
+
+  for (var imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    for (var outputY = 0; outputY < outputHeight; outputY += 1) {
+      var inputOriginY = (outputY * stride);
+      for (var outputX = 0; outputX < outputWidth; outputX += 1) {
+        var inputOriginX = (outputX * stride);
+        for (var outputChannel = 0; outputChannel < outputChannels; outputChannel += 1) {
+          var patchMax = -Number.MAX_VALUE;
+          for (var patchY = 0; patchY < patchWidth; patchY += 1) {
+            var inputY = Math.round(Math.min((inputHeight - 1), (inputOriginY + patchY)));
+            for (var patchX = 0; patchX < patchWidth; patchX += 1) {
+              var inputX = Math.round(Math.min((inputWidth - 1), (inputOriginX + patchX)));
+              var inputOffset = inputDims.offset(imageIndex, inputY, inputX, outputChannel);
+              var inputValue = input._data[inputOffset];
+              patchMax = Math.max(patchMax, inputValue);
+            }
+          }
+          var outputOffset = outputDims.offset(imageIndex, outputY, outputX, outputChannel);
+          outputData[outputOffset] = patchMax;
+        }
+      }
+    }
+  }
+
+  return output;
+}
+
+function matrixMax(input, maxValue) {
+  var inputDims = input._dims;
+  var output = new Buffer(inputDims);
+
+  var inputData = input._data;
+  var inputOffset = 0;
+  var inputElementCount = inputDims.elementCount();
+  var outputData = output._data;
+
+  while (inputOffset < inputElementCount) {
+    var inputValue = inputData[inputOffset];
+    outputData[inputOffset] = Math.max(inputValue, maxValue);
+    inputOffset += 1;
+  }
+
+  return output;
+}
+
+function matrixSoftmax(input) {
+
+  var inputDims = input._dims;
+  // We're expecting (# of images, # of values)
+  console.assert(inputDims._dims.length == 2);
+
+  var imageCount = inputDims._dims[0];
+  var inputValuesCount = inputDims._dims[1];
+
+  var output = new Buffer(inputDims);
+
+  var inputData = input._data;
+  var outputData = output._data;
+
+  for (var imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    var imageOffsetStart = (imageIndex * inputValuesCount);
+
+    // Rescales the array to accentuate the positive, see here for details:
+    // http://stackoverflow.com/questions/9906136/implementation-of-a-softmax-activation-function-for-neural-networks
+    var max = -Number.MAX_VALUE;
+    var inputOffset = imageOffsetStart;
+    while (inputOffset < inputValuesCount) {
+      var inputValue = inputData[inputOffset];
+      max = Math.max(max, inputValue);
+      inputOffset += 1;
+    }
+
+    var sum = 0;
+    inputOffset = imageOffsetStart;
+    while (inputOffset < inputValuesCount) {
+      var inputValue = inputData[inputOffset];
+      var normalized = (inputValue - max);
+      var outputValue = Math.exp(normalized);
+      outputData[inputOffset] = outputValue;
+      sum += outputValue;
+      inputOffset += 1;
+    }
+
+    var recipSum = (1.0 / sum);
+
+    inputOffset = imageOffsetStart;
+    while (inputOffset < inputValuesCount) {
+      outputData[inputOffset] *= recipSum;
+      inputOffset += 1;
+    }
+  }
+
+  return output;
+}
+
