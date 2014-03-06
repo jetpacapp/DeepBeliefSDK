@@ -237,7 +237,6 @@ Network = function(filename, onLoad) {
   xhr.send();
 };
 Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
-//  input.showDebugImage();
 
   var doFlip;
   var imageSize;
@@ -257,10 +256,11 @@ Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
   var rescaledInput = prepareInput.run(input);
   var predictions = this.run(rescaledInput, layerOffset);
 
-  var result = [{
-    'value': 0.1,
-    'label': 'sombrero',
-  }];
+  var result = [];
+  for (var index = 0; index < predictions._data.length; index += 1) {
+    result.push({value: predictions._data[index], label: this._labelNames[index]});
+  }
+
   return result;
 };
 Network.prototype.initializeFromBlob = function(blob) {
@@ -276,7 +276,6 @@ Network.prototype.initializeFromBlob = function(blob) {
 Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
   this.binaryFormat = new BinaryFormat(arrayBuffer);
   var graphDict = this.binaryFormat.firstTag();
-  console.log(graphDict.toString());
   this._fileTag = graphDict;
   var dataMeanTag = graphDict.getTagFromDict('data_mean');
   console.assert(dataMeanTag != null);
@@ -294,13 +293,12 @@ Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
   var labelNamesTag = graphDict.getTagFromDict('label_names');
   var labelNameSubTags = labelNamesTag.getSubTags();
   var labelNames = [];
-  _.each(labelNames, function(labelNameTag) {
+  _.each(labelNameSubTags, function(labelNameTag) {
     labelNames.push(labelNameTag.value);
   });
+  this._labelNames = labelNames;
 
   this._onLoad(this);
-
-  console.log(this);
 };
 Network.prototype.run = function(input, layerOffset) {
   if (_.isUndefined(layerOffset)) {
@@ -312,7 +310,8 @@ Network.prototype.run = function(input, layerOffset) {
     var layer = this._layers[index];
     console.log('Running ' + layer.constructor.name)
     var currentOutput = layer.run(currentInput);
-    currentOutput.setName(layer._name + ' output');
+    currentOutput.setName(layer.constructor.name + ' output');
+    console.log('currentOutput = ' + currentOutput);
     currentInput = currentOutput;
   }
   return currentInput;
@@ -498,8 +497,6 @@ ConvNode.prototype.run = function(input) {
   this._output.setName(this._name);
 
   matrixAddInplace(this._output, this._bias, 1.0);
-
-  this._output.showDebugImage();
 
   return this._output;
 };
@@ -1085,8 +1082,6 @@ function naiveGemm(
 
 function matrixExtractChannels(input, startChannel, endChannel) {
 
-  console.log('matrixExtractChannels(' + input + ', ' + startChannel + ', ' + endChannel + ')');
-
   var inputDims = input._dims;
   var inputChannels = inputDims._dims[inputDims._dims.length - 1];
   var outputChannels = (endChannel - startChannel);
@@ -1109,8 +1104,6 @@ function matrixExtractChannels(input, startChannel, endChannel) {
     inputOffset += inputChannels;
     outputOffset += outputChannels;
   }
-
-  console.log('output = ' + output);
 
   return output;
 }
