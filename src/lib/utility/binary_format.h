@@ -66,4 +66,23 @@ int count_list_entries(SBinaryTag* tag);
 SBinaryTag* get_first_list_entry(SBinaryTag* listTag);
 SBinaryTag* get_next_list_entry(SBinaryTag* listTag, SBinaryTag* previous);
 
+SBinaryTag* create_list_tag();
+SBinaryTag* add_tag_to_list(SBinaryTag* tag, SBinaryTag* subTag);
+SBinaryTag* create_dict_tag();
+SBinaryTag* add_tag_to_dict(SBinaryTag* tag, const char* key, SBinaryTag* valueTag);
+SBinaryTag* create_string_tag(const char* value);
+SBinaryTag* create_uint_tag(uint32_t value);
+SBinaryTag* create_float_tag(float value);
+SBinaryTag* create_float_array_tag(float* value, int elementCount);
+
+SBinaryTag* add_string_to_dict(SBinaryTag* tag, const char* key, const char* value);
+SBinaryTag* add_uint_to_dict(SBinaryTag* tag, const char* key, uint32_t value);
+SBinaryTag* add_float_to_dict(SBinaryTag* tag, const char* key, float value);
+SBinaryTag* add_float_array_to_dict(SBinaryTag* tag, const char* key, float* value, int elementCount);
+
+SBinaryTag* add_string_to_list(SBinaryTag* tag, const char* value);
+SBinaryTag* add_uint_to_list(SBinaryTag* tag, uint32_t value);
+SBinaryTag* add_float_to_list(SBinaryTag* tag, float value);
+SBinaryTag* add_float_array_to_list(SBinaryTag* tag, float* value, int elementCount);
+
 #endif // INCLUDE_BINARY_FORMAT_H

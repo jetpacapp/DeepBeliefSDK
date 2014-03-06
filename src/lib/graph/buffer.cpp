@@ -491,6 +491,31 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
   return buffer;
 }
 
+SBinaryTag* buffer_to_tag_dict(Buffer* buffer) {
+  SBinaryTag* mainDict = create_dict_tag();
+  mainDict = add_uint_to_dict(mainDict, "float_bits", 32);
+
+  SBinaryTag* dimsTag = create_list_tag();
+  for (int index = 0; index < buffer->_dims._length; index += 1) {
+    dimsTag = add_uint_to_list(dimsTag, buffer->_dims[index]);
+  }
+  mainDict = add_tag_to_dict(mainDict, "dims", dimsTag);
+//  free(dimsTag);
+
+  mainDict = add_float_array_to_dict(mainDict, "data", buffer->_data, buffer->_dims.elementCount());
+
+  return mainDict;
+}
+
+void buffer_dump_to_file(Buffer* buffer, const char* filename) {
+  SBinaryTag* mainDict = buffer_to_tag_dict(buffer);
+  FILE* outputFile = fopen(filename, "wb");
+  assert(outputFile != NULL);
+  fwrite(mainDict, (mainDict->length + 8), 1, outputFile);
+  fclose(outputFile);
+  free(mainDict);
+}
+
 void buffer_save_to_image_file(Buffer* buffer, const char* basename) {
   const int maxFilenameLength = 1024;
   char filename[maxFilenameLength];

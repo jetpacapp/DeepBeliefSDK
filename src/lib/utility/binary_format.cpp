@@ -151,3 +151,133 @@ SBinaryTag* get_next_list_entry(SBinaryTag* listTag, SBinaryTag* previous) {
   return result;
 }
 
+SBinaryTag* create_list_tag() {
+  SBinaryTag* result = (SBinaryTag*)(malloc(2 * sizeof(uint32_t)));
+  result->type = JP_LIST;
+  result->length = 0;
+  return result;
+}
+
+SBinaryTag* add_tag_to_list(SBinaryTag* tag, SBinaryTag* subTag) {
+  const size_t oldLength = tag->length;
+  const size_t subTagSize = get_total_sizeof_tag(subTag);
+  const size_t newLength = (oldLength + subTagSize);
+  const size_t newTagSize = (get_total_sizeof_tag(tag) + subTagSize);
+  SBinaryTag* result = (SBinaryTag*)(realloc(tag, newTagSize));
+  char* newTagDestination = ((char*)(result)) + (8 + oldLength);
+  memcpy(newTagDestination, subTag, subTagSize);
+  result->length = (int)(newLength);
+  return result;
+}
+
+SBinaryTag* create_dict_tag() {
+  SBinaryTag* result = (SBinaryTag*)(malloc(2 * sizeof(uint32_t)));
+  result->type = JP_DICT;
+  result->length = 0;
+  return result;
+}
+
+SBinaryTag* add_tag_to_dict(SBinaryTag* tag, const char* key, SBinaryTag* valueTag) {
+  SBinaryTag* result = tag;
+  SBinaryTag* keyTag = create_string_tag(key);
+  result = add_tag_to_list(result, keyTag);
+  free(keyTag);
+  result = add_tag_to_list(result, valueTag);
+  return result;
+}
+
+SBinaryTag* create_string_tag(const char* value) {
+  const size_t stringLength = strlen(value);
+  const size_t bufferLength = ((((stringLength + 1) + 3) / 4) * 4);
+  SBinaryTag* result = (SBinaryTag*)(malloc((2 * sizeof(uint32_t)) + bufferLength));
+  result->type = JP_CHAR;
+  result->length = (int)(bufferLength);
+  char* valueDestination = (((char*)(result)) + 8);
+  memcpy(valueDestination, value, stringLength);
+  char* terminatorDestination = (((char*)(result)) + 8 + stringLength);
+  const size_t terminatorCount = (bufferLength - stringLength);
+  memset(terminatorDestination, 0, terminatorCount);
+  return result;
+}
+
+SBinaryTag* create_uint_tag(uint32_t value) {
+  SBinaryTag* result = (SBinaryTag*)(malloc(8 + sizeof(uint32_t)));
+  result->type = JP_UINT;
+  result->length = sizeof(uint32_t);
+  result->payload.jpuint = value;
+  return result;
+}
+
+SBinaryTag* create_float_tag(float value) {
+  SBinaryTag* result = (SBinaryTag*)(malloc(8 + sizeof(float)));
+  result->type = JP_FL32;
+  result->length = sizeof(float);
+  result->payload.jpfl32 = value;
+  return result;
+}
+
+SBinaryTag* create_float_array_tag(float* value, int elementCount) {
+  const size_t bufferLength = (elementCount * sizeof(float));
+  SBinaryTag* result = (SBinaryTag*)(malloc((2 * sizeof(uint32_t)) + bufferLength));
+  result->type = JP_FARY;
+  result->length = (int)(bufferLength);
+  char* valueDestination = (((char*)(result)) + 8);
+  memcpy(valueDestination, value, bufferLength);
+  return result;
+}
+
+SBinaryTag* add_string_to_dict(SBinaryTag* tag, const char* key, const char* value) {
+  SBinaryTag* valueTag = create_string_tag(value);
+  SBinaryTag* result = add_tag_to_dict(tag, key, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_uint_to_dict(SBinaryTag* tag, const char* key, uint32_t value) {
+  SBinaryTag* valueTag = create_uint_tag(value);
+  SBinaryTag* result = add_tag_to_dict(tag, key, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_float_to_dict(SBinaryTag* tag, const char* key, float value) {
+  SBinaryTag* valueTag = create_float_tag(value);
+  SBinaryTag* result = add_tag_to_dict(tag, key, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_float_array_to_dict(SBinaryTag* tag, const char* key, float* value, int elementCount) {
+  SBinaryTag* valueTag = create_float_array_tag(value, elementCount);
+  SBinaryTag* result = add_tag_to_dict(tag, key, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_string_to_list(SBinaryTag* tag, const char* value) {
+  SBinaryTag* valueTag = create_string_tag(value);
+  SBinaryTag* result = add_tag_to_list(tag, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_uint_to_list(SBinaryTag* tag, uint32_t value) {
+  SBinaryTag* valueTag = create_uint_tag(value);
+  SBinaryTag* result = add_tag_to_list(tag, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_float_to_list(SBinaryTag* tag, float value) {
+  SBinaryTag* valueTag = create_float_tag(value);
+  SBinaryTag* result = add_tag_to_list(tag, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_float_array_to_list(SBinaryTag* tag, float* value, int elementCount) {
+  SBinaryTag* valueTag = create_float_array_tag(value, elementCount);
+  SBinaryTag* result = add_tag_to_list(tag, valueTag);
+  free(valueTag);
+  return result;
+}

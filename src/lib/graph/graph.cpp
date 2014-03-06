@@ -18,9 +18,11 @@
 #include "nodefactory.h"
 
 //#define CHECK_RESULTS
-#ifdef CHECK_RESULTS
+#define SAVE_RESULTS
+#if defined(CHECK_RESULTS) || defined(SAVE_RESULTS)
 #define FN_LEN (1024)
-#endif // CHECK_RESULTS
+#define DUMP_FILE_PATH ("data/c_dog_blobs/")
+#endif // CHECK_RESULTS || SAVE_RESULTS
 
 Graph::Graph() :
   _useMemoryMap(false),
@@ -71,8 +73,8 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
 #ifdef CHECK_RESULTS
     char expectedInputFilename[FN_LEN];
     snprintf(expectedInputFilename, FN_LEN,
-      "data/dog_blobs/%03d_input_%s.blob",
-      ((index * 2) + 1), layer->_name);
+      "%s%03d_input_%s.blob",
+      DUMP_FILE_PATH, ((index * 2) + 1), layer->_name);
     Buffer* expectedInput = buffer_from_dump_file(expectedInputFilename);
     const Dimensions& currentInputDims = currentInput->_dims;
     if (_isHomebrewed) {
@@ -87,6 +89,13 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       fprintf(stderr, "!!!!!Inputs match for %s\n", layer->_name);
     }
 #endif // CHECK_RESULTS
+#ifdef SAVE_RESULTS
+    char inputFilename[FN_LEN];
+    snprintf(inputFilename, FN_LEN,
+      "%s%03d_input.blob",
+      DUMP_FILE_PATH, ((index * 2) + 1));
+    buffer_dump_to_file(currentInput, inputFilename);
+#endif // SAVE_RESULTS
 
     Buffer* currentOutput = layer->run(currentInput);
     currentOutput->setName(layer->_name);
@@ -98,8 +107,8 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
 #ifdef CHECK_RESULTS
     char expectedOutputFilename[FN_LEN];
     snprintf(expectedOutputFilename, FN_LEN,
-      "data/dog_blobs/%03d_output_%s.blob",
-      ((index * 2) + 2), layer->_name);
+      "%s%03d_output_%s.blob",
+      DUMP_FILE_PATH, ((index * 2) + 2), layer->_name);
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
     const Dimensions& currentOutputDims = currentOutput->_dims;
     if (_isHomebrewed) {
@@ -114,6 +123,14 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
       fprintf(stderr, "***Outputs match for %s\n", layer->_name);
     }
 #endif // CHECK_RESULTS
+
+#ifdef SAVE_RESULTS
+    char outputFilename[FN_LEN];
+    snprintf(outputFilename, FN_LEN,
+      "%s%03d_output.blob",
+      DUMP_FILE_PATH, ((index * 2) + 1));
+    buffer_dump_to_file(currentOutput, outputFilename);
+#endif // SAVE_RESULTS
     currentInput = currentOutput;
   }
 

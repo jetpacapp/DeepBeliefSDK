@@ -126,6 +126,7 @@ Buffer.prototype.showDebugImage = function() {
     }
     var dataURL = canvas.toDataURL('image/png');
     console.log(dataURL);
+    document.write('<img src="' + dataURL + '"/><br/>');
     window.open(dataURL, '_blank');
   } else if (dims.length == 4) {
     var imageCount = dims[0];
@@ -151,6 +152,7 @@ Buffer.prototype.showDebugImage = function() {
       }
       var dataURL = canvas.toDataURL("image/png");
       console.log(dataURL);
+      document.write('<img src="' + dataURL + '"/><br/>');
       window.open(dataURL, '_blank');
     }
   } else {
