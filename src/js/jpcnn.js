@@ -289,8 +289,8 @@ Network = function(filename, onLoad) {
   this._isLoaded = false;
   this._isHomebrewed = true;
   this._fileTag = null;
-  this._testResults = true;
-  this._runOnlyLayer = 4;
+  //this._testResults = true;
+  //this._runOnlyLayer = 20;
   this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
@@ -1257,8 +1257,8 @@ function matrixDot(input, weights) {
   var output = new Buffer(outputDims);
 
   var m = outputChannels;
-  var n = input._dims[0];
-  var k = input._dims[1];
+  var n = inputDims._dims[0];
+  var k = inputDims._dims[1];
   var alpha = 1.0;
   var lda = m;
   var ldb = k;
