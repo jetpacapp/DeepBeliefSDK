@@ -1312,7 +1312,7 @@ function matrixLocalResponse(input, windowSize, k, alpha, beta) {
   var magnitudeOffset = 0;
 
   var alphaOverSize = (alpha / windowSize);
-  var prereadCount = ((windowSize / 2) - 0);
+  var prereadCount = Math.floor((windowSize / 2) - 0);
 
   while (inputOffset < inputElementCount) {
 
@@ -1327,12 +1327,12 @@ function matrixLocalResponse(input, windowSize, k, alpha, beta) {
     }
 
     for (var channel = 0; channel < inputChannels; channel += 1) {
-      var rightIndex = (channel + (windowSize / 2));
+      var rightIndex = (channel + Math.floor(windowSize / 2));
       if (rightIndex < inputChannels) {
         averagedScale += magBufferData[rightIndex];
       }
       magnitudeData[magnitudeOffset + channel] = (averagedScale + k);
-      var leftIndex = (channel - (windowSize / 2));
+      var leftIndex = (channel - Math.floor(windowSize / 2));
       if (leftIndex >= 0) {
         averagedScale -= magBufferData[leftIndex];
       }
