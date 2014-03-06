@@ -162,17 +162,62 @@ Buffer.prototype.showDebugImage = function() {
 Buffer.prototype.setName = function(name) {
   this._name = name;
 };
-Buffer.prototype.fromTagDict = function(mainDict, skipCopy) {
-  // TO DO
-};
-Buffer.prototype.areAllClose = function(other, tolerance) {
-  // TO DO
-};
-Buffer.prototype.convertFromChanneledRGBImage = function() {
-  // TO DO
-};
-Buffer.prototype.convertToChanneledRGBImage = function() {
-  // TO DO
+Buffer.prototype.areAllClose = function(b, tolerance) {
+  if (_.isUndefined(tolerance)) {
+    tolerance = 0.000001;
+  }
+  var a = this;
+  if (!a) {
+    console.log('Buffer a is empty or undefined');
+    return false;
+  }
+
+  if (!b) {
+    console.log('Buffer b is empty or undefined');
+    return false;
+  }
+
+  if (a._dims._dims.length != b._dims._dims.length) {
+    console.log('Buffers have different numbers of dimensions - ' + a + ' vs ' + b);
+    return false;
+  }
+
+  if (!a._dims.areEqualTo(b._dims)) {
+    console.log('Buffers are different sizes - ' + a + ' vs ' + b);
+    return false;
+  }
+
+  var differentCount = 0.0;
+  var totalDelta = 0.0;
+  var aData = a._data;
+  var bData = b._data;
+  var offset = 0;
+  var elementCount = a._dims.elementCount();
+  while (offset < elementCount) {
+    var aValue = aData[offset];
+    var bValue = bData[offset];
+    var delta = (aValue - bValue);
+    var absDelta = Math.abs(delta);
+    if (absDelta > tolerance) {
+      differentCount += 1;
+    }
+    totalDelta += absDelta;
+    offset += 1;
+  }
+
+  var differentPercentage = (100 * (differentCount / elementCount));
+  var meanDelta = (totalDelta / elementCount);
+  console.log('Buffers contained ' +
+  differentPercentage + '% different values' +
+  ' (' + differentCount + ')' +
+  ' mean delta = ' + meanDelta +
+  ' ' + a + ' vs' +
+  ' ' + b);
+  if (differentCount > 0) {
+    return false;
+  }
+
+  return true;
 };
 Buffer.prototype.extractSubRegion = function(origin, size) {
   // TO DO
@@ -215,11 +260,37 @@ function bufferFromTagDict(tagDict) {
 
   return buffer;
 }
+// Warning - only use this function for debugging, since it's synchronous
+function bufferFromFileAtURL(url) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.responseType = 'arraybuffer';
+  var isDone = false;
+  xhr.onload = function(e) {
+    isDone = true;
+  };
+  xhr.onerror = function(e) {
+    alert("Error " + e.target.status + " occurred while receiving the document.");
+    isDone = true;
+  };
+  xhr.send();
+  // Here be dragons! Faking a synchronous XHR call, since we need the
+  // responseType, and that's not supported with modern sync requests.
+  while (!isDone) {
+    // The flag for this should be set in the callbacks.
+  }
+  var tag = tagFromMemory(xhr.response, 0);
+  var buffer = bufferFromTagDict(tag);
+  buffer.setName(url);
+  return buffer;
+}
 
 Network = function(filename, onLoad) {
   this._isLoaded = false;
   this._isHomebrewed = true;
   this._fileTag = null;
+  this._testResults = true;
+  this._runOnlyLayer = 4;
   this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
@@ -228,8 +299,7 @@ Network = function(filename, onLoad) {
     var myNetwork = myThis;
     return function(e) {
       if (this.status == 200) {
-      var blob = new Blob([this.response]);
-      myNetwork.initializeFromBlob(blob);
+        myNetwork.initializeFromArrayBuffer(this.response);
       }
     };
   }(this);
@@ -265,16 +335,6 @@ Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
 
   return result;
 };
-Network.prototype.initializeFromBlob = function(blob) {
-  var fileReader = new FileReader();
-  fileReader.onload = function(myThis) {
-    var myNetwork = myThis;
-    return function() {
-      myNetwork.initializeFromArrayBuffer(this.result)
-    };
-  }(this);
-  fileReader.readAsArrayBuffer(blob);
-};
 Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
   this.binaryFormat = new BinaryFormat(arrayBuffer);
   var graphDict = this.binaryFormat.firstTag();
@@ -306,14 +366,48 @@ Network.prototype.run = function(input, layerOffset) {
   if (_.isUndefined(layerOffset)) {
     layerOffset = 0;
   }
+  var filePath = 'data/c_dog_blobs/';
   var currentInput = input;
   var howManyLayers = (this._layers.length + layerOffset);
   for (var index = 0; index < howManyLayers; index += 1) {
+    if (!_.isUndefined(this._runOnlyLayer) && (index != this._runOnlyLayer)) {
+      continue;
+    }
     var layer = this._layers[index];
     console.log('Running ' + layer.constructor.name)
+
+    if (this._testResults) {
+      var inputIndexString = ('000' + ((index * 2) + 1)).slice(-3);
+      var expectedInputFilename = filePath + inputIndexString + '_input.blob';
+      var expectedInput = bufferFromFileAtURL(expectedInputFilename);
+      if (!expectedInput.areAllClose(currentInput)) {
+        console.log('inputs differ for ' + index + ' - ' + layer.constructor.name);
+        currentInput = expectedInput;
+      } else {
+        console.log('inputs are equal for ' + index);
+      }
+    }
+
     var currentOutput = layer.run(currentInput);
     currentOutput.setName(layer.constructor.name + ' output');
     console.log('currentOutput = ' + currentOutput);
+
+    if (this._testResults) {
+      var outputIndexString = ('000' + ((index * 2) + 1)).slice(-3);
+      var expectedOutputFilename = filePath + outputIndexString + '_output.blob';
+      var expectedOutput = bufferFromFileAtURL(expectedOutputFilename);
+      if (!expectedOutput.areAllClose(currentOutput)) {
+        console.log('outputs differ for ' + index + ' - ' + layer.constructor.name);
+        currentOutput = expectedOutput;
+      } else {
+        console.log('outputs are equal for ' + index);
+      }
+    }
+
+    if (!_.isUndefined(this._runOnlyLayer)) {
+      return null;
+    }
+
     currentInput = currentOutput;
   }
   return currentInput;
