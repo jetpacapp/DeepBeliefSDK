@@ -195,6 +195,8 @@ Graph* new_graph_from_file(const char* filename, int useMemoryMap, int isHomebre
     currentLabelNameTag = get_next_list_entry(labelNamesTag, currentLabelNameTag);
   }
 
+save_graph_to_file(result, "compressed.ntwk");
+
   return result;
 }
 

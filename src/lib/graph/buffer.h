@@ -61,7 +61,8 @@ extern Buffer* buffer_view_at_top_index(Buffer* input, int index);
 extern Buffer* convert_from_channeled_rgb_image(Buffer* input);
 extern Buffer* convert_to_channeled_rgb_image(Buffer* input);
 extern Buffer* extract_subregion(Buffer* input, const Offset& origin, const Dimensions& size);
-SBinaryTag* buffer_to_tag_dict(Buffer* buffer);
+SBinaryTag* buffer_to_tag_dict(Buffer* buffer, int floatBits = 32);
 void buffer_dump_to_file(Buffer* buffer, const char* filename);
+void quantize_buffer(Buffer* input, int howManyBits, jpfloat_t* outMin, jpfloat_t* outMax, void** outData, size_t* outSizeofData);
 
 #endif // INCLUDE_BUFFER_H

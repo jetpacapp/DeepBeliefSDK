@@ -77,7 +77,7 @@ SBinaryTag* NeuronNode::toTag() {
   resultDict = add_tag_to_dict(resultDict, "spec", specDict);
   free(specDict);
 
-  SBinaryTag* weightsTag = buffer_to_tag_dict(_weights);
+  SBinaryTag* weightsTag = buffer_to_tag_dict(_weights, 8);
   resultDict = add_tag_to_dict(resultDict, "weight", weightsTag);
   free(weightsTag);
 

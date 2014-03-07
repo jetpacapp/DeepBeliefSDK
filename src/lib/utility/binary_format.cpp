@@ -226,6 +226,17 @@ SBinaryTag* create_float_array_tag(float* value, int elementCount) {
   return result;
 }
 
+SBinaryTag* create_blob_tag(void* value, int sizeofValue) {
+  const size_t bufferLength = (((sizeofValue + 3) / 4) * 4);
+  SBinaryTag* result = (SBinaryTag*)(malloc((2 * sizeof(uint32_t)) + bufferLength));
+  result->type = JP_BLOB;
+  result->length = (int)(bufferLength);
+  char* valueDestination = (((char*)(result)) + 8);
+  memcpy(valueDestination, value, sizeofValue);
+  memset((valueDestination + sizeofValue), 0, (bufferLength - sizeofValue));
+  return result;
+}
+
 SBinaryTag* add_string_to_dict(SBinaryTag* tag, const char* key, const char* value) {
   SBinaryTag* valueTag = create_string_tag(value);
   SBinaryTag* result = add_tag_to_dict(tag, key, valueTag);
@@ -254,6 +265,13 @@ SBinaryTag* add_float_array_to_dict(SBinaryTag* tag, const char* key, float* val
   return result;
 }
 
+SBinaryTag* add_blob_to_dict(SBinaryTag* tag, const char* key, void* value, int sizeofValue) {
+  SBinaryTag* valueTag = create_blob_tag(value, sizeofValue);
+  SBinaryTag* result = add_tag_to_dict(tag, key, valueTag);
+  free(valueTag);
+  return result;
+}
+
 SBinaryTag* add_string_to_list(SBinaryTag* tag, const char* value) {
   SBinaryTag* valueTag = create_string_tag(value);
   SBinaryTag* result = add_tag_to_list(tag, valueTag);
@@ -277,6 +295,13 @@ SBinaryTag* add_float_to_list(SBinaryTag* tag, float value) {
 
 SBinaryTag* add_float_array_to_list(SBinaryTag* tag, float* value, int elementCount) {
   SBinaryTag* valueTag = create_float_array_tag(value, elementCount);
+  SBinaryTag* result = add_tag_to_list(tag, valueTag);
+  free(valueTag);
+  return result;
+}
+
+SBinaryTag* add_blob_to_list(SBinaryTag* tag, void* value, int sizeofValue) {
+  SBinaryTag* valueTag = create_blob_tag(value, sizeofValue);
   SBinaryTag* result = add_tag_to_list(tag, valueTag);
   free(valueTag);
   return result;

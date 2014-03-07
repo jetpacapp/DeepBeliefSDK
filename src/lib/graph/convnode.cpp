@@ -113,7 +113,7 @@ SBinaryTag* ConvNode::toTag() {
   resultDict = add_tag_to_dict(resultDict, "spec", specDict);
   free(specDict);
 
-  SBinaryTag* kernelsTag = buffer_to_tag_dict(_kernels);
+  SBinaryTag* kernelsTag = buffer_to_tag_dict(_kernels, 16);
   resultDict = add_tag_to_dict(resultDict, "kernels", kernelsTag);
   free(kernelsTag);
 

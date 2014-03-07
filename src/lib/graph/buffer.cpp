@@ -327,39 +327,6 @@ void Buffer::populateWithRandomValues(jpfloat_t min, jpfloat_t max) {
   }
 }
 
-void Buffer::quantize(int bits) {
-  jpfloat_t min = FLT_MAX;
-  jpfloat_t max = -FLT_MAX;
-
-  const int elementCount = _dims.elementCount();
-  jpfloat_t* dataStart = _data;
-  jpfloat_t* dataEnd = (_data + elementCount);
-  jpfloat_t* data = dataStart;
-  while (data < dataEnd) {
-    const jpfloat_t value = *data;
-    min = fminf(min, value);
-    max = fmaxf(max, value);
-    data += 1;
-  }
-
-  const int levels = (1 << bits);
-
-  const jpfloat_t spread = ((max - min) / levels);
-  const jpfloat_t recipSpread = (1.0f / fmaxf(0.00000001f, spread));
-
-  fprintf(stderr, "min = %f, max = %f\n", min, max);
-
-  data = dataStart;
-  while (data < dataEnd) {
-    const jpfloat_t value = *data;
-    const int quantized = (int)roundf((value - min) * recipSpread);
-    const jpfloat_t dequantized = ((quantized * spread) + min);
-    *data = dequantized;
-    data += 1;
-  }
-
-}
-
 Buffer* buffer_from_image_file(const char* filename)
 {
   int inputWidth;
@@ -525,18 +492,34 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
   return buffer;
 }
 
-SBinaryTag* buffer_to_tag_dict(Buffer* buffer) {
+SBinaryTag* buffer_to_tag_dict(Buffer* buffer, int floatBits) {
   SBinaryTag* mainDict = create_dict_tag();
-  mainDict = add_uint_to_dict(mainDict, "float_bits", 32);
+  mainDict = add_uint_to_dict(mainDict, "float_bits", floatBits);
+
+  assert((floatBits == 32) || (floatBits == 16) || (floatBits == 8));
 
   SBinaryTag* dimsTag = create_list_tag();
   for (int index = 0; index < buffer->_dims._length; index += 1) {
     dimsTag = add_uint_to_list(dimsTag, buffer->_dims[index]);
   }
   mainDict = add_tag_to_dict(mainDict, "dims", dimsTag);
-//  free(dimsTag);
+  free(dimsTag);
 
-  mainDict = add_float_array_to_dict(mainDict, "data", buffer->_data, buffer->_dims.elementCount());
+  if ((floatBits == 8) || (floatBits == 16)) {
+    jpfloat_t min;
+    jpfloat_t max;
+    void* quantizedData;
+    size_t sizeofQuantizedData;
+    quantize_buffer(buffer, floatBits, &min, &max, &quantizedData, &sizeofQuantizedData);
+
+    mainDict = add_float_to_dict(mainDict, "min", min);
+    mainDict = add_float_to_dict(mainDict, "max", max);
+    mainDict = add_blob_to_dict(mainDict, "quantized_data", quantizedData, (int)sizeofQuantizedData);
+
+    free(quantizedData);
+  } else if (floatBits == 32) {
+    mainDict = add_float_array_to_dict(mainDict, "data", buffer->_data, buffer->_dims.elementCount());
+  }
 
   return mainDict;
 }
@@ -811,4 +794,73 @@ Buffer* extract_subregion(Buffer* input, const Offset& origin, const Dimensions&
   }
 
   return output;
+}
+
+void quantize_buffer(Buffer* input, int howManyBits, jpfloat_t* outMin, jpfloat_t* outMax, void** outData, size_t* outSizeofData) {
+  assert((howManyBits == 8) || (howManyBits == 16));
+
+  jpfloat_t min = FLT_MAX;
+  jpfloat_t max = -FLT_MAX;
+
+  const int elementCount = input->_dims.elementCount();
+  jpfloat_t* dataStart = input->_data;
+  jpfloat_t* dataEnd = (input->_data + elementCount);
+  jpfloat_t* data = dataStart;
+  while (data < dataEnd) {
+    const jpfloat_t value = *data;
+    min = fminf(min, value);
+    max = fmaxf(max, value);
+    data += 1;
+  }
+
+  const int levels = (1 << howManyBits);
+
+  const jpfloat_t spread = ((max - min) / levels);
+  const jpfloat_t recipSpread = (1.0f / fmaxf(0.00000001f, spread));
+
+  if (howManyBits == 8) {
+    const size_t sizeofQuantizedData = elementCount * sizeof(uint8_t);
+    uint8_t* quantizedDataStart = (uint8_t*)(malloc(sizeofQuantizedData));
+    data = dataStart;
+    uint8_t* quantizedData = quantizedDataStart;
+    while (data < dataEnd) {
+      const jpfloat_t value = *data;
+      int quantized = (int)floorf((value - min) * recipSpread);
+      if (quantized < 0) {
+        quantized = 0;
+      } else if (quantized >= levels) {
+        quantized = (levels - 1);
+      }
+      *quantizedData = (uint8_t)(quantized);
+      data += 1;
+      quantizedData += 1;
+    }
+    *outData = quantizedDataStart;
+    *outSizeofData = sizeofQuantizedData;
+  } else if (howManyBits == 16) {
+    const size_t sizeofQuantizedData = elementCount * sizeof(uint16_t);
+    uint16_t* quantizedDataStart = (uint16_t*)(malloc(sizeofQuantizedData));
+    data = dataStart;
+    uint16_t* quantizedData = quantizedDataStart;
+    while (data < dataEnd) {
+      const jpfloat_t value = *data;
+      int quantized = (int)floorf((value - min) * recipSpread);
+      if (quantized < 0) {
+        quantized = 0;
+      } else if (quantized >= levels) {
+        quantized = (levels - 1);
+      }
+      *quantizedData = (uint16_t)(quantized);
+      data += 1;
+      quantizedData += 1;
+    }
+    *outData = quantizedDataStart;
+    *outSizeofData = sizeofQuantizedData;
+  } else {
+    assert(false); // should never get here
+    *outData = NULL;
+    *outSizeofData = 0;
+  }
+  *outMin = min;
+  *outMax = max;
 }

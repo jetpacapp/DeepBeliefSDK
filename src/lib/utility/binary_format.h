@@ -37,6 +37,7 @@
 #define JP_FARY (0x59524146) // 'FARY'
 #define JP_DICT (0x54434944) // 'DICT'
 #define JP_LIST (0x5453494C) // 'LIST'
+#define JP_BLOB (0x424F4C42) // 'BLOB'
 
 typedef struct SBinaryTagStruct {
   uint32_t type;
@@ -74,15 +75,18 @@ SBinaryTag* create_string_tag(const char* value);
 SBinaryTag* create_uint_tag(uint32_t value);
 SBinaryTag* create_float_tag(float value);
 SBinaryTag* create_float_array_tag(float* value, int elementCount);
+SBinaryTag* create_blob_tag(void* value, int sizeofValue);
 
 SBinaryTag* add_string_to_dict(SBinaryTag* tag, const char* key, const char* value);
 SBinaryTag* add_uint_to_dict(SBinaryTag* tag, const char* key, uint32_t value);
 SBinaryTag* add_float_to_dict(SBinaryTag* tag, const char* key, float value);
 SBinaryTag* add_float_array_to_dict(SBinaryTag* tag, const char* key, float* value, int elementCount);
+SBinaryTag* add_blob_to_dict(SBinaryTag* tag, const char* key, void* value, int sizeofValue);
 
 SBinaryTag* add_string_to_list(SBinaryTag* tag, const char* value);
 SBinaryTag* add_uint_to_list(SBinaryTag* tag, uint32_t value);
 SBinaryTag* add_float_to_list(SBinaryTag* tag, float value);
 SBinaryTag* add_float_array_to_list(SBinaryTag* tag, float* value, int elementCount);
+SBinaryTag* add_blob_to_list(SBinaryTag* tag, void* value, int sizeofValue);
 
 #endif // INCLUDE_BINARY_FORMAT_H
