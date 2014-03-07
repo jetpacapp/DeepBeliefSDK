@@ -82,6 +82,26 @@ char* GConvNode::debugString() {
   return this->debugStringWithMessage(sourceBuffer);
 }
 
+SBinaryTag* GConvNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "gconv");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+
+  SBinaryTag* layersTag = create_list_tag();
+  for (int index = 0; index < _subnodesCount; index += 1) {
+    SBinaryTag* layerTag = _subnodes[index]->toTag();
+    layersTag = add_tag_to_list(layersTag, layerTag);
+    free(layerTag);
+  }
+  resultDict = add_tag_to_dict(resultDict, "layers", layersTag);
+  free(layersTag);
+
+  resultDict = add_uint_to_dict(resultDict, "layers_count", _subnodesCount);
+  resultDict = add_uint_to_dict(resultDict, "kernels_count", _kernelsCount);
+
+  return resultDict;
+}
+
 BaseNode* new_gconvnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "gconv") == 0);

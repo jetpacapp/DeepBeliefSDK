@@ -67,6 +67,32 @@ char* NeuronNode::debugString() {
   return this->debugStringWithMessage(additionalInfo);
 }
 
+SBinaryTag* NeuronNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "neuron");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+
+  SBinaryTag* specDict = create_dict_tag();
+  specDict = add_uint_to_dict(specDict, "num_output", _outputsCount);
+  resultDict = add_tag_to_dict(resultDict, "spec", specDict);
+  free(specDict);
+
+  SBinaryTag* weightsTag = buffer_to_tag_dict(_weights);
+  resultDict = add_tag_to_dict(resultDict, "weight", weightsTag);
+  free(weightsTag);
+
+  resultDict = add_uint_to_dict(resultDict, "has_bias", _useBias);
+  if (_useBias) {
+    SBinaryTag* biasTag = buffer_to_tag_dict(_bias);
+    resultDict = add_tag_to_dict(resultDict, "bias", biasTag);
+    free(biasTag);
+  }
+
+  resultDict = add_float_to_dict(resultDict, "dropout", _dropout);
+
+  return resultDict;
+}
+
 BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "neuron") == 0);

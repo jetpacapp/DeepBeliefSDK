@@ -21,6 +21,7 @@ public:
   ~PoolNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual SBinaryTag* toTag();
 
   int _patchWidth;
   int _stride;

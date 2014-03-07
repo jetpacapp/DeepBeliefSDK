@@ -21,6 +21,7 @@ public:
   ~NormalizeNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual SBinaryTag* toTag();
 
   int _windowSize;
   jpfloat_t _k;

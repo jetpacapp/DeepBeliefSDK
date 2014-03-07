@@ -41,6 +41,14 @@ Buffer* FlatNode::run(Buffer* input) {
   return _output;
 }
 
+SBinaryTag* FlatNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "flat");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+
+  return resultDict;
+}
+
 BaseNode* new_flatnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "flat") == 0);

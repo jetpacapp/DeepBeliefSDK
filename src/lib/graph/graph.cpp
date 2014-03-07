@@ -197,3 +197,35 @@ Graph* new_graph_from_file(const char* filename, int useMemoryMap, int isHomebre
 
   return result;
 }
+
+void save_graph_to_file(Graph* graph, const char* filename) {
+
+  SBinaryTag* graphDict = create_dict_tag();
+
+  SBinaryTag* dataMeanTag = buffer_to_tag_dict(graph->_dataMean);
+  graphDict = add_tag_to_dict(graphDict, "data_mean", dataMeanTag);
+  free(dataMeanTag);
+
+  SBinaryTag* layersTag = create_list_tag();
+  for (int index = 0; index < graph->_layersLength; index += 1) {
+    BaseNode* node = graph->_layers[index];
+    SBinaryTag* currentLayerTag = node->toTag();
+    layersTag = add_tag_to_list(layersTag, currentLayerTag);
+    free(currentLayerTag);
+  }
+  graphDict = add_tag_to_dict(graphDict, "layers", layersTag);
+  free(layersTag);
+
+  SBinaryTag* labelNamesTag = create_list_tag();
+  for (int index = 0; index < graph->_labelNamesLength; index += 1) {
+    labelNamesTag = add_string_to_list(labelNamesTag, graph->_labelNames[index]);
+  }
+  graphDict = add_tag_to_dict(graphDict, "label_names", labelNamesTag);
+  free(labelNamesTag);
+
+  FILE* outputFile = fopen(filename, "wb");
+  assert(outputFile != NULL);
+  fwrite(graphDict, (graphDict->length + 8), 1, outputFile);
+  fclose(outputFile);
+  free(graphDict);
+}

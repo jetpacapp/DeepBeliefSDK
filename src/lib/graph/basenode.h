@@ -10,6 +10,7 @@
 #define INCLUDE_BASENODE_H
 
 #include "jpcnn.h"
+#include "binary_format.h"
 
 class Buffer;
 
@@ -20,7 +21,8 @@ public:
   BaseNode();
   virtual ~BaseNode();
 
-  virtual Buffer* run(Buffer* input)=0;
+  virtual Buffer* run(Buffer* input) = 0;
+  virtual SBinaryTag* toTag() = 0;
 
   void setClassName(const char* name);
   void setName(const char* name);

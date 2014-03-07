@@ -31,6 +31,19 @@ Buffer* NormalizeNode::run(Buffer* input) {
   return _output;
 }
 
+SBinaryTag* NormalizeNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "normalize");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+
+  resultDict = add_uint_to_dict(resultDict, "size", _windowSize);
+  resultDict = add_float_to_dict(resultDict, "k", _k);
+  resultDict = add_float_to_dict(resultDict, "alpha", _alpha);
+  resultDict = add_float_to_dict(resultDict, "beta", _beta);
+
+  return resultDict;
+}
+
 BaseNode* new_normalizenode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "normalize") == 0);

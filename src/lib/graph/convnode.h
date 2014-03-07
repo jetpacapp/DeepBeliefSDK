@@ -21,6 +21,7 @@ public:
   ~ConvNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual SBinaryTag* toTag();
   virtual char* debugString();
 
   void saveDebugImage();

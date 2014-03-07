@@ -26,6 +26,14 @@ Buffer* DropoutNode::run(Buffer* input) {
   return input;
 }
 
+SBinaryTag* DropoutNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "dropout");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+
+  return resultDict;
+}
+
 BaseNode* new_dropoutnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "dropout") == 0);

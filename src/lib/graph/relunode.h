@@ -21,6 +21,7 @@ public:
   ~ReluNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual SBinaryTag* toTag();
 };
 
 BaseNode* new_relunode_from_tag(SBinaryTag* tag, bool skipCopy);

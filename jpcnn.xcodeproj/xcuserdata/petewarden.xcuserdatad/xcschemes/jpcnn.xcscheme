@@ -64,7 +64,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--network data/example_networks/homebrewed.ntwk"
+            argument = "--network data/example_networks/homebrewed_resaved.ntwk"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

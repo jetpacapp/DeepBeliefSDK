@@ -19,7 +19,8 @@ public:
   PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip, int imageSize, int rescaledSize, bool isMeanChanneled);
   ~PrepareInput();
 
-  Buffer* run(Buffer* input);
+  virtual Buffer* run(Buffer* input);
+  virtual SBinaryTag* toTag();
 
   Buffer* _dataMean;
   bool _useCenterOnly;

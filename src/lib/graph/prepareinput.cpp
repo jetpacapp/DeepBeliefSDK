@@ -109,6 +109,12 @@ Buffer* PrepareInput::run(Buffer* input) {
   return _output;
 }
 
+SBinaryTag* PrepareInput::toTag() {
+  assert(false); // This should never be called, prepare nodes are not part of the real graph
+  SBinaryTag* result = create_dict_tag();
+  return result;
+}
+
 void rescale_image_to_fit(Buffer* input, Buffer* output, bool doFlip) {
 
   const Dimensions inputDims = input->_dims;

@@ -37,5 +37,6 @@ public:
 };
 
 Graph* new_graph_from_file(const char* filename, int useMemoryMap, int isHomebrewed);
+void save_graph_to_file(Graph* graph, const char* filename);
 
 #endif // INCLUDE_GRAPH_H

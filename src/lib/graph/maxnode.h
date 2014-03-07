@@ -21,6 +21,7 @@ public:
   ~MaxNode();
 
   virtual Buffer* run(Buffer* input);
+  virtual SBinaryTag* toTag();
 };
 
 BaseNode* new_maxnode_from_tag(SBinaryTag* tag, bool skipCopy);

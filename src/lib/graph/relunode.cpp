@@ -33,6 +33,13 @@ Buffer* ReluNode::run(Buffer* input) {
   return _output;
 }
 
+SBinaryTag* ReluNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "relu");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+  return resultDict;
+}
+
 BaseNode* new_relunode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "relu") == 0);

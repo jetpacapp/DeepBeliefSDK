@@ -31,6 +31,13 @@ Buffer* MaxNode::run(Buffer* input) {
   return _output;
 }
 
+SBinaryTag* MaxNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "max");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+  return resultDict;
+}
+
 BaseNode* new_maxnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "max") == 0);

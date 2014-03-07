@@ -101,6 +101,34 @@ void ConvNode::saveDebugImage() {
   }
 }
 
+SBinaryTag* ConvNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "conv");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+
+  SBinaryTag* specDict = create_dict_tag();
+  specDict = add_uint_to_dict(specDict, "num_kernels", _kernelCount);
+  specDict = add_uint_to_dict(specDict, "ksize", _kernelWidth);
+  specDict = add_uint_to_dict(specDict, "stride", _sampleStride);
+  resultDict = add_tag_to_dict(resultDict, "spec", specDict);
+  free(specDict);
+
+  SBinaryTag* kernelsTag = buffer_to_tag_dict(_kernels);
+  resultDict = add_tag_to_dict(resultDict, "kernels", kernelsTag);
+  free(kernelsTag);
+
+  resultDict = add_uint_to_dict(resultDict, "has_bias", _useBias);
+  if (_useBias) {
+    SBinaryTag* biasTag = buffer_to_tag_dict(_bias);
+    resultDict = add_tag_to_dict(resultDict, "bias", biasTag);
+    free(biasTag);
+  }
+
+  resultDict = add_uint_to_dict(resultDict, "padding", _marginSize);
+
+  return resultDict;
+}
+
 BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "conv") == 0);

@@ -31,6 +31,24 @@ Buffer* PoolNode::run(Buffer* input) {
   return _output;
 }
 
+SBinaryTag* PoolNode::toTag() {
+  SBinaryTag* resultDict = create_dict_tag();
+  resultDict = add_string_to_dict(resultDict, "class", "pool");
+  resultDict = add_string_to_dict(resultDict, "name", _name);
+
+  resultDict = add_uint_to_dict(resultDict, "psize", _patchWidth);
+  resultDict = add_uint_to_dict(resultDict, "stride", _stride);
+  if (_mode == PoolNode::EModeMax) {
+    resultDict = add_string_to_dict(resultDict, "mode", "max");
+  } else if (_mode == PoolNode::EModeAverage) {
+    resultDict = add_string_to_dict(resultDict, "mode", "average");
+  } else {
+    fprintf(stderr, "Unknown pooling mode '%d'\n", _mode);
+  }
+
+  return resultDict;
+}
+
 BaseNode* new_poolnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   const char* className = get_string_from_dict(tag, "class");
   assert(strcmp(className, "pool") == 0);
