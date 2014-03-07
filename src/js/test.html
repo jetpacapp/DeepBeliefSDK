@@ -3,9 +3,18 @@
     <title>Jetpac Deep Belief Demo</title>
     <script type="text/javascript" src="underscore.js"></script>
     <script type="text/javascript" src="jpcnn.js"></script>
+    <style>
+      .image {
+        float: left;
+      }
+      .labels-container {
+        float: left;
+        width: 400px;
+      }
+    </style>
   </head>
   <body>
-    <h2>Jetpac Deep Belief</h2>
+    <h2>Jetpac's Deep Belief in Javascript</h2>
 
     <video style="visibility: hidden;" id="live" autoplay></video>
 
@@ -15,7 +24,8 @@
     </div>
 
     <canvas class="image" id="image-preview"></canvas>
-    <div class="labels-container"></div>
+    <div class="labels-container">
+    </div>
 
     <canvas id="snapshot" style="display:none"></canvas>
 
@@ -23,7 +33,7 @@
       var video = document.getElementById("live");
 
       var network = new Network('data/example_networks/homebrewed_compressed.ntwk', function() {
-        //testDogImage();
+        testDogImage();
       });
 
 //      navigator.webkitGetUserMedia({video: true},
@@ -85,12 +95,20 @@
 
         var results = network.classifyImage(inputBuffer, false, 0);
 
-        _.each(results, function(prediction) {
-          if (prediction.value > 0.01) {
-            console.log(prediction);
-          }
+        var topResults = _.select(results, function(prediction) {
+          return (prediction.value > 0.01);
         });
-
+        topResults = topResults.sort(function(a, b) { return (b.value - a.value); });
+        topResults = _.first(topResults, 10);
+        var labelsContainer = document.getElementsByClassName('labels-container')[0];
+        labelsContainer.innerHTML = '';
+        _.each(topResults, function(prediction) {
+          var score = Math.round(prediction.value * 100);
+          var label = document.createElement('div');
+          label.className = 'label';
+          label.innerText = prediction.label + ' - ' + score + '%';
+          labelsContainer.appendChild(label);
+        });
       }
 
       window.onload = function() {
