@@ -5,19 +5,25 @@
     <script type="text/javascript" src="jpcnn.js"></script>
   </head>
   <body>
-    <h2>HTML5 Photo Booth</h2>
-
-    <p><a href="#" onclick="testDogImage()">Take a picture!</a></p>
-    <div id="filmroll"></div>
+    <h2>Jetpac Deep Belief</h2>
 
     <video style="visibility: hidden;" id="live" autoplay></video>
+
+    <div>
+      Choose an image file to analyze:
+      <input type="file" id="file-input">
+    </div>
+
+    <canvas class="image" id="image-preview"></canvas>
+    <div class="labels-container"></div>
+
     <canvas id="snapshot" style="display:none"></canvas>
 
     <script type="text/javascript">
       var video = document.getElementById("live");
 
       var network = new Network('data/example_networks/homebrewed_compressed.ntwk', function() {
-        testDogImage();
+        //testDogImage();
       });
 
 //      navigator.webkitGetUserMedia({video: true},
@@ -42,7 +48,7 @@
 
         var destSize = 256;
 
-        var canvasElement = document.createElement("canvas");
+        var canvasElement = document.getElementById('image-preview');//document.createElement("canvas");
         canvasElement.width = destSize;
         canvasElement.height = destSize;
 
@@ -87,45 +93,26 @@
 
       }
 
-      function snap() {
-        var live = document.getElementById("live");
-        var snapshot = document.getElementById("snapshot");
-        var filmroll = document.getElementById("filmroll");
+      window.onload = function() {
+        var fileInput = document.getElementById('file-input');
+        fileInput.addEventListener('change', function(e) {
+          var file = fileInput.files[0];
+          var imageType = /image.*/;
 
-        var sourceWidth = live.clientWidth;
-        var sourceHeight = live.clientHeight;
-
-        var destSize = 256;
-
-        snapshot.width = destSize;
-        snapshot.height = destSize;
-
-        var sourceX;
-        var sourceY;
-        var sourceSize;
-        if (sourceWidth > sourceHeight) {
-          sourceSize = sourceHeight;
-          sourceX = ((sourceWidth - sourceHeight) / 2);
-          sourceY = 0;
-        } else {
-          sourceSize = sourceWidth;
-          sourceX = 0;
-          sourceY = ((sourceHeight - sourceWidth) / 2);
-        }
-        // Draw a frame of the live video onto the canvas
-        var canvas = snapshot.getContext("2d");
-        canvas.drawImage(live, sourceX, sourceY, sourceSize, sourceSize, destSize, destSize);
-
-        // Create an image element with the canvas image data
-        img = document.createElement("img");
-        img.src = snapshot.toDataURL("image/png");
-        img.style.padding = 5;
-        img.width = snapshot.width / 2;
-        img.height = snapshot.height / 2;
-
-        // Add the new image to the film roll
-        filmroll.appendChild(img);
+          if (file.type.match(imageType)) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              var image = new Image();
+              image.src = reader.result;
+              classifyImage(image, image.width, image.height);
+            }
+            reader.readAsDataURL(file); 
+          } else {
+            alert('File type "' + file.type + '" can\'t be read as an image');
+          }
+        });
       }
+
     </script>
   </body>
 </html>
