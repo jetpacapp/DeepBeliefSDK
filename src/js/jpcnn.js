@@ -240,7 +240,7 @@ Buffer.prototype.viewAtTopIndex = function(index) {
 function bufferFromTagDict(tagDict) {
   console.assert(tagDict.type === JP_DICT);
   var bitsPerFloat = tagDict.getUintFromDict('float_bits');
-  console.assert(bitsPerFloat === 32);
+  console.assert((bitsPerFloat === 32) || (bitsPerFloat === 16) || (bitsPerFloat === 8));
   var dimsTag = tagDict.getTagFromDict('dims');
   var dimsSubTags = dimsTag.getSubTags();
   var dimsValues = [];
@@ -249,15 +249,44 @@ function bufferFromTagDict(tagDict) {
     dimsValues.push(subTag.value);
   });
   var dims = new Dimensions(dimsValues);
-  var dataTag = tagDict.getTagFromDict("data");
-  console.assert(dataTag.type === JP_FARY);
-
   var elementCount = dims.elementCount();
-  console.assert(dataTag.length === (elementCount * 4));
 
-  var dataTagArray = dataTag.value;
-  var buffer = new Buffer(dims, dataTagArray);
+  if (bitsPerFloat === 32) {
+    var dataTag = tagDict.getTagFromDict("data");
+    console.assert(dataTag.type === JP_FARY);
+    console.assert(dataTag.length === (elementCount * 4));
 
+    var dataTagArray = dataTag.value;
+    var buffer = new Buffer(dims, dataTagArray);
+  } else if ((bitsPerFloat === 16) || (bitsPerFloat == 8)) {
+    var dataTag = tagDict.getTagFromDict("quantized_data");
+    console.assert(dataTag.type === JP_BLOB);
+    var bytesPerElement = (bitsPerFloat / 8);
+    var expectedByteCount = (Math.floor(((elementCount * bytesPerElement) + 3) / 4) * 4);
+    console.assert(dataTag.length === expectedByteCount);
+
+    var min = tagDict.getFloatFromDict('min');
+    var max = tagDict.getFloatFromDict('max');
+    var intRange = (1 << bitsPerFloat);
+    var spread = ((max - min) / intRange);
+
+    var floatBuffer = new Float32Array(elementCount);
+    var quantizedBuffer;
+    if (bitsPerFloat === 16) {
+      quantizedBuffer = new Uint16Array(dataTag.value);
+    } else if (bitsPerFloat === 8) {
+      quantizedBuffer = new Uint8Array(dataTag.value);
+    } else {
+      console.log('Bad bitsPerFloat ' + bitsPerFloat);
+      return null;
+    }
+    for (var index = 0; index < elementCount; index += 1) {
+      var quantizedValue = quantizedBuffer[index];
+      floatBuffer[index] = ((quantizedValue * spread) + min);
+    }
+
+    var buffer = new Buffer(dims, floatBuffer);
+  }
   return buffer;
 }
 // Warning - only use this function for debugging, since it's synchronous
@@ -289,8 +318,8 @@ Network = function(filename, onLoad) {
   this._isLoaded = false;
   this._isHomebrewed = true;
   this._fileTag = null;
-  //this._testResults = true;
-  //this._runOnlyLayer = 20;
+//  this._testResults = true;
+//  this._runOnlyLayer = 20;
   this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
@@ -423,6 +452,7 @@ JP_FL32 = 0x32334C46; // 'FL32'
 JP_FARY = 0x59524146; // 'FARY'
 JP_DICT = 0x54434944; // 'DICT'
 JP_LIST = 0x5453494C; // 'LIST'
+JP_BLOB = 0x424F4C42; // 'BLOB'
 BinaryFormat.prototype.firstTag = function() {
   return tagFromMemory(this.arrayBuffer, 0);
 };
@@ -461,6 +491,8 @@ BinaryTag = function(type, length, valuesBuffer) {
   } else if (type === JP_DICT) {
     value = valuesBuffer;
   } else if (type === JP_LIST) {
+    value = valuesBuffer;
+  } else if (type === JP_BLOB) {
     value = valuesBuffer;
   } else {
     console.log('Unknown type ' + type);

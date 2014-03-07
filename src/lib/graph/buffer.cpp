@@ -327,6 +327,39 @@ void Buffer::populateWithRandomValues(jpfloat_t min, jpfloat_t max) {
   }
 }
 
+void Buffer::quantize(int bits) {
+  jpfloat_t min = FLT_MAX;
+  jpfloat_t max = -FLT_MAX;
+
+  const int elementCount = _dims.elementCount();
+  jpfloat_t* dataStart = _data;
+  jpfloat_t* dataEnd = (_data + elementCount);
+  jpfloat_t* data = dataStart;
+  while (data < dataEnd) {
+    const jpfloat_t value = *data;
+    min = fminf(min, value);
+    max = fmaxf(max, value);
+    data += 1;
+  }
+
+  const int levels = (1 << bits);
+
+  const jpfloat_t spread = ((max - min) / levels);
+  const jpfloat_t recipSpread = (1.0f / fmaxf(0.00000001f, spread));
+
+  fprintf(stderr, "min = %f, max = %f\n", min, max);
+
+  data = dataStart;
+  while (data < dataEnd) {
+    const jpfloat_t value = *data;
+    const int quantized = (int)roundf((value - min) * recipSpread);
+    const jpfloat_t dequantized = ((quantized * spread) + min);
+    *data = dequantized;
+    data += 1;
+  }
+
+}
+
 Buffer* buffer_from_image_file(const char* filename)
 {
   int inputWidth;
@@ -825,7 +858,7 @@ void quantize_buffer(Buffer* input, int howManyBits, jpfloat_t* outMin, jpfloat_
     uint8_t* quantizedData = quantizedDataStart;
     while (data < dataEnd) {
       const jpfloat_t value = *data;
-      int quantized = (int)floorf((value - min) * recipSpread);
+      int quantized = (int)roundf((value - min) * recipSpread);
       if (quantized < 0) {
         quantized = 0;
       } else if (quantized >= levels) {
@@ -844,7 +877,7 @@ void quantize_buffer(Buffer* input, int howManyBits, jpfloat_t* outMin, jpfloat_
     uint16_t* quantizedData = quantizedDataStart;
     while (data < dataEnd) {
       const jpfloat_t value = *data;
-      int quantized = (int)floorf((value - min) * recipSpread);
+      int quantized = (int)roundf((value - min) * recipSpread);
       if (quantized < 0) {
         quantized = 0;
       } else if (quantized >= levels) {

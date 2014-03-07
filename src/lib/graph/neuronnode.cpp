@@ -44,6 +44,8 @@ Buffer* NeuronNode::run(Buffer* input) {
   Dimensions expectedWeightsDimensions(elementCount, _outputsCount);
   assert(expectedWeightsDimensions == _weights->_dims);
 
+//_weights->quantize(8);
+
   _output = matrix_dot(flattenedInput, _weights);
   _output->setName(_name);
 
