@@ -26,8 +26,7 @@
     <canvas class="image" id="image-preview"></canvas>
     <div class="labels-container">
     </div>
-
-    <canvas id="snapshot" style="display:none"></canvas>
+    <div class="time"></div>
 
     <script type="text/javascript">
       var video = document.getElementById("live");
@@ -93,7 +92,10 @@
         inputBuffer.setName('inputBuffer');
         console.log(inputBuffer);
 
+        var startTime = new Date().getTime();
         var results = network.classifyImage(inputBuffer, false, 0);
+        var endTime = new Date().getTime();
+        var duration = (endTime - startTime);
 
         var topResults = _.select(results, function(prediction) {
           return (prediction.value > 0.01);
@@ -116,6 +118,8 @@
           label.innerHTML = 'No labels found';
           labelsContainer.appendChild(label);
         }
+        var timeContainer = document.getElementsByClassName('time')[0];
+        timeContainer.innerHTML = 'Took ' + duration + 'ms';
       }
 
       window.onload = function() {
