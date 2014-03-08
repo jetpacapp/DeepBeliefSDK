@@ -141,6 +141,7 @@
 		59824251188DE2F0003F2C0A /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824201188DE27D003F2C0A /* binary_format.cpp */; };
 		5982425D188F2631003F2C0A /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5982425C188F2631003F2C0A /* ApplicationServices.framework */; };
 		5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
+		598B042B18CA99B300098916 /* webgl.js in Sources */ = {isa = PBXBuildFile; fileRef = 598B042A18CA99B300098916 /* webgl.js */; };
 		59DA425C18B4562A00462234 /* matrix_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 591A037618B4559A0014C655 /* matrix_scale.cpp */; };
 		59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
 /* End PBXBuildFile section */
@@ -267,6 +268,7 @@
 		59824259188F1E0F003F2C0A /* os_image_load.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = os_image_load.cpp; sourceTree = "<group>"; };
 		5982425A188F1E0F003F2C0A /* os_image_load.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_image_load.h; sourceTree = "<group>"; };
 		5982425C188F2631003F2C0A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		598B042A18CA99B300098916 /* webgl.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webgl.js; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59DD71FB18B29CC10054D561 /* os_image_save.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = os_image_save.cpp; sourceTree = "<group>"; };
 		59DD71FC18B29CC10054D561 /* os_image_save.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_image_save.h; sourceTree = "<group>"; };
@@ -428,6 +430,7 @@
 			children = (
 				59602FE418C52ECA00D6EEE2 /* jpcnn.js */,
 				59602FE518C52ECA00D6EEE2 /* test.html */,
+				598B042A18CA99B300098916 /* webgl.js */,
 			);
 			path = js;
 			sourceTree = "<group>";
@@ -838,6 +841,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				598B042B18CA99B300098916 /* webgl.js in Sources */,
 				59602FDC18C3C3A600D6EEE2 /* cstring_helpers.cpp in Sources */,
 				598241B8188DE166003F2C0A /* main.cpp in Sources */,
 			);

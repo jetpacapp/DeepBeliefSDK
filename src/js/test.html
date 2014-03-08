@@ -2,6 +2,8 @@
   <head>
     <title>Jetpac Deep Belief Demo</title>
     <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="glMatrix.js"></script>
+    <script type="text/javascript" src="webgl.js"></script>
     <script type="text/javascript" src="jpcnn.js"></script>
     <style>
       .image {
@@ -27,6 +29,8 @@
     <div class="labels-container">
     </div>
     <div class="time"></div>
+
+    <canvas class="gl-test" id="gl-test"></canvas>
 
     <script type="text/javascript">
       var video = document.getElementById("live");
@@ -140,6 +144,14 @@
             alert('File type "' + file.type + '" can\'t be read as an image');
           }
         });
+
+        var webglCanvas = document.getElementById('gl-test');
+        var webgl = new WebGL({
+          canvas: webglCanvas,
+          width: 400,
+          height: 400
+        });
+        webgl.clearScreen(1, 1, 0, 1);
       }
 
     </script>
