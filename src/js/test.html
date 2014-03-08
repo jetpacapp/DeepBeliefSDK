@@ -102,13 +102,20 @@
         topResults = _.first(topResults, 10);
         var labelsContainer = document.getElementsByClassName('labels-container')[0];
         labelsContainer.innerHTML = '';
-        _.each(topResults, function(prediction) {
-          var score = Math.round(prediction.value * 100);
+        if (topResults.length > 0) {
+          _.each(topResults, function(prediction) {
+            var score = Math.round(prediction.value * 100);
+            var label = document.createElement('div');
+            label.className = 'label';
+            label.innerHTML = prediction.label + ' - ' + score + '%';
+            labelsContainer.appendChild(label);
+          });
+        } else {
           var label = document.createElement('div');
           label.className = 'label';
-          label.innerText = prediction.label + ' - ' + score + '%';
+          label.innerHTML = 'No labels found';
           labelsContainer.appendChild(label);
-        });
+        }
       }
 
       window.onload = function() {

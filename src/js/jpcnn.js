@@ -63,13 +63,48 @@ Dimensions.prototype.areEqualTo = function(other) {
   return true;
 }
 
-Buffer = function(dims, data) {
+Buffer = function(dims, data, options) {
+  if (_.isUndefined(options)) {
+    options = {
+      bitsPerFloat: 32,
+      min: 0,
+      max: 0
+    };
+  }
+  var bitsPerFloat = options.bitsPerFloat;
+  var min = options.min;
+  var max = options.max;
+
   this._dims = new Dimensions(dims);
+  this._bitsPerFloat = bitsPerFloat;
+  this._min = min;
+  this._max = max;
+
+  var intRange = (1 << bitsPerFloat);
+  var spread = ((max - min) / intRange);
+  this._spread = spread;
+
   if (_.isUndefined(data)) {
     var elementCount = this._dims.elementCount();
-    this._data = new Float32Array(elementCount);
-  } else {
-    this._data = data;
+    if (bitsPerFloat === 32) {
+      this._data = new Float32Array(elementCount);
+    } else if (bitsPerFloat === 16) {
+      this._quantizedData = new Uint16Array(dataTag.value);
+    } else if (bitsPerFloat === 8) {
+      this._quantizedData = new Uint8Array(dataTag.value);
+    } else {
+      console.log('Bad bitsPerFloat ' + bitsPerFloat);
+    }
+   } else {
+    if (bitsPerFloat === 32) {
+      this._data = data;
+    } else if (bitsPerFloat === 16) {
+      this._quantizedData = new Uint16Array(data);
+    } else if (bitsPerFloat === 8) {
+      this._quantizedData = new Uint8Array(data);
+    } else {
+      console.log('Bad bitsPerFloat ' + bitsPerFloat);
+    }
   }
   this._name = 'None';
 };
@@ -267,25 +302,28 @@ function bufferFromTagDict(tagDict) {
 
     var min = tagDict.getFloatFromDict('min');
     var max = tagDict.getFloatFromDict('max');
-    var intRange = (1 << bitsPerFloat);
-    var spread = ((max - min) / intRange);
+    if (false) {
+      var intRange = (1 << bitsPerFloat);
+      var spread = ((max - min) / intRange);
 
-    var floatBuffer = new Float32Array(elementCount);
-    var quantizedBuffer;
-    if (bitsPerFloat === 16) {
-      quantizedBuffer = new Uint16Array(dataTag.value);
-    } else if (bitsPerFloat === 8) {
-      quantizedBuffer = new Uint8Array(dataTag.value);
+      var floatBuffer = new Float32Array(elementCount);
+      var quantizedBuffer;
+      if (bitsPerFloat === 16) {
+        quantizedBuffer = new Uint16Array(dataTag.value);
+      } else if (bitsPerFloat === 8) {
+        quantizedBuffer = new Uint8Array(dataTag.value);
+      } else {
+        console.log('Bad bitsPerFloat ' + bitsPerFloat);
+        return null;
+      }
+      for (var index = 0; index < elementCount; index += 1) {
+        var quantizedValue = quantizedBuffer[index];
+        floatBuffer[index] = ((quantizedValue * spread) + min);
+      }
+      var buffer = new Buffer(dims, floatBuffer, {bitsPerFloat: 32, min: 0, max: 1});
     } else {
-      console.log('Bad bitsPerFloat ' + bitsPerFloat);
-      return null;
+      var buffer = new Buffer(dims, dataTag.value, {bitsPerFloat: bitsPerFloat, min: min, max: max});
     }
-    for (var index = 0; index < elementCount; index += 1) {
-      var quantizedValue = quantizedBuffer[index];
-      floatBuffer[index] = ((quantizedValue * spread) + min);
-    }
-
-    var buffer = new Buffer(dims, floatBuffer);
   }
   return buffer;
 }
@@ -1132,19 +1170,37 @@ function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
   var ldc = m;
   var beta = 0.0;
 
-  matrixGemm(
-    m,
-    n,
-    k,
-    alpha,
-    kernels._data,
-    lda,
-    patches._data,
-    ldb,
-    beta,
-    output._data,
-    ldc
-  );
+  if (kernels._bitsPerFloat === 32) {
+    matrixGemm(
+      m,
+      n,
+      k,
+      alpha,
+      kernels._data,
+      lda,
+      patches._data,
+      ldb,
+      beta,
+      output._data,
+      ldc
+    );
+  } else {
+    matrixGemmScaleA(
+      m,
+      n,
+      k,
+      alpha,
+      kernels._quantizedData,
+      lda,
+      patches._data,
+      ldb,
+      beta,
+      output._data,
+      ldc,
+      kernels._spread,
+      kernels._min
+    );
+  }
 
   return output;
 }
@@ -1197,6 +1253,71 @@ function naiveGemm(
       for (var l = 0; l < k; l++) {
         var aIndex = ((lda * l) + i);
         var aValue = a[aIndex];
+        var bIndex = ((ldb * j) + l);
+        var bValue = b[bIndex];
+        total += (aValue * bValue);
+      }
+      var cIndex = ((ldc * j) + i);
+      var oldCValue = c[cIndex];
+      c[cIndex] = ((alpha * total) + (beta * oldCValue));
+    }
+  }
+}
+
+function matrixGemmScaleA(
+  m,
+  n,
+  k,
+  alpha,
+  a,
+  lda,
+  b,
+  ldb,
+  beta,
+  c,
+  ldc,
+  aScale,
+  aOffset) {
+
+  naiveGemmScaleA(
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc,
+    aScale,
+    aOffset
+  );
+
+}
+
+function naiveGemmScaleA(
+  m,
+  n,
+  k,
+  alpha,
+  a,
+  lda,
+  b,
+  ldb,
+  beta,
+  c,
+  ldc,
+  aScale,
+  aOffset) {
+
+  for (var i = 0; i < m; i++) {
+    for (var j = 0; j < n; j++) {
+      var total = 0.0;
+      for (var l = 0; l < k; l++) {
+        var aIndex = ((lda * l) + i);
+        var aValue = ((a[aIndex] * aScale) + aOffset);
         var bIndex = ((ldb * j) + l);
         var bValue = b[bIndex];
         total += (aValue * bValue);
@@ -1297,19 +1418,37 @@ function matrixDot(input, weights) {
   var ldc = m;
   var beta = 0.0;
 
-  matrixGemm(
-    m,
-    n,
-    k,
-    alpha,
-    weights._data,
-    lda,
-    input._data,
-    ldb,
-    beta,
-    output._data,
-    ldc
-  );
+  if (weights._bitsPerFloat === 32) {
+    matrixGemm(
+      m,
+      n,
+      k,
+      alpha,
+      weights._data,
+      lda,
+      input._data,
+      ldb,
+      beta,
+      output._data,
+      ldc
+    );
+  } else {
+    matrixGemmScaleA(
+      m,
+      n,
+      k,
+      alpha,
+      weights._quantizedData,
+      lda,
+      input._data,
+      ldb,
+      beta,
+      output._data,
+      ldc,
+      weights._spread,
+      weights._min
+    );
+  }
 
   return output;
 }
