@@ -3,6 +3,7 @@
     <title>Jetpac Deep Belief Demo</title>
     <script type="text/javascript" src="underscore.js"></script>
     <script type="text/javascript" src="glMatrix.js"></script>
+    <script type="text/javascript" src="webgl-debug.js"></script>
     <script type="text/javascript" src="webgl.js"></script>
     <script type="text/javascript" src="jpcnn.js"></script>
     <style>
@@ -36,7 +37,7 @@
       var video = document.getElementById("live");
 
       var network = new Network('data/example_networks/homebrewed_compressed.ntwk', function() {
-        testDogImage();
+        //testDogImage();
       });
 
 //      navigator.webkitGetUserMedia({video: true},
@@ -146,12 +147,63 @@
         });
 
         var webglCanvas = document.getElementById('gl-test');
+
+        var width = 400;
+        var height = 400;
         var webgl = new WebGL({
           canvas: webglCanvas,
-          width: 400,
-          height: 400
+          width: width,
+          height: height
         });
+
+        var testVertexShader = '' +
+          '  precision mediump float;\n' +
+          '  uniform mat4 modelView;\n' +
+          '  uniform mat4 projection;\n' +
+          '\n' +
+          '  attribute vec2 vertexPosition;\n' +
+          '  attribute vec2 texCoords;\n' +
+          '  varying vec2 outTexCoord;\n' +
+          '\n' +
+          '  void main(void) {\n' +
+          '    gl_Position = projection * modelView * vec4(vertexPosition, 0.0, 1.0);\n' +
+          '    outTexCoord = texCoords;\n' +
+          '  }\n';
+
+        var testFragmentShader = '' +
+          '  precision mediump float;\n' +
+          '  varying vec2 outTexCoord;\n' +
+          '  void main(void) {\n' +
+          '    vec2 texCoord = outTexCoord;\n' +
+          '    gl_FragColor = vec4(0, 1, 0, 1);\n' +
+          '  }\n';
+
+        var testProgram = webgl.createShaderProgram(testVertexShader, testFragmentShader);
+
+        var viewBottom = 0;
+        var viewTop = height;
+        var viewLeft = 0;
+        var viewRight = width;
+
+        var vertices = [
+          viewRight,  viewBottom,   viewRight,  viewBottom,
+          viewLeft,   viewBottom,   viewLeft,   viewBottom,
+          viewRight,  viewTop,      viewRight,  viewTop,
+          viewLeft,   viewTop,      viewLeft,   viewTop
+        ];
+        var vertexBuffer = webgl.createVertexBuffer(vertices, 2, 2);
+
+        webgl.setOneToOneProjection();
         webgl.clearScreen(1, 1, 0, 1);
+//        webgl.enable('BLEND');
+//        webgl.blendFunc('ONE', 'ONE_MINUS_SRC_ALPHA');
+
+        webgl.drawVertexBuffer({
+          shader: testProgram,
+          vertexBuffer: vertexBuffer,
+          uniformFloats: {}
+        });
+
       }
 
     </script>

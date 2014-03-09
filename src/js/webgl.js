@@ -74,6 +74,13 @@ function WebGL(options) {
       this.error = 'Unknown error initializing WebGL';
     }
   }
+
+  function throwOnGLError(err, funcName, args) {
+    throw WebGLDebugUtils.glEnumToString(err) + " was caused by call to: " + funcName;
+  };
+ 
+  context = WebGLDebugUtils.makeDebugContext(context, throwOnGLError);
+
   this.canvas = canvas;
   this.pixelScale = pixelScale;
   this.pointWidth = pointWidth;
@@ -82,7 +89,8 @@ function WebGL(options) {
   this.vertexBuffers = {};
   this.textures = {};
   this.gl = context;
-  
+  this.shaderNameIndex = 0;
+  this.vertexBufferNameIndex = 0;
 
   // Used to be '_.bindAll(this)', see
   // https://github.com/jashkenas/underscore/commit/bf657be243a075b5e72acc8a83e6f12a564d8f55
@@ -90,10 +98,29 @@ function WebGL(options) {
 };
 
 WebGL.prototype = {
-  createShaderProgram: function(name) {
+  createShaderProgram: function(vertexShaderText, fragmentShaderText) {
     var gl = this.gl;
-    var fragmentShader = this.getShader(name + '-fs', gl.FRAGMENT_SHADER);
-    var vertexShader = this.getShader(name + '-vs', gl.VERTEX_SHADER);
+
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, vertexShaderText);
+    gl.compileShader(vertexShader);
+
+    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+      console.log('Vertex shader compilation failed - ' + gl.getShaderInfoLog(vertexShader));
+      return null;
+    }
+
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, fragmentShaderText);
+    gl.compileShader(fragmentShader);
+
+    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+      console.log('Fragment shader compilation failed - ' + gl.getShaderInfoLog(fragmentShader));
+      return null;
+    }
+
+    var name = 'shader ' + this.shaderNameIndex;
+    this.shaderNameIndex += 1;
 
     var shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShader);
@@ -109,6 +136,8 @@ WebGL.prototype = {
     shaderProgram.uniformLocations = {};
 
 //    gl.useProgram(shaderProgram);
+
+    return name;
   },
   
   setUniformFloats: function(shaderName, uniformFloats) {
@@ -121,7 +150,9 @@ WebGL.prototype = {
     }, this));
   },
 
-  createVertexBuffer: function(name, vertexValues, positionsPerVertex, texCoordsPerVertex) {
+  createVertexBuffer: function(vertexValues, positionsPerVertex, texCoordsPerVertex) {
+    var name = 'vertex buffer ' + this.vertexBufferNameIndex;
+    this.vertexBufferNameIndex += 1;
     var gl = this.gl;
     if (typeof this.vertexBuffers[name] !== 'undefined') {
       var buffer = this.vertexBuffers[name];
@@ -139,13 +170,14 @@ WebGL.prototype = {
     buffer.texCoordsPerVertex = texCoordsPerVertex;
     buffer.vertexCount = Math.floor(vertexValues.length / valuesPerVertex);
     this.vertexBuffers[name] = buffer;
+    return name;
   },
 
   drawVertexBuffer: function(options) {
     var gl = this.gl;
-    var shaderName = options.shaderName;
-    var vertexBufferName = options.vertexBufferName;
-    var textureName = options.textureName;
+    var shaderName = options.shader;
+    var vertexBufferName = options.vertexBuffer;
+    var textureName = options.texture;
     var uniformFloats = options.uniformFloats;
     var bufferParts = options.bufferParts;
     var mode = options.mode;
