@@ -174,8 +174,8 @@ WebGL.prototype = {
     var gl = this.gl;
     var shaderName = options.shader;
     var vertexBufferName = options.vertexBuffer;
-    var textureName = options.texture;
-    var uniformFloats = options.uniformFloats;
+    var inputTextures = options.inputTextures || {};
+    var uniformFloats = options.uniformFloats || {};
     var bufferParts = options.bufferParts;
     var mode = options.mode;
     var lineWidth = options.lineWidth;
@@ -187,9 +187,18 @@ WebGL.prototype = {
       console.log('Couldn\'t find vertex buffer "' + vertexBufferName + '"');
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    if (typeof textureName !== 'undefined') {
-      this.useTexture(shaderName, textureName);
-    }
+
+    var textureUnitIndex = 0;
+    _.each(inputTextures, _.bind(function(textureId, samplerName) {
+      var texture = this.textures[textureId];
+      gl.activeTexture(gl.TEXTURE0 + textureUnitIndex);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      var samplerLocation = this.getUniformLocation(shaderName, samplerName);
+      gl.uniform1i(samplerLocation, textureUnitIndex);
+      textureUnitIndex += 1;
+    }, this));
 
     var stride = (buffer.valuesPerVertex * 4);
     var vertexPositionLocation = this.getAttribLocation(shaderName, 'vertexPosition');
@@ -285,9 +294,20 @@ WebGL.prototype = {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, dataType, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.bindTexture(gl.TEXTURE_2D, null);
     texture.isReady = true;
+    texture.width = width;
+    texture.height = height;
+    texture.bitDepth = bitDepth;
     return name;
+  },
+
+  deleteTexture: function(name) {
+    var texture = this.textures[name];
+    gl.deleteTexture(texture);
+    delete this.textures[name];
   },
 
   isTextureReady: function(name) {
@@ -513,8 +533,104 @@ WebGL.prototype = {
     var pixels = new Uint8Array(gl.viewportWidth * gl.viewportHeight * 4);
     gl.readPixels(0, 0, gl.viewportWidth, gl.viewportHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
     return pixels;
+  }
+};
+
+function GPUCalculator(options) {
+  options = options || {};
+  this.webgl = new WebGL({
+    width: 1,
+    height: 1
+  });
+  this.shadersByText = {};
+  this.vertexBuffersBySize = {};
+  this.framebufferTexturesBySizeAndDepth = {};
+}
+GPUCalculator.prototype = {
+
+  applyShader: function(options) {
+    var webgl = this.webgl;
+    var gl = webgl.gl;
+
+    var fragmentShaderText = options.shaderText;
+    var width = options.width;
+    var height = options.height;
+    var inputTextures = options.inputTextures || [];
+    var bitDepth = options.bitDepth || 8;
+    var uniformFloats = options.uniformFloats || {};
+
+    if (_.isUndefined(this.shadersByText[fragmentShaderText])) {
+      var passthruVertexShader = '' +
+        '  precision mediump float;\n' +
+        '  uniform mat4 modelView;\n' +
+        '  uniform mat4 projection;\n' +
+        '  attribute vec2 vertexPosition;\n' +
+        '  attribute vec2 texCoords;\n' +
+        '  varying vec2 outTexCoord;\n' +
+        '  void main(void) {\n' +
+        '    gl_Position = projection * modelView * vec4(vertexPosition, 0.0, 1.0);\n' +
+        '    outTexCoord = texCoords;\n' +
+        '  }\n';
+
+      var shaderProgram = webgl.createShaderProgram(passthruVertexShader, fragmentShaderText);
+      this.shadersByText[fragmentShaderText] = shaderProgram;
+    }
+    var shaderProgram = this.shadersByText[fragmentShaderText];
+
+    var sizeKey = width + 'x' + height;
+    if (_.isUndefined(this.vertexBuffersBySize[sizeKey])) {
+      var viewBottom = 0;
+      var viewTop = height;
+      var viewLeft = 0;
+      var viewRight = width;
+
+      var vertices = [
+        viewRight,  viewBottom,   viewRight,  viewBottom,
+        viewLeft,   viewBottom,   viewLeft,   viewBottom,
+        viewRight,  viewTop,      viewRight,  viewTop,
+        viewLeft,   viewTop,      viewLeft,   viewTop
+      ];
+      var vertexBuffer = webgl.createVertexBuffer(vertices, 2, 2);
+      this.vertexBuffersBySize[sizeKey] = vertexBuffer;
+    }
+    var vertexBuffer = this.vertexBuffersBySize[sizeKey];
+
+    var framebufferTexture = webgl.createEmptyTexture(width, height, bitDepth);
+
+    _.each(inputTextures, _.bind(function(textureId, samplerName) {
+      var webgl = this.webgl;
+      var texture = webgl.textures[textureId];
+      var textureScaleX = (1.0 / texture.width);
+      var textureScaleY = (1.0 / texture.height);
+      var scaleName = samplerName + 'Scale';
+      var offsetName = samplerName + 'Offset';
+      uniformFloats[scaleName] = [textureScaleX, textureScaleY];
+      uniformFloats[offsetName] = [0, 0];
+    }, this));
+
+    webgl.renderIntoTexture(framebufferTexture);
+    webgl.setOneToOneProjection();
+    webgl.disable('BLEND');
+
+    webgl.drawVertexBuffer({
+      shader: shaderProgram,
+      vertexBuffer: vertexBuffer,
+      uniformFloats: {},
+      inputTextures: inputTextures
+    });
+
+    return framebufferTexture;
   },
 
+  getResult: function(output) {
+    var webgl = this.webgl;
+    return webgl.readRenderedData();
+  },
+
+  deleteOutput: function(output) {
+    var webgl = this.webgl;
+    webgl.deleteTexture(output);
+  }
 };
 
 function isGLError(value) {
