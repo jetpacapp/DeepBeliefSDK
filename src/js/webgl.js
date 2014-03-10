@@ -89,8 +89,7 @@ function WebGL(options) {
   this.vertexBuffers = {};
   this.textures = {};
   this.gl = context;
-  this.shaderNameIndex = 0;
-  this.vertexBufferNameIndex = 0;
+  this.nameIndex = 0;
 
   // Used to be '_.bindAll(this)', see
   // https://github.com/jashkenas/underscore/commit/bf657be243a075b5e72acc8a83e6f12a564d8f55
@@ -119,8 +118,7 @@ WebGL.prototype = {
       return null;
     }
 
-    var name = 'shader ' + this.shaderNameIndex;
-    this.shaderNameIndex += 1;
+    var name = this.uniqueName('shader');
 
     var shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShader);
@@ -151,8 +149,7 @@ WebGL.prototype = {
   },
 
   createVertexBuffer: function(vertexValues, positionsPerVertex, texCoordsPerVertex) {
-    var name = 'vertex buffer ' + this.vertexBufferNameIndex;
-    this.vertexBufferNameIndex += 1;
+    var name = this.uniqueName('vertex buffer');
     var gl = this.gl;
     if (typeof this.vertexBuffers[name] !== 'undefined') {
       var buffer = this.vertexBuffers[name];
@@ -268,6 +265,29 @@ WebGL.prototype = {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.bindTexture(gl.TEXTURE_2D, null);
     texture.isReady = true;
+  },
+
+  createEmptyTexture: function(width, height, bitDepth) {
+    var gl = this.gl;
+    var name = this.uniqueName('texture ');
+    var texture = gl.createTexture();
+    this.textures[name] = texture;
+    var dataType;
+    if (_.isUndefined(bitDepth) || (bitDepth === 8)) {
+      dataType = gl.UNSIGNED_BYTE;
+    } else if (bitDepth === 32) {
+      dataType = gl.FLOAT;
+    } else {
+      console.log('webgl.createEmptyTexture() - bad bit depth ' + bitDepth);
+      return null;
+    }
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, dataType, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    texture.isReady = true;
+    return name;
   },
 
   isTextureReady: function(name) {
@@ -465,6 +485,34 @@ WebGL.prototype = {
     this.useShaderProgram(shaderName);
     var functionName = 'uniform' + values.length + 'fv';
     gl[functionName](uniformLocation, values);
+  },
+
+  uniqueName: function(prefix) {
+    if (_.isUndefined(prefix)) {
+      prefix = 'gl object';
+    }
+    var name = prefix + ' ' + this.nameIndex;
+    this.nameIndex += 1;
+    return name;
+  },
+
+  renderIntoTexture: function(textureName) {
+    console.assert(!_.isUndefined(textureName));
+    var gl = this.gl;
+    var texture = this.textures[textureName];
+    var framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        throw new Error("gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE");
+    }
+  },
+
+  readRenderedData: function() {
+    var gl = this.gl;
+    var pixels = new Uint8Array(gl.viewportWidth * gl.viewportHeight * 4);
+    gl.readPixels(0, 0, gl.viewportWidth, gl.viewportHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    return pixels;
   },
 
 };

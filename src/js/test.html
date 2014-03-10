@@ -193,6 +193,10 @@
         ];
         var vertexBuffer = webgl.createVertexBuffer(vertices, 2, 2);
 
+        var framebufferTexture = webgl.createEmptyTexture(width, height);
+
+        webgl.renderIntoTexture(framebufferTexture);
+
         webgl.setOneToOneProjection();
         webgl.clearScreen(1, 1, 0, 1);
 //        webgl.enable('BLEND');
@@ -204,6 +208,8 @@
           uniformFloats: {}
         });
 
+        var pixelData = webgl.readRenderedData();
+        console.log(pixelData);
       }
 
     </script>
