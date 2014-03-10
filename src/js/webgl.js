@@ -285,17 +285,19 @@ WebGL.prototype = {
     if (_.isUndefined(bitDepth) || (bitDepth === 8)) {
       dataType = gl.UNSIGNED_BYTE;
     } else if (bitDepth === 32) {
+      var hasFloat = gl.getExtension('OES_texture_float');
+      console.assert(hasFloat);
       dataType = gl.FLOAT;
     } else {
       console.log('webgl.createEmptyTexture() - bad bit depth ' + bitDepth);
       return null;
     }
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, dataType, null);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
     gl.bindTexture(gl.TEXTURE_2D, null);
     texture.isReady = true;
     texture.width = width;
@@ -305,6 +307,7 @@ WebGL.prototype = {
   },
 
   deleteTexture: function(name) {
+    var gl = this.gl;
     var texture = this.textures[name];
     gl.deleteTexture(texture);
     delete this.textures[name];
@@ -526,6 +529,14 @@ WebGL.prototype = {
     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
         throw new Error("gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE");
     }
+    var textureWidth = texture.width;
+    var textureHeight = texture.height;
+    gl.viewportWidth = textureWidth;
+    gl.viewportHeight = textureHeight;
+    this.pixelScale = 1.0;
+    this.pointWidth = textureWidth;
+    this.pointHeight = textureHeight;
+    this.setOneToOneProjection();
   },
 
   readRenderedData: function() {
@@ -556,7 +567,7 @@ GPUCalculator.prototype = {
     var width = options.width;
     var height = options.height;
     var inputTextures = options.inputTextures || [];
-    var bitDepth = options.bitDepth || 8;
+    var bitDepth = options.bitDepth || 32;
     var uniformFloats = options.uniformFloats || {};
 
     if (_.isUndefined(this.shadersByText[fragmentShaderText])) {
@@ -600,8 +611,8 @@ GPUCalculator.prototype = {
     _.each(inputTextures, _.bind(function(textureId, samplerName) {
       var webgl = this.webgl;
       var texture = webgl.textures[textureId];
-      var textureScaleX = (1.0 / texture.width);
-      var textureScaleY = (1.0 / texture.height);
+      var textureScaleX = 1.0;//(1.0 / texture.width);
+      var textureScaleY = 1.0;//(1.0 / texture.height);
       var scaleName = samplerName + 'Scale';
       var offsetName = samplerName + 'Offset';
       uniformFloats[scaleName] = [textureScaleX, textureScaleY];
@@ -615,7 +626,7 @@ GPUCalculator.prototype = {
     webgl.drawVertexBuffer({
       shader: shaderProgram,
       vertexBuffer: vertexBuffer,
-      uniformFloats: {},
+      uniformFloats: uniformFloats,
       inputTextures: inputTextures
     });
 
@@ -623,8 +634,87 @@ GPUCalculator.prototype = {
   },
 
   getResult: function(output) {
+
+    var encodeShaderText = '\n' +
+      'precision mediump float;\n' +
+      'float shiftRight(float v, float amt) {\n' +
+      '  v = floor(v) + 0.5;\n' +
+      '  return floor(v / exp2(amt));\n' +
+      '}\n' +
+      'float shiftLeft(float v, float amt) {\n' +
+      '  return floor(v * exp2(amt) + 0.5);\n' +
+      '}\n' +
+      '\n' +
+      'float maskLast(float v, float bits) {\n' +
+      '  return mod(v, shiftLeft(1.0, bits));\n' +
+      '}\n' +
+      'float extractBits(float num, float from, float to) {\n' +
+      '  from = floor(from + 0.5);\n' +
+      '  to = floor(to + 0.5);\n' +
+      '  return maskLast(shiftRight(num, from), to - from);\n' +
+      '}\n' +
+      'vec4 encodeFloat(float val) {\n' +
+      '  if (val == 0.0)\n' +
+      '    return vec4(0, 0, 0, 0);\n' +
+      '  float sign = val > 0.0 ? 0.0 : 1.0;\n' +
+      '  val = abs(val);\n' +
+      '  float exponent = floor(log2(val));\n' +
+      '  float biased_exponent = exponent + 127.0;\n' +
+      '  float fraction = ((val / exp2(exponent)) - 1.0) * 8388608.0;\n' +
+      '  \n' +
+      '  float t = biased_exponent / 2.0;\n' +
+      '  float last_bit_of_biased_exponent = fract(t) * 2.0;\n' +
+      '  float remaining_bits_of_biased_exponent = floor(t);\n' +
+      '  \n' +
+      '  float byte4 = extractBits(fraction, 0.0, 8.0) / 255.0;\n' +
+      '  float byte3 = extractBits(fraction, 8.0, 16.0) / 255.0;\n' +
+      '  float byte2 = (last_bit_of_biased_exponent * 128.0 + extractBits(fraction, 16.0, 23.0)) / 255.0;\n' +
+      '  float byte1 = (sign * 128.0 + remaining_bits_of_biased_exponent) / 255.0;\n' +
+      '  return vec4(byte4, byte3, byte2, byte1);\n' +
+      '}\n' +
+      '\n' +
+      'uniform sampler2D input0;\n' +
+      'uniform vec2 input0Scale;\n' +
+      'uniform vec2 input0Offset;\n' +
+      'varying vec2 outTexCoord;\n' +
+      '\n' +
+      'void main(void) {\n' +
+      '  vec2 originalCoord0 = outTexCoord;\n' +
+      '  float component = floor(mod(originalCoord0.x, 4.0));\n' +
+      '  vec2 texCoord0 = (originalCoord0 + input0Offset);\n' +
+      '  texCoord0 *= input0Scale;\n' +
+      '  texCoord0 *= vec2(0.25, 1.0);\n' +
+      '  vec4 inputColor = texture2D(input0, texCoord0);\n' +
+      '  float inputChannel;\n' +
+      '  if (component < 1.0) {\n' +
+      '    inputChannel = inputColor.r;\n' +
+      '  } else if (component < 2.0) {\n' +
+      '    inputChannel = inputColor.g;\n' +
+      '  } else if (component < 3.0) {\n' +
+      '    inputChannel = inputColor.b;\n' +
+      '  } else {\n' +
+      '    inputChannel = inputColor.a;\n' +
+      '  }\n' +
+      '  gl_FragColor = encodeFloat(inputChannel);\n' +
+      '}\n';
+
     var webgl = this.webgl;
-    return webgl.readRenderedData();
+    var outputTexture = webgl.textures[output];
+
+    var encodedOutput = this.applyShader({
+      shaderText: encodeShaderText,
+      inputTextures: { input0: output },
+      uniformFloats: {},
+      width: (outputTexture.width * 4),
+      height: outputTexture.height
+    });
+
+    var byteData = webgl.readRenderedData();
+    var floatData = new Float32Array(byteData.buffer);
+
+    webgl.deleteTexture(encodedOutput);
+
+    return floatData;
   },
 
   deleteOutput: function(output) {
