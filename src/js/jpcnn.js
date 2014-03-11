@@ -479,8 +479,16 @@ Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
   var layersTag = graphDict.getTagFromDict('layers');
   var layerSubTags = layersTag.getSubTags();
   var layers = [];
+  var previousClassName;
   _.each(layerSubTags, function(layerSubTag) {
     var layerNode = nodeFromTag(layerSubTag);
+
+    var className = layerNode._className;
+    var shouldSkip = ((className === 'relu') && (previousClassName === 'relu'));
+    previousClassName = className;
+    if (shouldSkip) {
+      return;
+    }
     layers.push(layerNode);
   });
   this._layers = layers;
@@ -697,6 +705,7 @@ function nodeFromTag(tag) {
   var jsClass = classLookup[tagClass];
   var result = new jsClass(tag);
   var tagName = tag.getStringFromDict('name');
+  result._className = tagClass;
   result._name = tagName;
   return result;
 }
