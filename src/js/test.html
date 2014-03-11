@@ -178,17 +178,209 @@
 
         var halvedOutput = gpuCalculator.applyShader({
           shaderText: halveFragmentShader,
-          inputTextures: { input0: testOutput },
+          inputBuffers: { input0: testOutput },
           width: 300,
           height: 300
         });
 
-        var result = gpuCalculator.getResult(halvedOutput);
+        var result = gpuCalculator.getResult(testOutput);
         console.log('result = ' + result[0] + ', ' + result[1] + ', ' + result[2] + ', ' + result[3]);
         console.log('result[1196] = ' + result[1196] + ', ' + result[1197] + ', ' + result[1198] + ', ' + result[1199]);
 
-        gpuCalculator.deleteOutput(testOutput);
-        gpuCalculator.deleteOutput(halvedOutput);
+        gpuCalculator.deleteBuffer(testOutput);
+        gpuCalculator.deleteBuffer(halvedOutput);
+
+        testGemm();
+      }
+
+      function testGemm() {
+        var weights;
+        var input;
+        var expectedOutput;
+        delayedBufferFromFileAtURL('data/gemm_test/a.buff', function(buffer) {
+          weights = buffer;
+          delayedBufferFromFileAtURL('data/gemm_test/b.buff', function(buffer) {
+            input = buffer;
+            delayedBufferFromFileAtURL('data/gemm_test/output.buff', function(buffer) {
+              expectedOutput = buffer;
+              doTestGemm(weights, input, expectedOutput);
+            });
+          });
+        });
+      }
+
+      function doTestGemm(weights, input, expectedOutput) {
+
+        var inputDims = input._dims;
+        // We're expecting (# of images, # of values)
+        console.assert(inputDims._dims.length == 2);
+
+        var imageCount = inputDims._dims[0];
+        var inputValuesCount = inputDims._dims[1];
+
+        var weightsDims = weights._dims;
+        // We're expecting (# of values in input, # of output channels)
+        console.assert(inputDims._dims.length == 2);
+        console.assert(weightsDims._dims[0] == inputValuesCount);
+        var outputChannels = weightsDims._dims[1];
+
+        var outputDims = new Dimensions(imageCount, outputChannels);
+        var output = new Buffer(outputDims);
+        output.setName('output');
+
+        var m = outputChannels;
+        var n = input._dims._dims[0];
+        var k = input._dims._dims[1];
+        var alpha = 1.0;
+        var lda = m;
+        var ldb = k;
+        var ldc = m;
+        var beta = 0.0;
+        var outputData = glGemm(
+          m,
+          n,
+          k,
+          alpha,
+          weights._data,
+          lda,
+          input._data,
+          ldb,
+          beta,
+          output._data,
+          ldc
+        );
+
+        var cpuOutput = new Buffer(outputDims);
+        cpuOutput.setName('output');
+        matrixGemm(
+          m,
+          n,
+          k,
+          alpha,
+          weights._data,
+          lda,
+          input._data,
+          ldb,
+          beta,
+          cpuOutput._data,
+          ldc
+        );
+
+        output._data = outputData;
+        output.areAllClose(cpuOutput);
+        console.log(output);
+        console.log(cpuOutput);
+      }
+
+      var gemmShader = "                     \n\
+        precision mediump float;                                      \n\
+        varying vec2 outTexCoord;                                     \n\
+        uniform sampler2D a;                                          \n\
+        uniform vec2 aScale;                                          \n\
+        uniform sampler2D b;                                          \n\
+        uniform vec2 bScale;                                          \n\
+        uniform sampler2D c;                                          \n\
+        uniform vec2 cScale;                                          \n\
+        uniform float alpha;                                          \n\
+        uniform float beta;                                           \n\
+        uniform float k;                                              \n\
+        void main(void) {                                             \n\
+          vec2 texCoord = outTexCoord;                                \n\
+          float i = texCoord.x;                                       \n\
+          float j = texCoord.y;                                       \n\
+          vec2 cCoords = vec2(i, j) * cScale;                         \n\
+          float cValue;                                               \n\
+          if (beta != 0.0) {                                          \n\
+            cValue = texture2D(c, cCoords).r;                         \n\
+          } else {                                                    \n\
+            cValue = 0.0;                                             \n\
+          }                                                           \n\
+          float total = 0.0;                                          \n\
+          for (int l = 0; l < 100000; l += 1) {                            \n\
+            if (l >= int(k)) {                                             \n\
+              break;                                                  \n\
+            }                                                         \n\
+            float lCoord = (float(l) + 0.5);                          \n\
+            vec2 aCoords = vec2(i, lCoord) * aScale;                  \n\
+            float aValue = texture2D(a, aCoords).r;                   \n\
+            vec2 bCoords = vec2(lCoord, j) * bScale;                  \n\
+            float bValue = texture2D(b, bCoords).r;                   \n\
+            total += (aValue * bValue);                               \n\
+          }                                                           \n\
+          gl_FragColor.r = (alpha * total) + (beta * cValue);         \n\
+          //gl_FragColor = vec4(k, 1, 0, 3);                        \n\
+        }                                                             \n\
+      ";
+
+      function glGemm(
+        m,
+        n,
+        inputK,
+        alpha,
+        a,
+        lda,
+        b,
+        ldb,
+        inputBeta,
+        c,
+        ldc) {
+
+        var gpuCalculator = new GPUCalculator();
+
+        var aFullDims = new Dimensions(inputK, m, 1);
+        var bFullDims = new Dimensions(n, inputK, 1);
+        var cDims = new Dimensions(n, m, 1);
+
+        var maxTextureSize = 4096;
+        var use4x = false;
+
+        var kStep = 0;
+        var currentK = inputK;
+        var originK = (kStep * maxTextureSize);
+        var beta = inputBeta;
+
+        var aDims;
+        var bDims;
+        if (use4x) {
+          aDims = new Dimensions(currentK, (m / 4), 4);
+          bDims = new Dimensions(n, (currentK / 4), 4);
+        } else {
+          aDims = new Dimensions(currentK, m, 1);
+          bDims = new Dimensions(n, currentK, 1);
+        }
+
+        var aBuffer = gpuCalculator.createBuffer(aDims._dims[1], aDims._dims[0], aDims._dims[2], a);
+        var bBuffer = gpuCalculator.createBuffer(bDims._dims[1], bDims._dims[0], bDims._dims[2], b);
+        var previousCBuffer = gpuCalculator.createBuffer(cDims._dims[1], cDims._dims[0], cDims._dims[2], null);
+
+        var uniforms = {
+          'alpha': alpha,
+          'beta': beta,
+          'k': currentK
+        };
+        var inputBuffers = {
+          'a': aBuffer,
+          'b': bBuffer,
+          'c': previousCBuffer
+        };
+
+        var outputCBuffer = gpuCalculator.applyShader({
+          shaderText: gemmShader,
+          inputBuffers: inputBuffers,
+          uniforms: uniforms,
+          width: cDims._dims[1],
+          height: cDims._dims[0]
+        });
+
+        var output = gpuCalculator.getResult(outputCBuffer, 1);
+        console.log('output = ' + output[0] + ', ' + output[1] + ', ' + output[2] + ', ' + output[3]);
+
+        gpuCalculator.deleteBuffer(aBuffer);
+        gpuCalculator.deleteBuffer(bBuffer);
+        gpuCalculator.deleteBuffer(previousCBuffer);
+        gpuCalculator.deleteBuffer(outputCBuffer);
+
+        return output;
       }
 
     </script>

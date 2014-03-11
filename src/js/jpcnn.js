@@ -335,6 +335,7 @@ function bufferFromFileAtURL(url) {
   var isDone = false;
   xhr.onload = function(e) {
     isDone = true;
+    console.log('loaded');
   };
   xhr.onerror = function(e) {
     alert("Error " + e.target.status + " occurred while receiving the document.");
@@ -350,6 +351,22 @@ function bufferFromFileAtURL(url) {
   var buffer = bufferFromTagDict(tag);
   buffer.setName(url);
   return buffer;
+}
+
+function delayedBufferFromFileAtURL(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function(e) {
+    var tag = tagFromMemory(xhr.response, 0);
+    var buffer = bufferFromTagDict(tag);
+    buffer.setName(url);
+    callback(buffer)
+  };
+  xhr.onerror = function(e) {
+    alert("Error " + e.target.status + " occurred while receiving the document.");
+  };
+  xhr.send();
 }
 
 Network = function(filename, onLoad) {
