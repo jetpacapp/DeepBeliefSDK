@@ -222,15 +222,32 @@ Buffer.prototype.areAllClose = function(b, tolerance) {
     return false;
   }
 
+  if (a._data.length !== a._dims.elementCount()) {
+    console.log('The length of a\'s data buffer doesn\'t match the required number of elements - a._data.length = ' + a._data.length + ', a._dims.elementCount() = ' + a._dims.elementCount() );
+    return false;
+  }
+
+  if (b._data.length !== b._dims.elementCount()) {
+    console.log('The length of b\'s data buffer doesn\'t match the required number of elements - b._data.length = ' + b._data.length + ', b._dims.elementCount() = ' + b._dims.elementCount() );
+    return false;
+  }
+
   var differentCount = 0.0;
   var totalDelta = 0.0;
   var aData = a._data;
   var bData = b._data;
   var offset = 0;
+  var aNaNCount = 0;
   var elementCount = a._dims.elementCount();
   while (offset < elementCount) {
     var aValue = aData[offset];
+    if (isNaN(aValue)) {
+      aNaNCount += 1;
+    }
     var bValue = bData[offset];
+    if (isNaN(bValue)) {
+      bNaNCount += 1;
+    }
     var delta = (aValue - bValue);
     var absDelta = Math.abs(delta);
     if (absDelta > tolerance) {
@@ -1645,6 +1662,21 @@ function matrixLocalResponse(input, windowSize, k, alpha, beta) {
 }
 
 function matrixMaxPatch(input, patchWidth, stride) {
+console.log('matrixMaxPatch(' + input + ', ' + patchWidth + ', ' + stride + ')');
+
+  var useNaive = false;
+  var output;
+  if (useNaive) {
+    output = naiveMaxPatch(input, patchWidth, stride);
+  } else {
+    output = glMaxPatch(input, patchWidth, stride);
+//    var expectedOutput = naiveMaxPatch(input, patchWidth, stride);
+//    console.assert(output.areAllClose(expectedOutput));
+  }
+  return output;
+}
+
+function naiveMaxPatch(input, patchWidth, stride) {
 
   var inputDims = input._dims;
   // We're expecting (# of images, height, width, # of channels)
@@ -1801,6 +1833,12 @@ var gemmShader = "                     \n\
 ";
 
 var g_gpuCalculator;
+function getGPUCalculator() {
+  if (_.isUndefined(g_gpuCalculator)) {
+    g_gpuCalculator = new GPUCalculator();
+  }
+  return g_gpuCalculator;
+}
 
 function glGemm(
   m,
@@ -1836,10 +1874,7 @@ function glGemm(
     aScale = (inputAScale * levels);
   }
 
-  if (_.isUndefined(g_gpuCalculator)) {
-    g_gpuCalculator = new GPUCalculator();
-  }
-  var gpuCalculator = g_gpuCalculator;
+  var gpuCalculator = getGPUCalculator();
 
   var aFullDims = new Dimensions(inputK, m, 1);
   var bFullDims = new Dimensions(n, inputK, 1);
@@ -1901,4 +1936,99 @@ function glGemm(
 
   return outputBuffer;
 }
+
+var maxPatchShader = "                     \n\
+  precision mediump float;                                      \n\
+  varying vec2 outTexCoord;                                     \n\
+  uniform sampler2D a;                                          \n\
+  uniform vec2 aScale;                                          \n\
+  uniform float patchWidth;                                     \n\
+  uniform float stride;                                         \n\
+  uniform float channelCount;                                   \n\
+  void main(void) {                                             \n\
+    vec2 texCoord = outTexCoord;                                \n\
+    float outputXAndChannels = floor(texCoord.x);               \n\
+    float outputChannel = mod(outputXAndChannels, channelCount); \n\
+    float outputX = floor(outputXAndChannels / channelCount);   \n\
+    float outputY = floor(texCoord.y);                          \n\
+    float inputOriginX = (outputX * stride);                    \n\
+    float inputOriginY = (outputY * stride);                    \n\
+    vec4 patchMax = vec4(-100000000.0, -100000000.0, -100000000.0, -100000000.0); \n\
+    for (int patchY = 0; patchY < 100; patchY += 1) {           \n\
+      if (patchY >= int(patchWidth)) {                               \n\
+        break;                                                  \n\
+      }                                                         \n\
+      float inputY = ((inputOriginY + float(patchY)) + 0.5);    \n\
+      for (int patchX = 0; patchX < 100; patchX += 1) {         \n\
+        if (patchX >= int(patchWidth)) {                        \n\
+          break;                                                \n\
+        }                                                       \n\
+        float inputX = ((inputOriginX + float(patchX)));        \n\
+        float inputXAndChannel = (inputX * channelCount) + outputChannel; \n\
+        vec2 inputCoords = vec2(inputXAndChannel + 0.5, inputY) * aScale; \n\
+        vec4 inputPixel = texture2D(a, inputCoords);            \n\
+        patchMax = max(patchMax, inputPixel);                   \n\
+      }                                                         \n\
+    }                                                           \n\
+    gl_FragColor = patchMax;                                    \n\
+  }                                                             \n\
+";
+
+function glMaxPatch(input, patchWidth, stride) {
+  var gpuCalculator = getGPUCalculator();
+
+  var inputDims = input._dims._dims;
+  var imageCount = inputDims[0];
+  console.assert((imageCount === 1), 'Only handles the single-image case');
+  var inputWidth = inputDims[2];
+  var inputHeight = inputDims[1];
+  var inputChannels = inputDims[3];
+
+  var quantizedChannels = Math.floor(inputChannels / 4);
+  console.assert(((quantizedChannels * 4) === inputChannels), 'Channel count must be a multiple of four');
+  var inputGPUWidth = (inputWidth * quantizedChannels);
+
+  var inputGPUDims = new Dimensions(inputHeight, inputGPUWidth, 4);
+
+  var outputWidth = Math.round(Math.floor((inputWidth - patchWidth) / stride) + 1);
+  var outputHeight = Math.round(Math.floor((inputHeight - patchWidth) / stride) + 1);
+  var outputChannels = inputChannels;
+  var outputDims = new Dimensions(imageCount, outputHeight, outputWidth, outputChannels);
+
+  var outputGPUWidth = (outputWidth * quantizedChannels);
+  var outputGPUDims = new Dimensions(outputHeight, outputGPUWidth, 4);
+
+  var inputGPUBuffer = input.getGPUBuffer(gpuCalculator, inputGPUDims);
+  var uniforms = {
+    'patchWidth': patchWidth,
+    'stride': stride,
+    'channelCount': quantizedChannels,
+  };
+  var inputBuffers = {
+    'a': inputGPUBuffer,
+  };
+
+  var outputGPUBuffer = gpuCalculator.applyShader({
+    shaderText: maxPatchShader,
+    inputBuffers: inputBuffers,
+    uniforms: uniforms,
+    width: outputGPUWidth,
+    height: outputHeight
+  });
+
+  var outputData = gpuCalculator.getResult(outputGPUBuffer, 4);
+  console.log('outputData = ' + outputData[0] + ', ' + outputData[1] + ', ' + outputData[2] + ', ' + outputData[3]);
+
+  gpuCalculator.deleteBuffer(inputGPUBuffer);
+  gpuCalculator.deleteBuffer(outputGPUBuffer);
+
+  var outputBuffer = new Buffer(outputGPUDims, outputData);
+  outputBuffer.reshape(outputDims);
+
+  console.log('outputBuffer = ' + outputBuffer, outputBuffer);
+
+  return outputBuffer;
+}
+
+
 

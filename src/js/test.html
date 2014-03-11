@@ -40,6 +40,8 @@
         testDogImage();
       });
 
+      //testMaxPatch();
+
 //      navigator.webkitGetUserMedia({video: true},
 //          function(stream) {
 //            video.src = window.webkitURL.createObjectURL(stream)
@@ -270,6 +272,27 @@
         output.areAllClose(cpuOutput);
         console.log(output);
         console.log(cpuOutput);
+      }
+
+      function testMaxPatch() {
+        var inputData = new Float32Array([
+          9,    8,    7,    6,    0,    0,    0,    0,
+          0,    0,    0,    0,    0,    0,    0,    0,
+          9,    0,    0,    0,    5,    4,    3,    2,
+          0,    0,    0,    0,    0,    0,    0,    0,
+        ]);
+        var inputDims = new Dimensions(1, 4, 2, 4);
+        var inputBuffer = new Buffer(inputDims, inputData);
+        var patchWidth = 2;
+        var stride = 2;
+        var naiveOutput = naiveMaxPatch(inputBuffer, patchWidth, stride);
+        var glOutput = glMaxPatch(inputBuffer, patchWidth, stride);
+
+        console.log(naiveOutput);
+        console.log(glOutput);
+
+        console.assert(glOutput.areAllClose(naiveOutput));
+
       }
 
     </script>
