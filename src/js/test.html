@@ -14,12 +14,15 @@
         float: left;
         width: 400px;
       }
+      .video-preview {
+        width: 400px;
+      }
     </style>
   </head>
   <body>
     <h2>Jetpac's Deep Belief in Javascript</h2>
 
-    <video style="visibility: hidden;" id="live" autoplay></video>
+    <video style="visibility: visible;" class="video-preview" id="live" autoplay></video>
 
     <div>
       Choose an image file to analyze:
@@ -42,14 +45,15 @@
 
       //testMaxPatch();
 
-//      navigator.webkitGetUserMedia({video: true},
-//          function(stream) {
-//            video.src = window.webkitURL.createObjectURL(stream)
-//          },
-//          function(err) {
-//            console.log("Unable to get video stream!")
-//          }
-//      );
+      navigator.webkitGetUserMedia({video: true},
+          function(stream) {
+            video.src = window.webkitURL.createObjectURL(stream)
+            setInterval(classifyWebcamSnapshot, 500);
+          },
+          function(err) {
+            console.log("Unable to get video stream!")
+          }
+      );
 
       var dogImage;
       function testDogImage() {
@@ -129,6 +133,17 @@
         timeContainer.innerHTML = 'Took ' + duration + 'ms';
       }
 
+      var g_isAlreadyClassifying;
+      function classifyWebcamSnapshot() {
+        if (g_isAlreadyClassifying) {
+          return;
+        }
+        g_isAlreadyClassifying = true;
+        var videoElement = document.getElementById('live');
+        classifyImage(videoElement, videoElement.videoWidth, videoElement.videoHeight);
+        g_isAlreadyClassifying = false;
+      }
+
       window.onload = function() {
         var fileInput = document.getElementById('file-input');
         fileInput.addEventListener('change', function(e) {
@@ -140,6 +155,7 @@
             reader.onload = function(e) {
               var image = new Image();
               image.src = reader.result;
+              g_isAlreadyClassifying = true;
               classifyImage(image, image.width, image.height);
             }
             reader.readAsDataURL(file); 

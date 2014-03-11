@@ -1662,16 +1662,12 @@ function matrixLocalResponse(input, windowSize, k, alpha, beta) {
 }
 
 function matrixMaxPatch(input, patchWidth, stride) {
-console.log('matrixMaxPatch(' + input + ', ' + patchWidth + ', ' + stride + ')');
-
   var useNaive = false;
   var output;
   if (useNaive) {
     output = naiveMaxPatch(input, patchWidth, stride);
   } else {
     output = glMaxPatch(input, patchWidth, stride);
-//    var expectedOutput = naiveMaxPatch(input, patchWidth, stride);
-//    console.assert(output.areAllClose(expectedOutput));
   }
   return output;
 }
@@ -1816,7 +1812,7 @@ var gemmShader = "                     \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 100000; l += 1) {                       \n\
+    for (int l = 0; l < 10000; l += 1) {                       \n\
       if (l >= int(k)) {                                        \n\
         break;                                                  \n\
       }                                                         \n\
@@ -2030,5 +2026,56 @@ function glMaxPatch(input, patchWidth, stride) {
   return outputBuffer;
 }
 
+var maxShader = "                     \n\
+  precision mediump float;                                      \n\
+  varying vec2 outTexCoord;                                     \n\
+  uniform sampler2D a;                                          \n\
+  uniform vec2 aScale;                                          \n\
+  void main(void) {                                             \n\
+    vec2 texCoord = outTexCoord;                                \n\
+    float outputXAndChannels = floor(texCoord.x);               \n\
+    float outputChannel = mod(outputXAndChannels, channelCount); \n\
+    float outputX = floor(outputXAndChannels / channelCount);   \n\
+    float outputY = floor(texCoord.y);                          \n\
+    float inputOriginX = (outputX * stride);                    \n\
+    float inputOriginY = (outputY * stride);                    \n\
+    vec4 patchMax = vec4(-100000000.0, -100000000.0, -100000000.0, -100000000.0); \n\
+    for (int patchY = 0; patchY < 100; patchY += 1) {           \n\
+      if (patchY >= int(patchWidth)) {                               \n\
+        break;                                                  \n\
+      }                                                         \n\
+      float inputY = ((inputOriginY + float(patchY)) + 0.5);    \n\
+      for (int patchX = 0; patchX < 100; patchX += 1) {         \n\
+        if (patchX >= int(patchWidth)) {                        \n\
+          break;                                                \n\
+        }                                                       \n\
+        float inputX = ((inputOriginX + float(patchX)));        \n\
+        float inputXAndChannel = (inputX * channelCount) + outputChannel; \n\
+        vec2 inputCoords = vec2(inputXAndChannel + 0.5, inputY) * aScale; \n\
+        vec4 inputPixel = texture2D(a, inputCoords);            \n\
+        patchMax = max(patchMax, inputPixel);                   \n\
+      }                                                         \n\
+    }                                                           \n\
+    gl_FragColor = patchMax;                                    \n\
+  }                                                             \n\
+";
+
+function glMax(input, maxValue) {
+  var inputDims = input._dims;
+  var output = new Buffer(inputDims);
+
+  var inputData = input._data;
+  var inputOffset = 0;
+  var inputElementCount = inputDims.elementCount();
+  var outputData = output._data;
+
+  while (inputOffset < inputElementCount) {
+    var inputValue = inputData[inputOffset];
+    outputData[inputOffset] = Math.max(inputValue, maxValue);
+    inputOffset += 1;
+  }
+
+  return output;
+}
 
 
