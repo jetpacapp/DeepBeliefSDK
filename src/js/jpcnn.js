@@ -1187,8 +1187,6 @@ function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
   var ldc = m;
   var beta = 0.0;
 
-g_useNaive = false;
-
   if (kernels._bitsPerFloat === 32) {
     output._data = matrixGemm(
       m,
@@ -1238,7 +1236,8 @@ function matrixGemm(
   c,
   ldc) {
 
-  if (g_useNaive) {
+  var useNaive = false;
+  if (useNaive) {
     return naiveGemm(
       m,
       n,
@@ -1302,8 +1301,6 @@ function naiveGemm(
   return c;
 }
 
-g_useNaive = true;
-
 function matrixGemmScaleA(
   m,
   n,
@@ -1320,7 +1317,8 @@ function matrixGemmScaleA(
   aOffset,
   aBitDepth) {
 
-  if (g_useNaive) {
+  var useNaive = false;
+  if (useNaive) {
     return naiveGemmScaleA(
       m,
       n,
@@ -1479,8 +1477,6 @@ function matrixDot(input, weights) {
   var ldb = k;
   var ldc = m;
   var beta = 0.0;
-
-g_useNaive = false;
 
   if (weights._bitsPerFloat === 32) {
     output._data = matrixGemm(
@@ -1789,7 +1785,7 @@ function glGemm(
   if ((aBitDepth === 32) || (aBitDepth === 16)) {
     aScale = inputAScale;
   } else {
-    var levels = (1 << aBitDepth);
+    var levels = ((1 << aBitDepth) - 1);
     aScale = (inputAScale * levels);
   }
 
