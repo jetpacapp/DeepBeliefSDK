@@ -48,7 +48,7 @@
       navigator.webkitGetUserMedia({video: true},
           function(stream) {
             video.src = window.webkitURL.createObjectURL(stream)
-            setInterval(classifyWebcamSnapshot, 500);
+            //setInterval(classifyWebcamSnapshot, 500);
           },
           function(err) {
             console.log("Unable to get video stream!")

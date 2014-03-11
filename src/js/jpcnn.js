@@ -1719,6 +1719,15 @@ function naiveMaxPatch(input, patchWidth, stride) {
 }
 
 function matrixMax(input, maxValue) {
+  var useNaive = false;
+  if (useNaive) {
+    return naiveMax(input, maxValue);
+  } else {
+    return glMax(input, maxValue);
+  }
+}
+
+function naiveMax(input, maxValue) {
   var inputDims = input._dims;
   var output = new Buffer(inputDims);
 
@@ -2013,15 +2022,11 @@ function glMaxPatch(input, patchWidth, stride) {
   });
 
   var outputData = gpuCalculator.getResult(outputGPUBuffer, 4);
-  console.log('outputData = ' + outputData[0] + ', ' + outputData[1] + ', ' + outputData[2] + ', ' + outputData[3]);
-
   gpuCalculator.deleteBuffer(inputGPUBuffer);
   gpuCalculator.deleteBuffer(outputGPUBuffer);
 
   var outputBuffer = new Buffer(outputGPUDims, outputData);
   outputBuffer.reshape(outputDims);
-
-  console.log('outputBuffer = ' + outputBuffer, outputBuffer);
 
   return outputBuffer;
 }
@@ -2031,51 +2036,68 @@ var maxShader = "                     \n\
   varying vec2 outTexCoord;                                     \n\
   uniform sampler2D a;                                          \n\
   uniform vec2 aScale;                                          \n\
+  uniform float maxValue;                                       \n\
   void main(void) {                                             \n\
     vec2 texCoord = outTexCoord;                                \n\
-    float outputXAndChannels = floor(texCoord.x);               \n\
-    float outputChannel = mod(outputXAndChannels, channelCount); \n\
-    float outputX = floor(outputXAndChannels / channelCount);   \n\
-    float outputY = floor(texCoord.y);                          \n\
-    float inputOriginX = (outputX * stride);                    \n\
-    float inputOriginY = (outputY * stride);                    \n\
-    vec4 patchMax = vec4(-100000000.0, -100000000.0, -100000000.0, -100000000.0); \n\
-    for (int patchY = 0; patchY < 100; patchY += 1) {           \n\
-      if (patchY >= int(patchWidth)) {                               \n\
-        break;                                                  \n\
-      }                                                         \n\
-      float inputY = ((inputOriginY + float(patchY)) + 0.5);    \n\
-      for (int patchX = 0; patchX < 100; patchX += 1) {         \n\
-        if (patchX >= int(patchWidth)) {                        \n\
-          break;                                                \n\
-        }                                                       \n\
-        float inputX = ((inputOriginX + float(patchX)));        \n\
-        float inputXAndChannel = (inputX * channelCount) + outputChannel; \n\
-        vec2 inputCoords = vec2(inputXAndChannel + 0.5, inputY) * aScale; \n\
-        vec4 inputPixel = texture2D(a, inputCoords);            \n\
-        patchMax = max(patchMax, inputPixel);                   \n\
-      }                                                         \n\
-    }                                                           \n\
-    gl_FragColor = patchMax;                                    \n\
+    vec2 inputCoords = (texCoord * aScale);                     \n\
+    vec4 inputPixel = texture2D(a, inputCoords);                \n\
+    gl_FragColor = max(inputPixel, vec4(maxValue, maxValue, maxValue, maxValue)); \n\
   }                                                             \n\
 ";
 
 function glMax(input, maxValue) {
-  var inputDims = input._dims;
-  var output = new Buffer(inputDims);
+  var gpuCalculator = getGPUCalculator();
 
-  var inputData = input._data;
-  var inputOffset = 0;
-  var inputElementCount = inputDims.elementCount();
-  var outputData = output._data;
-
-  while (inputOffset < inputElementCount) {
-    var inputValue = inputData[inputOffset];
-    outputData[inputOffset] = Math.max(inputValue, maxValue);
-    inputOffset += 1;
+  var inputDims = input._dims._dims;
+  var imageCount = inputDims[0];
+  console.assert((imageCount === 1), 'Only handles the single-image case');
+  var inputHeight = inputDims[1];
+  var inputWidth;
+  if (inputDims.length < 3) {
+    inputWidth = 1;
+  } else {
+    inputWidth = inputDims[2];
+  }
+  var inputChannels;
+  if (inputDims.length < 4) {
+    inputChannels = 1;
+  } else {
+    inputChannels = inputDims[3];
   }
 
-  return output;
+  var quantizedChannels = (inputChannels / 4);
+  if (inputWidth === 1) {
+    inputWidth = inputHeight;
+    inputHeight = 1;
+  }
+  var inputGPUWidth = (inputWidth * quantizedChannels);
+
+  var inputGPUDims = new Dimensions(inputHeight, inputGPUWidth, 4);
+
+  var inputGPUBuffer = input.getGPUBuffer(gpuCalculator, inputGPUDims);
+  var uniforms = {
+    'maxValue': maxValue,
+  };
+  var inputBuffers = {
+    'a': inputGPUBuffer,
+  };
+
+  var outputGPUBuffer = gpuCalculator.applyShader({
+    shaderText: maxShader,
+    inputBuffers: inputBuffers,
+    uniforms: uniforms,
+    width: inputGPUWidth,
+    height: inputHeight
+  });
+
+  var outputData = gpuCalculator.getResult(outputGPUBuffer, 4);
+  gpuCalculator.deleteBuffer(inputGPUBuffer);
+  gpuCalculator.deleteBuffer(outputGPUBuffer);
+
+  var outputBuffer = new Buffer(inputGPUDims, outputData);
+  outputBuffer.reshape(input._dims);
+
+  return outputBuffer;
 }
 
 
