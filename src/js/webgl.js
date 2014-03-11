@@ -284,6 +284,7 @@ WebGL.prototype = {
     if (_.isUndefined(data)) {
       data = null;
     }
+    //console.log('createDataTexture(' + width + ', ' + height + ', ' + channels + ', ' + bitDepth + ')');
     var gl = this.gl;
     var name = this.uniqueName('texture ');
     var texture = gl.createTexture();

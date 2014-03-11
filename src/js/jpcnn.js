@@ -272,6 +272,37 @@ Buffer.prototype.viewAtTopIndex = function(index) {
   var output = new Buffer(outputDims, viewData);
   return output;
 };
+Buffer.prototype.getGPUBuffer = function(gpuCalculator, inputDims) {
+  if (_.isUndefined(inputDims)) {
+    inputDims = this._dims;
+  }
+  if (_.isUndefined(this._gpuBuffer)) {
+    var data;
+    if (this._bitsPerFloat === 32) {
+      data = this._data;
+    } else {
+      data = this._quantizedData;
+    }
+    var dims = inputDims._dims;
+    var width = dims[1];
+    var height = dims[0];
+    var channels;
+    if (dims.length > 2) {
+      channels = dims[2];
+    } else {
+      channels = 1;
+    }
+
+    var gpuBuffer = gpuCalculator.createBuffer({
+      width: width,
+      height: height,
+      channels: channels,
+      bitDepth: this._bitsPerFloat,
+      data: data});
+    this._gpuBuffer = gpuBuffer;
+  }
+  return this._gpuBuffer;
+};
 function bufferFromTagDict(tagDict) {
   console.assert(tagDict.type === JP_DICT);
   var bitsPerFloat = tagDict.getUintFromDict('float_bits');
@@ -1188,37 +1219,35 @@ function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
   var beta = 0.0;
 
   if (kernels._bitsPerFloat === 32) {
-    output._data = matrixGemm(
+    output = matrixGemm(
       m,
       n,
       k,
       alpha,
-      kernels._data,
+      kernels,
       lda,
-      patches._data,
+      patches,
       ldb,
       beta,
-      output._data,
+      output,
       ldc
     );
   } else {
-    output._data = matrixGemmScaleA(
+    output = matrixGemmScaleA(
       m,
       n,
       k,
       alpha,
-      kernels._quantizedData,
+      kernels,
       lda,
-      patches._data,
+      patches,
       ldb,
       beta,
-      output._data,
-      ldc,
-      kernels._spread,
-      kernels._min,
-      kernels._bitsPerFloat
+      output,
+      ldc
     );
   }
+  output.reshape(outputDims);
 
   return output;
 }
@@ -1228,12 +1257,12 @@ function matrixGemm(
   n,
   k,
   alpha,
-  a,
+  aBuffer,
   lda,
-  b,
+  bBuffer,
   ldb,
   beta,
-  c,
+  cBuffer,
   ldc) {
 
   var useNaive = false;
@@ -1243,12 +1272,12 @@ function matrixGemm(
       n,
       k,
       alpha,
-      a,
+      aBuffer._data,
       lda,
-      b,
+      bBuffer._data,
       ldb,
       beta,
-      c,
+      cBuffer._data,
       ldc
     );
   } else {
@@ -1257,12 +1286,12 @@ function matrixGemm(
       n,
       k,
       alpha,
-      a,
+      aBuffer,
       lda,
-      b,
+      bBuffer,
       ldb,
       beta,
-      c,
+      cBuffer,
       ldc
     );
   }
@@ -1282,6 +1311,9 @@ function naiveGemm(
   c,
   ldc) {
 
+  var outputDims = new Dimensions(n, m);
+  var outputBuffer = new Buffer(outputDims, c);
+
   for (var i = 0; i < m; i++) {
     for (var j = 0; j < n; j++) {
       var total = 0.0;
@@ -1298,7 +1330,7 @@ function naiveGemm(
     }
   }
 
-  return c;
+  return outputBuffer;
 }
 
 function matrixGemmScaleA(
@@ -1306,12 +1338,12 @@ function matrixGemmScaleA(
   n,
   k,
   alpha,
-  a,
+  aBuffer,
   lda,
-  b,
+  bBuffer,
   ldb,
   beta,
-  c,
+  cBuffer,
   ldc,
   aScale,
   aOffset,
@@ -1324,12 +1356,12 @@ function matrixGemmScaleA(
       n,
       k,
       alpha,
-      a,
+      aBuffer._quantizedData,
       lda,
-      b,
+      bBuffer._data,
       ldb,
       beta,
-      c,
+      cBuffer._data,
       ldc,
       aScale,
       aOffset
@@ -1340,16 +1372,16 @@ function matrixGemmScaleA(
       n,
       k,
       alpha,
-      a,
+      aBuffer,
       lda,
-      b,
+      bBuffer,
       ldb,
       beta,
-      c,
+      cBuffer,
       ldc,
-      aScale,
-      aOffset,
-      aBitDepth
+      aBuffer._spread,
+      aBuffer._min,
+      aBuffer._bitsPerFloat
     );
   }
 
@@ -1370,6 +1402,9 @@ function naiveGemmScaleA(
   aScale,
   aOffset) {
 
+  var outputDims = new Dimensions(n, m);
+  var outputBuffer = new Buffer(outputDims, c);
+
   for (var i = 0; i < m; i++) {
     for (var j = 0; j < n; j++) {
       var total = 0.0;
@@ -1386,7 +1421,7 @@ function naiveGemmScaleA(
     }
   }
 
-  return c;
+  return outputBuffer;
 }
 
 function matrixExtractChannels(input, startChannel, endChannel) {
@@ -1479,37 +1514,38 @@ function matrixDot(input, weights) {
   var beta = 0.0;
 
   if (weights._bitsPerFloat === 32) {
-    output._data = matrixGemm(
+    output = matrixGemm(
       m,
       n,
       k,
       alpha,
-      weights._data,
+      weights,
       lda,
-      input._data,
+      input,
       ldb,
       beta,
-      output._data,
+      output,
       ldc
     );
   } else {
-    output._data = matrixGemmScaleA(
+    output = matrixGemmScaleA(
       m,
       n,
       k,
       alpha,
-      weights._quantizedData,
+      weights,
       lda,
-      input._data,
+      input,
       ldb,
       beta,
-      output._data,
+      output,
       ldc,
       weights._spread,
       weights._min,
       weights._bitsPerFloat
     );
   }
+  output.reshape(outputDims);
 
   return output;
 }
@@ -1760,12 +1796,12 @@ function glGemm(
   n,
   inputK,
   alpha,
-  a,
+  inputA,
   lda,
-  b,
+  inputB,
   ldb,
   inputBeta,
-  c,
+  inputC,
   ldc,
   inputAScale,
   aOffset,
@@ -1816,22 +1852,10 @@ function glGemm(
     bDims = new Dimensions(n, currentK, 1);
   }
 
-  var aBuffer = gpuCalculator.createBuffer({
-    width: aDims._dims[1],
-    height: aDims._dims[0],
-    channels: aDims._dims[2],
-    bitDepth: aBitDepth,
-    data: a});
-  var bBuffer = gpuCalculator.createBuffer({
-    width: bDims._dims[1],
-    height: bDims._dims[0],
-    channels: bDims._dims[2],
-    data: b});
-  var previousCBuffer = gpuCalculator.createBuffer({
-    width: cDims._dims[1],
-    height: cDims._dims[0],
-    channels: cDims._dims[2],
-    data: null});
+  var aGPUBuffer = inputA.getGPUBuffer(gpuCalculator, aDims);
+  var bGPUBuffer = inputB.getGPUBuffer(gpuCalculator, bDims);
+  var previousCBuffer = new Buffer(cDims, null);
+  var previousCGPUBuffer = previousCBuffer.getGPUBuffer(gpuCalculator);
 
   var uniforms = {
     'alpha': alpha,
@@ -1841,9 +1865,9 @@ function glGemm(
     'aValueOffset': aOffset
   };
   var inputBuffers = {
-    'a': aBuffer,
-    'b': bBuffer,
-    'c': previousCBuffer
+    'a': aGPUBuffer,
+    'b': bGPUBuffer,
+    'c': previousCGPUBuffer
   };
 
   var outputCBuffer = gpuCalculator.applyShader({
@@ -1854,14 +1878,16 @@ function glGemm(
     height: cDims._dims[0]
   });
 
-  var output = gpuCalculator.getResult(outputCBuffer, 1);
-  console.log('output = ' + output[0] + ', ' + output[1] + ', ' + output[2] + ', ' + output[3]);
+  var outputData = gpuCalculator.getResult(outputCBuffer, 1);
+  console.log('outputData = ' + outputData[0] + ', ' + outputData[1] + ', ' + outputData[2] + ', ' + outputData[3]);
 
-  gpuCalculator.deleteBuffer(aBuffer);
-  gpuCalculator.deleteBuffer(bBuffer);
+//  gpuCalculator.deleteBuffer(aBuffer);
+  gpuCalculator.deleteBuffer(bGPUBuffer);
   gpuCalculator.deleteBuffer(previousCBuffer);
   gpuCalculator.deleteBuffer(outputCBuffer);
 
-  return output;
+  var outputBuffer = new Buffer(cDims, outputData);
+
+  return outputBuffer;
 }
 
