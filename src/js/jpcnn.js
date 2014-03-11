@@ -406,6 +406,7 @@ Network = function(filename, onLoad) {
   this._fileTag = null;
 //  this._testResults = true;
 //  this._runOnlyLayer = 20;
+  this._profile = true;
   this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
@@ -489,7 +490,6 @@ Network.prototype.run = function(input, layerOffset) {
       continue;
     }
     var layer = this._layers[index];
-    console.log('Running ' + layer.constructor.name)
 
     if (this._testResults) {
       var inputIndexString = ('000' + ((index * 2) + 1)).slice(-3);
@@ -503,9 +503,18 @@ Network.prototype.run = function(input, layerOffset) {
       }
     }
 
+    if (this._profile) {
+      console.log('Running ' + layer.constructor.name)
+      var startTime = new Date().getTime();
+    }
     var currentOutput = layer.run(currentInput);
+    if (this._profile) {
+      var endTime = new Date().getTime();
+      var duration = (endTime - startTime);
+      console.log(layer._name + ' took ' + duration + ' ms');
+    }
     currentOutput.setName(layer.constructor.name + ' output');
-    console.log('currentOutput = ' + currentOutput);
+//    console.log('currentOutput = ' + currentOutput);
 
     if (this._testResults) {
       var outputIndexString = ('000' + ((index * 2) + 1)).slice(-3);
@@ -670,6 +679,8 @@ function nodeFromTag(tag) {
   var tagClass = tag.getStringFromDict('class');
   var jsClass = classLookup[tagClass];
   var result = new jsClass(tag);
+  var tagName = tag.getStringFromDict('name');
+  result._name = tagName;
   return result;
 }
 
