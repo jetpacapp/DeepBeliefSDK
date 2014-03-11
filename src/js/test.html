@@ -37,7 +37,7 @@
       var video = document.getElementById("live");
 
       var network = new Network('data/example_networks/homebrewed_compressed.ntwk', function() {
-        //testDogImage();
+        testDogImage();
       });
 
 //      navigator.webkitGetUserMedia({video: true},
@@ -270,117 +270,6 @@
         output.areAllClose(cpuOutput);
         console.log(output);
         console.log(cpuOutput);
-      }
-
-      var gemmShader = "                     \n\
-        precision mediump float;                                      \n\
-        varying vec2 outTexCoord;                                     \n\
-        uniform sampler2D a;                                          \n\
-        uniform vec2 aScale;                                          \n\
-        uniform sampler2D b;                                          \n\
-        uniform vec2 bScale;                                          \n\
-        uniform sampler2D c;                                          \n\
-        uniform vec2 cScale;                                          \n\
-        uniform float alpha;                                          \n\
-        uniform float beta;                                           \n\
-        uniform float k;                                              \n\
-        void main(void) {                                             \n\
-          vec2 texCoord = outTexCoord;                                \n\
-          float i = texCoord.x;                                       \n\
-          float j = texCoord.y;                                       \n\
-          vec2 cCoords = vec2(i, j) * cScale;                         \n\
-          float cValue;                                               \n\
-          if (beta != 0.0) {                                          \n\
-            cValue = texture2D(c, cCoords).r;                         \n\
-          } else {                                                    \n\
-            cValue = 0.0;                                             \n\
-          }                                                           \n\
-          float total = 0.0;                                          \n\
-          for (int l = 0; l < 100000; l += 1) {                            \n\
-            if (l >= int(k)) {                                             \n\
-              break;                                                  \n\
-            }                                                         \n\
-            float lCoord = (float(l) + 0.5);                          \n\
-            vec2 aCoords = vec2(i, lCoord) * aScale;                  \n\
-            float aValue = texture2D(a, aCoords).r;                   \n\
-            vec2 bCoords = vec2(lCoord, j) * bScale;                  \n\
-            float bValue = texture2D(b, bCoords).r;                   \n\
-            total += (aValue * bValue);                               \n\
-          }                                                           \n\
-          gl_FragColor.r = (alpha * total) + (beta * cValue);         \n\
-          //gl_FragColor = vec4(k, 1, 0, 3);                        \n\
-        }                                                             \n\
-      ";
-
-      function glGemm(
-        m,
-        n,
-        inputK,
-        alpha,
-        a,
-        lda,
-        b,
-        ldb,
-        inputBeta,
-        c,
-        ldc) {
-
-        var gpuCalculator = new GPUCalculator();
-
-        var aFullDims = new Dimensions(inputK, m, 1);
-        var bFullDims = new Dimensions(n, inputK, 1);
-        var cDims = new Dimensions(n, m, 1);
-
-        var maxTextureSize = 4096;
-        var use4x = false;
-
-        var kStep = 0;
-        var currentK = inputK;
-        var originK = (kStep * maxTextureSize);
-        var beta = inputBeta;
-
-        var aDims;
-        var bDims;
-        if (use4x) {
-          aDims = new Dimensions(currentK, (m / 4), 4);
-          bDims = new Dimensions(n, (currentK / 4), 4);
-        } else {
-          aDims = new Dimensions(currentK, m, 1);
-          bDims = new Dimensions(n, currentK, 1);
-        }
-
-        var aBuffer = gpuCalculator.createBuffer(aDims._dims[1], aDims._dims[0], aDims._dims[2], a);
-        var bBuffer = gpuCalculator.createBuffer(bDims._dims[1], bDims._dims[0], bDims._dims[2], b);
-        var previousCBuffer = gpuCalculator.createBuffer(cDims._dims[1], cDims._dims[0], cDims._dims[2], null);
-
-        var uniforms = {
-          'alpha': alpha,
-          'beta': beta,
-          'k': currentK
-        };
-        var inputBuffers = {
-          'a': aBuffer,
-          'b': bBuffer,
-          'c': previousCBuffer
-        };
-
-        var outputCBuffer = gpuCalculator.applyShader({
-          shaderText: gemmShader,
-          inputBuffers: inputBuffers,
-          uniforms: uniforms,
-          width: cDims._dims[1],
-          height: cDims._dims[0]
-        });
-
-        var output = gpuCalculator.getResult(outputCBuffer, 1);
-        console.log('output = ' + output[0] + ', ' + output[1] + ', ' + output[2] + ', ' + output[3]);
-
-        gpuCalculator.deleteBuffer(aBuffer);
-        gpuCalculator.deleteBuffer(bBuffer);
-        gpuCalculator.deleteBuffer(previousCBuffer);
-        gpuCalculator.deleteBuffer(outputCBuffer);
-
-        return output;
       }
 
     </script>

@@ -289,12 +289,20 @@ WebGL.prototype = {
     var texture = gl.createTexture();
     this.textures[name] = texture;
     var dataType;
+    var convertedData;
     if (_.isUndefined(bitDepth) || (bitDepth === 8)) {
       dataType = gl.UNSIGNED_BYTE;
+      convertedData = data;
+    } else if (bitDepth === 16) {
+      var hasFloat = gl.getExtension('OES_texture_float');
+      console.assert(hasFloat);
+      dataType = gl.FLOAT;
+      convertedData = new Float32Array(data);
     } else if (bitDepth === 32) {
       var hasFloat = gl.getExtension('OES_texture_float');
       console.assert(hasFloat);
       dataType = gl.FLOAT;
+      convertedData = data;
     } else {
       console.assert(false, 'webgl.createDataTexture() - bad bit depth ' + bitDepth);
       return null;
@@ -314,7 +322,8 @@ WebGL.prototype = {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, channelType, width, height, 0, channelType, gl.FLOAT, data);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, channelType, width, height, 0, channelType, dataType, convertedData);
     gl.bindTexture(gl.TEXTURE_2D, null);
     texture.isReady = true;
     texture.width = width;
@@ -800,9 +809,14 @@ GPUCalculator.prototype = {
     return floatData;
   },
 
-  createBuffer: function(width, height, channels, data) {
+  createBuffer: function(options) {
+    var width = options.width;
+    var height = options.height;
+    var channels = options.channels || 4;
+    var bitDepth = options.bitDepth || 32;
+    var data = options.data || null;
     var webgl = this.webgl;
-    var texture = webgl.createDataTexture(width, height, channels, 32, data);
+    var texture = webgl.createDataTexture(width, height, channels, bitDepth, data);
     return texture;
   },
 

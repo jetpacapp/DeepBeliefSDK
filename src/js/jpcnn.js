@@ -1187,8 +1187,10 @@ function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
   var ldc = m;
   var beta = 0.0;
 
+g_useNaive = false;
+
   if (kernels._bitsPerFloat === 32) {
-    matrixGemm(
+    output._data = matrixGemm(
       m,
       n,
       k,
@@ -1202,7 +1204,7 @@ function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
       ldc
     );
   } else {
-    matrixGemmScaleA(
+    output._data = matrixGemmScaleA(
       m,
       n,
       k,
@@ -1215,7 +1217,8 @@ function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
       output._data,
       ldc,
       kernels._spread,
-      kernels._min
+      kernels._min,
+      kernels._bitsPerFloat
     );
   }
 
@@ -1235,19 +1238,35 @@ function matrixGemm(
   c,
   ldc) {
 
-  naiveGemm(
-    m,
-    n,
-    k,
-    alpha,
-    a,
-    lda,
-    b,
-    ldb,
-    beta,
-    c,
-    ldc
-  );
+  if (g_useNaive) {
+    return naiveGemm(
+      m,
+      n,
+      k,
+      alpha,
+      a,
+      lda,
+      b,
+      ldb,
+      beta,
+      c,
+      ldc
+    );
+  } else {
+    return glGemm(
+      m,
+      n,
+      k,
+      alpha,
+      a,
+      lda,
+      b,
+      ldb,
+      beta,
+      c,
+      ldc
+    );
+  }
 
 }
 
@@ -1279,7 +1298,11 @@ function naiveGemm(
       c[cIndex] = ((alpha * total) + (beta * oldCValue));
     }
   }
+
+  return c;
 }
+
+g_useNaive = true;
 
 function matrixGemmScaleA(
   m,
@@ -1294,23 +1317,43 @@ function matrixGemmScaleA(
   c,
   ldc,
   aScale,
-  aOffset) {
+  aOffset,
+  aBitDepth) {
 
-  naiveGemmScaleA(
-    m,
-    n,
-    k,
-    alpha,
-    a,
-    lda,
-    b,
-    ldb,
-    beta,
-    c,
-    ldc,
-    aScale,
-    aOffset
-  );
+  if (g_useNaive) {
+    return naiveGemmScaleA(
+      m,
+      n,
+      k,
+      alpha,
+      a,
+      lda,
+      b,
+      ldb,
+      beta,
+      c,
+      ldc,
+      aScale,
+      aOffset
+    );
+  } else {
+    return glGemm(
+      m,
+      n,
+      k,
+      alpha,
+      a,
+      lda,
+      b,
+      ldb,
+      beta,
+      c,
+      ldc,
+      aScale,
+      aOffset,
+      aBitDepth
+    );
+  }
 
 }
 
@@ -1344,6 +1387,8 @@ function naiveGemmScaleA(
       c[cIndex] = ((alpha * total) + (beta * oldCValue));
     }
   }
+
+  return c;
 }
 
 function matrixExtractChannels(input, startChannel, endChannel) {
@@ -1435,8 +1480,10 @@ function matrixDot(input, weights) {
   var ldc = m;
   var beta = 0.0;
 
+g_useNaive = false;
+
   if (weights._bitsPerFloat === 32) {
-    matrixGemm(
+    output._data = matrixGemm(
       m,
       n,
       k,
@@ -1450,7 +1497,7 @@ function matrixDot(input, weights) {
       ldc
     );
   } else {
-    matrixGemmScaleA(
+    output._data = matrixGemmScaleA(
       m,
       n,
       k,
@@ -1463,7 +1510,8 @@ function matrixDot(input, weights) {
       output._data,
       ldc,
       weights._spread,
-      weights._min
+      weights._min,
+      weights._bitsPerFloat
     );
   }
 
@@ -1663,6 +1711,160 @@ function matrixSoftmax(input) {
       inputOffset += 1;
     }
   }
+
+  return output;
+}
+
+var gemmShader = "                     \n\
+  precision mediump float;                                      \n\
+  varying vec2 outTexCoord;                                     \n\
+  uniform sampler2D a;                                          \n\
+  uniform vec2 aScale;                                          \n\
+  uniform sampler2D b;                                          \n\
+  uniform vec2 bScale;                                          \n\
+  uniform sampler2D c;                                          \n\
+  uniform vec2 cScale;                                          \n\
+  uniform float alpha;                                          \n\
+  uniform float beta;                                           \n\
+  uniform float k;                                              \n\
+  uniform float aValueScale;                                    \n\
+  uniform float aValueOffset;                                   \n\
+  void main(void) {                                             \n\
+    vec2 texCoord = outTexCoord;                                \n\
+    float i = texCoord.x;                                       \n\
+    float j = texCoord.y;                                       \n\
+    vec2 cCoords = vec2(i, j) * cScale;                         \n\
+    float cValue;                                               \n\
+    if (beta != 0.0) {                                          \n\
+      cValue = texture2D(c, cCoords).r;                         \n\
+    } else {                                                    \n\
+      cValue = 0.0;                                             \n\
+    }                                                           \n\
+    float total = 0.0;                                          \n\
+    for (int l = 0; l < 100000; l += 1) {                       \n\
+      if (l >= int(k)) {                                        \n\
+        break;                                                  \n\
+      }                                                         \n\
+      float lCoord = (float(l) + 0.5);                          \n\
+      vec2 aCoords = vec2(i, lCoord) * aScale;                  \n\
+      float aValue = texture2D(a, aCoords).r;                   \n\
+      aValue = ((aValue * aValueScale) + aValueOffset);         \n\
+      vec2 bCoords = vec2(lCoord, j) * bScale;                  \n\
+      float bValue = texture2D(b, bCoords).r;                   \n\
+      total += (aValue * bValue);                               \n\
+    }                                                           \n\
+    gl_FragColor.r = (alpha * total) + (beta * cValue);         \n\
+  }                                                             \n\
+";
+
+var g_gpuCalculator;
+
+function glGemm(
+  m,
+  n,
+  inputK,
+  alpha,
+  a,
+  lda,
+  b,
+  ldb,
+  inputBeta,
+  c,
+  ldc,
+  inputAScale,
+  aOffset,
+  aBitDepth) {
+
+  if (_.isUndefined(inputAScale)) {
+    inputAScale = 1.0;
+  }
+  if (_.isUndefined(aOffset)) {
+    aOffset = 0.0;
+  }
+  if (_.isUndefined(aBitDepth)) {
+    aBitDepth = 32;
+  }
+
+  var aScale;
+  if ((aBitDepth === 32) || (aBitDepth === 16)) {
+    aScale = inputAScale;
+  } else {
+    var levels = (1 << aBitDepth);
+    aScale = (inputAScale * levels);
+  }
+
+  if (_.isUndefined(g_gpuCalculator)) {
+    g_gpuCalculator = new GPUCalculator();
+  }
+  var gpuCalculator = g_gpuCalculator;
+
+  var aFullDims = new Dimensions(inputK, m, 1);
+  var bFullDims = new Dimensions(n, inputK, 1);
+  var cDims = new Dimensions(n, m, 1);
+
+  var maxTextureSize = 4096;
+  var use4x = false;
+
+  var kStep = 0;
+  var currentK = inputK;
+  var originK = (kStep * maxTextureSize);
+  var beta = inputBeta;
+
+  var aDims;
+  var bDims;
+  if (use4x) {
+    aDims = new Dimensions(currentK, (m / 4), 4);
+    bDims = new Dimensions(n, (currentK / 4), 4);
+  } else {
+    aDims = new Dimensions(currentK, m, 1);
+    bDims = new Dimensions(n, currentK, 1);
+  }
+
+  var aBuffer = gpuCalculator.createBuffer({
+    width: aDims._dims[1],
+    height: aDims._dims[0],
+    channels: aDims._dims[2],
+    bitDepth: aBitDepth,
+    data: a});
+  var bBuffer = gpuCalculator.createBuffer({
+    width: bDims._dims[1],
+    height: bDims._dims[0],
+    channels: bDims._dims[2],
+    data: b});
+  var previousCBuffer = gpuCalculator.createBuffer({
+    width: cDims._dims[1],
+    height: cDims._dims[0],
+    channels: cDims._dims[2],
+    data: null});
+
+  var uniforms = {
+    'alpha': alpha,
+    'beta': beta,
+    'k': currentK,
+    'aValueScale': aScale,
+    'aValueOffset': aOffset
+  };
+  var inputBuffers = {
+    'a': aBuffer,
+    'b': bBuffer,
+    'c': previousCBuffer
+  };
+
+  var outputCBuffer = gpuCalculator.applyShader({
+    shaderText: gemmShader,
+    inputBuffers: inputBuffers,
+    uniforms: uniforms,
+    width: cDims._dims[1],
+    height: cDims._dims[0]
+  });
+
+  var output = gpuCalculator.getResult(outputCBuffer, 1);
+  console.log('output = ' + output[0] + ', ' + output[1] + ', ' + output[2] + ', ' + output[3]);
+
+  gpuCalculator.deleteBuffer(aBuffer);
+  gpuCalculator.deleteBuffer(bBuffer);
+  gpuCalculator.deleteBuffer(previousCBuffer);
+  gpuCalculator.deleteBuffer(outputCBuffer);
 
   return output;
 }
