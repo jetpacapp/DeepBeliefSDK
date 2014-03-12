@@ -470,13 +470,16 @@ function delayedBufferFromFileAtURL(url, callback) {
   xhr.send();
 }
 
-Network = function(filename, onLoad) {
+Network = function(filename, onLoad, options) {
+  if (_.isUndefined(options)) {
+    options = {};
+  }
   this._isLoaded = false;
   this._isHomebrewed = true;
   this._fileTag = null;
-//  this._testResults = true;
-//  this._runOnlyLayer = 20;
-  this._doProfile = true;
+  //this._testResults = true;
+  //this._runOnlyLayer = 20;
+  //this._doProfile = true;
   this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
@@ -492,6 +495,21 @@ Network = function(filename, onLoad) {
   xhr.onerror = function(e) {
     alert("Error " + e.target.status + " occurred while receiving the document.");
   };
+  if (options.progress) {
+    this.onprogress = options.progress;
+    xhr.onprogress = function (myThis) {
+      return function(event) {
+        var total;
+        if (event.lengthComputable) {
+          total = event.total;
+        } else {
+          total = 64140288; // Known length of our network file, and a good guess for similar ones
+        }
+        var percentComplete = (event.loaded / total) * 100;
+        myThis.onprogress(percentComplete);
+      };
+    }(this);
+  }
   xhr.send();
 };
 Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
@@ -553,6 +571,10 @@ Network.prototype.initializeFromArrayBuffer = function(arrayBuffer) {
     labelNames.push(labelNameTag.value);
   });
   this._labelNames = labelNames;
+
+  if (graphDict.getTagFromDict('copyright')) {
+    console.log('Neural network parameters ' + graphDict.getStringFromDict('copyright'));
+  }
 
   this._onLoad(this);
 };

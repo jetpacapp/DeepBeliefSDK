@@ -22,6 +22,8 @@
   <body>
     <h2>Jetpac's Deep Belief in Javascript</h2>
 
+    <progress id="network-progress-bar" value="0" max="100"></progress>
+
     <video style="visibility: visible;" class="video-preview" id="live" autoplay></video>
 
     <div>
@@ -39,22 +41,39 @@
     <script type="text/javascript">
       var video = document.getElementById("live");
 
-      var network = new Network('data/example_networks/homebrewed_compressed.ntwk', function() {
+      var networkUrl = 'http://d2rlgkokhpr1uq.cloudfront.net/jetpac.ntwk'; // 'data/example_networks/jetpac.ntwk'
+      var network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress});
+
+      function onNetworkProgress(percentComplete) {
+        var progressBar = document.getElementById('network-progress-bar');
+        progressBar.value = percentComplete;
+      }
+
+      function onNetworkLoad() {
         testDogImage();
-      });
+        beginWebcamClassification();
+      }
+
+      function beginWebcamClassification() {
+        navigator.getMedia = ( navigator.getUserMedia ||
+          navigator.webkitGetUserMedia ||
+          navigator.mozGetUserMedia ||
+          navigator.msGetUserMedia);
+
+        navigator.getMedia({video: true},
+            function(stream) {
+              video.src = URL.createObjectURL(stream)
+              setInterval(classifyWebcamSnapshot, 500);
+            },
+            function(err) {
+              console.log("Unable to get video stream!")
+            }
+        );
+
+      }
 
       testGemm();
       //testMaxPatch();
-
-      navigator.webkitGetUserMedia({video: true},
-          function(stream) {
-            video.src = window.webkitURL.createObjectURL(stream)
-            setInterval(classifyWebcamSnapshot, 500);
-          },
-          function(err) {
-            console.log("Unable to get video stream!")
-          }
-      );
 
       var dogImage;
       function testDogImage() {
@@ -87,8 +106,18 @@
         }
 
         var canvas = canvasElement.getContext("2d");
-        canvas.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, destSize, destSize);
-
+        // Workaround for Firefox bug that causes an error when the video's
+        // not yet ready and we try to draw with it. See:
+        // http://stackoverflow.com/questions/18580844/firefox-drawimagevideo-fails-with-ns-error-not-available-component-is-not-av
+        try {
+          canvas.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, destSize, destSize);
+        } catch (e) {
+          if (e.name == "NS_ERROR_NOT_AVAILABLE") {
+            return;
+          } else {
+            throw e;
+          }
+        }
         var imageData = canvas.getImageData(0, 0, destSize, destSize);
 
         var inputBuffer = new Buffer([destSize, destSize, 3]);
