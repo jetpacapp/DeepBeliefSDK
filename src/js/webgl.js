@@ -62,7 +62,10 @@ function WebGL(options) {
     }
     context = canvas.getContext('experimental-webgl', contextOptions);
     if (typeof WebGLDebugUtils !== 'undefined') {
-      context = WebGLDebugUtils.makeDebugContext(context);
+      function throwOnGLError(err, funcName, args) {
+        throw WebGLDebugUtils.glEnumToString(err) + " was caused by call to: " + funcName;
+      };
+      context = WebGLDebugUtils.makeDebugContext(context, throwOnGLError);
     }
     context.viewportWidth = pixelWidth;
     context.viewportHeight = pixelHeight;
@@ -74,12 +77,6 @@ function WebGL(options) {
       this.error = 'Unknown error initializing WebGL';
     }
   }
-
-  function throwOnGLError(err, funcName, args) {
-    throw WebGLDebugUtils.glEnumToString(err) + " was caused by call to: " + funcName;
-  };
- 
-  context = WebGLDebugUtils.makeDebugContext(context, throwOnGLError);
 
   this.canvas = canvas;
   this.pixelScale = pixelScale;
@@ -276,17 +273,20 @@ WebGL.prototype = {
     texture.isReady = true;
   },
 
-  createEmptyTexture: function(width, height, channels, bitDepth) {
+  createEmptyTexture: function(width, height, channels, bitDepth, debugInfo) {
     return this.createDataTexture(width, height, channels, bitDepth, null);
   },
 
-  createDataTexture: function(width, height, channels, bitDepth, data) {
+  createDataTexture: function(width, height, channels, bitDepth, data, debugInfo) {
     if (_.isUndefined(data)) {
       data = null;
     }
-    //console.log('createDataTexture(' + width + ', ' + height + ', ' + channels + ', ' + bitDepth + ')');
+    var namePrefix = 'texture';
+    if (!_.isUndefined(debugInfo)) {
+      namePrefix += ' ' + debugInfo;
+    }
     var gl = this.gl;
-    var name = this.uniqueName('texture ');
+    var name = this.uniqueName(namePrefix);
     var texture = gl.createTexture();
     this.textures[name] = texture;
     var dataType;
@@ -816,8 +816,9 @@ GPUCalculator.prototype = {
     var channels = options.channels || 4;
     var bitDepth = options.bitDepth || 32;
     var data = options.data || null;
+    var debugInfo = options.debugInfo;
     var webgl = this.webgl;
-    var texture = webgl.createDataTexture(width, height, channels, bitDepth, data);
+    var texture = webgl.createDataTexture(width, height, channels, bitDepth, data, debugInfo);
     return texture;
   },
 

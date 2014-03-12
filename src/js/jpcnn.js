@@ -297,6 +297,7 @@ Buffer.prototype.extractSubregion = function(originY, originX, size) {
       min: this._min,
       max: this._max});
   }
+  output._name = this._name + ' subregion';
 
   var elementsPerInputRow = (inputWidth * inputChannels);
   var elementsPerRegionRow = (regionWidth * regionChannels);
@@ -359,12 +360,15 @@ Buffer.prototype.getGPUBuffer = function(gpuCalculator, inputDims) {
       channels = 1;
     }
 
+    console.assert(this._name !== 'None');
+
     var gpuBuffer = gpuCalculator.createBuffer({
       width: width,
       height: height,
       channels: channels,
       bitDepth: this._bitsPerFloat,
-      data: data});
+      data: data,
+      debugInfo: this.toString()});
     this._gpuBuffer = gpuBuffer;
   }
   return this._gpuBuffer;
@@ -472,7 +476,7 @@ Network = function(filename, onLoad) {
   this._fileTag = null;
 //  this._testResults = true;
 //  this._runOnlyLayer = 20;
-  //this._profile = true;
+  this._doProfile = true;
   this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
@@ -577,12 +581,12 @@ Network.prototype.run = function(input, layerOffset) {
       }
     }
 
-    if (this._profile) {
+    if (this._doProfile) {
       console.log('Running ' + layer.constructor.name)
       var startTime = new Date().getTime();
     }
     var currentOutput = layer.run(currentInput);
-    if (this._profile) {
+    if (this._doProfile) {
       var endTime = new Date().getTime();
       var duration = (endTime - startTime);
       console.log(layer._name + ' took ' + duration + ' ms');
@@ -1887,7 +1891,7 @@ var gemmShader = "                                              \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 10000; l += 1) {                       \n\
+    for (int l = 0; l < 10000; l += 1) {                        \n\
       if (l >= int(k)) {                                        \n\
         break;                                                  \n\
       }                                                         \n\
@@ -1903,7 +1907,7 @@ var gemmShader = "                                              \n\
   }                                                             \n\
 ";
 
-var gemmShader4x = "                   \n\
+var gemmShader4x = "                                            \n\
   precision mediump float;                                      \n\
   varying vec2 outTexCoord;                                     \n\
   uniform sampler2D a;                                          \n\
@@ -1914,7 +1918,7 @@ var gemmShader4x = "                   \n\
   uniform vec2 cScale;                                          \n\
   uniform float alpha;                                          \n\
   uniform float beta;                                           \n\
-  uniform float k;                                                \n\
+  uniform float k;                                              \n\
   uniform float aValueScale;                                    \n\
   uniform float aValueOffset;                                   \n\
   void main(void) {                                             \n\
@@ -2071,10 +2075,14 @@ function glGemm(
     var aGPUBuffer;
     var bGPUBuffer;
     if (kStep === 0) {
+      inputA.setName('glGemm() inputA');
       aGPUBuffer = inputA.getGPUBuffer(gpuCalculator, aDims);
+      inputB.setName('glGemm() inputB kStep=' + kStep);
       bGPUBuffer = inputB.getGPUBuffer(gpuCalculator, bDims);
     } else {
+      aFullBuffer.setName('glGemm() aFullBuffer');
       var aSubregionBuffer = aFullBuffer.extractSubregion(originK, 0, aDims);
+      bFullBuffer.setName('glGemm() bFullBuffer');
       var bSubregionBuffer;
       if (use4x) {
         bSubregionBuffer = bFullBuffer.extractSubregion(0, (originK / 4), bDims);
@@ -2093,6 +2101,7 @@ function glGemm(
       } else {
         previousCBuffer = new Buffer(cDims, null);
       }
+      previousCBuffer.setName('glGemm() previousCBuffer');
       previousCGPUBuffer = previousCBuffer.getGPUBuffer(gpuCalculator);
       beta = inputBeta;
     } else {
@@ -2121,6 +2130,10 @@ function glGemm(
       height: cDims._dims[0]
     });
 
+    if (kStep !== 0) {
+      gpuCalculator.deleteBuffer(aGPUBuffer);
+    }
+    gpuCalculator.deleteBuffer(bGPUBuffer);
     if (previousCGPUBuffer) {
       gpuCalculator.deleteBuffer(previousCGPUBuffer);
     }
@@ -2133,7 +2146,6 @@ function glGemm(
 //  console.log('gemm took ' + (endTime - startTime) + 'ms');
 
 //  gpuCalculator.deleteBuffer(aBuffer);
-  gpuCalculator.deleteBuffer(bGPUBuffer);
   gpuCalculator.deleteBuffer(previousCGPUBuffer);
 
   var outputCDims = new Dimensions(n, m);
