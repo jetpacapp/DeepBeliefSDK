@@ -89,9 +89,9 @@ Buffer = function(dims, data, options) {
     if (bitsPerFloat === 32) {
       this._data = new Float32Array(elementCount);
     } else if (bitsPerFloat === 16) {
-      this._quantizedData = new Uint16Array(dataTag.value);
+      this._quantizedData = new Uint16Array(elementCount);
     } else if (bitsPerFloat === 8) {
-      this._quantizedData = new Uint8Array(dataTag.value);
+      this._quantizedData = new Uint8Array(elementCount);
     } else {
       console.log('Bad bitsPerFloat ' + bitsPerFloat);
     }
@@ -126,7 +126,15 @@ Buffer.prototype.populateWithRandomValues = function(min, max) {
   // TO DO
 };
 Buffer.prototype.view = function() {
-  var result = new Buffer(this._dims, this._data);
+  var result;
+  if (this._bitsPerFloat === 32) {
+    result = new Buffer(this._dims, this._data);
+  } else {
+    result = new Buffer(this._dims, this._quantizedData, {
+      bitsPerFloat: this._bitsPerFloat,
+      min: this._min,
+      max: this._max});
+  }
   result.setName(this._name + ' view');
   return result;
 };
@@ -271,8 +279,49 @@ Buffer.prototype.areAllClose = function(b, tolerance) {
 
   return true;
 };
-Buffer.prototype.extractSubRegion = function(origin, size) {
-  // TO DO
+Buffer.prototype.extractSubregion = function(originY, originX, size) {
+  var inputDims = this._dims._dims;
+
+  var inputWidth = inputDims[1];
+  var inputChannels = inputDims[2];
+
+  var regionWidth = size._dims[1];
+  var regionChannels = size._dims[2];
+
+  var output;
+  if (this._bitsPerFloat === 32) {
+    output = new Buffer(size);
+  } else {
+    output = new Buffer(size, undefined, {
+      bitsPerFloat: this._bitsPerFloat,
+      min: this._min,
+      max: this._max});
+  }
+
+  var elementsPerInputRow = (inputWidth * inputChannels);
+  var elementsPerRegionRow = (regionWidth * regionChannels);
+
+  var inputData;
+  var regionData;
+  if (this._bitsPerFloat === 32) {
+    inputData = this._data;
+    regionData = output._data;
+  } else {
+    inputData = this._quantizedData;
+    regionData = output._quantizedData;
+  }
+  var inputOffset = this._dims.offset(originY, originX, 0);
+  var regionOffset = 0;
+  var elementCount = size.elementCount();
+  while (regionOffset < elementCount) {
+    var inputRow = inputData.subarray(inputOffset, (inputOffset + elementsPerRegionRow));
+    var regionRow = regionData.subarray(regionOffset, (regionOffset + elementsPerRegionRow));
+    regionRow.set(inputRow);
+    inputOffset += elementsPerInputRow;
+    regionOffset += elementsPerRegionRow;
+  }
+
+  return output;
 };
 Buffer.prototype.valueAt = function() {
   var argsAsArray = Array.prototype.slice.call(arguments, 0);
@@ -1977,6 +2026,10 @@ function glGemm(
 
   var gpuCalculator = getGPUCalculator();
 
+  var maxTextureSize = 4096;
+
+  var previousCGPUBuffer = null;
+
   var use4x = (((m % 4) == 0) && ((inputK % 4) == 0));
   var shaderText;
   var aFullDims;
@@ -1994,59 +2047,94 @@ function glGemm(
     cDims = new Dimensions(n, m, 1);
   }
 
-  var maxTextureSize = 4096;
+  var aFullBuffer = inputA.view().reshape(aFullDims);
+  var bFullBuffer = inputB.view().reshape(bFullDims);
 
-  var kStep = 0;
-  var currentK = inputK;
-  var originK = (kStep * maxTextureSize);
-  var beta = inputBeta;
+  var kStepCount = Math.ceil(inputK / maxTextureSize);
+  for (var kStep = 0; kStep < kStepCount; kStep += 1) {
+    var currentK = (inputK - (kStep * maxTextureSize));
+    if (currentK > maxTextureSize) {
+      currentK = maxTextureSize;
+    }
+    var originK = (kStep * maxTextureSize);
 
-  var aDims;
-  var bDims;
-  if (use4x) {
-    aDims = new Dimensions(currentK, (m / 4), 4);
-    bDims = new Dimensions(n, (currentK / 4), 4);
-  } else {
-    aDims = new Dimensions(currentK, m, 1);
-    bDims = new Dimensions(n, currentK, 1);
+    var aDims;
+    var bDims;
+    if (use4x) {
+      aDims = new Dimensions(currentK, (m / 4), 4);
+      bDims = new Dimensions(n, (currentK / 4), 4);
+    } else {
+      aDims = new Dimensions(currentK, m, 1);
+      bDims = new Dimensions(n, currentK, 1);
+    }
+
+    var aGPUBuffer;
+    var bGPUBuffer;
+    if (kStep === 0) {
+      aGPUBuffer = inputA.getGPUBuffer(gpuCalculator, aDims);
+      bGPUBuffer = inputB.getGPUBuffer(gpuCalculator, bDims);
+    } else {
+      var aSubregionBuffer = aFullBuffer.extractSubregion(originK, 0, aDims);
+      var bSubregionBuffer;
+      if (use4x) {
+        bSubregionBuffer = bFullBuffer.extractSubregion(0, (originK / 4), bDims);
+      } else {
+        bSubregionBuffer = bFullBuffer.extractSubregion(0, originK, bDims);
+      }
+      aGPUBuffer = aSubregionBuffer.getGPUBuffer(gpuCalculator, aDims);
+      bGPUBuffer = bSubregionBuffer.getGPUBuffer(gpuCalculator, bDims);
+    }
+
+    var beta;
+    if (kStep === 0) {
+      var previousCBuffer;
+      if (inputBeta > 0.0) {
+        previousCBuffer = new Buffer(cDims, c._data);
+      } else {
+        previousCBuffer = new Buffer(cDims, null);
+      }
+      previousCGPUBuffer = previousCBuffer.getGPUBuffer(gpuCalculator);
+      beta = inputBeta;
+    } else {
+      beta = 1.0;
+    }
+
+    var uniforms = {
+      'alpha': alpha,
+      'beta': beta,
+      'k': currentK,
+      'aValueScale': aScale,
+      'aValueOffset': aOffset
+    };
+    var inputBuffers = {
+      'a': aGPUBuffer,
+      'b': bGPUBuffer,
+      'c': previousCGPUBuffer
+    };
+
+    var startTime = new Date().getTime();
+    var outputCGPUBuffer = gpuCalculator.applyShader({
+      shaderText: shaderText,
+      inputBuffers: inputBuffers,
+      uniforms: uniforms,
+      width: cDims._dims[1],
+      height: cDims._dims[0]
+    });
+
+    if (previousCGPUBuffer) {
+      gpuCalculator.deleteBuffer(previousCGPUBuffer);
+    }
+    previousCGPUBuffer = outputCGPUBuffer;
   }
 
-  var aGPUBuffer = inputA.getGPUBuffer(gpuCalculator, aDims);
-  var bGPUBuffer = inputB.getGPUBuffer(gpuCalculator, bDims);
-  var previousCBuffer = new Buffer(cDims, null);
-  var previousCGPUBuffer = previousCBuffer.getGPUBuffer(gpuCalculator);
-
-  var uniforms = {
-    'alpha': alpha,
-    'beta': beta,
-    'k': currentK,
-    'aValueScale': aScale,
-    'aValueOffset': aOffset
-  };
-  var inputBuffers = {
-    'a': aGPUBuffer,
-    'b': bGPUBuffer,
-    'c': previousCGPUBuffer
-  };
-
-  var startTime = new Date().getTime();
-  var outputCBuffer = gpuCalculator.applyShader({
-    shaderText: shaderText,
-    inputBuffers: inputBuffers,
-    uniforms: uniforms,
-    width: cDims._dims[1],
-    height: cDims._dims[0]
-  });
-
   var outputChannels = cDims._dims[2];
-  var outputData = gpuCalculator.getResult(outputCBuffer, outputChannels);
+  var outputData = gpuCalculator.getResult(previousCGPUBuffer, outputChannels);
   var endTime = new Date().getTime();
 //  console.log('gemm took ' + (endTime - startTime) + 'ms');
 
 //  gpuCalculator.deleteBuffer(aBuffer);
   gpuCalculator.deleteBuffer(bGPUBuffer);
-  gpuCalculator.deleteBuffer(previousCBuffer);
-  gpuCalculator.deleteBuffer(outputCBuffer);
+  gpuCalculator.deleteBuffer(previousCGPUBuffer);
 
   var outputCDims = new Dimensions(n, m);
   var outputBuffer = new Buffer(outputCDims, outputData);
