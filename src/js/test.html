@@ -43,12 +43,13 @@
         testDogImage();
       });
 
+      testGemm();
       //testMaxPatch();
 
       navigator.webkitGetUserMedia({video: true},
           function(stream) {
             video.src = window.webkitURL.createObjectURL(stream)
-            //setInterval(classifyWebcamSnapshot, 500);
+            setInterval(classifyWebcamSnapshot, 500);
           },
           function(err) {
             console.log("Unable to get video stream!")
@@ -101,7 +102,6 @@
           }
         }
         inputBuffer.setName('inputBuffer');
-        console.log(inputBuffer);
 
         var startTime = new Date().getTime();
         var results = network.classifyImage(inputBuffer, false, 0);
@@ -244,7 +244,7 @@
 
         var outputDims = new Dimensions(imageCount, outputChannels);
         var output = new Buffer(outputDims);
-        output.setName('output');
+        output.setName('gpu output');
 
         var m = outputChannels;
         var n = input._dims._dims[0];
@@ -254,23 +254,23 @@
         var ldb = k;
         var ldc = m;
         var beta = 0.0;
-        var outputData = glGemm(
+        var gpuOutput = glGemm(
           m,
           n,
           k,
           alpha,
-          weights._data,
+          weights,
           lda,
-          input._data,
+          input,
           ldb,
           beta,
-          output._data,
+          gpuOutput,
           ldc
         );
 
         var cpuOutput = new Buffer(outputDims);
-        cpuOutput.setName('output');
-        matrixGemm(
+        cpuOutput.setName('cpu output');
+        cpuOutput = naiveGemm(
           m,
           n,
           k,
@@ -284,9 +284,8 @@
           ldc
         );
 
-        output._data = outputData;
-        output.areAllClose(cpuOutput);
-        console.log(output);
+        gpuOutput.areAllClose(cpuOutput);
+        console.log(gpuOutput);
         console.log(cpuOutput);
       }
 

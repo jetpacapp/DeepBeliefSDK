@@ -423,7 +423,7 @@ Network = function(filename, onLoad) {
   this._fileTag = null;
 //  this._testResults = true;
 //  this._runOnlyLayer = 20;
-  this._profile = true;
+  //this._profile = true;
   this._onLoad = onLoad;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', filename, true);
@@ -1728,7 +1728,7 @@ function naiveMaxPatch(input, patchWidth, stride) {
 }
 
 function matrixMax(input, maxValue) {
-  var useNaive = false;
+  var useNaive = true;
   if (useNaive) {
     return naiveMax(input, maxValue);
   } else {
@@ -1804,7 +1804,15 @@ function matrixSoftmax(input) {
   return output;
 }
 
-var gemmShader = "                     \n\
+var g_gpuCalculator;
+function getGPUCalculator() {
+  if (_.isUndefined(g_gpuCalculator)) {
+    g_gpuCalculator = new GPUCalculator();
+  }
+  return g_gpuCalculator;
+}
+
+var gemmShader = "                                              \n\
   precision mediump float;                                      \n\
   varying vec2 outTexCoord;                                     \n\
   uniform sampler2D a;                                          \n\
@@ -1846,13 +1854,92 @@ var gemmShader = "                     \n\
   }                                                             \n\
 ";
 
-var g_gpuCalculator;
-function getGPUCalculator() {
-  if (_.isUndefined(g_gpuCalculator)) {
-    g_gpuCalculator = new GPUCalculator();
-  }
-  return g_gpuCalculator;
-}
+var gemmShader4x = "                   \n\
+  precision mediump float;                                      \n\
+  varying vec2 outTexCoord;                                     \n\
+  uniform sampler2D a;                                          \n\
+  uniform vec2 aScale;                                          \n\
+  uniform sampler2D b;                                          \n\
+  uniform vec2 bScale;                                          \n\
+  uniform sampler2D c;                                          \n\
+  uniform vec2 cScale;                                          \n\
+  uniform float alpha;                                          \n\
+  uniform float beta;                                           \n\
+  uniform float k;                                                \n\
+  uniform float aValueScale;                                    \n\
+  uniform float aValueOffset;                                   \n\
+  void main(void) {                                             \n\
+    vec2 texCoord = outTexCoord;                                \n\
+    float startI = ((texCoord.x - 0.5) * 4.0) + 0.5;            \n\
+    float j = texCoord.y;                                       \n\
+    vec2 cCoords = vec2(texCoord.x, texCoord.y) * cScale;       \n\
+    vec4 cPixel = texture2D(c, cCoords);                        \n\
+    for (int iInc = 0; iInc < 4; iInc += 1) {                   \n\
+      float i = startI + float(iInc);                           \n\
+      float iCoord = float(int(i) / 4) + 0.5;                   \n\
+      float cValue;                                             \n\
+      if (iInc == 0) {                                          \n\
+        cValue = cPixel.x;                                      \n\
+      } else if (iInc == 1) {                                   \n\
+        cValue = cPixel.y;                                      \n\
+      } else if (iInc == 2) {                                   \n\
+        cValue = cPixel.z;                                      \n\
+      } else if (iInc == 3) {                                   \n\
+        cValue = cPixel.w;                                      \n\
+      }                                                         \n\
+      float total;                                              \n\
+      if (beta != 0.0) {                                        \n\
+        total = (cValue * beta);                                \n\
+      } else {                                                  \n\
+        total = 0.0;                                            \n\
+      }                                                         \n\
+      for (int l = 0; l < 10000; l += 1) {                      \n\
+        if (l >= int(k)) {                                      \n\
+          break;                                                \n\
+        }                                                       \n\
+        float aLCoord = float(l) + 0.5;                         \n\
+        vec2 aCoords = vec2(iCoord, aLCoord) * aScale;          \n\
+        vec4 aPixel = texture2D(a, aCoords);                    \n\
+        float aValue;                                           \n\
+        if (iInc == 0) {                                        \n\
+          aValue = aPixel.x;                                    \n\
+        } else if (iInc == 1) {                                 \n\
+          aValue = aPixel.y;                                    \n\
+        } else if (iInc == 2) {                                 \n\
+          aValue = aPixel.z;                                    \n\
+        } else if (iInc == 3) {                                 \n\
+          aValue = aPixel.w;                                    \n\
+        }                                                       \n\
+        aValue = ((aValue * aValueScale) + aValueOffset);       \n\
+        float bLCoord = float(l / 4) + 0.5;                     \n\
+        int bLComponent = int(mod(float(l), 4.0));              \n\
+        vec2 bCoords = vec2(bLCoord, j) * bScale;               \n\
+        vec4 bPixel = texture2D(b, bCoords);                    \n\
+        float bValue;                                           \n\
+        if (bLComponent == 0) {                                 \n\
+          bValue = bPixel.x;                                    \n\
+        } else if (bLComponent == 1) {                          \n\
+          bValue = bPixel.y;                                    \n\
+        } else if (bLComponent == 2) {                          \n\
+          bValue = bPixel.z;                                    \n\
+        } else if (bLComponent == 3) {                          \n\
+          bValue = bPixel.w;                                    \n\
+        }                                                       \n\
+        total += (aValue * bValue);                             \n\
+      }                                                         \n\
+      float result = (alpha * total);                           \n\
+      if (iInc == 0) {                                          \n\
+        gl_FragColor.r = result;                                \n\
+      } else if (iInc == 1) {                                   \n\
+        gl_FragColor.g = result;                                \n\
+      } else if (iInc == 2) {                                   \n\
+        gl_FragColor.b = result;                                \n\
+      } else if (iInc == 3) {                                   \n\
+        gl_FragColor.a = result;                                \n\
+      }                                                         \n\
+    }                                                           \n\
+  }                                                             \n\
+";
 
 function glGemm(
   m,
@@ -1890,12 +1977,24 @@ function glGemm(
 
   var gpuCalculator = getGPUCalculator();
 
-  var aFullDims = new Dimensions(inputK, m, 1);
-  var bFullDims = new Dimensions(n, inputK, 1);
-  var cDims = new Dimensions(n, m, 1);
+  var use4x = (((m % 4) == 0) && ((inputK % 4) == 0));
+  var shaderText;
+  var aFullDims;
+  var bFullDims;
+  var cDims;
+  if (use4x) {
+    shaderText = gemmShader4x;
+    aFullDims = new Dimensions(inputK, (m / 4), 4);
+    bFullDims = new Dimensions(n, (inputK / 4), 4);
+    cDims = new Dimensions(n, (m / 4), 4);
+  } else {
+    shaderText = gemmShader;
+    aFullDims = new Dimensions(inputK, m, 1);
+    bFullDims = new Dimensions(n, inputK, 1);
+    cDims = new Dimensions(n, m, 1);
+  }
 
   var maxTextureSize = 4096;
-  var use4x = false;
 
   var kStep = 0;
   var currentK = inputK;
@@ -1930,23 +2029,27 @@ function glGemm(
     'c': previousCGPUBuffer
   };
 
+  var startTime = new Date().getTime();
   var outputCBuffer = gpuCalculator.applyShader({
-    shaderText: gemmShader,
+    shaderText: shaderText,
     inputBuffers: inputBuffers,
     uniforms: uniforms,
     width: cDims._dims[1],
     height: cDims._dims[0]
   });
 
-  var outputData = gpuCalculator.getResult(outputCBuffer, 1);
-  console.log('outputData = ' + outputData[0] + ', ' + outputData[1] + ', ' + outputData[2] + ', ' + outputData[3]);
+  var outputChannels = cDims._dims[2];
+  var outputData = gpuCalculator.getResult(outputCBuffer, outputChannels);
+  var endTime = new Date().getTime();
+//  console.log('gemm took ' + (endTime - startTime) + 'ms');
 
 //  gpuCalculator.deleteBuffer(aBuffer);
   gpuCalculator.deleteBuffer(bGPUBuffer);
   gpuCalculator.deleteBuffer(previousCBuffer);
   gpuCalculator.deleteBuffer(outputCBuffer);
 
-  var outputBuffer = new Buffer(cDims, outputData);
+  var outputCDims = new Dimensions(n, m);
+  var outputBuffer = new Buffer(outputCDims, outputData);
 
   return outputBuffer;
 }
