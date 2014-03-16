@@ -22,7 +22,11 @@
 #include "glgemm.h"
 #endif // USE_OPENGL
 
-#ifdef USE_NAIVE
+#if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL)
+#define USE_NAIVE_GEMM
+#endif
+
+#ifdef USE_NAIVE_GEMM
 static void naive_cblas_sgemm(
   int order,
   int transposeA,
@@ -68,7 +72,7 @@ void matrix_gemm(
     ldc);
 #endif // DO_LOG_OPERATIONS
 
-#ifdef USE_NAIVE
+#if defined(USE_NAIVE_GEMM)
   CBLAS_ORDER order = CblasColMajor;
   CBLAS_TRANSPOSE transposeA = CblasNoTrans;
   CBLAS_TRANSPOSE transposeB = CblasNoTrans;
@@ -89,8 +93,7 @@ void matrix_gemm(
     c,
     ldc
   );
-#else
-#ifdef USE_OPENGL
+#elif defined(USE_OPENGL)
   gl_gemm(
     m,
     n,
@@ -104,7 +107,7 @@ void matrix_gemm(
     c,
     ldc
   );
-#else // USE_OPENGL
+#elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM)
   CBLAS_ORDER order = CblasColMajor;
   CBLAS_TRANSPOSE transposeA = CblasNoTrans;
   CBLAS_TRANSPOSE transposeB = CblasNoTrans;
@@ -125,8 +128,7 @@ void matrix_gemm(
     c,
     ldc
   );
-#endif // USE_OPENGL
-#endif // USE_NAIVE
+#endif
 
 }
 
