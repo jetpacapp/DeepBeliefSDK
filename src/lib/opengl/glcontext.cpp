@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
 //
 
+#ifdef USE_OPENGL
+
 #include "glcontext.h"
 
 #include <stdio.h>
@@ -173,3 +175,5 @@ void GLContext::copyOutputToHost(Buffer* hostBuffer) {
   memcpy(hostBuffer->_data, outputData, (width * height * channels * sizeof(jpfloat_t)));
   CHECK_GL_ERROR();
 }
+
+#endif // USE_OPENGL

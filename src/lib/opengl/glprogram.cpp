@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
 //
 
+#ifdef USE_OPENGL
+
 #include "glprogram.h"
 
 #include <stdio.h>
@@ -259,4 +261,5 @@ int validate_program(GLint programId) {
   return 1;
 }
 
+#endif // USE_OPENGL
 

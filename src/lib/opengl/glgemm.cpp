@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
 //
 
+#ifdef USE_OPENGL
+
 #include "glgemm.h"
 
 #include <assert.h>
@@ -294,3 +296,5 @@ void gl_gemm(
   delete program;
   delete context;
 }
+
+#endif // USE_OPENGL

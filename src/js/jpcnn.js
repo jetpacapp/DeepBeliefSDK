@@ -2,6 +2,9 @@
 // All rights reserved.
 // Pete Warden <pete@jetpac.com>
 
+/**
+ * @constructor
+ */
 Dimensions = function(input) {
   if (input instanceof Array) {
     this._dims = _.clone(input);
@@ -22,6 +25,7 @@ Dimensions = function(input) {
     }
   });
 };
+window['Dimensions'] = Dimensions;
 Dimensions.prototype.elementCount = function() {
   var result = 1;
   for (var index = 0; index < this._dims.length; index += 1) {
@@ -63,6 +67,9 @@ Dimensions.prototype.areEqualTo = function(other) {
   return true;
 }
 
+/**
+ * @constructor
+ */
 Buffer = function(dims, data, options) {
   if (_.isUndefined(options)) {
     options = {
@@ -108,6 +115,7 @@ Buffer = function(dims, data, options) {
   }
   this._name = 'None';
 };
+window['Buffer'] = Buffer;
 Buffer.prototype.canReshapeTo = function(newDims) {
   // TO DO
 };
@@ -470,6 +478,9 @@ function delayedBufferFromFileAtURL(url, callback) {
   xhr.send();
 }
 
+/**
+ * @constructor
+ */
 Network = function(filename, onLoad, options) {
   if (_.isUndefined(options)) {
     options = {};
@@ -512,6 +523,7 @@ Network = function(filename, onLoad, options) {
   }
   xhr.send();
 };
+window['Network'] = Network;
 Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
 
   var doFlip;
@@ -637,10 +649,14 @@ Network.prototype.run = function(input, layerOffset) {
   return currentInput;
 };
 
+/**
+ * @constructor
+ */
 BinaryFormat = function(arrayBuffer) {
   this.arrayBuffer = arrayBuffer;
   this.cursor = 0;
 };
+window['BinaryFormat'] = BinaryFormat;
 JP_CHAR = 0x52414843; // 'CHAR'
 JP_UINT = 0x544E4955; // 'UINT'
 JP_FL32 = 0x32334C46; // 'FL32'
@@ -660,6 +676,9 @@ function tagFromMemory(arrayBuffer, offset) {
   return new BinaryTag(type, length, valuesBuffer);
 };
 
+/**
+ * @constructor
+ */
 BinaryTag = function(type, length, valuesBuffer) {
   var value;
   if (type === JP_CHAR) {
@@ -697,6 +716,7 @@ BinaryTag = function(type, length, valuesBuffer) {
   this.length = length;
   this.value = value;
 };
+window['BinaryTag'] = BinaryTag;
 BinaryTag.prototype.toString = function() {
   var type = this.type;
   var length = this.length;
@@ -774,7 +794,7 @@ function nodeFromTag(tag) {
     'normalize': NormalizeNode,
     'pool': PoolNode,
     'relu': ReluNode,
-    'max': MaxNode,
+    'max': MaxNode
   };
   var tagClass = tag.getStringFromDict('class');
   var jsClass = classLookup[tagClass];
@@ -785,6 +805,9 @@ function nodeFromTag(tag) {
   return result;
 }
 
+/**
+ * @constructor
+ */
 function ConvNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'conv', 'Wrong class name in tag');
@@ -805,6 +828,7 @@ function ConvNode(tag) {
 
   this._marginSize = tag.getUintFromDict('padding');
 }
+window['ConvNode'] = ConvNode;
 ConvNode.prototype.run = function(input) {
   var inputDims = input._dims;
   var inputChannels = inputDims._dims[inputDims._dims.length - 1];
@@ -827,18 +851,26 @@ ConvNode.prototype.run = function(input) {
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function DropoutNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'dropout', 'Wrong class name in tag');
 }
+window['DropoutNode'] = DropoutNode;
 DropoutNode.prototype.run = function(input) {
   return input;
 };
 
+/**
+ * @constructor
+ */
 function FlatNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'flat', 'Wrong class name in tag');
 }
+window['FlatNode'] = FlatNode;
 FlatNode.prototype.run = function(input) {
   var inputDims = input._dims;
   // We're expecting (# of images, height, width, # of channels)
@@ -858,6 +890,9 @@ FlatNode.prototype.run = function(input) {
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function GConvNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'gconv', 'Wrong class name in tag');
@@ -874,6 +909,7 @@ function GConvNode(tag) {
 
   this._kernelCount = tag.getUintFromDict('kernels_count');
 }
+window['GConvNode'] = GConvNode;
 GConvNode.prototype.run = function(input) {
   var inputDims = input._dims;
 
@@ -905,6 +941,9 @@ GConvNode.prototype.run = function(input) {
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function NeuronNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'neuron', 'Wrong class name in tag');
@@ -925,6 +964,7 @@ function NeuronNode(tag) {
     this._dropout = tag.getFloatFromDict('dropout');
   }
 }
+window['NeuronNode'] = NeuronNode;
 NeuronNode.prototype.run = function(input) {
   var inputDims = input._dims;
   var numberOfImages = inputDims._dims[0];
@@ -950,6 +990,9 @@ NeuronNode.prototype.run = function(input) {
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function NormalizeNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'normalize', 'Wrong class name in tag');
@@ -959,11 +1002,15 @@ function NormalizeNode(tag) {
   this._alpha = tag.getFloatFromDict('alpha');
   this._beta = tag.getFloatFromDict('beta');
 }
+window['NormalizeNode'] = NormalizeNode;
 NormalizeNode.prototype.run = function(input) {
   this._output = matrixLocalResponse(input, this._windowSize, this._k, this._alpha, this._beta);
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function PoolNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'pool', 'Wrong class name in tag');
@@ -972,29 +1019,41 @@ function PoolNode(tag) {
   this._stride = tag.getUintFromDict('stride');
   this._mode = tag.getStringFromDict('mode');
 }
+window['PoolNode'] = PoolNode;
 PoolNode.prototype.run = function(input) {
   this._output = matrixMaxPatch(input, this._patchWidth, this._stride);
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function ReluNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'relu', 'Wrong class name in tag');
 }
+window['ReluNode'] = ReluNode;
 ReluNode.prototype.run = function(input) {
   this._output = matrixMax(input, 0.0);
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function MaxNode(tag) {
   var className = tag.getStringFromDict('class');
   console.assert(className === 'max', 'Wrong class name in tag');
 }
+window['MaxNode'] = MaxNode;
 MaxNode.prototype.run = function(input) {
   this._output = matrixSoftmax(input);
   return this._output;
 };
 
+/**
+ * @constructor
+ */
 function PrepareInputNode(dataMean, useCenterOnly, needsFlip, imageSize, rescaledSize, isMeanChanneled) {
   this._useCenterOnly = useCenterOnly;
   this._needsFlip = needsFlip;
@@ -1016,6 +1075,7 @@ function PrepareInputNode(dataMean, useCenterOnly, needsFlip, imageSize, rescale
   }
   this._dataMean.setName('_dataMean');
 }
+window['PrepareInputNode'] = PrepareInputNode;
 PrepareInputNode.prototype.run = function(input) {
   var rescaledDims = new Dimensions(this._rescaledSize, this._rescaledSize, 3);
   console.assert(input._dims.areEqualTo(rescaledDims));
@@ -2241,10 +2301,10 @@ function glMaxPatch(input, patchWidth, stride) {
   var uniforms = {
     'patchWidth': patchWidth,
     'stride': stride,
-    'channelCount': quantizedChannels,
+    'channelCount': quantizedChannels
   };
   var inputBuffers = {
-    'a': inputGPUBuffer,
+    'a': inputGPUBuffer
   };
 
   var outputGPUBuffer = gpuCalculator.applyShader({
@@ -2310,10 +2370,10 @@ function glMax(input, maxValue) {
 
   var inputGPUBuffer = input.getGPUBuffer(gpuCalculator, inputGPUDims);
   var uniforms = {
-    'maxValue': maxValue,
+    'maxValue': maxValue
   };
   var inputBuffers = {
-    'a': inputGPUBuffer,
+    'a': inputGPUBuffer
   };
 
   var outputGPUBuffer = gpuCalculator.applyShader({
@@ -2334,4 +2394,54 @@ function glMax(input, maxValue) {
   return outputBuffer;
 }
 
+// Shim for Internet Explorer's missing slice(), see
+// http://stackoverflow.com/questions/21440050/arraybuffer-prototype-slice-shim-for-ie
+if (!ArrayBuffer.prototype.slice) {
+  //Returns a new ArrayBuffer whose contents are a copy of this ArrayBuffer's
+  //bytes from `begin`, inclusive, up to `end`, exclusive
+  ArrayBuffer.prototype.slice = function (begin, end) {
+    //If `begin` is unspecified, Chrome assumes 0, so we do the same
+    if (begin === void 0) {
+      begin = 0;
+    }
+
+    //If `end` is unspecified, the new ArrayBuffer contains all
+    //bytes from `begin` to the end of this ArrayBuffer.
+    if (end === void 0) {
+      end = this.byteLength;
+    }
+
+    //Chrome converts the values to integers via flooring
+    begin = Math.floor(begin);
+    end = Math.floor(end);
+
+    //If either `begin` or `end` is negative, it refers to an
+    //index from the end of the array, as opposed to from the beginning.
+    if (begin < 0) {
+      begin += this.byteLength;
+    }
+    if (end < 0) {
+      end += this.byteLength;
+    }
+
+    //The range specified by the `begin` and `end` values is clamped to the 
+    //valid index range for the current array.
+    begin = Math.min(Math.max(0, begin), this.byteLength);
+    end = Math.min(Math.max(0, end), this.byteLength);
+
+    //If the computed length of the new ArrayBuffer would be negative, it 
+    //is clamped to zero.
+    if (end - begin <= 0) {
+      return new ArrayBuffer(0);
+    }
+
+    var result = new ArrayBuffer(end - begin);
+    var resultBytes = new Uint8Array(result);
+    var sourceBytes = new Uint8Array(this, begin, end - begin);
+
+    resultBytes.set(sourceBytes);
+
+    return result;
+  };
+}
 

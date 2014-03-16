@@ -8,6 +8,8 @@
 
 #include "glbuffer.h"
 
+#ifdef USE_OPENGL
+
 #include <assert.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
@@ -87,3 +89,5 @@ void GLBuffer::copyHostBufferToGPU() {
     assert(false); // Bad number of channels
   }
 }
+
+#endif // USE_OPENGL

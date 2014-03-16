@@ -1056,7 +1056,10 @@
 		59D2FBC2187F8D2A00427417 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_ACCELERATE_GEMM=1",
+					USE_OPENGL,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -18,10 +18,11 @@
 #include <mkl_cblas.h>
 #endif // USE_MKL_GEMM
 
-//#define USE_NAIVE
-
+#ifdef USE_OPENGL
 #include "glgemm.h"
+#endif // USE_OPENGL
 
+#ifdef USE_NAIVE
 static void naive_cblas_sgemm(
   int order,
   int transposeA,
@@ -37,6 +38,7 @@ static void naive_cblas_sgemm(
   jpfloat_t beta,
   jpfloat_t* c,
   int ldc);
+#endif
 
 void matrix_gemm(
   int m,
@@ -88,6 +90,7 @@ void matrix_gemm(
     ldc
   );
 #else
+#ifdef USE_OPENGL
   gl_gemm(
     m,
     n,
@@ -101,6 +104,28 @@ void matrix_gemm(
     c,
     ldc
   );
+#else // USE_OPENGL
+  CBLAS_ORDER order = CblasColMajor;
+  CBLAS_TRANSPOSE transposeA = CblasNoTrans;
+  CBLAS_TRANSPOSE transposeB = CblasNoTrans;
+
+  cblas_sgemm(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc
+  );
+#endif // USE_OPENGL
 #endif // USE_NAIVE
 
 }
