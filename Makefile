@@ -7,10 +7,22 @@ LIBCPPFLAGS=-O3 -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./s
 LIBLDFLAG=
 LIBLDLIBS=
 
-MKLROOT=/opt/intel/composer_xe_2013_sp1.0.080/mkl
-LIBCPPFLAGS+= -fopenmp -DMKL_ILP64 -m64 -I$(MKLROOT)/include -DUSE_MKL_GEMM=1
-LIBLDLIBS+= -Wl,--start-group /opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64/libmkl_intel_ilp64.a /opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64/libmkl_gnu_thread.a /opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64/libmkl_core.a -Wl,--end-group -ldl -lpthread -lm
-LIBLDLIBS+= -L/usr/lib/gcc/x86_64-linux-gnu/4.6/ -lgomp
+ifeq ($(target),"")
+	TARGET=linux
+else
+	TARGET=$(target)
+endif
+
+ifeq ($(TARGET), linux)
+	MKLROOT=/opt/intel/composer_xe_2013_sp1.0.080/mkl
+	LIBCPPFLAGS+= -fopenmp -DMKL_ILP64 -m64 -I$(MKLROOT)/include -DUSE_MKL_GEMM=1
+	LIBLDLIBS+= -Wl,--start-group /opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64/libmkl_intel_ilp64.a /opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64/libmkl_gnu_thread.a /opt/intel/composer_xe_2013_sp1.0.080/mkl/lib/intel64/libmkl_core.a -Wl,--end-group -ldl -lpthread -lm
+	LIBLDLIBS+= -L/usr/lib/gcc/x86_64-linux-gnu/4.6/ -lgomp
+endif
+ifeq ($(TARGET), pi)
+	LIBCPPFLAGS+= -I/usr/include -DUSE_ATLAS_GEMM=1
+	LIBLDLIBS+= -lblas
+endif
 
 LIBSRCS:=$(shell find src/lib -name '*.cpp')
 LIBOBJS=$(subst .cpp,.o,$(LIBSRCS))
