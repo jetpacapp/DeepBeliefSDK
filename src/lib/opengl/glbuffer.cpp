@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Jetpac, Inc. All rights reserved.
 //
 
-#include "glbuffer.h"
-
 #ifdef USE_OPENGL
+
+#include "glbuffer.h"
 
 #include <assert.h>
 #include <OpenGL/gl.h>
