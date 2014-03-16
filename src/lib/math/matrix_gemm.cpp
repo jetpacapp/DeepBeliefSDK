@@ -122,7 +122,7 @@ void matrix_gemm(
     c,
     ldc
   );
-#elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM)
+#elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM)
   CBLAS_ORDER order = CblasColMajor;
   CBLAS_TRANSPOSE transposeA = CblasNoTrans;
   CBLAS_TRANSPOSE transposeB = CblasNoTrans;
