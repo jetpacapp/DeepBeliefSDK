@@ -18,7 +18,7 @@
 #include "nodefactory.h"
 
 //#define CHECK_RESULTS
-#define SAVE_RESULTS
+//#define SAVE_RESULTS
 #if defined(CHECK_RESULTS) || defined(SAVE_RESULTS)
 #define FN_LEN (1024)
 #define DUMP_FILE_PATH ("data/c_dog_blobs/")
