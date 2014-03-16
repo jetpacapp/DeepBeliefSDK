@@ -9,6 +9,7 @@
 #include "matrix_ops.h"
 
 #include <stdio.h>
+#include <assert.h>
 
 #ifdef USE_ACCELERATE_GEMM
 #include <Accelerate/Accelerate.h>
