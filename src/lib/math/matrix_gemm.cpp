@@ -19,11 +19,15 @@
 #include <mkl_cblas.h>
 #endif // USE_MKL_GEMM
 
+#ifdef USE_ATLAS_GEMM
+#include <cblas.h>
+#endif // USE_ATLAS_GEMM
+
 #ifdef USE_OPENGL
 #include "glgemm.h"
 #endif // USE_OPENGL
 
-#if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL)
+#if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL) && !defined(USE_ATLAS_GEMM)
 #define USE_NAIVE_GEMM
 #endif
 
