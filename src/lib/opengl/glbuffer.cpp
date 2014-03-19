@@ -56,12 +56,12 @@ void GLBuffer::copyHostBufferToGPU() {
     glTexImage2D(
       GL_TEXTURE_2D,
       0,
-      GL_R32F,
+      GL_RGBA,
       width,
       height,
       0,
-      GL_RED,
-      GL_FLOAT,
+      GL_RGBA,
+      GL_UNSIGNED_BYTE,
       hostBuffer->_data);
   } else if (channels == 3) {
     glTexImage2D(

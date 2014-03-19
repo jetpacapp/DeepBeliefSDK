@@ -31,24 +31,6 @@
 #define USE_NAIVE_GEMM
 #endif
 
-#ifdef USE_NAIVE_GEMM
-static void naive_cblas_sgemm(
-  int order,
-  int transposeA,
-  int transposeB,
-  int m,
-  int n,
-  int k,
-  jpfloat_t alpha,
-  jpfloat_t *a,
-  int lda,
-  jpfloat_t *b,
-  int ldb,
-  jpfloat_t beta,
-  jpfloat_t* c,
-  int ldc);
-#endif
-
 void matrix_gemm(
   int order,
   int transposeA,

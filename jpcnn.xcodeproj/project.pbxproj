@@ -939,6 +939,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 					USE_ACCELERATE_GEMM,
+					USE_OPENGL,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

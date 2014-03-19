@@ -161,17 +161,21 @@ void GLContext::copyOutputToHost(Buffer* hostBuffer) {
   const int channels = outputDims[2];
 //  jpfloat_t* outputData = hostBuffer->_data;
   jpfloat_t* outputData = (jpfloat_t*)(malloc(width * height * channels * sizeof(jpfloat_t)));
+  GLint dataFormat;
   GLint channelFormat;
   if (channels == 1) {
-    channelFormat = GL_RED;
+    dataFormat = GL_UNSIGNED_BYTE;
+    channelFormat = GL_RGBA;
   } else if (channels == 3) {
+    dataFormat = GL_FLOAT;
     channelFormat = GL_RGB;
   } else if (channels == 4) {
+    dataFormat = GL_FLOAT;
     channelFormat = GL_RGBA;
   } else {
     assert(false); // Bad number of channels
   }
-  glReadPixels(0, 0, width, height, channelFormat, GL_FLOAT, outputData);
+  glReadPixels(0, 0, width, height, channelFormat, dataFormat, outputData);
   memcpy(hostBuffer->_data, outputData, (width * height * channels * sizeof(jpfloat_t)));
   CHECK_GL_ERROR();
 }

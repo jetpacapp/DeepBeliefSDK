@@ -54,4 +54,20 @@ void matrix_gemm(
   jpfloat_t* c,
   int ldc);
 
+void naive_cblas_sgemm(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  jpfloat_t *a,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc);
+
 #endif // INCLUDE_MATRIX_OPS_H

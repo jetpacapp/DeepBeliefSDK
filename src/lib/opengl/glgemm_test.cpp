@@ -41,6 +41,10 @@ int main(int argc, char** argv) {
   input->populateWithRandomValues(0, 1);
   weights->populateWithRandomValues(0, 1);
 
+  const int order = JPCblasColMajor;
+  const int transposeA = JPCblasNoTrans;
+  const int transposeB = JPCblasNoTrans;
+
   const int m = outputChannels;
   const int n = input->_dims[0];
   const int k = input->_dims[1];
@@ -50,7 +54,10 @@ int main(int argc, char** argv) {
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
 
-  matrix_gemm(
+  naive_cblas_sgemm(
+    order,
+    transposeA,
+    transposeB,
     m,
     n,
     k,
@@ -65,6 +72,9 @@ int main(int argc, char** argv) {
   );
 
   gl_gemm(
+    order,
+    transposeA,
+    transposeB,
     m,
     n,
     k,

@@ -45,6 +45,49 @@ static const char* g_gemmFragmentShader = "                     \n\
   uniform float alpha;                                          \n\
   uniform float beta;                                           \n\
   uniform int k;                                                \n\
+  float shiftRight(float v, float amt) {                        \n\
+    v = floor(v) + 0.5;                                         \n\
+    return floor(v / exp2(amt));                                \n\
+  }                                                             \n\
+  float shiftLeft(float v, float amt) {                         \n\
+    return floor(v * exp2(amt) + 0.5);                          \n\
+  }                                                             \n\
+  float maskLast(float v, float bits) {                         \n\
+    return mod(v, shiftLeft(1.0, bits));                        \n\
+  }                                                             \n\
+  float extractBits(float num, float from, float to) {          \n\
+    from = floor(from + 0.5);                                   \n\
+    to = floor(to + 0.5);                                       \n\
+    return maskLast(shiftRight(num, from), to - from);          \n\
+  }                                                             \n\
+  vec4 encode32(float val) {                                    \n\
+    if (val == 0.0)                                             \n\
+      return vec4(0, 0, 0, 0);                                  \n\
+    float sign = val > 0.0 ? 0.0 : 1.0;                         \n\
+    val = abs(val);                                             \n\
+    float exponent = floor(log2(val));                          \n\
+    float biased_exponent = exponent + 127.0;                   \n\
+    float fraction = ((val / exp2(exponent)) - 1.0) * 8388608.0; \n\
+    float t = biased_exponent / 2.0;                            \n\
+    float last_bit_of_biased_exponent = fract(t) * 2.0;         \n\
+    float remaining_bits_of_biased_exponent = floor(t);         \n\
+    float byte4 = extractBits(fraction, 0.0, 8.0) / 255.0;      \n\
+    float byte3 = extractBits(fraction, 8.0, 16.0) / 255.0;     \n\
+    float byte2 = (last_bit_of_biased_exponent * 128.0 + extractBits(fraction, 16.0, 23.0)) / 255.0; \n\
+    float byte1 = (sign * 128.0 + remaining_bits_of_biased_exponent) / 255.0; \n\
+    return vec4(byte4, byte3, byte2, byte1);                      \n\
+  }                                                             \n\
+  float decode32(vec4 rgba) {                                   \n\
+    float byte1 = rgba[3] * 255.0;                              \n\
+    float byte2 = rgba[2] * 255.0;                              \n\
+    float byte3 = rgba[1] * 255.0;                              \n\
+    float byte4 = rgba[0] * 255.0;                              \n\
+    float Sign = 1.0 - step(128.0, byte1)*2.0;                 \n\
+    float Exponent = 2.0 * mod(byte1,128.0) + step(128.0, byte2) - 127.0; \n\
+    float Mantissa = mod(byte2, 128.0) * 65536.0 + byte3 * 256.0 + byte4 + float(0x800000); \n\
+    float Result =  Sign * exp2(Exponent) * (Mantissa * exp2(-23.0 )); \n\
+    return Result;                                     \n\
+  }                                                             \n\
   void main(void) {                                             \n\
     vec2 texCoord = outTexCoord;                                \n\
     float i = texCoord.x;                                       \n\
@@ -52,7 +95,7 @@ static const char* g_gemmFragmentShader = "                     \n\
     vec2 cCoords = vec2(i, j) * cCoordScale;                    \n\
     float cValue;                                               \n\
     if (beta != 0.0) {                                          \n\
-      cValue = texture2D(c, cCoords).r;                         \n\
+      cValue = decode32(texture2D(c, cCoords));                 \n\
     } else {                                                    \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
@@ -62,12 +105,12 @@ static const char* g_gemmFragmentShader = "                     \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
       vec2 aCoords = (aTransformedCoords * aCoordScale);        \n\
-      float aValue = texture2D(a, aCoords).r;                   \n\
+      float aValue = decode32(texture2D(a, aCoords));           \n\
       vec2 bCoords = vec2(lCoord, j) * bCoordScale;             \n\
-      float bValue = texture2D(b, bCoords).r;                   \n\
+      float bValue = decode32(texture2D(b, bCoords));           \n\
       total += (aValue * bValue);                               \n\
     }                                                           \n\
-    gl_FragColor.r = (alpha * total) + (beta * cValue);         \n\
+    gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
   }                                                             \n\
 ";
 
