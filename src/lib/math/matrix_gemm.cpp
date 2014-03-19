@@ -32,16 +32,6 @@
 #endif
 
 #ifdef USE_NAIVE_GEMM
-enum CBLAS_ORDER {
-  CblasRowMajor=101,
-  CblasColMajor=102
-};
-enum CBLAS_TRANSPOSE {
-  CblasNoTrans=111,
-  CblasTrans=112,
-  CblasConjTrans=113,
-  AtlasConj=114
-};
 static void naive_cblas_sgemm(
   int order,
   int transposeA,
@@ -60,6 +50,9 @@ static void naive_cblas_sgemm(
 #endif
 
 void matrix_gemm(
+  int order,
+  int transposeA,
+  int transposeB,
   int m,
   int n,
   int k,
@@ -88,10 +81,6 @@ void matrix_gemm(
 #endif // DO_LOG_OPERATIONS
 
 #if defined(USE_NAIVE_GEMM)
-  CBLAS_ORDER order = CblasColMajor;
-  CBLAS_TRANSPOSE transposeA = CblasNoTrans;
-  CBLAS_TRANSPOSE transposeB = CblasNoTrans;
-
   naive_cblas_sgemm(
     order,
     transposeA,
@@ -110,6 +99,9 @@ void matrix_gemm(
   );
 #elif defined(USE_OPENGL)
   gl_gemm(
+    order,
+    transposeA,
+    transposeB,
     m,
     n,
     k,
@@ -123,14 +115,10 @@ void matrix_gemm(
     ldc
   );
 #elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM)
-  CBLAS_ORDER order = CblasColMajor;
-  CBLAS_TRANSPOSE transposeA = CblasNoTrans;
-  CBLAS_TRANSPOSE transposeB = CblasNoTrans;
-
   cblas_sgemm(
-    order,
-    transposeA,
-    transposeB,
+    (enum CBLAS_ORDER)(order),
+    (enum CBLAS_TRANSPOSE)(transposeA),
+    (enum CBLAS_TRANSPOSE)(transposeB),
     m,
     n,
     k,
@@ -163,16 +151,21 @@ void naive_cblas_sgemm(
   jpfloat_t* c,
   int ldc) {
 
-  assert(transposeA == CblasNoTrans);
-  assert(transposeB == CblasNoTrans);
-  assert(order == CblasColMajor);
+  assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
+  assert(transposeB == JPCblasNoTrans);
+  assert(order == JPCblasColMajor);
 
   int i, j, l;
-  for (i = 0; i < m; i++) {
-    for (j = 0; j < n; j++) {
+  for (j = 0; j < n; j++) {
+    for (i = 0; i < m; i++) {
       jpfloat_t total = 0.0f;
       for (l = 0; l < k; l++) {
-        const int aIndex = ((lda * l) + i);
+        int aIndex;
+        if (transposeA == JPCblasNoTrans) {
+          aIndex = ((lda * l) + i);
+        } else {
+          aIndex = ((lda * i) + l);
+        }
         const jpfloat_t aValue = a[aIndex];
         const int bIndex = ((ldb * j) + l);
         const jpfloat_t bValue = b[bIndex];

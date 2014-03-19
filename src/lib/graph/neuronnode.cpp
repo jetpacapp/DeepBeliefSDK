@@ -15,7 +15,7 @@
 #include "binary_format.h"
 #include "matrix_ops.h"
 
-NeuronNode::NeuronNode() : BaseNode(), _weights(NULL), _bias(NULL), _dropout(0.0f) {
+NeuronNode::NeuronNode() : BaseNode(), _weights(NULL), _bias(NULL), _dropout(0.0f), _areWeightsTransposed(false) {
   setClassName("NeuronNode");
 }
 
@@ -41,12 +41,17 @@ Buffer* NeuronNode::run(Buffer* input) {
   Buffer* flattenedInput = input->view();
   flattenedInput->reshape(flattenedDimensions);
 
-  Dimensions expectedWeightsDimensions(elementCount, _outputsCount);
-  assert(expectedWeightsDimensions == _weights->_dims);
+  if (_areWeightsTransposed) {
+    Dimensions expectedWeightsDimensions(_outputsCount, elementCount);
+    assert(expectedWeightsDimensions == _weights->_dims);
+  } else {
+    Dimensions expectedWeightsDimensions(elementCount, _outputsCount);
+    assert(expectedWeightsDimensions == _weights->_dims);
+  }
 
 //_weights->quantize(8);
 
-  _output = matrix_dot(flattenedInput, _weights);
+  _output = matrix_dot(flattenedInput, _weights, _areWeightsTransposed);
   _output->setName(_name);
 
   matrix_add_inplace(_output, _bias, 1.0);
@@ -79,9 +84,24 @@ SBinaryTag* NeuronNode::toTag() {
   resultDict = add_tag_to_dict(resultDict, "spec", specDict);
   free(specDict);
 
-  SBinaryTag* weightsTag = buffer_to_tag_dict(_weights, 8);
+  const bool wantTransposedOutput = true;
+  const int outputBitDepth = 32; // 8
+
+  if (wantTransposedOutput != _areWeightsTransposed) {
+    _weights->transpose(); // First transpose so they match
+  }
+  SBinaryTag* weightsTag = buffer_to_tag_dict(_weights, outputBitDepth);
   resultDict = add_tag_to_dict(resultDict, "weight", weightsTag);
   free(weightsTag);
+  if (wantTransposedOutput != _areWeightsTransposed) {
+    _weights->transpose(); // Undo the original transpose by applying another
+  }
+
+  if (wantTransposedOutput) {
+    resultDict = add_uint_to_dict(resultDict, "are_weights_transposed", 1);
+  } else {
+    resultDict = add_uint_to_dict(resultDict, "are_weights_transposed", 0);
+  }
 
   resultDict = add_uint_to_dict(resultDict, "has_bias", _useBias);
   if (_useBias) {
@@ -114,6 +134,10 @@ BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy) {
 
   if (get_tag_from_dict(tag, "dropout") != NULL) {
     result->_dropout = get_float_from_dict(tag, "dropout");
+  }
+
+  if (get_tag_from_dict(tag, "are_weights_transposed")) {
+    result->_areWeightsTransposed = get_uint_from_dict(tag, "are_weights_transposed");
   }
 
   return result;

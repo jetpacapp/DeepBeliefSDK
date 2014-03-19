@@ -19,6 +19,7 @@
 #include "glprogram.h"
 #include "dimensions.h"
 #include "buffer.h"
+#include "matrix_ops.h"
 
 static const char* g_gemmVertexShader = "                       \n\
   attribute vec2 aVertexPosition;                               \n\
@@ -34,6 +35,8 @@ static const char* g_gemmVertexShader = "                       \n\
 static const char* g_gemmFragmentShader = "                     \n\
   varying vec2 outTexCoord;                                     \n\
   uniform sampler2D a;                                          \n\
+  uniform vec2 aXTransform;                                     \n\
+  uniform vec2 aYTransform;                                     \n\
   uniform vec2 aCoordScale;                                     \n\
   uniform sampler2D b;                                          \n\
   uniform vec2 bCoordScale;                                     \n\
@@ -56,7 +59,9 @@ static const char* g_gemmFragmentShader = "                     \n\
     float total = 0.0;                                          \n\
     for (int l = 0; l < k; l += 1) {                            \n\
       float lCoord = (float(l) + 0.5);                          \n\
-      vec2 aCoords = vec2(i, lCoord) * aCoordScale;             \n\
+      vec2 aInputCoords = vec2(i, lCoord);                      \n\
+      vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
+      vec2 aCoords = (aTransformedCoords * aCoordScale);        \n\
       float aValue = texture2D(a, aCoords).r;                   \n\
       vec2 bCoords = vec2(lCoord, j) * bCoordScale;             \n\
       float bValue = texture2D(b, bCoords).r;                   \n\
@@ -69,6 +74,8 @@ static const char* g_gemmFragmentShader = "                     \n\
 static const char* g_gemmFragmentShader4x = "                   \n\
   varying vec2 outTexCoord;                                     \n\
   uniform sampler2D a;                                          \n\
+  uniform vec2 aXTransform;                                     \n\
+  uniform vec2 aYTransform;                                     \n\
   uniform vec2 aCoordScale;                                     \n\
   uniform sampler2D b;                                          \n\
   uniform vec2 bCoordScale;                                     \n\
@@ -85,7 +92,6 @@ static const char* g_gemmFragmentShader4x = "                   \n\
     vec4 cPixel = texture2D(c, cCoords);                        \n\
     for (int iInc = 0; iInc < 4; iInc += 1) {                   \n\
       float i = startI + float(iInc);                           \n\
-      float iCoord = float(int(i) / 4) + 0.5;                   \n\
       float cValue;                                             \n\
       if (iInc == 0) {                                          \n\
         cValue = cPixel.x;                                      \n\
@@ -104,20 +110,24 @@ static const char* g_gemmFragmentShader4x = "                   \n\
       }                                                         \n\
       for (int l = 0; l < k; l += 1) {                          \n\
         float aLCoord = float(l) + 0.5;                         \n\
-        vec2 aCoords = vec2(iCoord, aLCoord) * aCoordScale;     \n\
+        vec2 aInputCoords = vec2(i, aLCoord);                   \n\
+        vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
+        int aXComponent = int(mod(aTransformedCoords.x, 4.0)); \n\
+        aTransformedCoords.x = float(int(aTransformedCoords.x / 4.0)) + 0.5;    \n\
+        vec2 aCoords = (aTransformedCoords * aCoordScale);        \n\
         vec4 aPixel = texture2D(a, aCoords);                    \n\
         float aValue;                                           \n\
-        if (iInc == 0) {                                        \n\
+        if (aXComponent == 0) {                                 \n\
           aValue = aPixel.x;                                    \n\
-        } else if (iInc == 1) {                                 \n\
+        } else if (aXComponent == 1) {                          \n\
           aValue = aPixel.y;                                    \n\
-        } else if (iInc == 2) {                                 \n\
+        } else if (aXComponent == 2) {                          \n\
           aValue = aPixel.z;                                    \n\
-        } else if (iInc == 3) {                                 \n\
+        } else {                                                \n\
           aValue = aPixel.w;                                    \n\
         }                                                       \n\
         float bLCoord = float(l / 4) + 0.5;                     \n\
-        int bLComponent = int(mod(float(l), 4.0));                       \n\
+        int bLComponent = int(mod(float(l), 4.0));              \n\
         vec2 bCoords = vec2(bLCoord, j) * bCoordScale;          \n\
         vec4 bPixel = texture2D(b, bCoords);                    \n\
         float bValue;                                           \n\
@@ -148,6 +158,8 @@ static const char* g_gemmFragmentShader4x = "                   \n\
 
 static const char* g_gemmUniformNames[] = {
   "a",
+  "aXTransform",
+  "aYTransform",
   "aCoordScale",
   "b",
   "bCoordScale",
@@ -165,6 +177,9 @@ static GLint g_gemmUniformIds[g_gemmUniformCount];
 const int maxTextureSize = 4096;
 
 void gl_gemm(
+  int order,
+  int transposeA,
+  int transposeB,
   int m,
   int n,
   int inputK,
@@ -177,6 +192,10 @@ void gl_gemm(
   jpfloat_t* c,
   int ldc) {
 
+  assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
+  assert(transposeB == JPCblasNoTrans);
+  assert(order == JPCblasColMajor);
+
   GLContext* context = new GLContext();
 
   GLBuffer* previousCBuffer = NULL;
@@ -188,12 +207,20 @@ void gl_gemm(
   Dimensions* cDims;
   if (use4x) {
     program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader4x, g_gemmUniformNames, g_gemmUniformIds, g_gemmUniformCount);
-    aFullDims = new Dimensions(inputK, (m / 4), 4);
+    if (transposeA == JPCblasTrans) {
+      aFullDims = new Dimensions(m, (inputK / 4), 4);
+    } else {
+      aFullDims = new Dimensions(inputK, (m / 4), 4);
+    }
     bFullDims = new Dimensions(n, (inputK / 4), 4);
     cDims = new Dimensions(n, (m / 4), 4);
   } else {
     program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader, g_gemmUniformNames, g_gemmUniformIds, g_gemmUniformCount);
-    aFullDims = new Dimensions(inputK, m, 1);
+    if (transposeA == JPCblasTrans) {
+      aFullDims = new Dimensions(m, inputK, 1);
+    } else {
+      aFullDims = new Dimensions(inputK, m, 1);
+    }
     bFullDims = new Dimensions(n, inputK, 1);
     cDims = new Dimensions(n, m, 1);
   }
@@ -211,16 +238,20 @@ void gl_gemm(
     Dimensions* aDims;
     Dimensions* bDims;
     if (use4x) {
-      aDims = new Dimensions(currentK, (m / 4), 4);
+      if (transposeA == JPCblasTrans) {
+        aDims = new Dimensions(m, (currentK / 4), 4);
+      } else {
+        aDims = new Dimensions(currentK, (m / 4), 4);
+      }
       bDims = new Dimensions(n, (currentK / 4), 4);
     } else {
-      aDims = new Dimensions(currentK, m, 1);
+      if (transposeA == JPCblasTrans) {
+        aDims = new Dimensions(m, currentK, 1);
+      } else {
+        aDims = new Dimensions(currentK, m, 1);
+      }
       bDims = new Dimensions(n, currentK, 1);
     }
-
-    fprintf(stderr, "aDims=%s\n", aDims->debugString());
-    fprintf(stderr, "bDims=%s\n", bDims->debugString());
-    fprintf(stderr, "cDims=%s\n", cDims->debugString());
 
     GLBuffer* aBuffer;
     GLBuffer* bBuffer;
@@ -230,7 +261,15 @@ void gl_gemm(
       aBuffer = new GLBuffer(context, *aDims, a);
       bBuffer = new GLBuffer(context, *bDims, b);
     } else {
-      aHostBuffer = extract_subregion(aFullBuffer, Offset(originK, 0, 0), *aDims);
+      if (transposeA == JPCblasTrans) {
+        if (use4x) {
+          aHostBuffer = extract_subregion(aFullBuffer, Offset(0, (originK / 4), 0), *aDims);
+        } else {
+          aHostBuffer = extract_subregion(aFullBuffer, Offset(0, originK, 0), *aDims);
+        }
+      } else {
+        aHostBuffer = extract_subregion(aFullBuffer, Offset(originK, 0, 0), *aDims);
+      }
       if (use4x) {
         bHostBuffer = extract_subregion(bFullBuffer, Offset(0, (originK / 4), 0), *bDims);
       } else {
@@ -253,6 +292,13 @@ void gl_gemm(
     }
     GLBuffer* outputCBuffer = new GLBuffer(context, *cDims);
 
+    if (transposeA == JPCblasTrans) {
+      program->setUniform2f("aXTransform", 0.0f, 1.0f);
+      program->setUniform2f("aYTransform", 1.0f, 0.0f);
+    } else {
+      program->setUniform2f("aXTransform", 1.0f, 0.0f);
+      program->setUniform2f("aYTransform", 0.0f, 1.0f);
+    }
     program->setUniform2f("aCoordScale", 1.0f / (*aDims)[1], 1.0f / (*aDims)[0]);
     program->setUniform2f("bCoordScale", 1.0f / (*bDims)[1], 1.0f / (*bDims)[0]);
     program->setUniform2f("cCoordScale", 1.0f / (*cDims)[1], 1.0f / (*cDims)[0]);

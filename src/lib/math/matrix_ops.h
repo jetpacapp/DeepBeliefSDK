@@ -16,8 +16,8 @@
 class Buffer;
 
 void matrix_add_inplace(Buffer* output, Buffer* input, jpfloat_t inputScale);
-Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride);
-Buffer* matrix_dot(Buffer* a, Buffer* b);
+Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride, bool areKernelsTransposed);
+Buffer* matrix_dot(Buffer* a, Buffer* b, bool areWeightsTransposed);
 Buffer* matrix_extract_channels(Buffer* input, int startChannel, int endChannel);
 Buffer* matrix_insert_margin(Buffer* input, int marginWidth, int marginHeight);
 Buffer* matrix_join_channels(Buffer** inputs, int inputsCount);
@@ -27,7 +27,21 @@ Buffer* matrix_max_patch(Buffer* input, int patchWidth, int stride);
 void matrix_scale_inplace(Buffer* output, jpfloat_t scale);
 Buffer* matrix_softmax(Buffer* input);
 
+enum JPCBLAS_ORDER {
+  JPCblasRowMajor=101,
+  JPCblasColMajor=102
+};
+enum JPCBLAS_TRANSPOSE {
+  JPCblasNoTrans=111,
+  JPCblasTrans=112,
+  JPCblasConjTrans=113,
+  JPAtlasConj=114
+};
+
 void matrix_gemm(
+  int order,
+  int transposeA,
+  int transposeB,
   int m,
   int n,
   int k,

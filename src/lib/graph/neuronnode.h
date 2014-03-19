@@ -29,6 +29,7 @@ public:
   bool _useBias;
   Buffer* _bias;
   jpfloat_t _dropout;
+  bool _areWeightsTransposed;
 };
 
 BaseNode* new_neuronnode_from_tag(SBinaryTag* tag, bool skipCopy);

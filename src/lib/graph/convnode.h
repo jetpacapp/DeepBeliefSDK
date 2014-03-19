@@ -33,6 +33,7 @@ public:
   bool _useBias;
   Buffer* _bias;
   uint32_t _marginSize;
+  bool _areKernelsTransposed;
 };
 
 BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy);

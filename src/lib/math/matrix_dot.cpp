@@ -12,7 +12,7 @@
 
 #include "buffer.h"
 
-Buffer* matrix_dot(Buffer* input, Buffer* weights) {
+Buffer* matrix_dot(Buffer* input, Buffer* weights, bool areWeightsTransposed) {
 
 #ifdef DO_LOG_OPERATIONS
   fprintf(stderr, "matrix_dot(input=[%s], weights=[%s])\n",
@@ -29,24 +29,50 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights) {
   const Dimensions weightsDims = weights->_dims;
   // We're expecting (# of values in input, # of output channels)
   assert(inputDims._length == 2);
-  assert(weightsDims[0] == inputValuesCount);
-  const int outputChannels = weightsDims[1];
+  int inputValuesIndex;
+  int outputChannelsIndex;
+  if (areWeightsTransposed) {
+    inputValuesIndex = 1;
+    outputChannelsIndex = 0;
+  } else {
+    inputValuesIndex = 0;
+    outputChannelsIndex = 1;
+  }
+  assert(weightsDims[inputValuesIndex] == inputValuesCount);
+  const int outputChannels = weightsDims[outputChannelsIndex];
 
   const Dimensions outputDims(imageCount, outputChannels);
   Buffer* output = new Buffer(outputDims);
 
 #ifdef USE_GEMM
 
+  const int order = JPCblasColMajor;
+  int transposeA;
+  if (areWeightsTransposed) {
+    transposeA = JPCblasTrans;
+  } else {
+    transposeA = JPCblasNoTrans;
+  }
+  const int transposeB = JPCblasNoTrans;
+
   const int m = outputChannels;
   const int n = input->_dims[0];
   const int k = input->_dims[1];
   const float alpha = 1.0f;
-  const int lda = m;
+  int lda;
+  if (areWeightsTransposed) {
+    lda = k;
+  } else {
+    lda = m;
+  }
   const int ldb = k;
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
 
   matrix_gemm(
+    order,
+    transposeA,
+    transposeB,
     m,
     n,
     k,

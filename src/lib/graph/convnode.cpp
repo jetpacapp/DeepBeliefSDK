@@ -16,7 +16,7 @@
 #include "binary_format.h"
 #include "matrix_ops.h"
 
-ConvNode::ConvNode() : BaseNode(), _kernels(NULL), _bias(NULL) {
+ConvNode::ConvNode() : BaseNode(), _kernels(NULL), _bias(NULL), _areKernelsTransposed(false) {
   setClassName("ConvNode");
 }
 
@@ -37,8 +37,13 @@ Buffer* ConvNode::run(Buffer* input) {
   Dimensions inputDims = input->_dims;
   const int inputChannels = inputDims[inputDims._length - 1];
   const int valuesPerKernel = (inputChannels * _kernelWidth * _kernelWidth);
-  Dimensions expectedKernelsDims(valuesPerKernel, _kernelCount);
-  assert(expectedKernelsDims == _kernels->_dims);
+  if (_areKernelsTransposed) {
+    Dimensions expectedKernelsDims(_kernelCount, valuesPerKernel);
+    assert(expectedKernelsDims == _kernels->_dims);
+  } else {
+    Dimensions expectedKernelsDims(valuesPerKernel, _kernelCount);
+    assert(expectedKernelsDims == _kernels->_dims);
+  }
 
   Buffer* inputWithMargin;
   if (_marginSize == 0) {
@@ -49,7 +54,7 @@ Buffer* ConvNode::run(Buffer* input) {
 
 //_kernels->quantize(16);
 
-  _output = matrix_correlate(inputWithMargin, _kernels, _kernelWidth, _kernelCount, _sampleStride);
+  _output = matrix_correlate(inputWithMargin, _kernels, _kernelWidth, _kernelCount, _sampleStride, _areKernelsTransposed);
   _output->setName(_name);
 
   matrix_add_inplace(_output, _bias, 1.0);
@@ -115,9 +120,24 @@ SBinaryTag* ConvNode::toTag() {
   resultDict = add_tag_to_dict(resultDict, "spec", specDict);
   free(specDict);
 
-  SBinaryTag* kernelsTag = buffer_to_tag_dict(_kernels, 16);
+  const bool wantTransposedOutput = true;
+  const int outputBitDepth = 32; // 16
+
+  if (wantTransposedOutput != _areKernelsTransposed) {
+    _kernels->transpose(); // First transpose so they match
+  }
+  SBinaryTag* kernelsTag = buffer_to_tag_dict(_kernels, outputBitDepth);
   resultDict = add_tag_to_dict(resultDict, "kernels", kernelsTag);
   free(kernelsTag);
+  if (wantTransposedOutput != _areKernelsTransposed) {
+    _kernels->transpose(); // Undo the original transpose by applying another
+  }
+
+  if (wantTransposedOutput) {
+    resultDict = add_uint_to_dict(resultDict, "are_kernels_transposed", 1);
+  } else {
+    resultDict = add_uint_to_dict(resultDict, "are_kernels_transposed", 0);
+  }
 
   resultDict = add_uint_to_dict(resultDict, "has_bias", _useBias);
   if (_useBias) {
@@ -152,6 +172,10 @@ BaseNode* new_convnode_from_tag(SBinaryTag* tag, bool skipCopy) {
   }
 
   result->_marginSize = get_uint_from_dict(tag, "padding");
+
+  if (get_tag_from_dict(tag, "are_kernels_transposed")) {
+    result->_areKernelsTransposed = get_uint_from_dict(tag, "are_kernels_transposed");
+  }
 
   return result;
 }

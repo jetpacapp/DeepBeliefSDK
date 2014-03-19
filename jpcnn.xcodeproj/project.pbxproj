@@ -959,7 +959,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					USE_OS_IMAGE,
-					USE_ACCELERATE_GEMM,
+					USE_OPENGL,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

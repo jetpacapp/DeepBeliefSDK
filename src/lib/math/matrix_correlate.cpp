@@ -105,7 +105,7 @@ Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
   return output;
 }
 
-Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride) {
+Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int kernelCount, int stride, bool areKernelsTransposed) {
 #ifdef DO_LOG_OPERATIONS
   fprintf(stderr, "matrix_correlate[GEMM](input=[%s], kernels=[%s], kernelWidth=%d, kernelCount=%d, stride=%d)\n",
     input->debugString(), kernels->debugString(), kernelWidth, kernelCount, stride);
@@ -122,8 +122,13 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
 
   const int pixelsPerKernel = (kernelWidth * kernelWidth);
   const int valuesPerKernel = (pixelsPerKernel * inputChannels);
-  Dimensions expectedKernelsDims(valuesPerKernel, kernelCount);
-  assert(expectedKernelsDims == kernels->_dims);
+  if (areKernelsTransposed) {
+    Dimensions expectedKernelsDims(kernelCount, valuesPerKernel);
+    assert(expectedKernelsDims == kernels->_dims);
+  } else {
+    Dimensions expectedKernelsDims(valuesPerKernel, kernelCount);
+    assert(expectedKernelsDims == kernels->_dims);
+  }
 
   const int outputWidth = (int)(ceilf((inputWidth - kernelWidth) / (jpfloat_t)stride) + 1);
   const int outputHeight = (int)(ceilf((inputHeight - kernelWidth) / (jpfloat_t)stride) + 1);
@@ -133,16 +138,33 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
 
   Buffer* patches = patches_into_rows(input, kernelWidth, stride);
 
+  const int order = JPCblasColMajor;
+  int transposeA;
+  if (areKernelsTransposed) {
+    transposeA = JPCblasTrans;
+  } else {
+    transposeA = JPCblasNoTrans;
+  }
+  const int transposeB = JPCblasNoTrans;
+
   const int m = kernelCount;
   const int n = (patches->_dims[1] * patches->_dims[0]);
   const int k = patches->_dims[2];
   const float alpha = 1.0f;
-  const int lda = m;
+  int lda;
+  if (areKernelsTransposed) {
+    lda = k;
+  } else {
+    lda = m;
+  }
   const int ldb = k;
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
 
   matrix_gemm(
+    order,
+    transposeA,
+    transposeB,
     m,
     n,
     k,

@@ -360,6 +360,39 @@ void Buffer::quantize(int bits) {
 
 }
 
+void Buffer::transpose() {
+  const Dimensions& originalDims = _dims;
+  assert(originalDims._length == 2); // expecting width x height
+  const int originalHeight = originalDims[0];
+  const int originalWidth = originalDims[1];
+
+  const int newHeight = originalWidth;
+  const int newWidth = originalHeight;
+
+  Dimensions newDims(newHeight, newWidth);
+
+  const int elementCount = originalDims.elementCount();
+  const size_t byteCount = (elementCount * sizeof(jpfloat_t));
+  jpfloat_t* newData = (jpfloat_t*)(malloc(byteCount));
+  jpfloat_t* originalData = _data;
+
+  for (int originalY = 0; originalY < originalHeight; originalY += 1) {
+    for (int originalX = 0; originalX < originalWidth; originalX += 1) {
+      jpfloat_t* source = (originalData + originalDims.offset(originalY, originalX));
+      jpfloat_t* dest = (newData + newDims.offset(originalX, originalY));
+      *dest = *source;
+    }
+  }
+
+  if (_doesOwnData) {
+    free(_data);
+  }
+
+  _data = newData;
+  _dims = newDims;
+  _doesOwnData = true;
+}
+
 Buffer* buffer_from_image_file(const char* filename)
 {
   int inputWidth;

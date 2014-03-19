@@ -39,6 +39,7 @@ public:
   void convertFromChannelMajor(const Dimensions& expectedDims);
   void populateWithRandomValues(jpfloat_t min, jpfloat_t max);
   void quantize(int bits);
+  void transpose();
 
   // Creates a new buffer object that shares the underlying data array,
   // but has independent shape and other meta-data.

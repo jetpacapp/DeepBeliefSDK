@@ -12,6 +12,9 @@
 #include "jpcnn.h"
 
 void gl_gemm(
+  int order,
+  int transposeA,
+  int transposeB,
   int m,
   int n,
   int k,
