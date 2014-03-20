@@ -26,7 +26,14 @@
 
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
 
-Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(NULL)
+Buffer::Buffer(const Dimensions& dims) :
+  _dims(dims),
+  _name(NULL),
+  _debugString(NULL),
+  _quantizedData(NULL),
+  _min(0.0f),
+  _max(1.0f),
+  _bitsPerElement(32)
 {
   const int elementCount = _dims.elementCount();
   const size_t byteCount = (elementCount * sizeof(jpfloat_t));
@@ -35,9 +42,48 @@ Buffer::Buffer(const Dimensions& dims) : _dims(dims), _name(NULL), _debugString(
   setName("None");
 }
 
-Buffer::Buffer(const Dimensions& dims, jpfloat_t* data) : _dims(dims), _name(NULL), _debugString(NULL) {
+Buffer::Buffer(const Dimensions& dims, jpfloat_t* data) :
+  _dims(dims),
+  _name(NULL),
+  _debugString(NULL),
+  _quantizedData(NULL),
+  _min(0.0f),
+  _max(1.0f),
+  _bitsPerElement(32)
+{
   _data = data;
   _doesOwnData = false;
+  setName("None");
+}
+
+Buffer::Buffer(const Dimensions& dims, void* quantizedData, jpfloat_t min, jpfloat_t max, int bitsPerElement) :
+  _dims(dims),
+  _name(NULL),
+  _debugString(NULL),
+  _data(NULL),
+  _min(min),
+  _max(max),
+  _bitsPerElement(bitsPerElement)
+{
+  _quantizedData = quantizedData;
+  _doesOwnData = false;
+  setName("None");
+}
+
+Buffer::Buffer(const Dimensions& dims, jpfloat_t min, jpfloat_t max, int bitsPerElement) :
+  _dims(dims),
+  _name(NULL),
+  _debugString(NULL),
+  _data(NULL),
+  _min(min),
+  _max(max),
+  _bitsPerElement(bitsPerElement)
+{
+  const int elementCount = _dims.elementCount();
+  const int sizeofElement = (_bitsPerElement / 8);
+  const size_t byteCount = (elementCount * sizeofElement);
+  _quantizedData = (void*)(malloc(byteCount * 1));
+  _doesOwnData = true;
   setName("None");
 }
 
@@ -481,7 +527,7 @@ Buffer* buffer_from_image_file(const char* filename)
   buffer->setName(filename);
 
   jpfloat_t* bufferCurrent = buffer->_data;
-  jpfloat_t* bufferEnd = buffer->dataEnd();
+  jpfloat_t* bufferEnd = (buffer->_data + buffer->_dims.elementCount());
   uint8_t* imageCurrent = imageData;
   while (bufferCurrent != bufferEnd)
   {
@@ -520,8 +566,8 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
 
   SBinaryTag* bitsPerFloatTag = get_tag_from_dict(mainDict, "float_bits");
   const uint32_t bitsPerFloat = bitsPerFloatTag->payload.jpuint;
-  if (bitsPerFloat != 32) {
-    fprintf(stderr, "jpcnn can only read 32-bit float dump files, found %d\n", bitsPerFloat);
+  if ((bitsPerFloat != 32) && (bitsPerFloat != 16) && (bitsPerFloat != 8)) {
+    fprintf(stderr, "jpcnn can only read 32, 16 or 8 bit dump files, found %d\n", bitsPerFloat);
     return NULL;
   }
 
@@ -540,19 +586,34 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
   }
 
   Dimensions dims(dimensions, dimensionsCount);
-  SBinaryTag* dataTag = get_tag_from_dict(mainDict, "data");
-  assert(dataTag->type == JP_FARY);
-
   const int elementCount = dims.elementCount();
-  assert(dataTag->length == (elementCount * sizeof(jpfloat_t)));
 
   Buffer* buffer;
-  if (skipCopy) {
-    jpfloat_t* tagDataArray = dataTag->payload.jpfary;
-    buffer = new Buffer(dims, tagDataArray);
+  if (bitsPerFloat == 32) {
+    SBinaryTag* dataTag = get_tag_from_dict(mainDict, "data");
+    assert(dataTag->type == JP_FARY);
+    assert(dataTag->length == (elementCount * sizeof(jpfloat_t)));
+    if (skipCopy) {
+      jpfloat_t* tagDataArray = dataTag->payload.jpfary;
+      buffer = new Buffer(dims, tagDataArray);
+    } else {
+      buffer = new Buffer(dims);
+      memcpy(buffer->_data, dataTag->payload.jpchar, dataTag->length);
+    }
   } else {
-    buffer = new Buffer(dims);
-    memcpy(buffer->_data, dataTag->payload.jpchar, dataTag->length);
+    SBinaryTag* quantizedDataTag = get_tag_from_dict(mainDict, "quantized_data");
+    const size_t sizeofElement = (bitsPerFloat / 8);
+    assert(quantizedDataTag->type == JP_BLOB);
+    assert(quantizedDataTag->length == (elementCount * sizeofElement));
+    const jpfloat_t min = get_float_from_dict(mainDict, "min");
+    const jpfloat_t max = get_float_from_dict(mainDict, "max");
+    void* tagDataArray = quantizedDataTag->payload.jpchar;
+    if (skipCopy) {
+      buffer = new Buffer(dims, tagDataArray, min, max, bitsPerFloat);
+    } else {
+      buffer = new Buffer(dims, min, max, bitsPerFloat);
+      memcpy(buffer->_quantizedData, tagDataArray, quantizedDataTag->length);
+    }
   }
 
   return buffer;
@@ -717,7 +778,7 @@ bool buffer_are_all_close(Buffer* a, Buffer* b, jpfloat_t tolerance) {
   int differentCount = 0;
   jpfloat_t totalDelta = 0.0f;
   jpfloat_t* aCurrent = a->_data;
-  jpfloat_t* aEnd = a->dataEnd();
+  jpfloat_t* aEnd = (a->_data + a->_dims.elementCount());
   jpfloat_t* bCurrent = b->_data;
   while (aCurrent != aEnd) {
     const jpfloat_t aValue = *aCurrent;

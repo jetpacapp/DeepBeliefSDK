@@ -142,7 +142,6 @@ static const char* g_gemmFragmentShader = "                     \n\
       total += (aValue * bValue);                               \n\
     }                                                           \n\
     gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
-//gl_FragColor = encode32(floor(cPhysicalCoords.x * cPhysicalSize.x)); \n\
   }                                                             \n\
 ";
 

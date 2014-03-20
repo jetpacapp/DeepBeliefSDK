@@ -69,22 +69,44 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights, bool areWeightsTransposed) {
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
 
-  matrix_gemm(
-    order,
-    transposeA,
-    transposeB,
-    m,
-    n,
-    k,
-    alpha,
-    weights->_data,
-    lda,
-    input->_data,
-    ldb,
-    beta,
-    output->_data,
-    ldc
-  );
+  if (weights->_bitsPerElement == 32) {
+    matrix_gemm(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weights->_data,
+      lda,
+      input->_data,
+      ldb,
+      beta,
+      output->_data,
+      ldc
+    );
+  } else {
+    matrix_gemm_fixed(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weights->_quantizedData,
+      weights->_min,
+      weights->_max,
+      weights->_bitsPerElement,
+      lda,
+      input->_data,
+      ldb,
+      beta,
+      output->_data,
+      ldc
+    );
+  }
 
 #else // Use naive algorithm instead
 

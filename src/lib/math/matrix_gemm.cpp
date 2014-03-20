@@ -117,6 +117,47 @@ void matrix_gemm(
 
 }
 
+void matrix_gemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int aBitsPerElement,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc) {
+
+  naive_cblas_sgemm_fixed(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    aMin,
+    aMax,
+    aBitsPerElement,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc
+  );
+
+}
+
 void naive_cblas_sgemm(
   int order,
   int transposeA,
@@ -157,5 +198,81 @@ void naive_cblas_sgemm(
       const jpfloat_t oldCValue = c[cIndex];
       c[cIndex] = ((alpha * total) + (beta * oldCValue));
     }
+  }
+}
+
+void naive_cblas_sgemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int aBitsPerElement,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc) {
+
+  assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
+  assert(transposeB == JPCblasNoTrans);
+  assert(order == JPCblasColMajor);
+
+  const jpfloat_t aRange = ((aMax - aMin) / (1 << aBitsPerElement));
+
+  if (aBitsPerElement == 16) {
+    uint16_t* aData = (uint16_t*)(a);
+    int i, j, l;
+    for (j = 0; j < n; j++) {
+      for (i = 0; i < m; i++) {
+        jpfloat_t total = 0.0f;
+        for (l = 0; l < k; l++) {
+          int aIndex;
+          if (transposeA == JPCblasNoTrans) {
+            aIndex = ((lda * l) + i);
+          } else {
+            aIndex = ((lda * i) + l);
+          }
+          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
+          const int bIndex = ((ldb * j) + l);
+          const jpfloat_t bValue = b[bIndex];
+          total += (aValue * bValue);
+        }
+        const int cIndex = ((ldc * j) + i);
+        const jpfloat_t oldCValue = c[cIndex];
+        c[cIndex] = ((alpha * total) + (beta * oldCValue));
+      }
+    }
+  } else if (aBitsPerElement == 8) {
+    uint8_t* aData = (uint8_t*)(a);
+    int i, j, l;
+    for (j = 0; j < n; j++) {
+      for (i = 0; i < m; i++) {
+        jpfloat_t total = 0.0f;
+        for (l = 0; l < k; l++) {
+          int aIndex;
+          if (transposeA == JPCblasNoTrans) {
+            aIndex = ((lda * l) + i);
+          } else {
+            aIndex = ((lda * i) + l);
+          }
+          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
+          const int bIndex = ((ldb * j) + l);
+          const jpfloat_t bValue = b[bIndex];
+          total += (aValue * bValue);
+        }
+        const int cIndex = ((ldc * j) + i);
+        const jpfloat_t oldCValue = c[cIndex];
+        c[cIndex] = ((alpha * total) + (beta * oldCValue));
+      }
+    }
+  } else {
+    assert(false); // Should never get here, only 8 or 16 bit supported
   }
 }

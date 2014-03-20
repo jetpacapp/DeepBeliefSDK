@@ -20,15 +20,19 @@ public:
 
   Buffer(const Dimensions& dims);
   Buffer(const Dimensions& dims, jpfloat_t* data);
+  Buffer(const Dimensions& dims, void* quantizedData, jpfloat_t min, jpfloat_t max, int bitsPerElement);
+  Buffer(const Dimensions& dims, jpfloat_t min, jpfloat_t max, int bitsPerElement);
   virtual ~Buffer();
 
   Dimensions _dims;
   jpfloat_t* _data;
+  void* _quantizedData;
+  jpfloat_t _min;
+  jpfloat_t _max;
+  int _bitsPerElement;
   bool _doesOwnData;
   char* _debugString;
   char* _name;
-
-  jpfloat_t* dataEnd();
 
   // You must call canReshapeTo() to make sure the dimensions match before
   // calling reshape()
@@ -50,8 +54,6 @@ public:
   void saveDebugImage();
   void setName(const char*);
 };
-
-inline jpfloat_t* Buffer::dataEnd() { return (_data + _dims.elementCount()); }
 
 extern Buffer* buffer_from_image_file(const char* filename);
 extern Buffer* buffer_from_dump_file(const char* filename);

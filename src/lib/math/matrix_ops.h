@@ -54,6 +54,25 @@ void matrix_gemm(
   jpfloat_t* c,
   int ldc);
 
+void matrix_gemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int aBitsPerElement,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc);
+
 void naive_cblas_sgemm(
   int order,
   int transposeA,
@@ -63,6 +82,25 @@ void naive_cblas_sgemm(
   int k,
   jpfloat_t alpha,
   jpfloat_t *a,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc);
+
+void naive_cblas_sgemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int aBitsPerElement,
   int lda,
   jpfloat_t *b,
   int ldb,

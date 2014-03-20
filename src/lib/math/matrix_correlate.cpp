@@ -161,22 +161,44 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
 
-  matrix_gemm(
-    order,
-    transposeA,
-    transposeB,
-    m,
-    n,
-    k,
-    alpha,
-    kernels->_data,
-    lda,
-    patches->_data,
-    ldb,
-    beta,
-    output->_data,
-    ldc
-  );
+  if (kernels->_bitsPerElement == 32) {
+    matrix_gemm(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      kernels->_data,
+      lda,
+      patches->_data,
+      ldb,
+      beta,
+      output->_data,
+      ldc
+    );
+  } else {
+    matrix_gemm_fixed(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      kernels->_quantizedData,
+      kernels->_min,
+      kernels->_max,
+      kernels->_bitsPerElement,
+      lda,
+      patches->_data,
+      ldb,
+      beta,
+      output->_data,
+      ldc
+    );
+  }
 
   delete patches;
 
