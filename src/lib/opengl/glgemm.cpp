@@ -21,6 +21,8 @@
 #include "buffer.h"
 #include "matrix_ops.h"
 
+static Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize);
+
 static const char* g_gemmVertexShader = "                       \n\
   attribute vec2 aVertexPosition;                               \n\
   attribute vec2 aTexCoord;                                     \n\
@@ -37,11 +39,20 @@ static const char* g_gemmFragmentShader = "                     \n\
   uniform sampler2D a;                                          \n\
   uniform vec2 aXTransform;                                     \n\
   uniform vec2 aYTransform;                                     \n\
-  uniform vec2 aCoordScale;                                     \n\
+  uniform vec2 aVirtualSize;                                    \n\
+  uniform vec2 aRecipVirtualSize;                               \n\
+  uniform vec2 aPhysicalSize;                                   \n\
+  uniform vec2 aRecipPhysicalSize;                              \n\
   uniform sampler2D b;                                          \n\
-  uniform vec2 bCoordScale;                                     \n\
+  uniform vec2 bVirtualSize;                                    \n\
+  uniform vec2 bRecipVirtualSize;                               \n\
+  uniform vec2 bPhysicalSize;                                   \n\
+  uniform vec2 bRecipPhysicalSize;                              \n\
   uniform sampler2D c;                                          \n\
-  uniform vec2 cCoordScale;                                     \n\
+  uniform vec2 cVirtualSize;                                    \n\
+  uniform vec2 cRecipVirtualSize;                               \n\
+  uniform vec2 cPhysicalSize;                                   \n\
+  uniform vec2 cRecipPhysicalSize;                              \n\
   uniform float alpha;                                          \n\
   uniform float beta;                                           \n\
   uniform int k;                                                \n\
@@ -88,14 +99,32 @@ static const char* g_gemmFragmentShader = "                     \n\
     float Result =  Sign * exp2(Exponent) * (Mantissa * exp2(-23.0 )); \n\
     return Result;                                     \n\
   }                                                             \n\
+  vec2 virtualToPhysicalCoords(vec2 normalizedVirtualCoords, vec2 virtualSize, vec2 physicalSize, vec2 recipPhysicalSize) { \n\
+    vec2 virtualCoords = (normalizedVirtualCoords * virtualSize); \n\
+    float elementOffset = ((floor(virtualCoords.y) * virtualSize.x) + floor(virtualCoords.x));\n\
+    vec2 physicalCoords;                                        \n\
+    physicalCoords.x = (mod(elementOffset, physicalSize.x) + 0.5);      \n\
+    physicalCoords.y = (floor((elementOffset + 0.5) * recipPhysicalSize.x) + 0.5); \n\
+    vec2 normalizedPhysicalCoords = (physicalCoords * recipPhysicalSize); \n\
+    return normalizedPhysicalCoords;                            \n\
+  }                                                             \n\
+  vec2 physicalToVirtualCoords(vec2 normalizedPhysicalCoords, vec2 virtualSize, vec2 recipVirtualSize, vec2 physicalSize) { \n\
+    vec2 physicalCoords = (normalizedPhysicalCoords * physicalSize); \n\
+    float elementOffset = ((floor(physicalCoords.y) * physicalSize.x) + floor(physicalCoords.x));\n\
+    vec2 virtualCoords;                                        \n\
+    virtualCoords.x = (mod(elementOffset, virtualSize.x) + 0.5);       \n\
+    virtualCoords.y = (floor((elementOffset + 0.5) * recipVirtualSize.x) + 0.5); \n\
+    vec2 normalizedVirtualCoords = (virtualCoords * recipVirtualSize); \n\
+    return normalizedVirtualCoords;                            \n\
+  }                                                             \n\
   void main(void) {                                             \n\
-    vec2 texCoord = outTexCoord;                                \n\
-    float i = texCoord.x;                                       \n\
-    float j = texCoord.y;                                       \n\
-    vec2 cCoords = vec2(i, j) * cCoordScale;                    \n\
+    vec2 cPhysicalCoords = (outTexCoord * cRecipPhysicalSize); \n\
+    vec2 texCoord = physicalToVirtualCoords(cPhysicalCoords, cVirtualSize, cRecipVirtualSize, cPhysicalSize); \n\
+    float i = (texCoord.x * cVirtualSize.x);                    \n\
+    float j = (texCoord.y * cVirtualSize.y);                    \n\
     float cValue;                                               \n\
     if (beta != 0.0) {                                          \n\
-      cValue = decode32(texture2D(c, cCoords));                 \n\
+      cValue = decode32(texture2D(c, cPhysicalCoords));             \n\
     } else {                                                    \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
@@ -104,13 +133,16 @@ static const char* g_gemmFragmentShader = "                     \n\
       float lCoord = (float(l) + 0.5);                          \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
-      vec2 aCoords = (aTransformedCoords * aCoordScale);        \n\
-      float aValue = decode32(texture2D(a, aCoords));           \n\
-      vec2 bCoords = vec2(lCoord, j) * bCoordScale;             \n\
-      float bValue = decode32(texture2D(b, bCoords));           \n\
+      vec2 aVirtualCoords = (aTransformedCoords * aRecipVirtualSize); \n\
+      vec2 aPhysicalCoords = virtualToPhysicalCoords(aVirtualCoords, aVirtualSize, aPhysicalSize, aRecipPhysicalSize); \n\
+      float aValue = decode32(texture2D(a, aPhysicalCoords));    \n\
+      vec2 bVirtualCoords = (vec2(lCoord, j) * bRecipVirtualSize); \n\
+      vec2 bPhysicalCoords = virtualToPhysicalCoords(bVirtualCoords, bVirtualSize, bPhysicalSize, bRecipPhysicalSize); \n\
+      float bValue = decode32(texture2D(b, bPhysicalCoords));   \n\
       total += (aValue * bValue);                               \n\
     }                                                           \n\
     gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
+//gl_FragColor = encode32(floor(cPhysicalCoords.x * cPhysicalSize.x)); \n\
   }                                                             \n\
 ";
 
@@ -203,6 +235,31 @@ static const char* g_gemmUniformNames[] = {
   "a",
   "aXTransform",
   "aYTransform",
+  "aVirtualSize",
+  "aRecipVirtualSize",
+  "aPhysicalSize",
+  "aRecipPhysicalSize",
+  "b",
+  "bVirtualSize",
+  "bRecipVirtualSize",
+  "bPhysicalSize",
+  "bRecipPhysicalSize",
+  "c",
+  "cVirtualSize",
+  "cRecipVirtualSize",
+  "cPhysicalSize",
+  "cRecipPhysicalSize",
+  "alpha",
+  "beta",
+  "k",
+};
+static const int g_gemmUniformCount = (sizeof(g_gemmUniformNames) / sizeof(g_gemmUniformNames[0]));
+static GLint g_gemmUniformIds[g_gemmUniformCount];
+
+static const char* g_gemm4xUniformNames[] = {
+  "a",
+  "aXTransform",
+  "aYTransform",
   "aCoordScale",
   "b",
   "bCoordScale",
@@ -212,12 +269,14 @@ static const char* g_gemmUniformNames[] = {
   "beta",
   "k",
 };
-static const int g_gemmUniformCount = (sizeof(g_gemmUniformNames) / sizeof(g_gemmUniformNames[0]));
-static GLint g_gemmUniformIds[g_gemmUniformCount];
+static const int g_gemm4xUniformCount = (sizeof(g_gemm4xUniformNames) / sizeof(g_gemm4xUniformNames[0]));
+static GLint g_gemm4xUniformIds[g_gemm4xUniformCount];
 
 // Somewhat arbitrary, but covers 85% of cards according to
 // http://feedback.wildfiregames.com/report/opengl/feature/GL_MAX_TEXTURE_SIZE
-const int maxTextureSize = 4096;
+const int maxTextureSize = 2048;
+
+static GLContext* g_glContext = NULL;
 
 void gl_gemm(
   int order,
@@ -239,7 +298,10 @@ void gl_gemm(
   assert(transposeB == JPCblasNoTrans);
   assert(order == JPCblasColMajor);
 
-  GLContext* context = new GLContext();
+  if (g_glContext == NULL) {
+    g_glContext = new GLContext();
+  }
+  GLContext* context = g_glContext;
 
   GLBuffer* previousCBuffer = NULL;
 
@@ -249,7 +311,7 @@ void gl_gemm(
   Dimensions* bFullDims;
   Dimensions* cDims;
   if (use4x) {
-    program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader4x, g_gemmUniformNames, g_gemmUniformIds, g_gemmUniformCount);
+    program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader4x, g_gemm4xUniformNames, g_gemm4xUniformIds, g_gemm4xUniformCount);
     if (transposeA == JPCblasTrans) {
       aFullDims = new Dimensions(m, (inputK / 4), 4);
     } else {
@@ -267,6 +329,8 @@ void gl_gemm(
     bFullDims = new Dimensions(n, inputK, 1);
     cDims = new Dimensions(n, m, 1);
   }
+  const bool useVirtualSize = (!use4x);
+  Dimensions* cPhysicalDims = physicalFromVirtualSize(cDims, useVirtualSize);
 
   Buffer* aFullBuffer = new Buffer(*aFullDims, a);
   Buffer* bFullBuffer = new Buffer(*bFullDims, b);
@@ -296,6 +360,9 @@ void gl_gemm(
       bDims = new Dimensions(n, currentK, 1);
     }
 
+    Dimensions* aPhysicalDims = physicalFromVirtualSize(aDims, useVirtualSize);
+    Dimensions* bPhysicalDims = physicalFromVirtualSize(bDims, useVirtualSize);
+
     GLBuffer* aBuffer;
     GLBuffer* bBuffer;
     Buffer* aHostBuffer = NULL;
@@ -318,22 +385,22 @@ void gl_gemm(
       } else {
         bHostBuffer = extract_subregion(bFullBuffer, Offset(0, originK, 0), *bDims);
       }
-      aBuffer = new GLBuffer(context, *aDims, aHostBuffer->_data);
-      bBuffer = new GLBuffer(context, *bDims, bHostBuffer->_data);
+      aBuffer = new GLBuffer(context, *aPhysicalDims, aHostBuffer->_data);
+      bBuffer = new GLBuffer(context, *bPhysicalDims, bHostBuffer->_data);
     }
 
     jpfloat_t beta;
     if (kStep == 0) {
       if (inputBeta > 0.0f) {
-        previousCBuffer = new GLBuffer(context, *cDims, c);
+        previousCBuffer = new GLBuffer(context, *cPhysicalDims, c);
       } else {
-        previousCBuffer = new GLBuffer(context, *cDims);
+        previousCBuffer = new GLBuffer(context, *cPhysicalDims);
       }
       beta = inputBeta;
     } else {
       beta = 1.0f;
     }
-    GLBuffer* outputCBuffer = new GLBuffer(context, *cDims);
+    GLBuffer* outputCBuffer = new GLBuffer(context, *cPhysicalDims);
 
     if (transposeA == JPCblasTrans) {
       program->setUniform2f("aXTransform", 0.0f, 1.0f);
@@ -342,9 +409,26 @@ void gl_gemm(
       program->setUniform2f("aXTransform", 1.0f, 0.0f);
       program->setUniform2f("aYTransform", 0.0f, 1.0f);
     }
-    program->setUniform2f("aCoordScale", 1.0f / (*aDims)[1], 1.0f / (*aDims)[0]);
-    program->setUniform2f("bCoordScale", 1.0f / (*bDims)[1], 1.0f / (*bDims)[0]);
-    program->setUniform2f("cCoordScale", 1.0f / (*cDims)[1], 1.0f / (*cDims)[0]);
+    if (useVirtualSize) {
+      program->setUniform2f("aVirtualSize", (*aDims)[1], (*aDims)[0]);
+      program->setUniform2f("aRecipVirtualSize", 1.0f / (*aDims)[1], 1.0f / (*aDims)[0]);
+      program->setUniform2f("aPhysicalSize", (*aPhysicalDims)[1], (*aPhysicalDims)[0]);
+      program->setUniform2f("aRecipPhysicalSize", 1.0f / (*aPhysicalDims)[1], 1.0f / (*aPhysicalDims)[0]);
+
+      program->setUniform2f("bVirtualSize", (*bDims)[1], (*bDims)[0]);
+      program->setUniform2f("bRecipVirtualSize", 1.0f / (*bDims)[1], 1.0f / (*bDims)[0]);
+      program->setUniform2f("bPhysicalSize", (*bPhysicalDims)[1], (*bPhysicalDims)[0]);
+      program->setUniform2f("bRecipPhysicalSize", 1.0f / (*bPhysicalDims)[1], 1.0f / (*bPhysicalDims)[0]);
+
+      program->setUniform2f("cVirtualSize", (*cDims)[1], (*cDims)[0]);
+      program->setUniform2f("cRecipVirtualSize", 1.0f / (*cDims)[1], 1.0f / (*cDims)[0]);
+      program->setUniform2f("cPhysicalSize", (*cPhysicalDims)[1], (*cPhysicalDims)[0]);
+      program->setUniform2f("cRecipPhysicalSize", 1.0f / (*cPhysicalDims)[1], 1.0f / (*cPhysicalDims)[0]);
+    } else {
+      program->setUniform2f("aCoordScale", 1.0f / (*aDims)[1], 1.0f / (*aDims)[0]);
+      program->setUniform2f("bCoordScale", 1.0f / (*bDims)[1], 1.0f / (*bDims)[0]);
+      program->setUniform2f("cCoordScale", 1.0f / (*cDims)[1], 1.0f / (*cDims)[0]);
+    }
     program->setUniform1f("alpha", alpha);
     program->setUniform1f("beta", beta);
     program->setUniform1i("k", currentK);
@@ -369,11 +453,13 @@ void gl_gemm(
     if (bHostBuffer != NULL) {
       delete bHostBuffer;
     }
+    delete bPhysicalDims;
+    delete aPhysicalDims;
     delete bDims;
     delete aDims;
   }
 
-  Buffer* output = new Buffer(*cDims, c);
+  Buffer* output = new Buffer(*cPhysicalDims, c);
   context->copyOutputToHost(output);
 
   delete aFullDims;
@@ -381,9 +467,47 @@ void gl_gemm(
   delete aFullBuffer;
   delete bFullBuffer;
   delete cDims;
+  delete cPhysicalDims;
   delete output; // Doesn't own 'c' data, so this is ok
   delete program;
-  delete context;
+}
+
+Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize) {
+  assert(virtualSize->_length == 3);
+
+  const int virtualWidth = virtualSize->_dims[1];
+  const int virtualHeight = virtualSize->_dims[0];
+  const int virtualChannels = virtualSize->_dims[2];
+
+  const int virtualPixelCount = (virtualWidth * virtualHeight);
+
+  int physicalWidth = virtualWidth;
+  int physicalHeight = virtualHeight;
+
+  float distanceFromSquareness = fabsf(physicalWidth - physicalHeight);
+
+  const int maxFactor = (doResize) ? 20 : 0;
+  for (int factor = 2; factor < maxFactor; factor += 1) {
+    int candidateWidth;
+    int candidateHeight;
+    if (virtualWidth > virtualHeight) {
+      candidateWidth = (virtualWidth / factor);
+      candidateHeight = (virtualHeight * factor);
+    } else {
+      candidateWidth = (virtualWidth * factor);
+      candidateHeight = (virtualHeight / factor);
+    }
+    const int candidatePixelCount = (candidateWidth * candidateHeight);
+    const float candidateDistanceFromSquareness = fabsf(candidateWidth - candidateHeight);
+    if ((candidatePixelCount == virtualPixelCount) && (candidateDistanceFromSquareness < distanceFromSquareness)) {
+      physicalWidth = candidateWidth;
+      physicalHeight = candidateHeight;
+      distanceFromSquareness = candidateDistanceFromSquareness;
+    }
+  }
+
+  Dimensions* result = new Dimensions(physicalHeight, physicalWidth, virtualChannels);
+  return result;
 }
 
 #endif // USE_OPENGL

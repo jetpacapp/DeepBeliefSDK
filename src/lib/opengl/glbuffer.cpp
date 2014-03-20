@@ -16,6 +16,7 @@
 
 #include "buffer.h"
 #include "dimensions.h"
+#include "glcontext.h"
 
 GLBuffer::GLBuffer(GLContext* context, const Dimensions& dims) {
   // We expect (height, width, channels)
@@ -88,6 +89,7 @@ void GLBuffer::copyHostBufferToGPU() {
   } else {
     assert(false); // Bad number of channels
   }
+  CHECK_GL_ERROR();
 }
 
 #endif // USE_OPENGL

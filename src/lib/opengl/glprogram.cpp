@@ -61,7 +61,7 @@ GLProgram::~GLProgram() {
   }
   free(_uniformNames);
   free(_uniformIds);
-  for (int index = 0; index < _howManyUniforms; index += 1) {
+  for (int index = 0; index < _howManyInputBuffers; index += 1) {
     // We don't own the input buffers, so just free the array holding
     // the pointers to them, but do free the name strings.
     free(_inputBufferNames[index]);
