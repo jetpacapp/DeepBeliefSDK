@@ -21,7 +21,7 @@
 #include "buffer.h"
 #include "matrix_ops.h"
 
-static Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize);
+static Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int bitsPerElement = 32);
 
 static const char* g_gemmVertexShader = "                       \n\
   attribute vec2 aVertexPosition;                               \n\
@@ -145,6 +145,264 @@ static const char* g_gemmFragmentShader = "                     \n\
   }                                                             \n\
 ";
 
+static const char* g_gemmFragmentShader16Bit = "                     \n\
+  varying vec2 outTexCoord;                                     \n\
+  uniform sampler2D a;                                          \n\
+  uniform vec2 aXTransform;                                     \n\
+  uniform vec2 aYTransform;                                     \n\
+  uniform vec2 aVirtualSize;                                    \n\
+  uniform vec2 aRecipVirtualSize;                               \n\
+  uniform vec2 aPhysicalSize;                                   \n\
+  uniform vec2 aRecipPhysicalSize;                              \n\
+  uniform float aMin;                                           \n\
+  uniform float aRange;                                         \n\
+  uniform sampler2D b;                                          \n\
+  uniform vec2 bVirtualSize;                                    \n\
+  uniform vec2 bRecipVirtualSize;                               \n\
+  uniform vec2 bPhysicalSize;                                   \n\
+  uniform vec2 bRecipPhysicalSize;                              \n\
+  uniform sampler2D c;                                          \n\
+  uniform vec2 cVirtualSize;                                    \n\
+  uniform vec2 cRecipVirtualSize;                               \n\
+  uniform vec2 cPhysicalSize;                                   \n\
+  uniform vec2 cRecipPhysicalSize;                              \n\
+  uniform float alpha;                                          \n\
+  uniform float beta;                                           \n\
+  uniform int k;                                                \n\
+  float shiftRight(float v, float amt) {                        \n\
+    v = floor(v) + 0.5;                                         \n\
+    return floor(v / exp2(amt));                                \n\
+  }                                                             \n\
+  float shiftLeft(float v, float amt) {                         \n\
+    return floor(v * exp2(amt) + 0.5);                          \n\
+  }                                                             \n\
+  float maskLast(float v, float bits) {                         \n\
+    return mod(v, shiftLeft(1.0, bits));                        \n\
+  }                                                             \n\
+  float extractBits(float num, float from, float to) {          \n\
+    from = floor(from + 0.5);                                   \n\
+    to = floor(to + 0.5);                                       \n\
+    return maskLast(shiftRight(num, from), to - from);          \n\
+  }                                                             \n\
+  vec4 encode32(float val) {                                    \n\
+    if (val == 0.0)                                             \n\
+      return vec4(0, 0, 0, 0);                                  \n\
+    float sign = val > 0.0 ? 0.0 : 1.0;                         \n\
+    val = abs(val);                                             \n\
+    float exponent = floor(log2(val));                          \n\
+    float biased_exponent = exponent + 127.0;                   \n\
+    float fraction = ((val / exp2(exponent)) - 1.0) * 8388608.0; \n\
+    float t = biased_exponent / 2.0;                            \n\
+    float last_bit_of_biased_exponent = fract(t) * 2.0;         \n\
+    float remaining_bits_of_biased_exponent = floor(t);         \n\
+    float byte4 = extractBits(fraction, 0.0, 8.0) / 255.0;      \n\
+    float byte3 = extractBits(fraction, 8.0, 16.0) / 255.0;     \n\
+    float byte2 = (last_bit_of_biased_exponent * 128.0 + extractBits(fraction, 16.0, 23.0)) / 255.0; \n\
+    float byte1 = (sign * 128.0 + remaining_bits_of_biased_exponent) / 255.0; \n\
+    return vec4(byte4, byte3, byte2, byte1);                      \n\
+  }                                                             \n\
+  float decode32(vec4 rgba) {                                   \n\
+    float byte1 = rgba[3] * 255.0;                              \n\
+    float byte2 = rgba[2] * 255.0;                              \n\
+    float byte3 = rgba[1] * 255.0;                              \n\
+    float byte4 = rgba[0] * 255.0;                              \n\
+    float Sign = 1.0 - step(128.0, byte1)*2.0;                 \n\
+    float Exponent = 2.0 * mod(byte1,128.0) + step(128.0, byte2) - 127.0; \n\
+    float Mantissa = mod(byte2, 128.0) * 65536.0 + byte3 * 256.0 + byte4 + float(0x800000); \n\
+    float Result =  Sign * exp2(Exponent) * (Mantissa * exp2(-23.0 )); \n\
+    return Result;                                              \n\
+  }                                                             \n\
+  float decode16(vec4 rgba, int component, float min, float range) { \n\
+    float byte0 = rgba[(component * 2) + 0];                    \n\
+    float byte1 = rgba[(component * 2) + 1];                    \n\
+    float value = (byte1 * (255.0 / 256.0)) + (byte0 / 256.0);                      \n\
+    float result = ((value * range) + min);                     \n\
+    return result;                                              \n\
+  }                                                             \n\
+  vec2 virtualToPhysicalCoords(vec2 normalizedVirtualCoords, vec2 virtualSize, vec2 physicalSize, vec2 recipPhysicalSize) { \n\
+    vec2 virtualCoords = (normalizedVirtualCoords * virtualSize); \n\
+    float elementOffset = ((floor(virtualCoords.y) * virtualSize.x) + floor(virtualCoords.x));\n\
+    vec2 physicalCoords;                                        \n\
+    physicalCoords.x = (mod(elementOffset, physicalSize.x) + 0.5);      \n\
+    physicalCoords.y = (floor((elementOffset + 0.5) * recipPhysicalSize.x) + 0.5); \n\
+    vec2 normalizedPhysicalCoords = (physicalCoords * recipPhysicalSize); \n\
+    return normalizedPhysicalCoords;                            \n\
+  }                                                             \n\
+  vec2 virtualToPhysicalCoordsFixed(vec2 normalizedVirtualCoords, vec2 virtualSize, vec2 physicalSize, vec2 recipPhysicalSize, float elementsPerPixelScale) { \n\
+    vec2 virtualCoords = (normalizedVirtualCoords * virtualSize); \n\
+    float elementOffset = ((floor(virtualCoords.y) * virtualSize.x * elementsPerPixelScale) + floor(virtualCoords.x * elementsPerPixelScale));\n\
+    vec2 physicalCoords;                                        \n\
+    physicalCoords.x = (mod(elementOffset, physicalSize.x) + 0.5);      \n\
+    physicalCoords.y = (floor((elementOffset + 0.5) * recipPhysicalSize.x) + 0.5); \n\
+    vec2 normalizedPhysicalCoords = (physicalCoords * recipPhysicalSize); \n\
+    return normalizedPhysicalCoords;                            \n\
+  }                                                             \n\
+  vec2 physicalToVirtualCoords(vec2 normalizedPhysicalCoords, vec2 virtualSize, vec2 recipVirtualSize, vec2 physicalSize) { \n\
+    vec2 physicalCoords = (normalizedPhysicalCoords * physicalSize); \n\
+    float elementOffset = ((floor(physicalCoords.y) * physicalSize.x) + floor(physicalCoords.x));\n\
+    vec2 virtualCoords;                                        \n\
+    virtualCoords.x = (mod(elementOffset, virtualSize.x) + 0.5);       \n\
+    virtualCoords.y = (floor((elementOffset + 0.5) * recipVirtualSize.x) + 0.5); \n\
+    vec2 normalizedVirtualCoords = (virtualCoords * recipVirtualSize); \n\
+    return normalizedVirtualCoords;                            \n\
+  }                                                             \n\
+  void main(void) {                                             \n\
+    vec2 cPhysicalCoords = (outTexCoord * cRecipPhysicalSize); \n\
+    vec2 texCoord = physicalToVirtualCoords(cPhysicalCoords, cVirtualSize, cRecipVirtualSize, cPhysicalSize); \n\
+    float i = (texCoord.x * cVirtualSize.x);                    \n\
+    float j = (texCoord.y * cVirtualSize.y);                    \n\
+    float cValue;                                               \n\
+    if (beta != 0.0) {                                          \n\
+      cValue = decode32(texture2D(c, cPhysicalCoords));             \n\
+    } else {                                                    \n\
+      cValue = 0.0;                                             \n\
+    }                                                           \n\
+    float total = 0.0;                                          \n\
+    for (int l = 0; l < k; l += 1) {                            \n\
+      float lCoord = (float(l) + 0.5);                          \n\
+      vec2 aInputCoords = vec2(i, lCoord);                      \n\
+      vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
+      int aComponent = int(mod(floor(aTransformedCoords.x), 2.0)); \n\
+      vec2 aVirtualCoords = (aTransformedCoords * aRecipVirtualSize); \n\
+      vec2 aPhysicalCoords = virtualToPhysicalCoordsFixed(aVirtualCoords, aVirtualSize, aPhysicalSize, aRecipPhysicalSize, 0.5); \n\
+      float aValue = decode16(texture2D(a, aPhysicalCoords), aComponent, aMin, aRange);    \n\
+      vec2 bVirtualCoords = (vec2(lCoord, j) * bRecipVirtualSize); \n\
+      vec2 bPhysicalCoords = virtualToPhysicalCoords(bVirtualCoords, bVirtualSize, bPhysicalSize, bRecipPhysicalSize); \n\
+      float bValue = decode32(texture2D(b, bPhysicalCoords));   \n\
+      total += (aValue * bValue);                               \n\
+    }                                                           \n\
+    gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
+  }                                                             \n\
+";
+
+static const char* g_gemmFragmentShader8Bit = "                     \n\
+  varying vec2 outTexCoord;                                     \n\
+  uniform sampler2D a;                                          \n\
+  uniform vec2 aXTransform;                                     \n\
+  uniform vec2 aYTransform;                                     \n\
+  uniform vec2 aVirtualSize;                                    \n\
+  uniform vec2 aRecipVirtualSize;                               \n\
+  uniform vec2 aPhysicalSize;                                   \n\
+  uniform vec2 aRecipPhysicalSize;                              \n\
+  uniform float aMin;                                           \n\
+  uniform float aRange;                                         \n\
+  uniform sampler2D b;                                          \n\
+  uniform vec2 bVirtualSize;                                    \n\
+  uniform vec2 bRecipVirtualSize;                               \n\
+  uniform vec2 bPhysicalSize;                                   \n\
+  uniform vec2 bRecipPhysicalSize;                              \n\
+  uniform sampler2D c;                                          \n\
+  uniform vec2 cVirtualSize;                                    \n\
+  uniform vec2 cRecipVirtualSize;                               \n\
+  uniform vec2 cPhysicalSize;                                   \n\
+  uniform vec2 cRecipPhysicalSize;                              \n\
+  uniform float alpha;                                          \n\
+  uniform float beta;                                           \n\
+  uniform int k;                                                \n\
+  float shiftRight(float v, float amt) {                        \n\
+    v = floor(v) + 0.5;                                         \n\
+    return floor(v / exp2(amt));                                \n\
+  }                                                             \n\
+  float shiftLeft(float v, float amt) {                         \n\
+    return floor(v * exp2(amt) + 0.5);                          \n\
+  }                                                             \n\
+  float maskLast(float v, float bits) {                         \n\
+    return mod(v, shiftLeft(1.0, bits));                        \n\
+  }                                                             \n\
+  float extractBits(float num, float from, float to) {          \n\
+    from = floor(from + 0.5);                                   \n\
+    to = floor(to + 0.5);                                       \n\
+    return maskLast(shiftRight(num, from), to - from);          \n\
+  }                                                             \n\
+  vec4 encode32(float val) {                                    \n\
+    if (val == 0.0)                                             \n\
+      return vec4(0, 0, 0, 0);                                  \n\
+    float sign = val > 0.0 ? 0.0 : 1.0;                         \n\
+    val = abs(val);                                             \n\
+    float exponent = floor(log2(val));                          \n\
+    float biased_exponent = exponent + 127.0;                   \n\
+    float fraction = ((val / exp2(exponent)) - 1.0) * 8388608.0; \n\
+    float t = biased_exponent / 2.0;                            \n\
+    float last_bit_of_biased_exponent = fract(t) * 2.0;         \n\
+    float remaining_bits_of_biased_exponent = floor(t);         \n\
+    float byte4 = extractBits(fraction, 0.0, 8.0) / 255.0;      \n\
+    float byte3 = extractBits(fraction, 8.0, 16.0) / 255.0;     \n\
+    float byte2 = (last_bit_of_biased_exponent * 128.0 + extractBits(fraction, 16.0, 23.0)) / 255.0; \n\
+    float byte1 = (sign * 128.0 + remaining_bits_of_biased_exponent) / 255.0; \n\
+    return vec4(byte4, byte3, byte2, byte1);                      \n\
+  }                                                             \n\
+  float decode32(vec4 rgba) {                                   \n\
+    float byte1 = rgba[3] * 255.0;                              \n\
+    float byte2 = rgba[2] * 255.0;                              \n\
+    float byte3 = rgba[1] * 255.0;                              \n\
+    float byte4 = rgba[0] * 255.0;                              \n\
+    float Sign = 1.0 - step(128.0, byte1)*2.0;                 \n\
+    float Exponent = 2.0 * mod(byte1,128.0) + step(128.0, byte2) - 127.0; \n\
+    float Mantissa = mod(byte2, 128.0) * 65536.0 + byte3 * 256.0 + byte4 + float(0x800000); \n\
+    float Result =  Sign * exp2(Exponent) * (Mantissa * exp2(-23.0 )); \n\
+    return Result;                                     \n\
+  }                                                             \n\
+  float decode8(vec4 rgba, int component, float min, float range) { \n\
+    float value = rgba[component];                              \n\
+    float result = ((value * range) + min);                     \n\
+    return result;                                              \n\
+  }                                                             \n\
+  vec2 virtualToPhysicalCoords(vec2 normalizedVirtualCoords, vec2 virtualSize, vec2 physicalSize, vec2 recipPhysicalSize) { \n\
+    vec2 virtualCoords = (normalizedVirtualCoords * virtualSize); \n\
+    float elementOffset = ((floor(virtualCoords.y) * virtualSize.x) + floor(virtualCoords.x));\n\
+    vec2 physicalCoords;                                        \n\
+    physicalCoords.x = (mod(elementOffset, physicalSize.x) + 0.5);      \n\
+    physicalCoords.y = (floor((elementOffset + 0.5) * recipPhysicalSize.x) + 0.5); \n\
+    vec2 normalizedPhysicalCoords = (physicalCoords * recipPhysicalSize); \n\
+    return normalizedPhysicalCoords;                            \n\
+  }                                                             \n\
+  vec2 virtualToPhysicalCoordsFixed(vec2 normalizedVirtualCoords, vec2 virtualSize, vec2 physicalSize, vec2 recipPhysicalSize, float elementsPerPixelScale) { \n\
+    vec2 virtualCoords = (normalizedVirtualCoords * virtualSize); \n\
+    float elementOffset = ((floor(virtualCoords.y) * virtualSize.x * elementsPerPixelScale) + floor(virtualCoords.x * elementsPerPixelScale));\n\
+    vec2 physicalCoords;                                        \n\
+    physicalCoords.x = (mod(elementOffset, physicalSize.x) + 0.5);      \n\
+    physicalCoords.y = (floor((elementOffset + 0.5) * recipPhysicalSize.x) + 0.5); \n\
+    vec2 normalizedPhysicalCoords = (physicalCoords * recipPhysicalSize); \n\
+    return normalizedPhysicalCoords;                            \n\
+  }                                                             \n\
+  vec2 physicalToVirtualCoords(vec2 normalizedPhysicalCoords, vec2 virtualSize, vec2 recipVirtualSize, vec2 physicalSize) { \n\
+    vec2 physicalCoords = (normalizedPhysicalCoords * physicalSize); \n\
+    float elementOffset = ((floor(physicalCoords.y) * physicalSize.x) + floor(physicalCoords.x));\n\
+    vec2 virtualCoords;                                        \n\
+    virtualCoords.x = (mod(elementOffset, virtualSize.x) + 0.5);       \n\
+    virtualCoords.y = (floor((elementOffset + 0.5) * recipVirtualSize.x) + 0.5); \n\
+    vec2 normalizedVirtualCoords = (virtualCoords * recipVirtualSize); \n\
+    return normalizedVirtualCoords;                            \n\
+  }                                                             \n\
+  void main(void) {                                             \n\
+    vec2 cPhysicalCoords = (outTexCoord * cRecipPhysicalSize); \n\
+    vec2 texCoord = physicalToVirtualCoords(cPhysicalCoords, cVirtualSize, cRecipVirtualSize, cPhysicalSize); \n\
+    float i = (texCoord.x * cVirtualSize.x);                    \n\
+    float j = (texCoord.y * cVirtualSize.y);                    \n\
+    float cValue;                                               \n\
+    if (beta != 0.0) {                                          \n\
+      cValue = decode32(texture2D(c, cPhysicalCoords));             \n\
+    } else {                                                    \n\
+      cValue = 0.0;                                             \n\
+    }                                                           \n\
+    float total = 0.0;                                          \n\
+    for (int l = 0; l < k; l += 1) {                            \n\
+      float lCoord = (float(l) + 0.5);                          \n\
+      vec2 aInputCoords = vec2(i, lCoord);                      \n\
+      vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
+      int aComponent = int(mod((floor(aTransformedCoords.x)), 4.0)); \n\
+      vec2 aVirtualCoords = (aTransformedCoords * aRecipVirtualSize); \n\
+      vec2 aPhysicalCoords = virtualToPhysicalCoordsFixed(aVirtualCoords, aVirtualSize, aPhysicalSize, aRecipPhysicalSize, 0.25); \n\
+      float aValue = decode8(texture2D(a, aPhysicalCoords), aComponent, aMin, aRange);    \n\
+      vec2 bVirtualCoords = (vec2(lCoord, j) * bRecipVirtualSize); \n\
+      vec2 bPhysicalCoords = virtualToPhysicalCoords(bVirtualCoords, bVirtualSize, bPhysicalSize, bRecipPhysicalSize); \n\
+      float bValue = decode32(texture2D(b, bPhysicalCoords));   \n\
+      total += (aValue * bValue);                               \n\
+    }                                                           \n\
+    gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
+  }                                                             \n\
+";
+
 static const char* g_gemmFragmentShader4x = "                   \n\
   varying vec2 outTexCoord;                                     \n\
   uniform sampler2D a;                                          \n\
@@ -255,6 +513,60 @@ static const char* g_gemmUniformNames[] = {
 static const int g_gemmUniformCount = (sizeof(g_gemmUniformNames) / sizeof(g_gemmUniformNames[0]));
 static GLint g_gemmUniformIds[g_gemmUniformCount];
 
+static const char* g_gemm16BitUniformNames[] = {
+  "a",
+  "aXTransform",
+  "aYTransform",
+  "aVirtualSize",
+  "aRecipVirtualSize",
+  "aPhysicalSize",
+  "aRecipPhysicalSize",
+  "aMin",
+  "aRange",
+  "b",
+  "bVirtualSize",
+  "bRecipVirtualSize",
+  "bPhysicalSize",
+  "bRecipPhysicalSize",
+  "c",
+  "cVirtualSize",
+  "cRecipVirtualSize",
+  "cPhysicalSize",
+  "cRecipPhysicalSize",
+  "alpha",
+  "beta",
+  "k",
+};
+static const int g_gemm16BitUniformCount = (sizeof(g_gemm16BitUniformNames) / sizeof(g_gemm16BitUniformNames[0]));
+static GLint g_gemm16BitUniformIds[g_gemm16BitUniformCount];
+
+static const char* g_gemm8BitUniformNames[] = {
+  "a",
+  "aXTransform",
+  "aYTransform",
+  "aVirtualSize",
+  "aRecipVirtualSize",
+  "aPhysicalSize",
+  "aRecipPhysicalSize",
+  "aMin",
+  "aRange",
+  "b",
+  "bVirtualSize",
+  "bRecipVirtualSize",
+  "bPhysicalSize",
+  "bRecipPhysicalSize",
+  "c",
+  "cVirtualSize",
+  "cRecipVirtualSize",
+  "cPhysicalSize",
+  "cRecipPhysicalSize",
+  "alpha",
+  "beta",
+  "k",
+};
+static const int g_gemm8BitUniformCount = (sizeof(g_gemm8BitUniformNames) / sizeof(g_gemm8BitUniformNames[0]));
+static GLint g_gemm8BitUniformIds[g_gemm8BitUniformCount];
+
 static const char* g_gemm4xUniformNames[] = {
   "a",
   "aXTransform",
@@ -362,31 +674,24 @@ void gl_gemm(
     Dimensions* aPhysicalDims = physicalFromVirtualSize(aDims, useVirtualSize);
     Dimensions* bPhysicalDims = physicalFromVirtualSize(bDims, useVirtualSize);
 
-    GLBuffer* aBuffer;
-    GLBuffer* bBuffer;
     Buffer* aHostBuffer = NULL;
     Buffer* bHostBuffer = NULL;
-    if (kStepCount == 0) {
-      aBuffer = new GLBuffer(context, *aDims, a);
-      bBuffer = new GLBuffer(context, *bDims, b);
-    } else {
-      if (transposeA == JPCblasTrans) {
-        if (use4x) {
-          aHostBuffer = extract_subregion(aFullBuffer, Offset(0, (originK / 4), 0), *aDims);
-        } else {
-          aHostBuffer = extract_subregion(aFullBuffer, Offset(0, originK, 0), *aDims);
-        }
-      } else {
-        aHostBuffer = extract_subregion(aFullBuffer, Offset(originK, 0, 0), *aDims);
-      }
+    if (transposeA == JPCblasTrans) {
       if (use4x) {
-        bHostBuffer = extract_subregion(bFullBuffer, Offset(0, (originK / 4), 0), *bDims);
+        aHostBuffer = extract_subregion(aFullBuffer, Offset(0, (originK / 4), 0), *aDims);
       } else {
-        bHostBuffer = extract_subregion(bFullBuffer, Offset(0, originK, 0), *bDims);
+        aHostBuffer = extract_subregion(aFullBuffer, Offset(0, originK, 0), *aDims);
       }
-      aBuffer = new GLBuffer(context, *aPhysicalDims, aHostBuffer->_data);
-      bBuffer = new GLBuffer(context, *bPhysicalDims, bHostBuffer->_data);
+    } else {
+      aHostBuffer = extract_subregion(aFullBuffer, Offset(originK, 0, 0), *aDims);
     }
+    if (use4x) {
+      bHostBuffer = extract_subregion(bFullBuffer, Offset(0, (originK / 4), 0), *bDims);
+    } else {
+      bHostBuffer = extract_subregion(bFullBuffer, Offset(0, originK, 0), *bDims);
+    }
+    GLBuffer* aBuffer = new GLBuffer(context, *aPhysicalDims, aHostBuffer->_data);
+    GLBuffer* bBuffer = new GLBuffer(context, *bPhysicalDims, bHostBuffer->_data);
 
     jpfloat_t beta;
     if (kStep == 0) {
@@ -471,16 +776,188 @@ void gl_gemm(
   delete program;
 }
 
-Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize) {
+void gl_gemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int inputK,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int aBitsPerElement,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t inputBeta,
+  jpfloat_t* c,
+  int ldc) {
+
+  assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
+  assert(transposeB == JPCblasNoTrans);
+  assert(order == JPCblasColMajor);
+
+  if (g_glContext == NULL) {
+    g_glContext = new GLContext();
+  }
+  GLContext* context = g_glContext;
+
+  GLBuffer* previousCBuffer = NULL;
+
+  GLProgram* program;
+  if (aBitsPerElement == 16) {
+    program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader16Bit, g_gemm16BitUniformNames, g_gemm16BitUniformIds, g_gemm16BitUniformCount);
+  } else if (aBitsPerElement == 8) {
+    program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader8Bit, g_gemm8BitUniformNames, g_gemm8BitUniformIds, g_gemm8BitUniformCount);
+  } else {
+    assert(false); // Should never get here
+  }
+
+  Dimensions* aFullDims;
+  if (transposeA == JPCblasTrans) {
+    aFullDims = new Dimensions(m, inputK, 1);
+  } else {
+    aFullDims = new Dimensions(inputK, m, 1);
+  }
+  Dimensions* bFullDims = new Dimensions(n, inputK, 1);
+  Dimensions* cDims = new Dimensions(n, m, 1);
+
+  const bool useVirtualSize = true;
+  Dimensions* cPhysicalDims = physicalFromVirtualSize(cDims, useVirtualSize);
+
+  Buffer* aFullBuffer = new Buffer(*aFullDims, a, aMin, aMax, aBitsPerElement);
+  Buffer* bFullBuffer = new Buffer(*bFullDims, b);
+
+  const jpfloat_t aSpread = (aMax - aMin);
+  const jpfloat_t fullBitRange = (1 << aBitsPerElement);
+  const jpfloat_t oneOffBitRange = (fullBitRange - 1);
+
+  const jpfloat_t aRange = ((aSpread * oneOffBitRange) / fullBitRange);
+
+  const int kStepCount = (int)ceilf(inputK / (float)(maxTextureSize));
+  for (int kStep = 0; kStep < kStepCount; kStep += 1) {
+    int currentK = (inputK - (kStep * maxTextureSize));
+    if (currentK > maxTextureSize) {
+      currentK = maxTextureSize;
+    }
+    const int originK = (kStep * maxTextureSize);
+    Dimensions* aDims;
+    if (transposeA == JPCblasTrans) {
+      aDims = new Dimensions(m, currentK, 1);
+    } else {
+      aDims = new Dimensions(currentK, m, 1);
+    }
+    Dimensions* bDims = new Dimensions(n, currentK, 1);
+
+    Dimensions* aPhysicalDims = physicalFromVirtualSize(aDims, useVirtualSize, aBitsPerElement);
+    Dimensions* bPhysicalDims = physicalFromVirtualSize(bDims, useVirtualSize);
+
+    Buffer* aHostBuffer = NULL;
+    if (transposeA == JPCblasTrans) {
+      aHostBuffer = extract_subregion(aFullBuffer, Offset(0, originK, 0), *aDims);
+    } else {
+      aHostBuffer = extract_subregion(aFullBuffer, Offset(originK, 0, 0), *aDims);
+    }
+    Buffer* bHostBuffer = extract_subregion(bFullBuffer, Offset(0, originK, 0), *bDims);
+    GLBuffer* aBuffer = new GLBuffer(context, *aPhysicalDims, aHostBuffer->_quantizedData, aMin, aMax, aBitsPerElement);
+    GLBuffer* bBuffer = new GLBuffer(context, *bPhysicalDims, bHostBuffer->_data);
+
+    jpfloat_t beta;
+    if (kStep == 0) {
+      if (inputBeta > 0.0f) {
+        previousCBuffer = new GLBuffer(context, *cPhysicalDims, c);
+      } else {
+        previousCBuffer = new GLBuffer(context, *cPhysicalDims);
+      }
+      beta = inputBeta;
+    } else {
+      beta = 1.0f;
+    }
+    GLBuffer* outputCBuffer = new GLBuffer(context, *cPhysicalDims);
+
+    if (transposeA == JPCblasTrans) {
+      program->setUniform2f("aXTransform", 0.0f, 1.0f);
+      program->setUniform2f("aYTransform", 1.0f, 0.0f);
+    } else {
+      program->setUniform2f("aXTransform", 1.0f, 0.0f);
+      program->setUniform2f("aYTransform", 0.0f, 1.0f);
+    }
+    program->setUniform2f("aVirtualSize", (*aDims)[1], (*aDims)[0]);
+    program->setUniform2f("aRecipVirtualSize", 1.0f / (*aDims)[1], 1.0f / (*aDims)[0]);
+    program->setUniform2f("aPhysicalSize", (*aPhysicalDims)[1], (*aPhysicalDims)[0]);
+    program->setUniform2f("aRecipPhysicalSize", 1.0f / (*aPhysicalDims)[1], 1.0f / (*aPhysicalDims)[0]);
+    program->setUniform1f("aMin", aMin);
+    program->setUniform1f("aRange", aRange);
+
+    program->setUniform2f("bVirtualSize", (*bDims)[1], (*bDims)[0]);
+    program->setUniform2f("bRecipVirtualSize", 1.0f / (*bDims)[1], 1.0f / (*bDims)[0]);
+    program->setUniform2f("bPhysicalSize", (*bPhysicalDims)[1], (*bPhysicalDims)[0]);
+    program->setUniform2f("bRecipPhysicalSize", 1.0f / (*bPhysicalDims)[1], 1.0f / (*bPhysicalDims)[0]);
+
+    program->setUniform2f("cVirtualSize", (*cDims)[1], (*cDims)[0]);
+    program->setUniform2f("cRecipVirtualSize", 1.0f / (*cDims)[1], 1.0f / (*cDims)[0]);
+    program->setUniform2f("cPhysicalSize", (*cPhysicalDims)[1], (*cPhysicalDims)[0]);
+    program->setUniform2f("cRecipPhysicalSize", 1.0f / (*cPhysicalDims)[1], 1.0f / (*cPhysicalDims)[0]);
+
+    program->setUniform1f("alpha", alpha);
+    program->setUniform1f("beta", beta);
+    program->setUniform1i("k", currentK);
+    program->setInputBuffer("a", aBuffer);
+    program->setInputBuffer("b", bBuffer);
+    program->setInputBuffer("c", previousCBuffer);
+
+    context->setProgram(program);
+    context->setOutputBuffer(outputCBuffer);
+
+    context->runProgram();
+
+    delete previousCBuffer;
+    previousCBuffer = outputCBuffer;
+
+    delete bBuffer;
+    delete aBuffer;
+
+    if (aHostBuffer != NULL) {
+      delete aHostBuffer;
+    }
+    if (bHostBuffer != NULL) {
+      delete bHostBuffer;
+    }
+    delete bPhysicalDims;
+    delete aPhysicalDims;
+    delete bDims;
+    delete aDims;
+  }
+
+  Buffer* output = new Buffer(*cPhysicalDims, c);
+  context->copyOutputToHost(output);
+
+  delete aFullDims;
+  delete bFullDims;
+  delete aFullBuffer;
+  delete bFullBuffer;
+  delete cDims;
+  delete cPhysicalDims;
+  delete output; // Doesn't own 'c' data, so this is ok
+  delete program;
+}
+
+Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int bitsPerElement) {
   assert(virtualSize->_length == 3);
+
+  const int elementsPerPixel = (32 / bitsPerElement);
 
   const int virtualWidth = virtualSize->_dims[1];
   const int virtualHeight = virtualSize->_dims[0];
   const int virtualChannels = virtualSize->_dims[2];
 
-  const int virtualPixelCount = (virtualWidth * virtualHeight);
+  assert((virtualWidth % elementsPerPixel) == 0);
 
-  int physicalWidth = virtualWidth;
+  const int virtualPixelCount = ((virtualWidth / elementsPerPixel) * virtualHeight);
+
+  int physicalWidth = (virtualWidth / elementsPerPixel);
   int physicalHeight = virtualHeight;
 
   float distanceFromSquareness = fabsf(physicalWidth - physicalHeight);
@@ -496,6 +973,10 @@ Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize) {
       candidateWidth = (virtualWidth * factor);
       candidateHeight = (virtualHeight / factor);
     }
+    if ((candidateWidth % elementsPerPixel) != 0) {
+      continue;
+    }
+    candidateWidth = (candidateWidth / elementsPerPixel);
     const int candidatePixelCount = (candidateWidth * candidateHeight);
     const float candidateDistanceFromSquareness = fabsf(candidateWidth - candidateHeight);
     if ((candidatePixelCount == virtualPixelCount) && (candidateDistanceFromSquareness < distanceFromSquareness)) {

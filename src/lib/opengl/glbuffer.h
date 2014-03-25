@@ -21,6 +21,7 @@ class GLBuffer {
 public:
   GLBuffer(GLContext* context, const Dimensions& dims);
   GLBuffer(GLContext* context, const Dimensions& dims, jpfloat_t* data);
+  GLBuffer(GLContext* context, const Dimensions& dims, void* data, jpfloat_t min, jpfloat_t max, int bitsPerElement);
   virtual ~GLBuffer();
 
   void copyHostBufferToGPU();

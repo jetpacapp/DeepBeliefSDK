@@ -38,6 +38,16 @@ GLBuffer::GLBuffer(GLContext* context, const Dimensions& dims, jpfloat_t* data) 
   copyHostBufferToGPU();
 }
 
+GLBuffer::GLBuffer(GLContext* context, const Dimensions& dims, void* data, jpfloat_t min, jpfloat_t max, int bitsPerElement) {
+  // We expect (height, width, channels)
+  assert(dims._length == 3);
+  const int channels = dims[2];
+  assert((channels == 1) || (channels == 3) || (channels == 4));
+  _context = context;
+  _hostBuffer = new Buffer(dims, data, min, max, bitsPerElement);
+  copyHostBufferToGPU();
+}
+
 GLBuffer::~GLBuffer() {
   delete _hostBuffer;
   glDeleteTextures(1, &_textureId);
@@ -52,8 +62,19 @@ void GLBuffer::copyHostBufferToGPU() {
   const int width = bufferDims[1];
   const int height = bufferDims[0];
   const int channels = bufferDims[2];
+  const int bitsPerElement = hostBuffer->_bitsPerElement;
+  assert((bitsPerElement == 32) || (bitsPerElement == 16) || (bitsPerElement == 8));
 
   if (channels == 1) {
+    void* dataSource;
+    if (bitsPerElement == 32) {
+      dataSource = hostBuffer->_data;
+    } else if ((bitsPerElement == 16) || (bitsPerElement == 8)) {
+      dataSource = hostBuffer->_quantizedData;
+    } else {
+      assert(false); // Should never get here
+      dataSource = NULL;
+    }
     glTexImage2D(
       GL_TEXTURE_2D,
       0,
@@ -63,8 +84,9 @@ void GLBuffer::copyHostBufferToGPU() {
       0,
       GL_RGBA,
       GL_UNSIGNED_BYTE,
-      hostBuffer->_data);
+      dataSource);
   } else if (channels == 3) {
+    assert(bitsPerElement == 32);
     glTexImage2D(
       GL_TEXTURE_2D,
       0,
@@ -76,6 +98,7 @@ void GLBuffer::copyHostBufferToGPU() {
       GL_FLOAT,
       hostBuffer->_data);
   } else if (channels == 4) {
+    assert(bitsPerElement == 32);
     glTexImage2D(
       GL_TEXTURE_2D,
       0,

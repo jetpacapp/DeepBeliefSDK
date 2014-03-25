@@ -362,14 +362,43 @@ void Buffer::convertFromChannelMajor(const Dimensions& expectedDims) {
 
 void Buffer::populateWithRandomValues(jpfloat_t min, jpfloat_t max) {
   const int elementCount = _dims.elementCount();
-  jpfloat_t* dataStart = _data;
-  jpfloat_t* dataEnd = (_data + elementCount);
-  jpfloat_t* data = dataStart;
-  while (data < dataEnd) {
-    // rand() is awful, but as long as we're using this for debugging
-    // it should be good enough, and avoids dependencies.
-    *data = (((max - min) * ((float)rand() / RAND_MAX)) + min);
-    data += 1;
+  const int bitsPerElement = _bitsPerElement;
+  if (bitsPerElement == 32) {
+    jpfloat_t* dataStart = _data;
+    jpfloat_t* dataEnd = (_data + elementCount);
+    jpfloat_t* data = dataStart;
+    while (data < dataEnd) {
+      // rand() is awful, but as long as we're using this for debugging
+      // it should be good enough, and avoids dependencies.
+      *data = (((max - min) * ((float)rand() / RAND_MAX)) + min);
+      data += 1;
+    }
+  } else if (bitsPerElement == 16) {
+    uint16_t* dataStart = (uint16_t*)(_quantizedData);
+    uint16_t* dataEnd = (dataStart + elementCount);
+    uint16_t* data = dataStart;
+    const int integerMin = (((min - _min) * (1 << bitsPerElement)) / (_max - _min));
+    const int integerMax = (((max - _min) * (1 << bitsPerElement)) / (_max - _min));
+    while (data < dataEnd) {
+      // rand() is awful, but as long as we're using this for debugging
+      // it should be good enough, and avoids dependencies.
+      *data = (((integerMax - integerMin) * ((float)rand() / RAND_MAX)) + integerMin);
+      data += 1;
+    }
+  } else if (bitsPerElement == 8) {
+    uint8_t* dataStart = (uint8_t*)(_quantizedData);
+    uint8_t* dataEnd = (dataStart + elementCount);
+    uint8_t* data = dataStart;
+    const int integerMin = (((min - _min) * (1 << bitsPerElement)) / (_max - _min));
+    const int integerMax = (((max - _min) * (1 << bitsPerElement)) / (_max - _min));
+    while (data < dataEnd) {
+      // rand() is awful, but as long as we're using this for debugging
+      // it should be good enough, and avoids dependencies.
+      *data = (((integerMax - integerMin) * ((float)rand() / RAND_MAX)) + integerMin);
+      data += 1;
+    }
+  } else {
+    assert(false); // Should never get here
   }
 }
 
@@ -411,6 +440,8 @@ void Buffer::transpose() {
   assert(originalDims._length == 2); // expecting width x height
   const int originalHeight = originalDims[0];
   const int originalWidth = originalDims[1];
+  const int bitsPerElement = _bitsPerElement;
+  const int bytesPerElement = (bitsPerElement / 8);
 
   const int newHeight = originalWidth;
   const int newWidth = originalHeight;
@@ -418,23 +449,50 @@ void Buffer::transpose() {
   Dimensions newDims(newHeight, newWidth);
 
   const int elementCount = originalDims.elementCount();
-  const size_t byteCount = (elementCount * sizeof(jpfloat_t));
-  jpfloat_t* newData = (jpfloat_t*)(malloc(byteCount));
-  jpfloat_t* originalData = _data;
+  const size_t byteCount = (elementCount * bytesPerElement);
+  void* newDataBytes = malloc(byteCount);
 
-  for (int originalY = 0; originalY < originalHeight; originalY += 1) {
-    for (int originalX = 0; originalX < originalWidth; originalX += 1) {
-      jpfloat_t* source = (originalData + originalDims.offset(originalY, originalX));
-      jpfloat_t* dest = (newData + newDims.offset(originalX, originalY));
-      *dest = *source;
+  if (bitsPerElement == 32) {
+    jpfloat_t* originalData = _data;
+    jpfloat_t* newData = (jpfloat_t*)(newDataBytes);
+    for (int originalY = 0; originalY < originalHeight; originalY += 1) {
+      for (int originalX = 0; originalX < originalWidth; originalX += 1) {
+        jpfloat_t* source = (originalData + originalDims.offset(originalY, originalX));
+        jpfloat_t* dest = (newData + newDims.offset(originalX, originalY));
+        *dest = *source;
+      }
     }
+    _data = newData;
+  } else if (bitsPerElement == 16) {
+    uint16_t* originalData = (uint16_t*)(_quantizedData);
+    uint16_t* newData = (uint16_t*)(newDataBytes);
+    for (int originalY = 0; originalY < originalHeight; originalY += 1) {
+      for (int originalX = 0; originalX < originalWidth; originalX += 1) {
+        uint16_t* source = (originalData + originalDims.offset(originalY, originalX));
+        uint16_t* dest = (newData + newDims.offset(originalX, originalY));
+        *dest = *source;
+      }
+    }
+    _quantizedData = newData;
+  } else if (bitsPerElement == 8) {
+    uint8_t* originalData = (uint8_t*)(_quantizedData);
+    uint8_t* newData = (uint8_t*)(newDataBytes);
+    for (int originalY = 0; originalY < originalHeight; originalY += 1) {
+      for (int originalX = 0; originalX < originalWidth; originalX += 1) {
+        uint8_t* source = (originalData + originalDims.offset(originalY, originalX));
+        uint8_t* dest = (newData + newDims.offset(originalX, originalY));
+        *dest = *source;
+      }
+    }
+    _quantizedData = newData;
+  } else {
+    assert(false); // should never get here
   }
 
   if (_doesOwnData) {
     free(_data);
   }
 
-  _data = newData;
   _dims = newDims;
   _doesOwnData = true;
 }
@@ -637,13 +695,25 @@ SBinaryTag* buffer_to_tag_dict(Buffer* buffer, int floatBits) {
     jpfloat_t max;
     void* quantizedData;
     size_t sizeofQuantizedData;
-    quantize_buffer(buffer, floatBits, &min, &max, &quantizedData, &sizeofQuantizedData);
+    if (buffer->_bitsPerElement == 32) {
+      quantize_buffer(buffer, floatBits, &min, &max, &quantizedData, &sizeofQuantizedData);
+    } else {
+      assert(floatBits == buffer->_bitsPerElement);
+      quantizedData = buffer->_quantizedData;
+      min = buffer->_min;
+      max = buffer->_max;
+      const int bytesPerElement = (buffer->_bitsPerElement / 8);
+      const int elementCount = buffer->_dims.elementCount();
+      sizeofQuantizedData = (bytesPerElement * elementCount);
+    }
 
     mainDict = add_float_to_dict(mainDict, "min", min);
     mainDict = add_float_to_dict(mainDict, "max", max);
     mainDict = add_blob_to_dict(mainDict, "quantized_data", quantizedData, (int)sizeofQuantizedData);
 
-    free(quantizedData);
+    if (buffer->_bitsPerElement == 32) {
+      free(quantizedData);
+    }
   } else if (floatBits == 32) {
     mainDict = add_float_array_to_dict(mainDict, "data", buffer->_data, buffer->_dims.elementCount());
   }
@@ -904,20 +974,40 @@ Buffer* extract_subregion(Buffer* input, const Offset& origin, const Dimensions&
   const int regionWidth = size[1];
   const int regionChannels = size[2];
 
-  Buffer* output = new Buffer(size);
+  const int bitsPerElement = (input->_bitsPerElement);
+  const int bytesPerElement = (bitsPerElement / 8);
+
+  Buffer* output;
+  if (bitsPerElement == 32) {
+    output = new Buffer(size);
+  } else {
+    output = new Buffer(size, input->_min, input->_max, bitsPerElement);
+  }
 
   const size_t elementsPerInputRow = (inputWidth * inputChannels);
+  const size_t bytesPerInputRow = (elementsPerInputRow * bytesPerElement);
   const size_t elementsPerRegionRow = (regionWidth * regionChannels);
-  const size_t bytesPerRegionRow = (elementsPerRegionRow * sizeof(jpfloat_t));
+  const size_t bytesPerRegionRow = (elementsPerRegionRow * bytesPerElement);
 
   const size_t inputOffset = inputDims.offset(origin[0], origin[1], origin[2]);
-  const jpfloat_t* inputData = (input->_data + inputOffset);
-  jpfloat_t* regionData = output->_data;
-  jpfloat_t* const regionEnd = (output->_data + size.elementCount());
-  while (regionData < regionEnd) {
-    memcpy(regionData, inputData, bytesPerRegionRow);
-    inputData += elementsPerInputRow;
-    regionData += elementsPerRegionRow;
+  const uint8_t* inputByteDataStart;
+  if (bitsPerElement == 32) {
+    inputByteDataStart = (uint8_t*)(input->_data);
+  } else {
+    inputByteDataStart = (uint8_t*)(input->_quantizedData);
+  }
+  const uint8_t* inputByteData = (inputByteDataStart + (inputOffset * bytesPerElement));
+  uint8_t* regionByteData;
+  if (bitsPerElement == 32) {
+    regionByteData = (uint8_t*)(output->_data);
+  } else {
+    regionByteData = (uint8_t*)(output->_quantizedData);
+  }
+  uint8_t* const regionByteEnd = (regionByteData + (size.elementCount() * bytesPerElement));
+  while (regionByteData < regionByteEnd) {
+    memcpy(regionByteData, inputByteData, bytesPerRegionRow);
+    inputByteData += bytesPerInputRow;
+    regionByteData += bytesPerRegionRow;
   }
 
   return output;

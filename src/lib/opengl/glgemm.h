@@ -27,4 +27,23 @@ void gl_gemm(
   jpfloat_t* c,
   int ldc);
 
+void gl_gemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int inputK,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int bitsPerElement,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t inputBeta,
+  jpfloat_t* c,
+  int ldc);
+
 #endif // INCLUDE_GLGEMM_H

@@ -91,7 +91,60 @@ int main(int argc, char** argv) {
   outputCPU->printContents();
   outputGPU->printContents();
 
-//  assert(buffer_are_all_close(outputCPU, outputGPU));
+  const float weightsMin = 0.0f;
+  const float weightsMax = 1.0f;
+  const int weightsBitsPerElement = 16;
+
+  Buffer* weightsFixed = new Buffer(Dimensions(100, 20), weightsMin, weightsMax, weightsBitsPerElement);
+  Buffer* outputFixedCPU = new Buffer(outputDims);
+  outputFixedCPU->setName("outputFixedCPU");
+  Buffer* outputFixedGPU = new Buffer(outputDims);
+  outputFixedGPU->setName("outputFixedGPU");
+
+  weightsFixed->populateWithRandomValues(0, 1);
+
+  naive_cblas_sgemm_fixed(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    weightsFixed->_quantizedData,
+    weightsMin,
+    weightsMax,
+    weightsBitsPerElement,
+    lda,
+    input->_data,
+    ldb,
+    beta,
+    outputFixedCPU->_data,
+    ldc
+  );
+
+  gl_gemm_fixed(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    weightsFixed->_quantizedData,
+    weightsMin,
+    weightsMax,
+    weightsBitsPerElement,
+    lda,
+    input->_data,
+    ldb,
+    beta,
+    outputFixedGPU->_data,
+    ldc
+  );
+
+  outputFixedCPU->printContents();
+  outputFixedGPU->printContents();
 
   return 0;
 }

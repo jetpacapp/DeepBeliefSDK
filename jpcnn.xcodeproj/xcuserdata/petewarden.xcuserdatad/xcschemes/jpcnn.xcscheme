@@ -64,8 +64,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--network data/example_networks/homebrewed_compressed.ntwk"
+            argument = "--network data/example_networks/homebrewed_transpressed.ntwk"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--network data/example_networks/homebrewed_transposed.ntwk"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--model /Users/petewarden/dogs_homebrew.model"

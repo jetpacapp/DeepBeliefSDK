@@ -113,6 +113,8 @@ void matrix_gemm(
     c,
     ldc
   );
+#else
+#error "No GEMM implementation defined"
 #endif
 
 }
@@ -136,6 +138,7 @@ void matrix_gemm_fixed(
   jpfloat_t* c,
   int ldc) {
 
+#if defined(USE_NAIVE_GEMM)
   naive_cblas_sgemm_fixed(
     order,
     transposeA,
@@ -155,6 +158,29 @@ void matrix_gemm_fixed(
     c,
     ldc
   );
+#elif defined(USE_OPENGL)
+  gl_gemm_fixed(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    aMin,
+    aMax,
+    aBitsPerElement,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc
+  );
+#else
+#error "No GEMM implementation defined"
+#endif
 
 }
 

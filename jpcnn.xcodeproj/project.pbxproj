@@ -961,7 +961,6 @@
 					"$(inherited)",
 					USE_OS_IMAGE,
 					USE_OPENGL,
-					USE_NAIVE_GEMM,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

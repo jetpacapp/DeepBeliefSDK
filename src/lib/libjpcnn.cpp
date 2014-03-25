@@ -27,6 +27,7 @@ extern "C" {
 
 void* jpcnn_create_network(const char* filename) {
   Graph* graph = new_graph_from_file(filename, false, true);
+//save_graph_to_file(graph, "homebrewed_transpressed.ntwk");
   return (void*)(graph);
 }
 
