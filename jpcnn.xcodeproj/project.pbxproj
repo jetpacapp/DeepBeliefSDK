@@ -11,7 +11,6 @@
 		594BBA851886FE8A007F9A2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA841886FE8A007F9A2A /* Foundation.framework */; };
 		594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA861886FE8A007F9A2A /* CoreGraphics.framework */; };
 		594BBA891886FE8A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA881886FE8A007F9A2A /* UIKit.framework */; };
-		594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE81887024B007F9A2A /* imagenet.ntwk */; };
 		594BBAEB1887024B007F9A2A /* lena.png in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAE91887024B007F9A2A /* lena.png */; };
 		594BBAFD18871401007F9A2A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAF118871401007F9A2A /* MainStoryboard_iPad.storyboard */; };
 		594BBAFE18871401007F9A2A /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 594BBAF318871401007F9A2A /* MainStoryboard_iPhone.storyboard */; };
@@ -27,6 +26,18 @@
 		594BBB0F18871539007F9A2A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB0E18871539007F9A2A /* AVFoundation.framework */; };
 		594BBB1118871541007F9A2A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB1018871541007F9A2A /* CoreVideo.framework */; };
 		594BBB131887154A007F9A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBB121887154A007F9A2A /* UIKit.framework */; };
+		59574E6418E23736008247E4 /* matrix_gemm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9018C00C8300D6EEE2 /* matrix_gemm.cpp */; };
+		59574E6518E23736008247E4 /* matrix_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 591A037618B4559A0014C655 /* matrix_scale.cpp */; };
+		59574E6618E23736008247E4 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
+		59574E6718E23736008247E4 /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
+		59574E6818E23736008247E4 /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
+		59574E6B18E23F10008247E4 /* homebrewed_transpressed.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 59574E6918E23EB3008247E4 /* homebrewed_transpressed.ntwk */; };
+		59574E6E18E240C2008247E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59574E6D18E240C2008247E4 /* OpenGLES.framework */; };
+		59574E7018E24125008247E4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59574E6F18E24125008247E4 /* GLKit.framework */; };
+		59574E7218E242DF008247E4 /* glheaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 59574E7118E242DF008247E4 /* glheaders.h */; };
+		59574E7418E24BA4008247E4 /* glcontext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59574E7318E24BA4008247E4 /* glcontext.mm */; };
+		59574E7518E24DA6008247E4 /* glcontext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59574E7318E24BA4008247E4 /* glcontext.mm */; };
+		59574E7718E61CCC008247E4 /* dog.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59574E7618E61CCC008247E4 /* dog.jpg */; };
 		59602F7F18B6DDF300D6EEE2 /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7B18B6DDF300D6EEE2 /* svm.cpp */; };
 		59602F8018B6DDF300D6EEE2 /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7D18B6DDF300D6EEE2 /* svmutils.cpp */; };
 		59602F8118B6E78200D6EEE2 /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7B18B6DDF300D6EEE2 /* svm.cpp */; };
@@ -84,8 +95,6 @@
 		59602FDE18C3C91C00D6EEE2 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
 		59602FE018C51B9E00D6EEE2 /* offset.h in Headers */ = {isa = PBXBuildFile; fileRef = 59602FDF18C51B9E00D6EEE2 /* offset.h */; };
 		59602FE218C51BA700D6EEE2 /* dimensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 59602FE118C51BA700D6EEE2 /* dimensions.h */; };
-		59602FE618C52ECA00D6EEE2 /* jpcnn.js in Sources */ = {isa = PBXBuildFile; fileRef = 59602FE418C52ECA00D6EEE2 /* jpcnn.js */; };
-		59602FE718C52ECA00D6EEE2 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 59602FE518C52ECA00D6EEE2 /* test.html */; };
 		5962AD9D188A09F2009E64DD /* liblibjpcnn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */; };
 		5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
 		598241B8188DE166003F2C0A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241B6188DE0FB003F2C0A /* main.cpp */; };
@@ -197,6 +206,13 @@
 		594BBB0E18871539007F9A2A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		594BBB1018871541007F9A2A /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
 		594BBB121887154A007F9A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		59574E6918E23EB3008247E4 /* homebrewed_transpressed.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = homebrewed_transpressed.ntwk; sourceTree = "<group>"; };
+		59574E6A18E23EB3008247E4 /* homebrewed.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = homebrewed.ntwk; sourceTree = "<group>"; };
+		59574E6D18E240C2008247E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		59574E6F18E24125008247E4 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		59574E7118E242DF008247E4 /* glheaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glheaders.h; sourceTree = "<group>"; };
+		59574E7318E24BA4008247E4 /* glcontext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = glcontext.mm; sourceTree = "<group>"; };
+		59574E7618E61CCC008247E4 /* dog.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dog.jpg; sourceTree = "<group>"; };
 		59602F7B18B6DDF300D6EEE2 /* svm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = svm.cpp; sourceTree = "<group>"; };
 		59602F7C18B6DDF300D6EEE2 /* svm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svm.h; sourceTree = "<group>"; };
 		59602F7D18B6DDF300D6EEE2 /* svmutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = svmutils.cpp; sourceTree = "<group>"; };
@@ -281,6 +297,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59574E7018E24125008247E4 /* GLKit.framework in Frameworks */,
+				59574E6E18E240C2008247E4 /* OpenGLES.framework in Frameworks */,
 				5930AA8D188A23DA00997469 /* Accelerate.framework in Frameworks */,
 				594BBB131887154A007F9A2A /* UIKit.framework in Frameworks */,
 				594BBB1118871541007F9A2A /* CoreVideo.framework in Frameworks */,
@@ -338,6 +356,8 @@
 		594BBA831886FE8A007F9A2A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59574E6F18E24125008247E4 /* GLKit.framework */,
+				59574E6D18E240C2008247E4 /* OpenGLES.framework */,
 				59602F8E18BFE4E500D6EEE2 /* OpenGL.framework */,
 				59602F8C18BFE4DA00D6EEE2 /* GLUT.framework */,
 				5982425C188F2631003F2C0A /* ApplicationServices.framework */,
@@ -377,6 +397,7 @@
 		594BBAE61887024B007F9A2A /* data */ = {
 			isa = PBXGroup;
 			children = (
+				59574E7618E61CCC008247E4 /* dog.jpg */,
 				594BBAE71887024B007F9A2A /* example_networks */,
 				594BBAE91887024B007F9A2A /* lena.png */,
 			);
@@ -386,6 +407,8 @@
 		594BBAE71887024B007F9A2A /* example_networks */ = {
 			isa = PBXGroup;
 			children = (
+				59574E6918E23EB3008247E4 /* homebrewed_transpressed.ntwk */,
+				59574E6A18E23EB3008247E4 /* homebrewed.ntwk */,
 				594BBAE81887024B007F9A2A /* imagenet.ntwk */,
 			);
 			path = example_networks;
@@ -418,9 +441,11 @@
 				59602F9418C0313400D6EEE2 /* glbuffer.h */,
 				59602F9518C0313400D6EEE2 /* glcontext.cpp */,
 				59602F9618C0313400D6EEE2 /* glcontext.h */,
+				59574E7318E24BA4008247E4 /* glcontext.mm */,
 				59602FA718C154D300D6EEE2 /* glgemm_test.cpp */,
 				59602F9F18C10BB800D6EEE2 /* glgemm.cpp */,
 				59602FA018C10BB800D6EEE2 /* glgemm.h */,
+				59574E7118E242DF008247E4 /* glheaders.h */,
 				59602FA218C114C200D6EEE2 /* glprogram.cpp */,
 				59602FA318C114C200D6EEE2 /* glprogram.h */,
 			);
@@ -590,6 +615,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59602FE018C51B9E00D6EEE2 /* offset.h in Headers */,
+				59574E7218E242DF008247E4 /* glheaders.h in Headers */,
 				59602FE218C51BA700D6EEE2 /* dimensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -700,9 +726,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59574E7718E61CCC008247E4 /* dog.jpg in Resources */,
+				59574E6B18E23F10008247E4 /* homebrewed_transpressed.ntwk in Resources */,
 				594BBAFD18871401007F9A2A /* MainStoryboard_iPad.storyboard in Resources */,
-				594BBAEA1887024B007F9A2A /* imagenet.ntwk in Resources */,
-				59602FE718C52ECA00D6EEE2 /* test.html in Resources */,
 				594BBAFE18871401007F9A2A /* MainStoryboard_iPhone.storyboard in Resources */,
 				594BBB0318871401007F9A2A /* squarePNG.png in Resources */,
 				594BBAEB1887024B007F9A2A /* lena.png in Resources */,
@@ -716,7 +742,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59602FE618C52ECA00D6EEE2 /* jpcnn.js in Sources */,
+				59574E7518E24DA6008247E4 /* glcontext.mm in Sources */,
+				59574E6418E23736008247E4 /* matrix_gemm.cpp in Sources */,
+				59574E6518E23736008247E4 /* matrix_scale.cpp in Sources */,
+				59574E6618E23736008247E4 /* cstring_helpers.cpp in Sources */,
+				59574E6718E23736008247E4 /* os_image_load.cpp in Sources */,
+				59574E6818E23736008247E4 /* os_image_save.cpp in Sources */,
 				59824204188DE27D003F2C0A /* basenode.cpp in Sources */,
 				5982422F188DE27D003F2C0A /* matrix_softmax.cpp in Sources */,
 				59824220188DE27D003F2C0A /* libjpcnn.cpp in Sources */,
@@ -817,6 +848,7 @@
 				5982423B188DE2F0003F2C0A /* dropoutnode.cpp in Sources */,
 				5982423C188DE2F0003F2C0A /* flatnode.cpp in Sources */,
 				5982423D188DE2F0003F2C0A /* gconvnode.cpp in Sources */,
+				59574E7418E24BA4008247E4 /* glcontext.mm in Sources */,
 				5982423E188DE2F0003F2C0A /* graph.cpp in Sources */,
 				5982423F188DE2F0003F2C0A /* maxnode.cpp in Sources */,
 				59824240188DE2F0003F2C0A /* neuronnode.cpp in Sources */,
@@ -888,9 +920,9 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
 					"USE_ACCELERATE_GEMM=1",
+					USE_OPENGL,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
@@ -917,7 +949,10 @@
 				);
 				GCC_FAST_MATH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_ACCELERATE_GEMM=1",
+					USE_OPENGL,
+				);
 				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;

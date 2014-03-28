@@ -11,8 +11,8 @@
 #include "glbuffer.h"
 
 #include <assert.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
+
+#include "glheaders.h"
 
 #include "buffer.h"
 #include "dimensions.h"
@@ -87,6 +87,7 @@ void GLBuffer::copyHostBufferToGPU() {
       dataSource);
   } else if (channels == 3) {
     assert(bitsPerElement == 32);
+#ifdef GL_RGB32F_ARB
     glTexImage2D(
       GL_TEXTURE_2D,
       0,
@@ -97,8 +98,12 @@ void GLBuffer::copyHostBufferToGPU() {
       GL_RGB,
       GL_FLOAT,
       hostBuffer->_data);
+#else
+    assert(false); // Float not supported
+#endif
   } else if (channels == 4) {
     assert(bitsPerElement == 32);
+#ifdef GL_RGBA32F_ARB
     glTexImage2D(
       GL_TEXTURE_2D,
       0,
@@ -109,6 +114,9 @@ void GLBuffer::copyHostBufferToGPU() {
       GL_RGBA,
       GL_FLOAT,
       hostBuffer->_data);
+#else
+    assert(false); // Float not supported
+#endif
   } else {
     assert(false); // Bad number of channels
   }

@@ -46,4 +46,6 @@ void gl_gemm_fixed(
   jpfloat_t* c,
   int ldc);
 
+void test_gl_gemm();
+
 #endif // INCLUDE_GLGEMM_H

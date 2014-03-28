@@ -11,7 +11,7 @@
 
 #include "jpcnn.h"
 
-#include <OpenGL/gl.h>
+#include "glheaders.h"
 
 class GLContext;
 class Dimensions;

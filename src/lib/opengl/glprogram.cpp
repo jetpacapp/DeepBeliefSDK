@@ -14,9 +14,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
 
+#include "glheaders.h"
 #include "cstring_helpers.h"
 #include "glcontext.h"
 #include "glbuffer.h"
@@ -24,9 +23,8 @@
 static GLint load_glsl_program(const char* vertexShaderText, const char* fragmentShaderText, char** uniformNames, GLint* uniformIds, int howManyUniforms);
 static int compile_shader(const char* shaderText, GLenum type, GLint* outShaderId);
 static int link_program(GLint programId);
-static int validate_program(GLint programId);
 
-const int maxInputBuffers = 16;
+const int maxInputBuffers = 8;
 
 GLProgram::GLProgram(GLContext* context, const char* vertexShaderText, const char* fragmentShaderText, const char** uniformNames, GLint* uniformIds, int howManyUniforms) {
   _context = context;
@@ -46,12 +44,26 @@ GLProgram::GLProgram(GLContext* context, const char* vertexShaderText, const cha
   }
   _howManyInputBuffers = 0;
 
+#ifdef OPENGL_IPHONE
+  const char* prefixLine = "precision highp float;\n";
+  const size_t prefixedLength = (strlen(prefixLine) + strlen(fragmentShaderText) + 1);
+  char* prefixedFragmentShaderText = (char*)(malloc(prefixedLength));
+  snprintf(prefixedFragmentShaderText, prefixedLength, "%s%s", prefixLine, fragmentShaderText);
+  _programId = load_glsl_program(
+    vertexShaderText,
+    prefixedFragmentShaderText,
+    _uniformNames,
+    _uniformIds,
+    _howManyUniforms);
+  free(prefixedFragmentShaderText);
+#else // OPENGL_IPHONE
   _programId = load_glsl_program(
     vertexShaderText,
     fragmentShaderText,
     _uniformNames,
     _uniformIds,
     _howManyUniforms);
+#endif // OPENGL_IPHONE
 }
 
 GLProgram::~GLProgram() {
@@ -122,6 +134,17 @@ void GLProgram::setUniform4f(const char* name, float x, float y, float z, float 
   CHECK_GL_ERROR();
 }
 
+void GLProgram::setUniformMatrix4fv(const char* name, float* values) {
+  glUseProgram(_programId);
+  GLint id = getUniformIdFromName(name);
+  assert(id != -1);
+  glUniformMatrix4fv(id, 1, GL_FALSE, values);
+}
+
+void GLProgram::clearInputBuffers() {
+  _howManyInputBuffers = 0;
+}
+
 void GLProgram::setInputBuffer(const char* name, GLBuffer* buffer) {
   assert(_howManyInputBuffers < maxInputBuffers);
   _inputBuffers[_howManyInputBuffers] = buffer;
@@ -136,11 +159,13 @@ void GLProgram::bindInputBuffers() {
     glBindTexture(GL_TEXTURE_2D, buffer->_textureId);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    CHECK_GL_ERROR();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     char* name = _inputBufferNames[index];
     GLint uniformId = getUniformIdFromName(name);
     assert(uniformId != -1);
     glUniform1i(uniformId, index);
+    CHECK_GL_ERROR();
   }
 }
 
@@ -161,11 +186,6 @@ GLint load_glsl_program(const char* vertexShaderText, const char* fragmentShader
   GLint programId = glCreateProgram();
   glAttachShader(programId, vertexShaderId);
   glAttachShader(programId, fragmentShaderId);
-
-  // Bind attribute locations.
-  // This needs to be done prior to linking.
-//  glBindAttribLocation(programId, GL_ATTRIB_VERTEX, "position");
-//  glBindAttribLocation(programId, GLKVertexAttribTexCoord0, "vertexTexCoord0");
 
   // Link program.
   if (!link_program(programId)) {
@@ -234,26 +254,6 @@ int link_program(GLint programId) {
 
   GLint status;
   glGetProgramiv(programId, GL_LINK_STATUS, &status);
-  if (status == 0) {
-    return 0;
-  }
-
-  return 1;
-}
-
-int validate_program(GLint programId) {
-  glValidateProgram(programId);
-  GLint logLength;
-  glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &logLength);
-  if (logLength > 0) {
-    GLchar *log = (GLchar *)malloc(logLength);
-    glGetProgramInfoLog(programId, logLength, &logLength, log);
-    fprintf(stderr, "Program validate log:\n%s", log);
-    free(log);
-  }
-
-  GLint status;
-  glGetProgramiv(programId, GL_VALIDATE_STATUS, &status);
   if (status == 0) {
     return 0;
   }

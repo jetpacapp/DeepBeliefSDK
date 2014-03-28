@@ -24,12 +24,13 @@
 static Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int bitsPerElement = 32);
 
 static const char* g_gemmVertexShader = "                       \n\
+  uniform mat4 modelViewProjectionMatrix;                       \n\
   attribute vec2 aVertexPosition;                               \n\
   attribute vec2 aTexCoord;                                     \n\
   varying vec2 outTexCoord;                                     \n\
                                                                 \n\
   void main(void) {                                             \n\
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0); \n\
+    gl_Position = modelViewProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0); \n\
     outTexCoord = aTexCoord;                                    \n\
   }                                                             \n\
 ";
@@ -489,6 +490,7 @@ static const char* g_gemmFragmentShader4x = "                   \n\
 ";
 
 static const char* g_gemmUniformNames[] = {
+  "modelViewProjectionMatrix",
   "a",
   "aXTransform",
   "aYTransform",
@@ -514,6 +516,7 @@ static const int g_gemmUniformCount = (sizeof(g_gemmUniformNames) / sizeof(g_gem
 static GLint g_gemmUniformIds[g_gemmUniformCount];
 
 static const char* g_gemm16BitUniformNames[] = {
+  "modelViewProjectionMatrix",
   "a",
   "aXTransform",
   "aYTransform",
@@ -541,6 +544,7 @@ static const int g_gemm16BitUniformCount = (sizeof(g_gemm16BitUniformNames) / si
 static GLint g_gemm16BitUniformIds[g_gemm16BitUniformCount];
 
 static const char* g_gemm8BitUniformNames[] = {
+  "modelViewProjectionMatrix",
   "a",
   "aXTransform",
   "aYTransform",
@@ -568,6 +572,7 @@ static const int g_gemm8BitUniformCount = (sizeof(g_gemm8BitUniformNames) / size
 static GLint g_gemm8BitUniformIds[g_gemm8BitUniformCount];
 
 static const char* g_gemm4xUniformNames[] = {
+  "modelViewProjectionMatrix",
   "a",
   "aXTransform",
   "aYTransform",
@@ -583,9 +588,8 @@ static const char* g_gemm4xUniformNames[] = {
 static const int g_gemm4xUniformCount = (sizeof(g_gemm4xUniformNames) / sizeof(g_gemm4xUniformNames[0]));
 static GLint g_gemm4xUniformIds[g_gemm4xUniformCount];
 
-// Somewhat arbitrary, but covers 85% of cards according to
-// http://feedback.wildfiregames.com/report/opengl/feature/GL_MAX_TEXTURE_SIZE
-const int maxTextureSize = 2048;
+// The largest loop to allow in GLSL programs
+const int maxLoopSize = 512;
 
 static GLContext* g_glContext = NULL;
 
@@ -646,13 +650,13 @@ void gl_gemm(
   Buffer* aFullBuffer = new Buffer(*aFullDims, a);
   Buffer* bFullBuffer = new Buffer(*bFullDims, b);
 
-  const int kStepCount = (int)ceilf(inputK / (float)(maxTextureSize));
+  const int kStepCount = (int)ceilf(inputK / (float)(maxLoopSize));
   for (int kStep = 0; kStep < kStepCount; kStep += 1) {
-    int currentK = (inputK - (kStep * maxTextureSize));
-    if (currentK > maxTextureSize) {
-      currentK = maxTextureSize;
+    int currentK = (inputK - (kStep * maxLoopSize));
+    if (currentK > maxLoopSize) {
+      currentK = maxLoopSize;
     }
-    const int originK = (kStep * maxTextureSize);
+    const int originK = (kStep * maxLoopSize);
     Dimensions* aDims;
     Dimensions* bDims;
     if (use4x) {
@@ -836,13 +840,13 @@ void gl_gemm_fixed(
 
   const jpfloat_t aRange = ((aSpread * oneOffBitRange) / fullBitRange);
 
-  const int kStepCount = (int)ceilf(inputK / (float)(maxTextureSize));
+  const int kStepCount = (int)ceilf(inputK / (float)(maxLoopSize));
   for (int kStep = 0; kStep < kStepCount; kStep += 1) {
-    int currentK = (inputK - (kStep * maxTextureSize));
-    if (currentK > maxTextureSize) {
-      currentK = maxTextureSize;
+    int currentK = (inputK - (kStep * maxLoopSize));
+    if (currentK > maxLoopSize) {
+      currentK = maxLoopSize;
     }
-    const int originK = (kStep * maxTextureSize);
+    const int originK = (kStep * maxLoopSize);
     Dimensions* aDims;
     if (transposeA == JPCblasTrans) {
       aDims = new Dimensions(m, currentK, 1);
@@ -904,6 +908,8 @@ void gl_gemm_fixed(
     program->setUniform1f("alpha", alpha);
     program->setUniform1f("beta", beta);
     program->setUniform1i("k", currentK);
+
+    program->clearInputBuffers();
     program->setInputBuffer("a", aBuffer);
     program->setInputBuffer("b", bBuffer);
     program->setInputBuffer("c", previousCBuffer);
@@ -988,6 +994,138 @@ Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int 
 
   Dimensions* result = new Dimensions(physicalHeight, physicalWidth, virtualChannels);
   return result;
+}
+
+void test_gl_gemm() {
+  Buffer* input = new Buffer(Dimensions(1, 100));
+  Buffer* weights = new Buffer(Dimensions(100, 20));
+
+  const Dimensions inputDims = input->_dims;
+  // We're expecting (# of images, # of values)
+  assert(inputDims._length == 2);
+
+  const int imageCount = inputDims[0];
+  const int inputValuesCount = inputDims[1];
+
+  const Dimensions weightsDims = weights->_dims;
+  // We're expecting (# of values in input, # of output channels)
+  assert(inputDims._length == 2);
+  assert(weightsDims[0] == inputValuesCount);
+  const int outputChannels = weightsDims[1];
+
+  const Dimensions outputDims(imageCount, outputChannels);
+  Buffer* outputCPU = new Buffer(outputDims);
+  outputCPU->setName("outputCPU");
+  Buffer* outputGPU = new Buffer(outputDims);
+  outputGPU->setName("outputGPU");
+
+  input->populateWithRandomValues(0, 1);
+  weights->populateWithRandomValues(0, 1);
+
+  const int order = JPCblasColMajor;
+  const int transposeA = JPCblasNoTrans;
+  const int transposeB = JPCblasNoTrans;
+
+  const int m = outputChannels;
+  const int n = input->_dims[0];
+  const int k = input->_dims[1];
+  const float alpha = 1.0f;
+  const int lda = m;
+  const int ldb = k;
+  const int ldc = m;
+  const jpfloat_t beta = 0.0f;
+
+//  naive_cblas_sgemm(
+//    order,
+//    transposeA,
+//    transposeB,
+//    m,
+//    n,
+//    k,
+//    alpha,
+//    weights->_data,
+//    lda,
+//    input->_data,
+//    ldb,
+//    beta,
+//    outputCPU->_data,
+//    ldc
+//  );
+//
+//  gl_gemm(
+//    order,
+//    transposeA,
+//    transposeB,
+//    m,
+//    n,
+//    k,
+//    alpha,
+//    weights->_data,
+//    lda,
+//    input->_data,
+//    ldb,
+//    beta,
+//    outputGPU->_data,
+//    ldc
+//  );
+//
+//  outputCPU->printContents();
+//  outputGPU->printContents();
+
+  const float weightsMin = 0.0f;
+  const float weightsMax = 1.0f;
+  const int weightsBitsPerElement = 8;
+
+  Buffer* weightsFixed = new Buffer(Dimensions(100, 20), weightsMin, weightsMax, weightsBitsPerElement);
+  Buffer* outputFixedCPU = new Buffer(outputDims);
+  outputFixedCPU->setName("outputFixedCPU");
+  Buffer* outputFixedGPU = new Buffer(outputDims);
+  outputFixedGPU->setName("outputFixedGPU");
+
+  weightsFixed->populateWithRandomValues(0, 1);
+
+  naive_cblas_sgemm_fixed(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    weightsFixed->_quantizedData,
+    weightsMin,
+    weightsMax,
+    weightsBitsPerElement,
+    lda,
+    input->_data,
+    ldb,
+    beta,
+    outputFixedCPU->_data,
+    ldc
+  );
+
+  gl_gemm_fixed(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    weightsFixed->_quantizedData,
+    weightsMin,
+    weightsMax,
+    weightsBitsPerElement,
+    lda,
+    input->_data,
+    ldb,
+    beta,
+    outputFixedGPU->_data,
+    ldc
+  );
+
+  outputFixedCPU->printContents();
+  outputFixedGPU->printContents();
 }
 
 #endif // USE_OPENGL

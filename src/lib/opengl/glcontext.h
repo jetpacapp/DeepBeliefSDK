@@ -9,10 +9,17 @@
 #ifndef INCLUDE_GLCONTEXT_H
 #define INCLUDE_GLCONTEXT_H
 
-#include <OpenGL/gl.h>
-#include <GLUT/glut.h>
+#include "glheaders.h"
 
+#if __APPLE__ && TARGET_OS_IPHONE
+#define gluErrorString(x) ("")
+#else
+#include <GLUT/glut.h>
+#endif
+
+#if defined(DEBUG)
 #define CHECK_GL_ERROR() do {                                 \
+  /*glFinish();*/                                             \
   GLint error = glGetError();                                 \
   if (error != GL_NO_ERROR) {                                 \
     fprintf(stderr, "OpenGL Error %s 0x%x at %s:%d (%s)\n",   \
@@ -20,6 +27,9 @@
       __FILE__, __LINE__,  __PRETTY_FUNCTION__);              \
     assert(false);                                            \
   }} while(0)
+#else // DEBUG
+#define CHECK_GL_ERROR() (void)(0)
+#endif // DEBUG
 
 class GLProgram;
 class GLBuffer;
@@ -35,12 +45,17 @@ public:
   void setOutputBuffer(GLBuffer* buffer);
   void runProgram();
   void copyOutputToHost(Buffer* hostBuffer);
+  void createContextHandle();
+  void destroyContextHandle();
 
   GLProgram* _program;
   GLBuffer** _inputs;
   GLBuffer* _output;
 
-  int _glutWindowHandle;
+  union {
+    void* pointer;
+    int integer;
+  } _contextHandle;
   GLuint _framebuffer;
 };
 

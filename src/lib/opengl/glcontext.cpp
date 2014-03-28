@@ -21,8 +21,6 @@
 
 const int maxInputBuffers = 8;
 
-static int g_nextWindowIndex = 0;
-
 GLContext::GLContext() {
   _inputs = (GLBuffer**)(malloc(sizeof(GLBuffer*) * maxInputBuffers));
   for (int index = 0; index < maxInputBuffers; index += 1) {
@@ -30,16 +28,7 @@ GLContext::GLContext() {
   }
   _output = NULL;
 
-  int glut_argv = 1;
-  char* glut_argc[] = { "foo" };
-  glutInit(&glut_argv, glut_argc);
-
-  const int windowNameLength = 256;
-  char windowName[windowNameLength];
-  snprintf(windowName, windowNameLength, "JPCNN Window #%d", g_nextWindowIndex);
-  g_nextWindowIndex += 1;
-
-  _glutWindowHandle = glutCreateWindow(windowName);
+  createContextHandle();
   CHECK_GL_ERROR();
 
   glGenFramebuffers(1, &_framebuffer);
@@ -50,7 +39,7 @@ GLContext::GLContext() {
 
 GLContext::~GLContext() {
   glDeleteFramebuffers(1, &_framebuffer);
-  glutDestroyWindow(_glutWindowHandle);
+  destroyContextHandle();
 }
 
 void GLContext::setProgram(GLProgram* program) {
@@ -64,13 +53,7 @@ void GLContext::setOutputBuffer(GLBuffer* buffer) {
   const int width = outputDims[1];
   const int height = outputDims[0];
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 	glViewport(0, 0, width, height);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0.0, width, 0.0, height, -1.0f, 1.0f);
 
   glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
   CHECK_GL_ERROR();
@@ -93,6 +76,22 @@ void GLContext::runProgram() {
   const jpfloat_t viewTop = outputHeight;
   const jpfloat_t viewLeft = 0;
   const jpfloat_t viewRight = outputWidth;
+
+  const GLfloat a = (2.0f / outputWidth);
+  const GLfloat b = (2.0f / outputHeight);
+  const GLfloat c = -1.0f;
+
+  const GLfloat tx = -1.0f;
+  const GLfloat ty = -1.0f;
+  const GLfloat tz = 0.0f;
+
+  GLfloat orthoValues[16] = {
+      a, 0, 0, 0,
+      0, b, 0, 0,
+      0, 0, c, 0,
+      tx, ty, tz, 1
+  };
+  _program->setUniformMatrix4fv("modelViewProjectionMatrix", orthoValues);
 
   GLfloat vertices[] = {
     viewLeft, viewBottom,
@@ -159,8 +158,7 @@ void GLContext::copyOutputToHost(Buffer* hostBuffer) {
   const int width = outputDims[1];
   const int height = outputDims[0];
   const int channels = outputDims[2];
-//  jpfloat_t* outputData = hostBuffer->_data;
-  jpfloat_t* outputData = (jpfloat_t*)(malloc(width * height * channels * sizeof(jpfloat_t)));
+  jpfloat_t* outputData = hostBuffer->_data;
   GLint dataFormat;
   GLint channelFormat;
   if (channels == 1) {
@@ -176,8 +174,33 @@ void GLContext::copyOutputToHost(Buffer* hostBuffer) {
     assert(false); // Bad number of channels
   }
   glReadPixels(0, 0, width, height, channelFormat, dataFormat, outputData);
-  memcpy(hostBuffer->_data, outputData, (width * height * channels * sizeof(jpfloat_t)));
   CHECK_GL_ERROR();
 }
+
+// OpenGL context support for non-iOS platforms
+#if !__APPLE__ || !TARGET_OS_IPHONE
+
+void GLContext::createContextHandle() {
+  static int nextWindowIndex = 0;
+  int glut_argv = 1;
+  char* glut_argc[] = { "foo" };
+  glutInit(&glut_argv, glut_argc);
+
+  const int windowNameLength = 256;
+  char windowName[windowNameLength];
+  snprintf(windowName, windowNameLength, "JPCNN Window #%d", nextWindowIndex);
+  nextWindowIndex += 1;
+
+  const int windowHandle = glutCreateWindow(windowName);
+
+  _contextHandle.integer = windowHandle;
+}
+
+void GLContext::destroyContextHandle() {
+  const int windowHandle = _contextHandle.integer;
+  glutDestroyWindow(windowHandle);
+}
+
+#endif
 
 #endif // USE_OPENGL

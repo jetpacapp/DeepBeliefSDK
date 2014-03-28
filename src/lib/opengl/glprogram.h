@@ -9,7 +9,7 @@
 #ifndef INCLUDE_GLPROGRAM_H
 #define INCLUDE_GLPROGRAM_H
 
-#include <OpenGL/gl.h>
+#include "glheaders.h"
 
 class GLContext;
 class GLBuffer;
@@ -25,6 +25,8 @@ public:
   void setUniform2f(const char* name, float x, float y);
   void setUniform3f(const char* name, float x, float y, float z);
   void setUniform4f(const char* name, float x, float y, float z, float w);
+  void setUniformMatrix4fv(const char* name, float* values);
+  void clearInputBuffers();
   void setInputBuffer(const char* name, GLBuffer* buffer);
   void bindInputBuffers();
 
