@@ -108,4 +108,23 @@ void naive_cblas_sgemm_fixed(
   jpfloat_t* c,
   int ldc);
 
+void cblas_sgemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int aBitsPerElement,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc);
+
 #endif // INCLUDE_MATRIX_OPS_H

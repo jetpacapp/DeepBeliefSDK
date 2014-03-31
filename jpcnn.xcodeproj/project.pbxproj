@@ -38,6 +38,7 @@
 		59574E7418E24BA4008247E4 /* glcontext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59574E7318E24BA4008247E4 /* glcontext.mm */; };
 		59574E7518E24DA6008247E4 /* glcontext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59574E7318E24BA4008247E4 /* glcontext.mm */; };
 		59574E7718E61CCC008247E4 /* dog.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 59574E7618E61CCC008247E4 /* dog.jpg */; };
+		59574E7818E6360B008247E4 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
 		59602F7F18B6DDF300D6EEE2 /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7B18B6DDF300D6EEE2 /* svm.cpp */; };
 		59602F8018B6DDF300D6EEE2 /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7D18B6DDF300D6EEE2 /* svmutils.cpp */; };
 		59602F8118B6E78200D6EEE2 /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7B18B6DDF300D6EEE2 /* svm.cpp */; };
@@ -250,7 +251,7 @@
 		598241C9188DE27D003F2C0A /* flatnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flatnode.h; sourceTree = "<group>"; };
 		598241CB188DE27D003F2C0A /* gconvnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gconvnode.cpp; sourceTree = "<group>"; };
 		598241CC188DE27D003F2C0A /* gconvnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gconvnode.h; sourceTree = "<group>"; };
-		598241CE188DE27D003F2C0A /* graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = graph.cpp; sourceTree = "<group>"; };
+		598241CE188DE27D003F2C0A /* graph.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = graph.cpp; sourceTree = "<group>"; };
 		598241CF188DE27D003F2C0A /* graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graph.h; sourceTree = "<group>"; };
 		598241D1188DE27D003F2C0A /* maxnode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maxnode.cpp; sourceTree = "<group>"; };
 		598241D2188DE27D003F2C0A /* maxnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maxnode.h; sourceTree = "<group>"; };
@@ -318,6 +319,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59574E7818E6360B008247E4 /* Accelerate.framework in Frameworks */,
 				59602FD918C15E7400D6EEE2 /* OpenGL.framework in Frameworks */,
 				59602FD818C15E6C00D6EEE2 /* GLUT.framework in Frameworks */,
 			);
@@ -922,7 +924,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"USE_ACCELERATE_GEMM=1",
-					USE_OPENGL,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
@@ -949,10 +950,7 @@
 				);
 				GCC_FAST_MATH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_ACCELERATE_GEMM=1",
-					USE_OPENGL,
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
 				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
@@ -995,7 +993,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					USE_OS_IMAGE,
-					USE_OPENGL,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

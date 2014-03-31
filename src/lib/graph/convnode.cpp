@@ -118,7 +118,7 @@ SBinaryTag* ConvNode::toTag() {
   resultDict = add_tag_to_dict(resultDict, "spec", specDict);
   free(specDict);
 
-  const bool wantTransposedOutput = false;
+  const bool wantTransposedOutput = true;
   const int outputBitDepth = 16;
 
   if (wantTransposedOutput != _areKernelsTransposed) {

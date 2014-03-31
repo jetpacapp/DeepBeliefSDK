@@ -50,6 +50,7 @@
 #import <ImageIO/ImageIO.h>
 #import <AssertMacros.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#include <sys/time.h>
 
 #import "libjpcnn.h"
 
@@ -606,7 +607,17 @@ bail:
   int predictionsLength;
   char** predictionsLabels;
   int predictionsLabelsLength;
+
+  struct timeval start;
+  gettimeofday(&start, NULL);
   jpcnn_classify_image(network, cnnInput, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+  struct timeval end;
+  gettimeofday(&end, NULL);
+  const long seconds  = end.tv_sec  - start.tv_sec;
+  const long useconds = end.tv_usec - start.tv_usec;
+  const float duration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+  NSLog(@"Took %f ms", duration);
+
   jpcnn_destroy_image_buffer(cnnInput);
 
   NSString* predictionText = @"";
@@ -680,7 +691,17 @@ bail:
   int predictionsLength;
   char** predictionsLabels;
   int predictionsLabelsLength;
+
+  struct timeval start;
+  gettimeofday(&start, NULL);
   jpcnn_classify_image(network, inputImage, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+  struct timeval end;
+  gettimeofday(&end, NULL);
+  const long seconds  = end.tv_sec  - start.tv_sec;
+  const long useconds = end.tv_usec - start.tv_usec;
+  const float duration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+  NSLog(@"Took %f ms", duration);
+
   jpcnn_destroy_image_buffer(inputImage);
 
   for (int index = 0; index < predictionsLength; index += 1) {

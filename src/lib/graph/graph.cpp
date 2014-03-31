@@ -17,11 +17,22 @@
 #include "basenode.h"
 #include "nodefactory.h"
 
+#if __APPLE__
+  #include "TargetConditionals.h"
+  #if TARGET_OS_IPHONE
+    #define USE_BUNDLE_LOADING
+  #endif // TARGET_OS_IPHONE
+#endif // __APPLE__
+
+#ifdef USE_BUNDLE_LOADING
+#import <UIKit/UIKit.h>
+#endif // USE_BUNDLE_LOADING
+
 //#define CHECK_RESULTS
 //#define SAVE_RESULTS
 #if defined(CHECK_RESULTS) || defined(SAVE_RESULTS)
 #define FN_LEN (1024)
-#define DUMP_FILE_PATH ("data/c_dog_blobs/")
+#define DUMP_FILE_PATH ("data/fixed_dog_blobs/")
 #endif // CHECK_RESULTS || SAVE_RESULTS
 
 Graph::Graph() :
@@ -71,15 +82,19 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
   for (int index = 0; index < howManyLayers; index += 1) {
     BaseNode* layer = _layers[index];
 #ifdef CHECK_RESULTS
+#ifdef USE_BUNDLE_LOADING
+    NSString* expectedInputFilename = [NSString stringWithFormat: @"%03d_input", index];
+    NSString* inputPath = [[NSBundle mainBundle] pathForResource:expectedInputFilename ofType:@"blob"];
+    const char* bundleInputFilename = [inputPath UTF8String];
+    Buffer* expectedInput = buffer_from_dump_file(bundleInputFilename);
+#else // USE_BUNDLE_LOADING
     char expectedInputFilename[FN_LEN];
     snprintf(expectedInputFilename, FN_LEN,
-      "%s%03d_input_%s.blob",
-      DUMP_FILE_PATH, ((index * 2) + 1), layer->_name);
+      "%s%03d_input.blob",
+      DUMP_FILE_PATH, index);
     Buffer* expectedInput = buffer_from_dump_file(expectedInputFilename);
+#endif // USE_BUNDLE_LOADING
     const Dimensions& currentInputDims = currentInput->_dims;
-    if (_isHomebrewed) {
-      expectedInput->convertFromChannelMajor(currentInputDims);
-    }
     if (expectedInput->canReshapeTo(currentInputDims)) {
       expectedInput->reshape(currentInputDims);
     }
@@ -93,7 +108,7 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
     char inputFilename[FN_LEN];
     snprintf(inputFilename, FN_LEN,
       "%s%03d_input.blob",
-      DUMP_FILE_PATH, ((index * 2) + 1));
+      DUMP_FILE_PATH, index);
     buffer_dump_to_file(currentInput, inputFilename);
 #endif // SAVE_RESULTS
 
@@ -105,15 +120,19 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
 #endif // DO_LOG_OPERATIONS
 
 #ifdef CHECK_RESULTS
+#ifdef USE_BUNDLE_LOADING
+    NSString* expectedOutputFilename = [NSString stringWithFormat: @"%03d_output", index];
+    NSString* outputPath = [[NSBundle mainBundle] pathForResource:expectedOutputFilename ofType:@"blob"];
+    const char* bundleOutputFilename = [outputPath UTF8String];
+    Buffer* expectedOutput = buffer_from_dump_file(bundleOutputFilename);
+#else // USE_BUNDLE_LOADING
     char expectedOutputFilename[FN_LEN];
     snprintf(expectedOutputFilename, FN_LEN,
-      "%s%03d_output_%s.blob",
-      DUMP_FILE_PATH, ((index * 2) + 2), layer->_name);
+      "%s%03d_output.blob",
+      DUMP_FILE_PATH, index);
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
+#endif // USE_BUNDLE_LOADING
     const Dimensions& currentOutputDims = currentOutput->_dims;
-    if (_isHomebrewed) {
-      expectedOutput->convertFromChannelMajor(currentOutputDims);
-    }
     if (expectedOutput->canReshapeTo(currentOutputDims)) {
       expectedOutput->reshape(currentOutputDims);
     }
@@ -128,7 +147,7 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
     char outputFilename[FN_LEN];
     snprintf(outputFilename, FN_LEN,
       "%s%03d_output.blob",
-      DUMP_FILE_PATH, ((index * 2) + 1));
+      DUMP_FILE_PATH, index);
     buffer_dump_to_file(currentOutput, outputFilename);
 #endif // SAVE_RESULTS
     currentInput = currentOutput;

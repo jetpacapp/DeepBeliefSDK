@@ -158,6 +158,26 @@ void matrix_gemm_fixed(
     c,
     ldc
   );
+#elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM)
+  cblas_sgemm_fixed(
+    order,
+    transposeA,
+    transposeB,
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    aMin,
+    aMax,
+    aBitsPerElement,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc
+  );
 #else
   naive_cblas_sgemm_fixed(
     order,
@@ -262,7 +282,8 @@ void naive_cblas_sgemm_fixed(
           } else {
             aIndex = ((lda * i) + l);
           }
-          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
+          uint16_t aIntValue = aData[aIndex];
+          const jpfloat_t aValue = aMin + (aIntValue * aRange);
           const int bIndex = ((ldb * j) + l);
           const jpfloat_t bValue = b[bIndex];
           total += (aValue * bValue);
@@ -285,7 +306,8 @@ void naive_cblas_sgemm_fixed(
           } else {
             aIndex = ((lda * i) + l);
           }
-          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
+          uint8_t aIntValue = aData[aIndex];
+          const jpfloat_t aValue = aMin + (aIntValue * aRange);
           const int bIndex = ((ldb * j) + l);
           const jpfloat_t bValue = b[bIndex];
           total += (aValue * bValue);
@@ -299,3 +321,86 @@ void naive_cblas_sgemm_fixed(
     assert(false); // Should never get here, only 8 or 16 bit supported
   }
 }
+
+#if defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM)
+void cblas_sgemm_fixed(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  void *a,
+  jpfloat_t aMin,
+  jpfloat_t aMax,
+  int aBitsPerElement,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc) {
+
+  assert(transposeA == JPCblasTrans);
+  assert(transposeB == JPCblasNoTrans);
+  assert(order == JPCblasColMajor);
+
+  const jpfloat_t aRange = ((aMax - aMin) / (1 << aBitsPerElement));
+
+  const int rowsPerOperation = 64;
+
+  const size_t bytesPerRow = (k * sizeof(jpfloat_t));
+  const size_t bytesPerSubMatrix = (bytesPerRow * rowsPerOperation);
+  jpfloat_t* aSubMatrix = (jpfloat_t*)(malloc(bytesPerSubMatrix));
+  jpfloat_t* cSubMatrix = (jpfloat_t*)(malloc(bytesPerSubMatrix));
+
+  for (int iBase = 0; iBase < m; iBase += rowsPerOperation) {
+    const int rowsThisTime = MIN(rowsPerOperation, (m - iBase));
+    if (aBitsPerElement == 16) {
+      uint16_t* aData = (uint16_t*)(a);
+      for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
+        const int i = (iBase + iOffset);
+        for (int l = 0; l < k; l++) {
+          const int aIndex = ((lda * i) + l);
+          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
+          const int aSubMatrixIndex = ((lda * iOffset) + l);
+          aSubMatrix[aSubMatrixIndex] = aValue;
+        }
+      }
+    } else if (aBitsPerElement == 8) {
+      uint8_t* aData = (uint8_t*)(a);
+      for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
+        const int i = (iBase + iOffset);
+        for (int l = 0; l < k; l++) {
+          const int aIndex = ((lda * i) + l);
+          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
+          const int aSubMatrixIndex = ((lda * iOffset) + l);
+          aSubMatrix[aSubMatrixIndex] = aValue;
+        }
+      }
+    } else {
+      assert(false); // Should never get here, only 8 or 16 bit supported
+    }
+    cblas_sgemm(
+      (enum CBLAS_ORDER)(order),
+      (enum CBLAS_TRANSPOSE)(transposeA),
+      (enum CBLAS_TRANSPOSE)(transposeB),
+      rowsThisTime,
+      n,
+      k,
+      alpha,
+      aSubMatrix,
+      lda,
+      b,
+      ldb,
+      beta,
+      (c + iBase),
+      ldc
+    );
+  }
+
+  free(aSubMatrix);
+  free(cSubMatrix);
+}
+#endif

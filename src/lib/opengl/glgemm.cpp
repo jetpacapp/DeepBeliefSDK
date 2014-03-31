@@ -998,7 +998,8 @@ Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int 
 
 void test_gl_gemm() {
   Buffer* input = new Buffer(Dimensions(1, 100));
-  Buffer* weights = new Buffer(Dimensions(100, 20));
+  Buffer* weights = new Buffer(Dimensions(20, 100));
+  const bool areWeightsTransposed = true;
 
   const Dimensions inputDims = input->_dims;
   // We're expecting (# of images, # of values)
@@ -1010,8 +1011,18 @@ void test_gl_gemm() {
   const Dimensions weightsDims = weights->_dims;
   // We're expecting (# of values in input, # of output channels)
   assert(inputDims._length == 2);
-  assert(weightsDims[0] == inputValuesCount);
-  const int outputChannels = weightsDims[1];
+  assert(inputDims._length == 2);
+  int inputValuesIndex;
+  int outputChannelsIndex;
+  if (areWeightsTransposed) {
+    inputValuesIndex = 1;
+    outputChannelsIndex = 0;
+  } else {
+    inputValuesIndex = 0;
+    outputChannelsIndex = 1;
+  }
+  assert(weightsDims[inputValuesIndex] == inputValuesCount);
+  const int outputChannels = weightsDims[outputChannelsIndex];
 
   const Dimensions outputDims(imageCount, outputChannels);
   Buffer* outputCPU = new Buffer(outputDims);
@@ -1023,14 +1034,14 @@ void test_gl_gemm() {
   weights->populateWithRandomValues(0, 1);
 
   const int order = JPCblasColMajor;
-  const int transposeA = JPCblasNoTrans;
+  const int transposeA = JPCblasTrans;
   const int transposeB = JPCblasNoTrans;
 
   const int m = outputChannels;
   const int n = input->_dims[0];
   const int k = input->_dims[1];
   const float alpha = 1.0f;
-  const int lda = m;
+  const int lda = (transposeA == JPCblasNoTrans) ? m : k;
   const int ldb = k;
   const int ldc = m;
   const jpfloat_t beta = 0.0f;
@@ -1076,7 +1087,7 @@ void test_gl_gemm() {
   const float weightsMax = 1.0f;
   const int weightsBitsPerElement = 8;
 
-  Buffer* weightsFixed = new Buffer(Dimensions(100, 20), weightsMin, weightsMax, weightsBitsPerElement);
+  Buffer* weightsFixed = new Buffer(Dimensions(20, 100), weightsMin, weightsMax, weightsBitsPerElement);
   Buffer* outputFixedCPU = new Buffer(outputDims);
   outputFixedCPU->setName("outputFixedCPU");
   Buffer* outputFixedGPU = new Buffer(outputDims);
@@ -1104,7 +1115,7 @@ void test_gl_gemm() {
     ldc
   );
 
-  gl_gemm_fixed(
+  cblas_sgemm_fixed(
     order,
     transposeA,
     transposeB,
