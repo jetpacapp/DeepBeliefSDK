@@ -68,6 +68,7 @@
   AVSpeechSynthesizer *synth;
   NSMutableDictionary* oldPredictionValues;
   NSMutableArray* labelLayers;
+  AVCaptureSession* session;
 }
 @property (retain, nonatomic) CATextLayer *predictionTextLayer;
 
