@@ -825,7 +825,7 @@ bail:
   for (NSString* label in oldPredictionValues) {
     NSNumber* oldPredictionValueObject = [oldPredictionValues objectForKey:label];
     const float oldPredictionValue = [oldPredictionValueObject floatValue];
-    if (oldPredictionValue > 0.10f) {
+    if (oldPredictionValue > 0.05f) {
       NSDictionary *entry = @{
         @"label" : label,
         @"value" : oldPredictionValueObject
@@ -874,6 +874,10 @@ bail:
       originX: labelOriginX originY: originY
       width: labelWidth height: labelHeight
       alignment:kCAAlignmentLeft];
+
+    if ((labelCount == 0) && (value > 0.5f)) {
+      [self speak: [label capitalizedString]];
+    }
 
     labelCount += 1;
     if (labelCount > 4) {
@@ -954,7 +958,7 @@ bail:
   }
   AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString: words];
   utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"en-US"];
-  utterance.rate = 0.70*AVSpeechUtteranceDefaultSpeechRate;
+  utterance.rate = 0.50*AVSpeechUtteranceDefaultSpeechRate;
   [synth speakUtterance:utterance];
 }
 
