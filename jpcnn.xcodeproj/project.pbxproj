@@ -186,7 +186,6 @@
 		594BBA861886FE8A007F9A2A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		594BBA881886FE8A007F9A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		594BBAA61886FE8A007F9A2A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		594BBAE81887024B007F9A2A /* imagenet.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = imagenet.ntwk; sourceTree = "<group>"; };
 		594BBAE91887024B007F9A2A /* lena.png */ = {isa = PBXFileReference; explicitFileType = archive.tar; path = lena.png; sourceTree = "<group>"; };
 		594BBAEE18870D27007F9A2A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		594BBAF218871401007F9A2A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
@@ -411,7 +410,6 @@
 			children = (
 				59574E6918E23EB3008247E4 /* homebrewed_transpressed.ntwk */,
 				59574E6A18E23EB3008247E4 /* homebrewed.ntwk */,
-				594BBAE81887024B007F9A2A /* imagenet.ntwk */,
 			);
 			path = example_networks;
 			sourceTree = "<group>";

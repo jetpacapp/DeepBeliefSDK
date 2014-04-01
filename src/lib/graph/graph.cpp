@@ -210,6 +210,7 @@ Graph* new_graph_from_file(const char* filename, int useMemoryMap, int isHomebre
     const size_t labelNameLength = strlen(fileLabelName);
     result->_labelNames[index] = (char*)(malloc(labelNameLength + 1));
     strncpy(result->_labelNames[index], fileLabelName, labelNameLength);
+    result->_labelNames[index][labelNameLength] = '\0';
     index += 1;
     currentLabelNameTag = get_next_list_entry(labelNamesTag, currentLabelNameTag);
   }
