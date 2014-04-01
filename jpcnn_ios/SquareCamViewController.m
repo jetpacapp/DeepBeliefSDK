@@ -61,14 +61,6 @@ static const NSString *AVCaptureStillImageIsCapturingStillImageContext = @"AVCap
 
 static CGFloat DegreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
-static void ReleaseCVPixelBuffer(void *pixel, const void *data, size_t size);
-static void ReleaseCVPixelBuffer(void *pixel, const void *data, size_t size) 
-{	
-	CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)pixel;
-	CVPixelBufferUnlockBaseAddress( pixelBuffer, 0 );
-	CVPixelBufferRelease( pixelBuffer );
-}
-
 // utility used by newSquareOverlayedImageForFeatures for
 static CGContextRef CreateCGBitmapContextForSize(CGSize size);
 static CGContextRef CreateCGBitmapContextForSize(CGSize size)
@@ -624,7 +616,7 @@ bail:
   NSMutableDictionary* newValues = [NSMutableDictionary dictionary];
   for (int index = 0; index < predictionsLength; index += 1) {
     const float predictionValue = predictions[index];
-    if (predictionValue > 0.05) {
+    if (predictionValue > 0.05f) {
       char* label = predictionsLabels[index % predictionsLabelsLength];
       NSString* labelObject = [NSString stringWithCString: label];
       NSNumber* valueObject = [NSNumber numberWithFloat: predictionValue];
@@ -719,30 +711,8 @@ bail:
 
   synth = [[AVSpeechSynthesizer alloc] init];
 
-  CGRect fullBounds = [self view].bounds;
-  const float fullWidth = fullBounds.size.width;
-  const float fullHeight = fullBounds.size.height;
+  labelLayers = [[NSMutableArray alloc] init];
 
-  const float predictionTextMarginX = 10;
-  const float predictionTextMarginY = 10;
-  const float predictionTextHeight = (fullHeight - (predictionTextMarginY * 2));
-  const float predictionTextFontSize = 20.0;
-  NSString* const predictionTextFont = @"HelveticaNeue-Light";
-  const float predictionTextWidth = (fullWidth - (predictionTextMarginX * 2));
-  const float predictionTextOriginX = predictionTextMarginX;
-  const float predictionTextOriginY = predictionTextMarginY;
-  const CGRect predictionTextBounds = CGRectMake(predictionTextOriginX, predictionTextOriginY, predictionTextWidth, predictionTextHeight);
-
-  CATextLayer *predictionTextLayer = [CATextLayer layer];
-  [predictionTextLayer setForegroundColor: [UIColor blackColor].CGColor];
-  [predictionTextLayer setFrame: predictionTextBounds];
-  [predictionTextLayer setAlignmentMode: kCAAlignmentCenter];
-  [predictionTextLayer setWrapped: YES];
-  [predictionTextLayer setFont: predictionTextFont];
-  [predictionTextLayer setFontSize: predictionTextFontSize];
-  predictionTextLayer.contentsScale = [[UIScreen mainScreen] scale];
-  self.predictionTextLayer = predictionTextLayer;
-  [self setPredictionText: @"" withDuration: 0.0];
   oldPredictionValues = [[NSMutableDictionary alloc] init];
 }
 
@@ -854,7 +824,7 @@ bail:
   for (NSString* label in oldPredictionValues) {
     NSNumber* oldPredictionValueObject = [oldPredictionValues objectForKey:label];
     const float oldPredictionValue = [oldPredictionValueObject floatValue];
-    if (oldPredictionValue > 0.05f) {
+    if (oldPredictionValue > 0.10f) {
       NSDictionary *entry = @{
         @"label" : label,
         @"value" : oldPredictionValueObject
@@ -865,20 +835,96 @@ bail:
   NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"value" ascending:NO];
   NSArray* sortedLabels = [candidateLabels sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
 
-  NSString* predictionText = @"";
+  const float leftMargin = 10.0f;
+  const float topMargin = 10.0f;
+
+  const float valueWidth = 48.0f;
+  const float valueHeight = 26.0f;
+
+  const float labelWidth = 246.0f;
+  const float labelHeight = 26.0f;
+
+  const float labelMarginX = 5.0f;
+  const float labelMarginY = 5.0f;
+
+  [self removeAllLabelLayers];
+
   int labelCount = 0;
   for (NSDictionary* entry in sortedLabels) {
     NSString* label = [entry objectForKey: @"label"];
     NSNumber* valueObject =[entry objectForKey: @"value"];
     const float value = [valueObject floatValue];
-    NSString* predictionLine = [NSString stringWithFormat: @"%@ - %0.2f\n", label, value];
-    predictionText = [predictionText stringByAppendingString: predictionLine];
+
+    const float originY = (topMargin + ((labelHeight + labelMarginY) * labelCount));
+
+    const int valuePercentage = (int)roundf(value * 100.0f);
+
+    const float valueOriginX = leftMargin;
+    NSString* valueText = [NSString stringWithFormat:@"%d%%", valuePercentage];
+
+    [self addLabelLayerWithText:valueText
+      originX:valueOriginX originY:originY
+      width:valueWidth height:valueHeight
+      alignment: kCAAlignmentRight];
+
+    const float labelOriginX = (leftMargin + valueWidth + labelMarginX);
+
+    [self addLabelLayerWithText: [label capitalizedString]
+      originX: labelOriginX originY: originY
+      width: labelWidth height: labelHeight
+      alignment:kCAAlignmentLeft];
+
     labelCount += 1;
     if (labelCount > 4) {
       break;
     }
   }
-  [self setPredictionText: predictionText withDuration: 0.0f];
+}
+
+- (void) removeAllLabelLayers {
+  for (CATextLayer* layer in labelLayers) {
+    [layer removeFromSuperlayer];
+  }
+  [labelLayers removeAllObjects];
+}
+
+- (void) addLabelLayerWithText: (NSString*) text
+  originX:(float) originX originY:(float) originY
+  width:(float) width height:(float) height
+  alignment:(NSString*) alignment
+ {
+  NSString* const font = @"Menlo-Regular";
+  const float fontSize = 20.0f;
+
+  const float marginSizeX = 5.0f;
+  const float marginSizeY = 2.0f;
+
+  const CGRect backgroundBounds = CGRectMake(originX, originY, width, height);
+
+  const CGRect textBounds = CGRectMake((originX + marginSizeX), (originY + marginSizeY),
+    (width - (marginSizeX * 2)), (height - (marginSizeY * 2)));
+
+  CATextLayer* background = [CATextLayer layer];
+  [background setBackgroundColor: [UIColor blackColor].CGColor];
+  [background setOpacity:0.5f];
+  [background setFrame: backgroundBounds];
+  background.cornerRadius = 5.0f;
+
+  [[self.view layer] addSublayer: background];
+  [labelLayers addObject: background];
+
+  CATextLayer *layer = [CATextLayer layer];
+  [layer setForegroundColor: [UIColor whiteColor].CGColor];
+  [layer setFrame: textBounds];
+  [layer setAlignmentMode: alignment];
+  [layer setWrapped: YES];
+  [layer setFont: font];
+  [layer setFontSize: fontSize];
+  layer.contentsScale = [[UIScreen mainScreen] scale];
+  [layer setString: text];
+
+  [[self.view layer] addSublayer: layer];
+  [labelLayers addObject: layer];
 }
 
 - (void) setPredictionText: (NSString*) text withDuration: (float) duration {

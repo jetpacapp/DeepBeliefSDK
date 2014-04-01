@@ -67,6 +67,7 @@
   void* network;
   AVSpeechSynthesizer *synth;
   NSMutableDictionary* oldPredictionValues;
+  NSMutableArray* labelLayers;
 }
 @property (retain, nonatomic) CATextLayer *predictionTextLayer;
 
