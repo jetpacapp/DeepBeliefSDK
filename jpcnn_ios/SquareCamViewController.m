@@ -604,7 +604,7 @@ bail:
 
   struct timeval start;
   gettimeofday(&start, NULL);
-  jpcnn_classify_image(network, cnnInput, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+  jpcnn_classify_image(network, cnnInput, JPCNN_RANDOM_SAMPLE, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
   struct timeval end;
   gettimeofday(&end, NULL);
   const long seconds  = end.tv_sec  - start.tv_sec;

@@ -105,7 +105,10 @@ void* jpcnn_create_image_buffer_from_uint8_data(unsigned char* pixelData, int wi
   return (void*)(image);
 }
 
-void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSample, int layerOffset, float** outPredictionsValues, int* outPredictionsLength, char*** outPredictionsNames, int* outPredictionsNamesLength) {
+void jpcnn_classify_image(void* networkHandle, void* inputHandle, unsigned int flags, int layerOffset, float** outPredictionsValues, int* outPredictionsLength, char*** outPredictionsNames, int* outPredictionsNamesLength) {
+
+  const bool doMultiSample = (flags & JPCNN_MULTISAMPLE);
+  const bool doRandomSample = (flags & JPCNN_RANDOM_SAMPLE);
 
   Graph* graph = (Graph*)(networkHandle);
   Buffer* input = (Buffer*)(inputHandle);
@@ -124,7 +127,7 @@ void jpcnn_classify_image(void* networkHandle, void* inputHandle, int doMultiSam
   }
   const int rescaledSize = 256;
 
-  PrepareInput prepareInput(graph->_dataMean, !doMultiSample, doFlip, imageSize, rescaledSize, isMeanChanneled);
+  PrepareInput prepareInput(graph->_dataMean, !doMultiSample, doFlip, doRandomSample, imageSize, rescaledSize, isMeanChanneled);
   Buffer* rescaledInput = prepareInput.run(input);
   Buffer* predictions = graph->run(rescaledInput, layerOffset);
 

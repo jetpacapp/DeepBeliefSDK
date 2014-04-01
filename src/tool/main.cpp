@@ -271,7 +271,11 @@ void do_classify_image(void* network, const char* inputFilename, int doMultisamp
   int actualPredictionsLength;
   struct timeval start;
   gettimeofday(&start, NULL);
-  jpcnn_classify_image(network, input, doMultisample, layerOffset, predictions, &actualPredictionsLength, predictionsLabels, &predictionsLabelsLength);
+  uint32_t flags = 0;
+  if (doMultisample) {
+    flags = (flags | JPCNN_MULTISAMPLE);
+  }
+  jpcnn_classify_image(network, input, flags, layerOffset, predictions, &actualPredictionsLength, predictionsLabels, &predictionsLabelsLength);
   struct timeval end;
   gettimeofday(&end, NULL);
   jpcnn_destroy_image_buffer(input);

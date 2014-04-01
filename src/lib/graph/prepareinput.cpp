@@ -20,9 +20,10 @@ const int kOutputChannels = 3;
 static void rescale_image_to_fit(Buffer* input, Buffer* output, bool doFlip);
 static void crop_and_flip_image(Buffer* destBuffer, Buffer* sourceBuffer, int offsetX, int offsetY, bool doFlipHorizontal);
 
-PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip, int imageSize, int rescaledSize, bool isMeanChanneled) :
+PrepareInput::PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip, bool doRandomSample, int imageSize, int rescaledSize, bool isMeanChanneled) :
   _useCenterOnly(useCenterOnly),
   _needsFlip(needsFlip),
+  _doRandomSample(doRandomSample),
   _imageSize(imageSize),
   _rescaledSize(rescaledSize) {
   assert(dataMean != NULL);
@@ -72,8 +73,15 @@ Buffer* PrepareInput::run(Buffer* input) {
     _output = new Buffer(outputDims);
     _output->setName("prepareInput_output");
 
-    const int sourceX = marginX;
-    const int sourceY = marginY;
+    int sourceX;
+    int sourceY;
+    if (_doRandomSample) {
+      sourceX = (int)(rand() * (deltaX / (float)(RAND_MAX)));
+      sourceY = (int)(rand() * (deltaY / (float)(RAND_MAX)));
+    } else {
+      sourceX = marginX;
+      sourceY = marginY;
+    }
 
     Buffer* blitDestination = buffer_view_at_top_index(_output, 0);
     crop_and_flip_image(blitDestination, rescaled, sourceX, sourceY, false);

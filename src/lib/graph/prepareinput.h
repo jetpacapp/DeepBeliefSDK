@@ -16,7 +16,7 @@
 class PrepareInput : BaseNode {
 public:
 
-  PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip, int imageSize, int rescaledSize, bool isMeanChanneled);
+  PrepareInput(Buffer* dataMean, bool useCenterOnly, bool needsFlip, bool doRandomSample, int imageSize, int rescaledSize, bool isMeanChanneled);
   ~PrepareInput();
 
   virtual Buffer* run(Buffer* input);
@@ -25,6 +25,7 @@ public:
   Buffer* _dataMean;
   bool _useCenterOnly;
   bool _needsFlip;
+  bool _doRandomSample;
   const int _imageSize;
   const int _rescaledSize;
 };
