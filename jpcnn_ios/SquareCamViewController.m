@@ -374,7 +374,7 @@ bail:
 {
   if ([session isRunning]) {
     [session stopRunning];
-    [sender setTitle: @"Continue"];
+    [sender setTitle: @"Continue" forState:UIControlStateNormal];
 
     flashView = [[UIView alloc] initWithFrame:[previewView frame]];
     [flashView setBackgroundColor:[UIColor whiteColor]];
@@ -401,39 +401,8 @@ bail:
 
   } else {
     [session startRunning];
-    [sender setTitle: @"Freeze Frame"];
+    [sender setTitle: @"Freeze Frame" forState:UIControlStateNormal];
   }
-
-//	// Find out the current orientation and tell the still image output.
-//	AVCaptureConnection *stillImageConnection = [stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
-//	UIDeviceOrientation curDeviceOrientation = [[UIDevice currentDevice] orientation];
-//	AVCaptureVideoOrientation avcaptureOrientation = [self avOrientationForDeviceOrientation:curDeviceOrientation];
-//	[stillImageConnection setVideoOrientation:avcaptureOrientation];
-//	[stillImageConnection setVideoScaleAndCropFactor:effectiveScale];
-//	
-//    BOOL doingFaceDetection = detectFaces && (effectiveScale == 1.0);
-//	
-//    // set the appropriate pixel format / image type output setting depending on if we'll need an uncompressed image for
-//    // the possiblity of drawing the red square over top or if we're just writing a jpeg to the camera roll which is the trival case
-//    if (doingFaceDetection)
-//		[stillImageOutput setOutputSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCMPixelFormat_32BGRA] 
-//																		forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
-//	else
-//		[stillImageOutput setOutputSettings:[NSDictionary dictionaryWithObject:AVVideoCodecJPEG 
-//																		forKey:AVVideoCodecKey]]; 
-//	
-//	[stillImageOutput captureStillImageAsynchronouslyFromConnection:stillImageConnection
-//		completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
-//			if (error) {
-//				[self displayErrorOnMainQueue:error withMessage:@"Take picture failed"];
-//			}
-//			else {
-//        CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(imageDataSampleBuffer);
-//        assert(pixelBuffer != NULL);
-//        //[self runCNNOnFrame: pixelBuffer];
-//			}
-//		}
-//	 ];
 }
 
 // turn on/off face detection
