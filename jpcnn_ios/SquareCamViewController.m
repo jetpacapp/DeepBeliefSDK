@@ -570,7 +570,8 @@ bail:
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
-  // Do nothing
+  CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+  [self runCNNOnFrame:pixelBuffer];
 }
 
 - (void)runCNNOnFrame: (CVPixelBufferRef) pixelBuffer
@@ -620,17 +621,19 @@ bail:
 
   jpcnn_destroy_image_buffer(cnnInput);
 
-  NSString* predictionText = @"";
-
+  NSMutableDictionary* newValues = [NSMutableDictionary dictionary];
   for (int index = 0; index < predictionsLength; index += 1) {
     const float predictionValue = predictions[index];
     if (predictionValue > 0.05) {
       char* label = predictionsLabels[index % predictionsLabelsLength];
-      NSString* predictionLine = [NSString stringWithFormat: @"%s - %0.2f\n", label, predictionValue];
-      predictionText = [predictionText stringByAppendingString: predictionLine];
+      NSString* labelObject = [NSString stringWithCString: label];
+      NSNumber* valueObject = [NSNumber numberWithFloat: predictionValue];
+      [newValues setObject: valueObject forKey: labelObject];
     }
   }
-  [self setPredictionText: predictionText withDuration:0.0f];
+  dispatch_async(dispatch_get_main_queue(), ^(void) {
+    [self setPredictionValues: newValues];
+  });
 }
 
 - (void)dealloc
@@ -685,33 +688,36 @@ bail:
   NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"homebrewed_transpressed" ofType:@"ntwk"];
   network = jpcnn_create_network([networkPath UTF8String]);
   assert(network != NULL);
-  NSString* imagePath = [[NSBundle mainBundle] pathForResource:@"dog" ofType:@"jpg"];
-  void* inputImage = jpcnn_create_image_buffer_from_file([imagePath UTF8String]);
-  float* predictions;
-  int predictionsLength;
-  char** predictionsLabels;
-  int predictionsLabelsLength;
 
-  struct timeval start;
-  gettimeofday(&start, NULL);
-  jpcnn_classify_image(network, inputImage, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
-  struct timeval end;
-  gettimeofday(&end, NULL);
-  const long seconds  = end.tv_sec  - start.tv_sec;
-  const long useconds = end.tv_usec - start.tv_usec;
-  const float duration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-  NSLog(@"Took %f ms", duration);
+//  NSString* imagePath = [[NSBundle mainBundle] pathForResource:@"dog" ofType:@"jpg"];
+//  void* inputImage = jpcnn_create_image_buffer_from_file([imagePath UTF8String]);
+//  float* predictions;
+//  int predictionsLength;
+//  char** predictionsLabels;
+//  int predictionsLabelsLength;
+//
+//  struct timeval start;
+//  gettimeofday(&start, NULL);
+//  jpcnn_classify_image(network, inputImage, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+//  struct timeval end;
+//  gettimeofday(&end, NULL);
+//  const long seconds  = end.tv_sec  - start.tv_sec;
+//  const long useconds = end.tv_usec - start.tv_usec;
+//  const float duration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+//  NSLog(@"Took %f ms", duration);
+//
+//  jpcnn_destroy_image_buffer(inputImage);
+//
+//  for (int index = 0; index < predictionsLength; index += 1) {
+//    const float predictionValue = predictions[index];
+//    if (predictionValue > 0.05) {
+//      char* label = predictionsLabels[index % predictionsLabelsLength];
+//      NSString* predictionLine = [NSString stringWithFormat: @"%s - %0.2f\n", label, predictionValue];
+//      NSLog(@"%@", predictionLine);
+//    }
+//  }
 
-  jpcnn_destroy_image_buffer(inputImage);
-
-  for (int index = 0; index < predictionsLength; index += 1) {
-    const float predictionValue = predictions[index];
-    if (predictionValue > 0.05) {
-      char* label = predictionsLabels[index % predictionsLabelsLength];
-      NSString* predictionLine = [NSString stringWithFormat: @"%s - %0.2f\n", label, predictionValue];
-      NSLog(@"%@", predictionLine);
-    }
-  }
+  synth = [[AVSpeechSynthesizer alloc] init];
 
   CGRect fullBounds = [self view].bounds;
   const float fullWidth = fullBounds.size.width;
@@ -737,13 +743,15 @@ bail:
   predictionTextLayer.contentsScale = [[UIScreen mainScreen] scale];
   self.predictionTextLayer = predictionTextLayer;
   [self setPredictionText: @"" withDuration: 0.0];
+  oldPredictionValues = [[NSMutableDictionary alloc] init];
 }
 
 - (void)viewDidUnload
 {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+  [super viewDidUnload];
+  // Release any retained subviews of the main view.
+  // e.g. self.myOutlet = nil;
+  [oldPredictionValues release];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -812,7 +820,68 @@ bail:
     return YES;
 }
 
-- (void) setPredictionText:(NSString*) text withDuration: (float) duration {
+- (void) setPredictionValues: (NSDictionary*) newValues {
+  const float decayValue = 0.75f;
+  const float updateValue = 0.25f;
+  const float minimumThreshold = 0.01f;
+
+  NSMutableDictionary* decayedPredictionValues = [[NSMutableDictionary alloc] init];
+  for (NSString* label in oldPredictionValues) {
+    NSNumber* oldPredictionValueObject = [oldPredictionValues objectForKey:label];
+    const float oldPredictionValue = [oldPredictionValueObject floatValue];
+    const float decayedPredictionValue = (oldPredictionValue * decayValue);
+    if (decayedPredictionValue > minimumThreshold) {
+      NSNumber* decayedPredictionValueObject = [NSNumber numberWithFloat: decayedPredictionValue];
+      [decayedPredictionValues setObject: decayedPredictionValueObject forKey:label];
+    }
+  }
+  [oldPredictionValues release];
+  oldPredictionValues = decayedPredictionValues;
+
+  for (NSString* label in newValues) {
+    NSNumber* newPredictionValueObject = [newValues objectForKey:label];
+    NSNumber* oldPredictionValueObject = [oldPredictionValues objectForKey:label];
+    if (!oldPredictionValueObject) {
+      oldPredictionValueObject = [NSNumber numberWithFloat: 0.0f];
+    }
+    const float newPredictionValue = [newPredictionValueObject floatValue];
+    const float oldPredictionValue = [oldPredictionValueObject floatValue];
+    const float updatedPredictionValue = (oldPredictionValue + (newPredictionValue * updateValue));
+    NSNumber* updatedPredictionValueObject = [NSNumber numberWithFloat: updatedPredictionValue];
+    [oldPredictionValues setObject: updatedPredictionValueObject forKey:label];
+  }
+  NSArray* candidateLabels = [NSMutableArray array];
+  for (NSString* label in oldPredictionValues) {
+    NSNumber* oldPredictionValueObject = [oldPredictionValues objectForKey:label];
+    const float oldPredictionValue = [oldPredictionValueObject floatValue];
+    if (oldPredictionValue > 0.05f) {
+      NSDictionary *entry = @{
+        @"label" : label,
+        @"value" : oldPredictionValueObject
+      };
+      candidateLabels = [candidateLabels arrayByAddingObject: entry];
+    }
+  }
+  NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"value" ascending:NO];
+  NSArray* sortedLabels = [candidateLabels sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+
+  NSString* predictionText = @"";
+  int labelCount = 0;
+  for (NSDictionary* entry in sortedLabels) {
+    NSString* label = [entry objectForKey: @"label"];
+    NSNumber* valueObject =[entry objectForKey: @"value"];
+    const float value = [valueObject floatValue];
+    NSString* predictionLine = [NSString stringWithFormat: @"%@ - %0.2f\n", label, value];
+    predictionText = [predictionText stringByAppendingString: predictionLine];
+    labelCount += 1;
+    if (labelCount > 4) {
+      break;
+    }
+  }
+  [self setPredictionText: predictionText withDuration: 0.0f];
+}
+
+- (void) setPredictionText: (NSString*) text withDuration: (float) duration {
 
   if (duration > 0.0) {
     CABasicAnimation *colorAnimation = [CABasicAnimation animationWithKeyPath:@"foregroundColor"];
@@ -832,5 +901,14 @@ bail:
   [self.predictionTextLayer setString: text];
 }
 
+- (void) speak: (NSString*) words {
+  if ([synth isSpeaking]) {
+    return;
+  }
+  AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString: words];
+  utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"en-US"];
+  utterance.rate = 0.70*AVSpeechUtteranceDefaultSpeechRate;
+  [synth speakUtterance:utterance];
+}
 
 @end

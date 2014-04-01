@@ -65,6 +65,8 @@
 	CGFloat beginGestureScale;
 	CGFloat effectiveScale;
   void* network;
+  AVSpeechSynthesizer *synth;
+  NSMutableDictionary* oldPredictionValues;
 }
 @property (retain, nonatomic) CATextLayer *predictionTextLayer;
 
