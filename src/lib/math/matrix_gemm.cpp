@@ -346,7 +346,7 @@ void cblas_sgemm_fixed(
   assert(transposeB == JPCblasNoTrans);
   assert(order == JPCblasColMajor);
 
-  const jpfloat_t aRange = ((aMax - aMin) / (1 << aBitsPerElement));
+  jpfloat_t aRange = ((aMax - aMin) / (1 << aBitsPerElement));
 
   const int rowsPerOperation = 64;
 
@@ -357,19 +357,57 @@ void cblas_sgemm_fixed(
 
   for (int iBase = 0; iBase < m; iBase += rowsPerOperation) {
     const int rowsThisTime = MIN(rowsPerOperation, (m - iBase));
+    const int elementsPerSubMatrix = (rowsThisTime * k);
     if (aBitsPerElement == 16) {
       uint16_t* aData = (uint16_t*)(a);
+#if USE_ACCELERATE_GEMM
+      uint16_t* aSubDataStart = (aData + (lda * iBase));
+      vDSP_vfltu16(
+        aSubDataStart,
+        1,
+        aSubMatrix,
+        1,
+        elementsPerSubMatrix);
+      vDSP_vsmsa(
+        aSubMatrix,
+        1,
+        &aRange,
+        &aMin,
+        aSubMatrix,
+        1,
+        elementsPerSubMatrix
+      );
+#else // USE_ACCELERATE_GEMM
       for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
         const int i = (iBase + iOffset);
         for (int l = 0; l < k; l++) {
           const int aIndex = ((lda * i) + l);
           const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
           const int aSubMatrixIndex = ((lda * iOffset) + l);
-          aSubMatrix[aSubMatrixIndex] = aValue;
+          assert(aSubMatrix[aSubMatrixIndex] == aValue);
         }
       }
+#endif // USE_ACCELERATE_GEMM
     } else if (aBitsPerElement == 8) {
       uint8_t* aData = (uint8_t*)(a);
+#if USE_ACCELERATE_GEMM
+      uint8_t* aSubDataStart = (aData + (lda * iBase));
+      vDSP_vfltu8(
+        aSubDataStart,
+        1,
+        aSubMatrix,
+        1,
+        elementsPerSubMatrix);
+      vDSP_vsmsa(
+        aSubMatrix,
+        1,
+        &aRange,
+        &aMin,
+        aSubMatrix,
+        1,
+        elementsPerSubMatrix
+      );
+#else // USE_ACCELERATE_GEMM
       for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
         const int i = (iBase + iOffset);
         for (int l = 0; l < k; l++) {
@@ -379,6 +417,7 @@ void cblas_sgemm_fixed(
           aSubMatrix[aSubMatrixIndex] = aValue;
         }
       }
+#endif // USE_ACCELERATE_GEMM
     } else {
       assert(false); // Should never get here, only 8 or 16 bit supported
     }
