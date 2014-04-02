@@ -1,0 +1,341 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		592FF8B918ECBD7600C164F8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8B818ECBD7600C164F8 /* Foundation.framework */; };
+		592FF8BB18ECBD7600C164F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */; };
+		592FF8BD18ECBD7600C164F8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8BC18ECBD7600C164F8 /* UIKit.framework */; };
+		592FF8EB18ECBDBD00C164F8 /* SquareCamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */; };
+		592FF8EC18ECBDBD00C164F8 /* SquareCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */; };
+		592FF8F318ECBDC900C164F8 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF8EE18ECBDC900C164F8 /* MainStoryboard_iPad.storyboard */; };
+		592FF8F418ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF8F018ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard */; };
+		592FF8F718ECBDF700C164F8 /* DeepBelief.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8F618ECBDF700C164F8 /* DeepBelief.framework */; };
+		592FF90018ECC59F00C164F8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8FF18ECC59F00C164F8 /* Accelerate.framework */; };
+		592FF90218ECC66200C164F8 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 592FF90118ECC66200C164F8 /* main.mm */; };
+		592FF90618ECCD3B00C164F8 /* jetpac.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90518ECCD1E00C164F8 /* jetpac.ntwk */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		592FF8B518ECBD7600C164F8 /* DeepBeliefExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeepBeliefExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		592FF8B818ECBD7600C164F8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		592FF8BC18ECBD7600C164F8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		592FF8D118ECBD7600C164F8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		592FF8E618ECBDBD00C164F8 /* SquareCamAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamAppDelegate.h; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamAppDelegate.h; sourceTree = "<group>"; };
+		592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamAppDelegate.m; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamAppDelegate.m; sourceTree = "<group>"; };
+		592FF8E818ECBDBD00C164F8 /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamViewController.h; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamViewController.h; sourceTree = "<group>"; };
+		592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamViewController.m; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamViewController.m; sourceTree = "<group>"; };
+		592FF8EF18ECBDC900C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		592FF8F118ECBDC900C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		592FF8F618ECBDF700C164F8 /* DeepBelief.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeepBelief.framework; path = ../DeepBelief.framework; sourceTree = "<group>"; };
+		592FF8FF18ECC59F00C164F8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
+		592FF90118ECC66200C164F8 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = SOURCE_ROOT; };
+		592FF90318ECCB8300C164F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		592FF90518ECCD1E00C164F8 /* jetpac.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = jetpac.ntwk; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		592FF8B218ECBD7600C164F8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592FF90018ECC59F00C164F8 /* Accelerate.framework in Frameworks */,
+				592FF8F718ECBDF700C164F8 /* DeepBelief.framework in Frameworks */,
+				592FF8BB18ECBD7600C164F8 /* CoreGraphics.framework in Frameworks */,
+				592FF8BD18ECBD7600C164F8 /* UIKit.framework in Frameworks */,
+				592FF8B918ECBD7600C164F8 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		592FF8AA18ECBD3600C164F8 = {
+			isa = PBXGroup;
+			children = (
+				592FF8BE18ECBD7600C164F8 /* DeepBeliefExample */,
+				592FF8B718ECBD7600C164F8 /* Frameworks */,
+				592FF8B618ECBD7600C164F8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		592FF8B618ECBD7600C164F8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				592FF8B518ECBD7600C164F8 /* DeepBeliefExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		592FF8B718ECBD7600C164F8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				592FF8FF18ECC59F00C164F8 /* Accelerate.framework */,
+				592FF8F618ECBDF700C164F8 /* DeepBelief.framework */,
+				592FF8B818ECBD7600C164F8 /* Foundation.framework */,
+				592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */,
+				592FF8BC18ECBD7600C164F8 /* UIKit.framework */,
+				592FF8D118ECBD7600C164F8 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		592FF8BE18ECBD7600C164F8 /* DeepBeliefExample */ = {
+			isa = PBXGroup;
+			children = (
+				592FF8ED18ECBDC900C164F8 /* en.lproj */,
+				592FF90318ECCB8300C164F8 /* Info.plist */,
+				592FF90518ECCD1E00C164F8 /* jetpac.ntwk */,
+				592FF90118ECC66200C164F8 /* main.mm */,
+				592FF8E618ECBDBD00C164F8 /* SquareCamAppDelegate.h */,
+				592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */,
+				592FF8E818ECBDBD00C164F8 /* SquareCamViewController.h */,
+				592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */,
+			);
+			path = DeepBeliefExample;
+			sourceTree = "<group>";
+		};
+		592FF8ED18ECBDC900C164F8 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				592FF8EE18ECBDC900C164F8 /* MainStoryboard_iPad.storyboard */,
+				592FF8F018ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard */,
+			);
+			name = en.lproj;
+			path = ../../../../vagrant/jpcnn/jpcnn_ios/en.lproj;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		592FF8B418ECBD7600C164F8 /* DeepBeliefExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 592FF8E318ECBD7600C164F8 /* Build configuration list for PBXNativeTarget "DeepBeliefExample" */;
+			buildPhases = (
+				592FF8B118ECBD7600C164F8 /* Sources */,
+				592FF8B218ECBD7600C164F8 /* Frameworks */,
+				592FF8B318ECBD7600C164F8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeepBeliefExample;
+			productName = DeepBeliefExample;
+			productReference = 592FF8B518ECBD7600C164F8 /* DeepBeliefExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		592FF8AB18ECBD3600C164F8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = 592FF8AE18ECBD3600C164F8 /* Build configuration list for PBXProject "DeepBeliefExample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 592FF8AA18ECBD3600C164F8;
+			productRefGroup = 592FF8B618ECBD7600C164F8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				592FF8B418ECBD7600C164F8 /* DeepBeliefExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		592FF8B318ECBD7600C164F8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592FF90618ECCD3B00C164F8 /* jetpac.ntwk in Resources */,
+				592FF8F418ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard in Resources */,
+				592FF8F318ECBDC900C164F8 /* MainStoryboard_iPad.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		592FF8B118ECBD7600C164F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592FF90218ECC66200C164F8 /* main.mm in Sources */,
+				592FF8EC18ECBDBD00C164F8 /* SquareCamViewController.m in Sources */,
+				592FF8EB18ECBDBD00C164F8 /* SquareCamAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		592FF8EE18ECBDC900C164F8 /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				592FF8EF18ECBDC900C164F8 /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		592FF8F018ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				592FF8F118ECBDC900C164F8 /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		592FF8AF18ECBD3600C164F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		592FF8B018ECBD3600C164F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		592FF8DF18ECBD7600C164F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					/Users/petewarden/projects/DeepBeliefSDK,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		592FF8E018ECBD7600C164F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					/Users/petewarden/projects/DeepBeliefSDK,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		592FF8AE18ECBD3600C164F8 /* Build configuration list for PBXProject "DeepBeliefExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				592FF8AF18ECBD3600C164F8 /* Debug */,
+				592FF8B018ECBD3600C164F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		592FF8E318ECBD7600C164F8 /* Build configuration list for PBXNativeTarget "DeepBeliefExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				592FF8DF18ECBD7600C164F8 /* Debug */,
+				592FF8E018ECBD7600C164F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 592FF8AB18ECBD3600C164F8 /* Project object */;
+}
