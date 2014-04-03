@@ -1,0 +1,292 @@
+{"frames": [
+
+{
+	"filename": "Romo_Mumbles_Ani_v030219.png",
+	"frame": {"x":478,"y":398,"w":478,"h":344},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":283,"w":478,"h":344},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030220.png",
+	"frame": {"x":478,"y":0,"w":478,"h":398},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":271,"w":478,"h":398},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030221.png",
+	"frame": {"x":478,"y":1410,"w":478,"h":314},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":238,"w":478,"h":314},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030222.png",
+	"frame": {"x":478,"y":1410,"w":478,"h":314},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":238,"w":478,"h":314},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030223.png",
+	"frame": {"x":956,"y":1336,"w":478,"h":270},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":221,"w":478,"h":270},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030224.png",
+	"frame": {"x":956,"y":1336,"w":478,"h":270},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":221,"w":478,"h":270},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030225.png",
+	"frame": {"x":1434,"y":714,"w":478,"h":266},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":218,"w":478,"h":266},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030226.png",
+	"frame": {"x":1434,"y":714,"w":478,"h":266},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":218,"w":478,"h":266},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030227.png",
+	"frame": {"x":956,"y":1018,"w":478,"h":318},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":220,"w":478,"h":318},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030228.png",
+	"frame": {"x":1434,"y":980,"w":478,"h":246},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":316,"w":478,"h":246},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030229.png",
+	"frame": {"x":956,"y":1606,"w":478,"h":266},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":315,"w":478,"h":266},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030230.png",
+	"frame": {"x":1434,"y":1226,"w":476,"h":254},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":83,"y":421,"w":476,"h":254},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030231.png",
+	"frame": {"x":1442,"y":564,"w":466,"h":150},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":526,"w":466,"h":150},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030232.png",
+	"frame": {"x":1434,"y":1692,"w":464,"h":156},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":100,"y":532,"w":464,"h":156},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030233.png",
+	"frame": {"x":1434,"y":1692,"w":464,"h":156},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":100,"y":532,"w":464,"h":156},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030234.png",
+	"frame": {"x":1442,"y":406,"w":464,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":100,"y":532,"w":464,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030235.png",
+	"frame": {"x":956,"y":1872,"w":468,"h":144},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":532,"w":468,"h":144},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030236.png",
+	"frame": {"x":1442,"y":206,"w":464,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":100,"y":532,"w":464,"h":200},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030237.png",
+	"frame": {"x":1442,"y":0,"w":464,"h":206},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":100,"y":526,"w":464,"h":206},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030238.png",
+	"frame": {"x":1434,"y":1848,"w":468,"h":150},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":526,"w":468,"h":150},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030239.png",
+	"frame": {"x":1434,"y":1480,"w":476,"h":212},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":83,"y":421,"w":476,"h":212},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030240.png",
+	"frame": {"x":478,"y":1724,"w":478,"h":266},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":295,"w":478,"h":266},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030241.png",
+	"frame": {"x":0,"y":444,"w":478,"h":402},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":296,"w":478,"h":402},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030242.png",
+	"frame": {"x":0,"y":0,"w":478,"h":444},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":202,"w":478,"h":444},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030243.png",
+	"frame": {"x":0,"y":846,"w":478,"h":392},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":202,"w":478,"h":392},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030244.png",
+	"frame": {"x":478,"y":742,"w":478,"h":342},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":200,"w":478,"h":342},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030245.png",
+	"frame": {"x":478,"y":1084,"w":478,"h":326},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":199,"w":478,"h":326},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030246.png",
+	"frame": {"x":0,"y":1580,"w":478,"h":326},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":203,"w":478,"h":326},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030247.png",
+	"frame": {"x":0,"y":1580,"w":478,"h":326},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":203,"w":478,"h":326},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030248.png",
+	"frame": {"x":956,"y":680,"w":478,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":219,"w":478,"h":338},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030249.png",
+	"frame": {"x":956,"y":680,"w":478,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":219,"w":478,"h":338},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030250.png",
+	"frame": {"x":0,"y":1238,"w":478,"h":342},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":248,"w":478,"h":342},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030251.png",
+	"frame": {"x":956,"y":0,"w":486,"h":342},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":279,"w":486,"h":342},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030252.png",
+	"frame": {"x":956,"y":0,"w":486,"h":342},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":279,"w":486,"h":342},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Mumbles_Ani_v030253.png",
+	"frame": {"x":956,"y":342,"w":486,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":290,"w":486,"h":338},
+	"sourceSize": {"w":644,"h":964}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "Romo_Expression_106.png",
+	"format": "RGBA8888",
+	"size": {"w":1912,"h":2016},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2e82c2efc32072fd67a9c8f164205768:1/1$"
+}
+}

@@ -1,0 +1,123 @@
+{"frames": [
+
+{
+	"filename": "Romo_Hiccup_v030003.png",
+	"frame": {"x":0,"y":0,"w":456,"h":128},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":581,"w":456,"h":128},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030004.png",
+	"frame": {"x":448,"y":1552,"w":398,"h":438},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":118,"y":239,"w":398,"h":438},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030005.png",
+	"frame": {"x":0,"y":1552,"w":448,"h":414},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":93,"y":85,"w":448,"h":414},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030006.png",
+	"frame": {"x":482,"y":1174,"w":496,"h":378},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":70,"y":100,"w":496,"h":378},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030007.png",
+	"frame": {"x":482,"y":1174,"w":496,"h":378},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":70,"y":100,"w":496,"h":378},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030008.png",
+	"frame": {"x":0,"y":1174,"w":482,"h":360},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":78,"y":162,"w":482,"h":360},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030009.png",
+	"frame": {"x":484,"y":854,"w":498,"h":320},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":68,"y":228,"w":498,"h":320},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030010.png",
+	"frame": {"x":0,"y":564,"w":532,"h":290},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":46,"y":294,"w":532,"h":290},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030011.png",
+	"frame": {"x":456,"y":0,"w":510,"h":278},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":58,"y":319,"w":510,"h":278},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030012.png",
+	"frame": {"x":456,"y":0,"w":510,"h":278},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":58,"y":319,"w":510,"h":278},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030013.png",
+	"frame": {"x":0,"y":854,"w":484,"h":290},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":303,"w":484,"h":290},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030014.png",
+	"frame": {"x":0,"y":854,"w":484,"h":290},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":303,"w":484,"h":290},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030015.png",
+	"frame": {"x":484,"y":278,"w":484,"h":286},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":296,"w":484,"h":286},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030016.png",
+	"frame": {"x":484,"y":278,"w":484,"h":286},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":296,"w":484,"h":286},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Hiccup_v030017.png",
+	"frame": {"x":0,"y":278,"w":484,"h":284},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":294,"w":484,"h":284},
+	"sourceSize": {"w":640,"h":960}
+}]
+}

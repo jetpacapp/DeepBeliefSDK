@@ -1,0 +1,379 @@
+{"frames": [
+
+{
+	"filename": "Romo_Sniff_Ani_v010001.png",
+	"frame": {"x":0,"y":0,"w":496,"h":288},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":67,"y":293,"w":496,"h":288},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010002.png",
+	"frame": {"x":0,"y":288,"w":496,"h":276},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":67,"y":298,"w":496,"h":276},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010003.png",
+	"frame": {"x":0,"y":564,"w":478,"h":230},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":307,"w":478,"h":230},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010004.png",
+	"frame": {"x":0,"y":564,"w":478,"h":230},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":307,"w":478,"h":230},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010005.png",
+	"frame": {"x":0,"y":794,"w":478,"h":208},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":293,"w":478,"h":208},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010006.png",
+	"frame": {"x":0,"y":794,"w":478,"h":208},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":293,"w":478,"h":208},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010007.png",
+	"frame": {"x":1434,"y":756,"w":478,"h":194},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":274,"w":478,"h":194},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010008.png",
+	"frame": {"x":1434,"y":950,"w":478,"h":192},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":272,"w":478,"h":192},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010009.png",
+	"frame": {"x":974,"y":0,"w":478,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":272,"w":478,"h":200},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010010.png",
+	"frame": {"x":496,"y":202,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":273,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010011.png",
+	"frame": {"x":496,"y":202,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":273,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010012.png",
+	"frame": {"x":1434,"y":562,"w":478,"h":194},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":272,"w":478,"h":194},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010013.png",
+	"frame": {"x":956,"y":962,"w":478,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":274,"w":478,"h":200},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010014.png",
+	"frame": {"x":496,"y":0,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":274,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010015.png",
+	"frame": {"x":1434,"y":950,"w":478,"h":192},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":272,"w":478,"h":192},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010016.png",
+	"frame": {"x":974,"y":0,"w":478,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":272,"w":478,"h":200},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010017.png",
+	"frame": {"x":496,"y":202,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":273,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010018.png",
+	"frame": {"x":1434,"y":950,"w":478,"h":192},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":272,"w":478,"h":192},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010019.png",
+	"frame": {"x":1434,"y":950,"w":478,"h":192},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":272,"w":478,"h":192},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010020.png",
+	"frame": {"x":496,"y":202,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":273,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010021.png",
+	"frame": {"x":496,"y":202,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":273,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010022.png",
+	"frame": {"x":956,"y":762,"w":478,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":271,"w":478,"h":200},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010023.png",
+	"frame": {"x":974,"y":200,"w":478,"h":194},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":269,"w":478,"h":194},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010024.png",
+	"frame": {"x":478,"y":766,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":274,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010025.png",
+	"frame": {"x":478,"y":766,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":274,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010026.png",
+	"frame": {"x":956,"y":562,"w":478,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":309,"w":478,"h":200},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010027.png",
+	"frame": {"x":956,"y":562,"w":478,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":309,"w":478,"h":200},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010028.png",
+	"frame": {"x":478,"y":968,"w":478,"h":198},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":317,"w":478,"h":198},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010029.png",
+	"frame": {"x":478,"y":968,"w":478,"h":198},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":317,"w":478,"h":198},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010030.png",
+	"frame": {"x":478,"y":564,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":309,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010031.png",
+	"frame": {"x":478,"y":564,"w":478,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":309,"w":478,"h":202},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010032.png",
+	"frame": {"x":974,"y":394,"w":478,"h":168},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":275,"w":478,"h":168},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010033.png",
+	"frame": {"x":974,"y":394,"w":478,"h":168},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":275,"w":478,"h":168},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010034.png",
+	"frame": {"x":0,"y":1002,"w":478,"h":162},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":162},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010035.png",
+	"frame": {"x":0,"y":1002,"w":478,"h":162},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":162},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010036.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010037.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010038.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010039.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010040.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010041.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010042.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010043.png",
+	"frame": {"x":496,"y":404,"w":478,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":260,"w":478,"h":158},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010044.png",
+	"frame": {"x":1452,"y":366,"w":478,"h":178},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":266,"w":478,"h":178},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010045.png",
+	"frame": {"x":1452,"y":184,"w":478,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":302,"w":478,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010046.png",
+	"frame": {"x":1452,"y":184,"w":478,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":302,"w":478,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Sniff_Ani_v010047.png",
+	"frame": {"x":1452,"y":0,"w":478,"h":184},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":373,"w":478,"h":184},
+	"sourceSize": {"w":644,"h":964}
+}]
+}

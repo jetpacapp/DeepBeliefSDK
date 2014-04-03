@@ -12,12 +12,12 @@
 		592FF8BD18ECBD7600C164F8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8BC18ECBD7600C164F8 /* UIKit.framework */; };
 		592FF8EB18ECBDBD00C164F8 /* SquareCamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */; };
 		592FF8EC18ECBDBD00C164F8 /* SquareCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */; };
-		592FF8F318ECBDC900C164F8 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF8EE18ECBDC900C164F8 /* MainStoryboard_iPad.storyboard */; };
-		592FF8F418ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF8F018ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard */; };
 		592FF8F718ECBDF700C164F8 /* DeepBelief.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8F618ECBDF700C164F8 /* DeepBelief.framework */; };
 		592FF90018ECC59F00C164F8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8FF18ECC59F00C164F8 /* Accelerate.framework */; };
 		592FF90218ECC66200C164F8 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 592FF90118ECC66200C164F8 /* main.mm */; };
 		592FF90618ECCD3B00C164F8 /* jetpac.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90518ECCD1E00C164F8 /* jetpac.ntwk */; };
+		592FF90C18EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90818EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard */; };
+		592FF90D18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90A18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,17 +26,17 @@
 		592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		592FF8BC18ECBD7600C164F8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		592FF8D118ECBD7600C164F8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		592FF8E618ECBDBD00C164F8 /* SquareCamAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamAppDelegate.h; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamAppDelegate.h; sourceTree = "<group>"; };
-		592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamAppDelegate.m; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamAppDelegate.m; sourceTree = "<group>"; };
-		592FF8E818ECBDBD00C164F8 /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamViewController.h; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamViewController.h; sourceTree = "<group>"; };
-		592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamViewController.m; path = ../../../../vagrant/jpcnn/jpcnn_ios/SquareCamViewController.m; sourceTree = "<group>"; };
-		592FF8EF18ECBDC900C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		592FF8F118ECBDC900C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		592FF8E618ECBDBD00C164F8 /* SquareCamAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamAppDelegate.h; path = ../SquareCamAppDelegate.h; sourceTree = "<group>"; };
+		592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamAppDelegate.m; path = ../SquareCamAppDelegate.m; sourceTree = "<group>"; };
+		592FF8E818ECBDBD00C164F8 /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamViewController.h; path = ../SquareCamViewController.h; sourceTree = "<group>"; };
+		592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamViewController.m; path = ../SquareCamViewController.m; sourceTree = "<group>"; };
 		592FF8F618ECBDF700C164F8 /* DeepBelief.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeepBelief.framework; path = ../DeepBelief.framework; sourceTree = "<group>"; };
 		592FF8FF18ECC59F00C164F8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		592FF90118ECC66200C164F8 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = SOURCE_ROOT; };
 		592FF90318ECCB8300C164F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		592FF90518ECCD1E00C164F8 /* jetpac.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = jetpac.ntwk; sourceTree = SOURCE_ROOT; };
+		592FF90918EDD0DA00C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		592FF90B18EDD0DA00C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +88,7 @@
 		592FF8BE18ECBD7600C164F8 /* DeepBeliefExample */ = {
 			isa = PBXGroup;
 			children = (
-				592FF8ED18ECBDC900C164F8 /* en.lproj */,
+				592FF90718EDD0DA00C164F8 /* en.lproj */,
 				592FF90318ECCB8300C164F8 /* Info.plist */,
 				592FF90518ECCD1E00C164F8 /* jetpac.ntwk */,
 				592FF90118ECC66200C164F8 /* main.mm */,
@@ -100,15 +100,14 @@
 			path = DeepBeliefExample;
 			sourceTree = "<group>";
 		};
-		592FF8ED18ECBDC900C164F8 /* en.lproj */ = {
+		592FF90718EDD0DA00C164F8 /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				592FF8EE18ECBDC900C164F8 /* MainStoryboard_iPad.storyboard */,
-				592FF8F018ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard */,
+				592FF90818EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard */,
+				592FF90A18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard */,
 			);
-			name = en.lproj;
-			path = ../../../../vagrant/jpcnn/jpcnn_ios/en.lproj;
-			sourceTree = "<group>";
+			path = en.lproj;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -160,9 +159,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				592FF90D18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard in Resources */,
+				592FF90C18EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard in Resources */,
 				592FF90618ECCD3B00C164F8 /* jetpac.ntwk in Resources */,
-				592FF8F418ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard in Resources */,
-				592FF8F318ECBDC900C164F8 /* MainStoryboard_iPad.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,18 +181,18 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		592FF8EE18ECBDC900C164F8 /* MainStoryboard_iPad.storyboard */ = {
+		592FF90818EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				592FF8EF18ECBDC900C164F8 /* en */,
+				592FF90918EDD0DA00C164F8 /* en */,
 			);
 			name = MainStoryboard_iPad.storyboard;
 			sourceTree = "<group>";
 		};
-		592FF8F018ECBDC900C164F8 /* MainStoryboard_iPhone.storyboard */ = {
+		592FF90A18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				592FF8F118ECBDC900C164F8 /* en */,
+				592FF90B18EDD0DA00C164F8 /* en */,
 			);
 			name = MainStoryboard_iPhone.storyboard;
 			sourceTree = "<group>";

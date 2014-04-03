@@ -1,0 +1,388 @@
+{"frames": [
+
+{
+	"filename": "Romo_Confused_Idle_Ani_v040050.png",
+	"frame": {"x":1424,"y":234,"w":476,"h":244},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":63,"y":253,"w":476,"h":244},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040051.png",
+	"frame": {"x":0,"y":234,"w":474,"h":242},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":65,"y":256,"w":474,"h":242},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040052.png",
+	"frame": {"x":0,"y":234,"w":474,"h":242},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":65,"y":256,"w":474,"h":242},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040053.png",
+	"frame": {"x":0,"y":744,"w":488,"h":268},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":64,"y":275,"w":488,"h":268},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040054.png",
+	"frame": {"x":0,"y":744,"w":488,"h":268},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":64,"y":275,"w":488,"h":268},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040055.png",
+	"frame": {"x":494,"y":478,"w":476,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":67,"y":326,"w":476,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040056.png",
+	"frame": {"x":970,"y":478,"w":474,"h":264},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":328,"w":474,"h":264},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040057.png",
+	"frame": {"x":1444,"y":478,"w":474,"h":266},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":324,"w":474,"h":266},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040058.png",
+	"frame": {"x":1444,"y":478,"w":474,"h":266},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":324,"w":474,"h":266},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040059.png",
+	"frame": {"x":488,"y":744,"w":476,"h":288},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":291,"w":476,"h":288},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040060.png",
+	"frame": {"x":488,"y":744,"w":476,"h":288},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":291,"w":476,"h":288},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040061.png",
+	"frame": {"x":1438,"y":744,"w":472,"h":348},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":223,"w":472,"h":348},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040062.png",
+	"frame": {"x":1438,"y":744,"w":472,"h":348},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":223,"w":472,"h":348},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040063.png",
+	"frame": {"x":0,"y":1092,"w":472,"h":354},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":204,"w":472,"h":354},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040064.png",
+	"frame": {"x":0,"y":1092,"w":472,"h":354},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":204,"w":472,"h":354},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040065.png",
+	"frame": {"x":944,"y":1092,"w":472,"h":360},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":194,"w":472,"h":360},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040066.png",
+	"frame": {"x":944,"y":1092,"w":472,"h":360},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":194,"w":472,"h":360},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040067.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040068.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040069.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040070.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040071.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040072.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040073.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040074.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040075.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040076.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040077.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040078.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040079.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040080.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040081.png",
+	"frame": {"x":1416,"y":1092,"w":472,"h":362},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":191,"w":472,"h":362},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040082.png",
+	"frame": {"x":472,"y":1092,"w":472,"h":360},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":194,"w":472,"h":360},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040083.png",
+	"frame": {"x":472,"y":1092,"w":472,"h":360},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":96,"y":194,"w":472,"h":360},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040084.png",
+	"frame": {"x":964,"y":744,"w":474,"h":324},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":93,"y":235,"w":474,"h":324},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040085.png",
+	"frame": {"x":964,"y":744,"w":474,"h":324},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":93,"y":235,"w":474,"h":324},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040086.png",
+	"frame": {"x":1420,"y":0,"w":476,"h":234},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":339,"w":476,"h":234},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040087.png",
+	"frame": {"x":1420,"y":0,"w":476,"h":234},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":339,"w":476,"h":234},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040088.png",
+	"frame": {"x":468,"y":0,"w":468,"h":144},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":86,"y":470,"w":468,"h":144},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040089.png",
+	"frame": {"x":468,"y":0,"w":468,"h":144},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":86,"y":470,"w":468,"h":144},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040090.png",
+	"frame": {"x":0,"y":0,"w":468,"h":140},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":87,"y":466,"w":468,"h":140},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040091.png",
+	"frame": {"x":936,"y":0,"w":484,"h":224},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":377,"w":484,"h":224},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040092.png",
+	"frame": {"x":0,"y":478,"w":494,"h":258},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":67,"y":323,"w":494,"h":258},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040093.png",
+	"frame": {"x":0,"y":478,"w":494,"h":258},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":67,"y":323,"w":494,"h":258},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040094.png",
+	"frame": {"x":474,"y":234,"w":474,"h":244},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":67,"y":275,"w":474,"h":244},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040095.png",
+	"frame": {"x":474,"y":234,"w":474,"h":244},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":67,"y":275,"w":474,"h":244},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Confused_Idle_Ani_v040096.png",
+	"frame": {"x":948,"y":234,"w":476,"h":244},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":64,"y":257,"w":476,"h":244},
+	"sourceSize": {"w":640,"h":960}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "Romo_Expression_27_1.png",
+	"format": "BGRA8888",
+	"size": {"w":1918,"h":1454},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b61cbed0650c3d556b23412fb9004651:1/1$"
+}
+}

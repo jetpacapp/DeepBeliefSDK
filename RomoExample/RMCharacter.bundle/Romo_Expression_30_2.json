@@ -1,0 +1,459 @@
+{"frames": [
+
+{
+	"filename": "Romo_Smack_Ani_v030025.png",
+	"frame": {"x":1008,"y":720,"w":484,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":520,"w":484,"h":260},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030026.png",
+	"frame": {"x":1008,"y":720,"w":484,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":520,"w":484,"h":260},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030027.png",
+	"frame": {"x":504,"y":1358,"w":488,"h":300},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":43,"y":440,"w":488,"h":300},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030028.png",
+	"frame": {"x":0,"y":0,"w":494,"h":488},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":70,"y":223,"w":494,"h":488},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030029.png",
+	"frame": {"x":0,"y":0,"w":494,"h":488},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":70,"y":223,"w":494,"h":488},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030030.png",
+	"frame": {"x":494,"y":0,"w":506,"h":468},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":59,"y":183,"w":506,"h":468},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030031.png",
+	"frame": {"x":494,"y":0,"w":506,"h":468},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":59,"y":183,"w":506,"h":468},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030032.png",
+	"frame": {"x":0,"y":488,"w":504,"h":448},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":66,"y":173,"w":504,"h":448},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030033.png",
+	"frame": {"x":0,"y":488,"w":504,"h":448},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":66,"y":173,"w":504,"h":448},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030034.png",
+	"frame": {"x":1000,"y":0,"w":504,"h":452},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":68,"y":172,"w":504,"h":452},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030035.png",
+	"frame": {"x":1000,"y":0,"w":504,"h":452},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":68,"y":172,"w":504,"h":452},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030036.png",
+	"frame": {"x":0,"y":936,"w":504,"h":414},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":174,"w":504,"h":414},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030037.png",
+	"frame": {"x":0,"y":936,"w":504,"h":414},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":174,"w":504,"h":414},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030038.png",
+	"frame": {"x":0,"y":1350,"w":504,"h":384},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":173,"w":504,"h":384},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030039.png",
+	"frame": {"x":0,"y":1350,"w":504,"h":384},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":173,"w":504,"h":384},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030040.png",
+	"frame": {"x":504,"y":772,"w":504,"h":294},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":184,"w":504,"h":294},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030041.png",
+	"frame": {"x":504,"y":772,"w":504,"h":294},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":184,"w":504,"h":294},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030042.png",
+	"frame": {"x":504,"y":1658,"w":506,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":65,"y":247,"w":506,"h":260},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030043.png",
+	"frame": {"x":504,"y":1658,"w":506,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":65,"y":247,"w":506,"h":260},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030044.png",
+	"frame": {"x":992,"y":1394,"w":504,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":335,"w":504,"h":260},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030045.png",
+	"frame": {"x":992,"y":1394,"w":504,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":335,"w":504,"h":260},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030046.png",
+	"frame": {"x":504,"y":1066,"w":504,"h":292},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":70,"y":357,"w":504,"h":292},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030047.png",
+	"frame": {"x":504,"y":1066,"w":504,"h":292},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":70,"y":357,"w":504,"h":292},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030048.png",
+	"frame": {"x":0,"y":1734,"w":504,"h":304},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":362,"w":504,"h":304},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030049.png",
+	"frame": {"x":0,"y":1734,"w":504,"h":304},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":362,"w":504,"h":304},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030050.png",
+	"frame": {"x":504,"y":468,"w":502,"h":304},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":362,"w":502,"h":304},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030051.png",
+	"frame": {"x":504,"y":468,"w":502,"h":304},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":362,"w":502,"h":304},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030052.png",
+	"frame": {"x":504,"y":468,"w":502,"h":304},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":362,"w":502,"h":304},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030053.png",
+	"frame": {"x":504,"y":468,"w":502,"h":304},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":71,"y":362,"w":502,"h":304},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030054.png",
+	"frame": {"x":1006,"y":452,"w":502,"h":268},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":403,"w":502,"h":268},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030055.png",
+	"frame": {"x":1006,"y":452,"w":502,"h":268},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":403,"w":502,"h":268},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030056.png",
+	"frame": {"x":1008,"y":980,"w":494,"h":170},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":79,"y":500,"w":494,"h":170},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030057.png",
+	"frame": {"x":1008,"y":980,"w":494,"h":170},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":79,"y":500,"w":494,"h":170},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030058.png",
+	"frame": {"x":1010,"y":1776,"w":414,"h":124},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":540,"w":414,"h":124},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030059.png",
+	"frame": {"x":1010,"y":1654,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":130,"y":550,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030060.png",
+	"frame": {"x":956,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":97,"y":554,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030061.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030062.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030063.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030064.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030065.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030066.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030067.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030068.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030069.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030070.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030071.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030072.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030073.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030074.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030075.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030076.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":119,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030077.png",
+	"frame": {"x":1008,"y":1272,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":91,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030078.png",
+	"frame": {"x":1008,"y":1150,"w":450,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":89,"y":551,"w":450,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030079.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":115,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030080.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":118,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Smack_Ani_v030081.png",
+	"frame": {"x":504,"y":1918,"w":452,"h":122},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":118,"y":553,"w":452,"h":122},
+	"sourceSize": {"w":644,"h":964}
+}]
+}

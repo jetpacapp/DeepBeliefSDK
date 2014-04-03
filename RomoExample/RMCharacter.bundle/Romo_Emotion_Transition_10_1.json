@@ -1,0 +1,100 @@
+{"frames": [
+
+{
+	"filename": "Romo_Excited_Idle_Ani_v020006.png",
+	"frame": {"x":0,"y":0,"w":456,"h":132},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":531,"w":456,"h":132},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020007.png",
+	"frame": {"x":456,"y":0,"w":456,"h":134},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":523,"w":456,"h":134},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020008.png",
+	"frame": {"x":912,"y":0,"w":472,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":457,"w":472,"h":186},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020009.png",
+	"frame": {"x":912,"y":0,"w":472,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":457,"w":472,"h":186},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020010.png",
+	"frame": {"x":1384,"y":0,"w":478,"h":284},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":331,"w":478,"h":284},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020011.png",
+	"frame": {"x":0,"y":284,"w":474,"h":348},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":267,"w":474,"h":348},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020012.png",
+	"frame": {"x":474,"y":284,"w":476,"h":344},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":236,"w":476,"h":344},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020013.png",
+	"frame": {"x":474,"y":284,"w":476,"h":344},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":236,"w":476,"h":344},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020014.png",
+	"frame": {"x":950,"y":284,"w":476,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":230,"w":476,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020015.png",
+	"frame": {"x":950,"y":284,"w":476,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":230,"w":476,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Excited_Idle_Ani_v020016.png",
+	"frame": {"x":1426,"y":284,"w":476,"h":334},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":225,"w":476,"h":334},
+	"sourceSize": {"w":640,"h":960}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "Romo_Emotion_Transition_10_1.png",
+	"format": "BGRA8888",
+	"size": {"w":1902,"h":632},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:3800edebda4ac82fcf2bc2393fe0ee32:1/1$"
+}
+}

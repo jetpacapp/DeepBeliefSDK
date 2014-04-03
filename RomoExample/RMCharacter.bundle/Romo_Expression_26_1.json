@@ -1,0 +1,419 @@
+{"frames": [
+
+{
+	"filename": "Romo_Fart_v020001.png",
+	"frame": {"x":988,"y":1628,"w":482,"h":304},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":266,"w":482,"h":304},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020002.png",
+	"frame": {"x":502,"y":1628,"w":486,"h":284},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":80,"y":217,"w":486,"h":284},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020003.png",
+	"frame": {"x":502,"y":1628,"w":486,"h":284},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":80,"y":217,"w":486,"h":284},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020004.png",
+	"frame": {"x":0,"y":1628,"w":502,"h":278},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":74,"y":196,"w":502,"h":278},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020005.png",
+	"frame": {"x":1044,"y":1352,"w":504,"h":276},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":73,"y":193,"w":504,"h":276},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020006.png",
+	"frame": {"x":1044,"y":1352,"w":504,"h":276},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":73,"y":193,"w":504,"h":276},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020007.png",
+	"frame": {"x":1044,"y":608,"w":504,"h":220},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":73,"y":284,"w":504,"h":220},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020008.png",
+	"frame": {"x":548,"y":422,"w":504,"h":172},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":73,"y":397,"w":504,"h":172},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020009.png",
+	"frame": {"x":522,"y":0,"w":548,"h":140},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":507,"w":548,"h":140},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020010.png",
+	"frame": {"x":522,"y":0,"w":548,"h":140},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":507,"w":548,"h":140},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020011.png",
+	"frame": {"x":0,"y":280,"w":548,"h":140},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":47,"y":512,"w":548,"h":140},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020012.png",
+	"frame": {"x":548,"y":140,"w":548,"h":140},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":513,"w":548,"h":140},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020013.png",
+	"frame": {"x":0,"y":140,"w":548,"h":140},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":47,"y":514,"w":548,"h":140},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020014.png",
+	"frame": {"x":548,"y":140,"w":548,"h":140},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":515,"w":548,"h":140},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020015.png",
+	"frame": {"x":548,"y":280,"w":548,"h":142},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":47,"y":514,"w":548,"h":142},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020016.png",
+	"frame": {"x":0,"y":422,"w":548,"h":142},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":515,"w":548,"h":142},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020017.png",
+	"frame": {"x":0,"y":422,"w":548,"h":142},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":516,"w":548,"h":142},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020018.png",
+	"frame": {"x":0,"y":0,"w":522,"h":138},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":65,"y":507,"w":522,"h":138},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020019.png",
+	"frame": {"x":536,"y":608,"w":508,"h":212},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":352,"w":508,"h":212},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020020.png",
+	"frame": {"x":532,"y":1352,"w":512,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":68,"y":266,"w":512,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020021.png",
+	"frame": {"x":532,"y":1352,"w":512,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":68,"y":266,"w":512,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020022.png",
+	"frame": {"x":0,"y":1352,"w":532,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":58,"y":257,"w":532,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020023.png",
+	"frame": {"x":0,"y":1352,"w":532,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":58,"y":257,"w":532,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020024.png",
+	"frame": {"x":536,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":254,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020025.png",
+	"frame": {"x":536,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":254,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020026.png",
+	"frame": {"x":536,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":254,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020027.png",
+	"frame": {"x":0,"y":828,"w":536,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":257,"w":536,"h":260},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020028.png",
+	"frame": {"x":0,"y":828,"w":536,"h":260},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":257,"w":536,"h":260},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020029.png",
+	"frame": {"x":536,"y":828,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":263,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020030.png",
+	"frame": {"x":536,"y":828,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":263,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020031.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":266,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020032.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":266,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020033.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020034.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020035.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020036.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020037.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020038.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020039.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020040.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020041.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020042.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020043.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020044.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020045.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020046.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020047.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020048.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020049.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020050.png",
+	"frame": {"x":0,"y":1090,"w":536,"h":262},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":267,"w":536,"h":262},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020051.png",
+	"frame": {"x":0,"y":608,"w":536,"h":208},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":345,"w":536,"h":208},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Fart_v020053.png",
+	"frame": {"x":1052,"y":422,"w":472,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":469,"w":472,"h":186},
+	"sourceSize": {"w":640,"h":960}
+}]
+}

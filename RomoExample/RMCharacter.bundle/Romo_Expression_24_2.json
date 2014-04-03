@@ -1,0 +1,291 @@
+{"frames": [
+
+{
+	"filename": "Romo_Want_v030044.png",
+	"frame": {"x":0,"y":672,"w":478,"h":368},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":135,"w":478,"h":368},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030045.png",
+	"frame": {"x":496,"y":0,"w":496,"h":334},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":74,"y":131,"w":496,"h":334},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030046.png",
+	"frame": {"x":0,"y":0,"w":496,"h":334},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":74,"y":131,"w":496,"h":334},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030047.png",
+	"frame": {"x":1446,"y":1092,"w":460,"h":412},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":188,"w":460,"h":412},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030048.png",
+	"frame": {"x":474,"y":1062,"w":482,"h":398},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":235,"w":482,"h":398},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030049.png",
+	"frame": {"x":996,"y":338,"w":492,"h":356},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":74,"y":242,"w":492,"h":356},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030050.png",
+	"frame": {"x":956,"y":1090,"w":490,"h":406},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":73,"y":242,"w":490,"h":406},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030051.png",
+	"frame": {"x":984,"y":694,"w":486,"h":396},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":75,"y":235,"w":486,"h":396},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030052.png",
+	"frame": {"x":1438,"y":1504,"w":476,"h":432},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":80,"y":190,"w":476,"h":432},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030053.png",
+	"frame": {"x":0,"y":1442,"w":474,"h":420},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":135,"w":474,"h":420},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030054.png",
+	"frame": {"x":0,"y":1040,"w":474,"h":402},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":129,"w":474,"h":402},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030055.png",
+	"frame": {"x":1488,"y":342,"w":482,"h":366},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":130,"w":482,"h":366},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030056.png",
+	"frame": {"x":1446,"y":1092,"w":460,"h":412},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":188,"w":460,"h":412},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030057.png",
+	"frame": {"x":474,"y":1460,"w":482,"h":414},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":235,"w":482,"h":414},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030058.png",
+	"frame": {"x":1470,"y":708,"w":506,"h":384},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":241,"w":506,"h":384},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030059.png",
+	"frame": {"x":478,"y":678,"w":506,"h":384},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":69,"y":241,"w":506,"h":384},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030060.png",
+	"frame": {"x":984,"y":694,"w":486,"h":396},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":75,"y":235,"w":486,"h":396},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030061.png",
+	"frame": {"x":1438,"y":1504,"w":476,"h":432},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":80,"y":190,"w":476,"h":432},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030062.png",
+	"frame": {"x":956,"y":1496,"w":482,"h":418},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":163,"w":482,"h":418},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030063.png",
+	"frame": {"x":956,"y":1496,"w":482,"h":418},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":77,"y":163,"w":482,"h":418},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030064.png",
+	"frame": {"x":1492,"y":0,"w":492,"h":342},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":75,"y":157,"w":492,"h":342},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030065.png",
+	"frame": {"x":1492,"y":0,"w":492,"h":342},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":75,"y":157,"w":492,"h":342},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030066.png",
+	"frame": {"x":500,"y":338,"w":496,"h":340},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":74,"y":156,"w":496,"h":340},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030067.png",
+	"frame": {"x":500,"y":338,"w":496,"h":340},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":74,"y":156,"w":496,"h":340},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030068.png",
+	"frame": {"x":0,"y":334,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030069.png",
+	"frame": {"x":992,"y":0,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030070.png",
+	"frame": {"x":992,"y":0,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030071.png",
+	"frame": {"x":0,"y":334,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030072.png",
+	"frame": {"x":0,"y":334,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030073.png",
+	"frame": {"x":992,"y":0,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030074.png",
+	"frame": {"x":992,"y":0,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030075.png",
+	"frame": {"x":0,"y":334,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030076.png",
+	"frame": {"x":0,"y":334,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030077.png",
+	"frame": {"x":992,"y":0,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030078.png",
+	"frame": {"x":992,"y":0,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+},
+{
+	"filename": "Romo_Want_v030079.png",
+	"frame": {"x":0,"y":334,"w":500,"h":338},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":72,"y":155,"w":500,"h":338},
+	"sourceSize": {"w":640,"h":960}
+}]
+}

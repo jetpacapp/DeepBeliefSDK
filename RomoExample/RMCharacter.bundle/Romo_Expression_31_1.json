@@ -1,0 +1,363 @@
+{"frames": [
+
+{
+	"filename": "Romo_Weee_Ani_v060001.png",
+	"frame": {"x":0,"y":0,"w":478,"h":272},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":81,"y":372,"w":478,"h":272},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060002.png",
+	"frame": {"x":478,"y":0,"w":476,"h":228},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":450,"w":476,"h":228},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060003.png",
+	"frame": {"x":1394,"y":438,"w":460,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":516,"w":460,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060004.png",
+	"frame": {"x":1394,"y":438,"w":460,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":516,"w":460,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060005.png",
+	"frame": {"x":1394,"y":438,"w":460,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":520,"w":460,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060006.png",
+	"frame": {"x":1394,"y":438,"w":460,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":520,"w":460,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060007.png",
+	"frame": {"x":0,"y":272,"w":460,"h":174},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":525,"w":460,"h":174},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060008.png",
+	"frame": {"x":934,"y":370,"w":460,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":513,"w":460,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060009.png",
+	"frame": {"x":934,"y":370,"w":460,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":513,"w":460,"h":182},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060010.png",
+	"frame": {"x":954,"y":0,"w":460,"h":184},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":88,"y":484,"w":460,"h":184},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060011.png",
+	"frame": {"x":460,"y":414,"w":464,"h":168},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":85,"y":419,"w":464,"h":168},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060012.png",
+	"frame": {"x":1414,"y":0,"w":430,"h":252},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":108,"y":297,"w":430,"h":252},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060013.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":256,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060014.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060015.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060016.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":257,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060017.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":311,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060018.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":311,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060019.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":321,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060020.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":321,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060021.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":317,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060022.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":256,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060023.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":256,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060024.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060025.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060026.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":257,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060027.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":311,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060028.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":311,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060029.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":321,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060030.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":321,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060031.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":317,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060032.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":256,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060033.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":256,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060034.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060035.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060036.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060037.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060038.png",
+	"frame": {"x":1410,"y":252,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":251,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060039.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":257,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060040.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":311,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060041.png",
+	"frame": {"x":478,"y":228,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":311,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060042.png",
+	"frame": {"x":954,"y":184,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":378,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060043.png",
+	"frame": {"x":954,"y":184,"w":456,"h":186},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":378,"w":456,"h":186},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060044.png",
+	"frame": {"x":0,"y":446,"w":452,"h":168},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":412,"w":452,"h":168},
+	"sourceSize": {"w":644,"h":964}
+},
+{
+	"filename": "Romo_Weee_Ani_v060045.png",
+	"frame": {"x":0,"y":446,"w":452,"h":168},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":95,"y":412,"w":452,"h":168},
+	"sourceSize": {"w":644,"h":964}
+}]
+}
