@@ -39,7 +39,7 @@ To use the library in your own application, you need to add the DeepBelief.frame
 
 You should then be able to use code like this to classify a single image that you've included as a resource in your bundle. The code assumes it's called 'dog.jpg', but you should change it to match the name of your file.
 
-```
+```objectivec
   NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"jetpac" ofType:@"ntwk"];
   if (networkPath == NULL) {
     fprintf(stderr, "Couldn't find the neural network parameters file - did you add it as a resource to your application?\n");
