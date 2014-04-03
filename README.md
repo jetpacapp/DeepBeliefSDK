@@ -33,6 +33,42 @@ is a massive step forward compared to the previous state of the art, you'll stil
 need to adapt it to the domain you're working in to get the best results in a real
 application.
 
+## Usage example
+
+To use the library in your own application, you need to add the DeepBelief.framework bundle to the Link Binary with Libraries build phase in your XCode project settings, and add `#import <DeepBelief/DeepBelief.h>` to the top of the file you want to use the code in.
+
+You should then be able to use code like this to classify a single image that you've included as a resource in your bundle. The code assumes it's called 'dog.jpg', but you should change it to match the name of your file.
+
+```
+  NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"jetpac" ofType:@"ntwk"];
+  if (networkPath == NULL) {
+    fprintf(stderr, "Couldn't find the neural network parameters file - did you add it as a resource to your application?\n");
+    assert(false);
+  }
+  network = jpcnn_create_network([networkPath UTF8String]);
+  assert(network != NULL);
+
+  NSString* imagePath = [[NSBundle mainBundle] pathForResource:@"dog" ofType:@"jpg"];
+  void* inputImage = jpcnn_create_image_buffer_from_file([imagePath UTF8String]);
+
+  float* predictions;
+  int predictionsLength;
+  char** predictionsLabels;
+  int predictionsLabelsLength;
+  jpcnn_classify_image(network, inputImage, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+
+  jpcnn_destroy_image_buffer(inputImage);
+
+  for (int index = 0; index < predictionsLength; index += 1) {
+    const float predictionValue = predictions[index];
+    char* label = predictionsLabels[index % predictionsLabelsLength];
+    NSString* predictionLine = [NSString stringWithFormat: @"%s - %0.2f\n", label, predictionValue];
+    NSLog(@"%@", predictionLine);
+  }
+  
+  jpcnn_destroy_network(network);
+```
+
 ## API Reference
 
 Because we reuse the same code across a lot of different platforms, we use a
