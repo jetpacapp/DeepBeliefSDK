@@ -56,6 +56,7 @@ You'll need to make sure you include this 60MB file in the 'Copy Files' build ph
 of your application, and then call something like this to get the actual path:
 
 ```NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"jetpac" ofType:@"ntwk"];
+
 network = jpcnn_create_network([networkPath UTF8String]);```
 
 ### jpcnn_destroy_network
