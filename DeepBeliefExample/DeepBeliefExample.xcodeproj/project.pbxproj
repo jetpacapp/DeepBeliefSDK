@@ -10,14 +10,14 @@
 		592FF8B918ECBD7600C164F8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8B818ECBD7600C164F8 /* Foundation.framework */; };
 		592FF8BB18ECBD7600C164F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */; };
 		592FF8BD18ECBD7600C164F8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8BC18ECBD7600C164F8 /* UIKit.framework */; };
-		592FF8EB18ECBDBD00C164F8 /* SquareCamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */; };
-		592FF8EC18ECBDBD00C164F8 /* SquareCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */; };
 		592FF8F718ECBDF700C164F8 /* DeepBelief.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8F618ECBDF700C164F8 /* DeepBelief.framework */; };
 		592FF90018ECC59F00C164F8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8FF18ECC59F00C164F8 /* Accelerate.framework */; };
 		592FF90218ECC66200C164F8 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 592FF90118ECC66200C164F8 /* main.mm */; };
 		592FF90618ECCD3B00C164F8 /* jetpac.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90518ECCD1E00C164F8 /* jetpac.ntwk */; };
 		592FF90C18EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90818EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard */; };
 		592FF90D18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90A18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard */; };
+		592FF92518EE240200C164F8 /* SquareCamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF92218EE240200C164F8 /* SquareCamAppDelegate.m */; };
+		592FF92618EE240200C164F8 /* SquareCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF92418EE240200C164F8 /* SquareCamViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,10 +26,6 @@
 		592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		592FF8BC18ECBD7600C164F8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		592FF8D118ECBD7600C164F8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		592FF8E618ECBDBD00C164F8 /* SquareCamAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamAppDelegate.h; path = ../SquareCamAppDelegate.h; sourceTree = "<group>"; };
-		592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamAppDelegate.m; path = ../SquareCamAppDelegate.m; sourceTree = "<group>"; };
-		592FF8E818ECBDBD00C164F8 /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SquareCamViewController.h; path = ../SquareCamViewController.h; sourceTree = "<group>"; };
-		592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SquareCamViewController.m; path = ../SquareCamViewController.m; sourceTree = "<group>"; };
 		592FF8F618ECBDF700C164F8 /* DeepBelief.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeepBelief.framework; path = ../DeepBelief.framework; sourceTree = "<group>"; };
 		592FF8FF18ECC59F00C164F8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		592FF90118ECC66200C164F8 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = SOURCE_ROOT; };
@@ -37,6 +33,10 @@
 		592FF90518ECCD1E00C164F8 /* jetpac.ntwk */ = {isa = PBXFileReference; lastKnownFileType = file; path = jetpac.ntwk; sourceTree = SOURCE_ROOT; };
 		592FF90918EDD0DA00C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		592FF90B18EDD0DA00C164F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		592FF92118EE240200C164F8 /* SquareCamAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquareCamAppDelegate.h; sourceTree = SOURCE_ROOT; };
+		592FF92218EE240200C164F8 /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamAppDelegate.m; sourceTree = SOURCE_ROOT; };
+		592FF92318EE240200C164F8 /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquareCamViewController.h; sourceTree = SOURCE_ROOT; };
+		592FF92418EE240200C164F8 /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamViewController.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,10 +92,10 @@
 				592FF90318ECCB8300C164F8 /* Info.plist */,
 				592FF90518ECCD1E00C164F8 /* jetpac.ntwk */,
 				592FF90118ECC66200C164F8 /* main.mm */,
-				592FF8E618ECBDBD00C164F8 /* SquareCamAppDelegate.h */,
-				592FF8E718ECBDBD00C164F8 /* SquareCamAppDelegate.m */,
-				592FF8E818ECBDBD00C164F8 /* SquareCamViewController.h */,
-				592FF8E918ECBDBD00C164F8 /* SquareCamViewController.m */,
+				592FF92118EE240200C164F8 /* SquareCamAppDelegate.h */,
+				592FF92218EE240200C164F8 /* SquareCamAppDelegate.m */,
+				592FF92318EE240200C164F8 /* SquareCamViewController.h */,
+				592FF92418EE240200C164F8 /* SquareCamViewController.m */,
 			);
 			path = DeepBeliefExample;
 			sourceTree = "<group>";
@@ -173,8 +173,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				592FF90218ECC66200C164F8 /* main.mm in Sources */,
-				592FF8EC18ECBDBD00C164F8 /* SquareCamViewController.m in Sources */,
-				592FF8EB18ECBDBD00C164F8 /* SquareCamAppDelegate.m in Sources */,
+				592FF92618EE240200C164F8 /* SquareCamViewController.m in Sources */,
+				592FF92518EE240200C164F8 /* SquareCamAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

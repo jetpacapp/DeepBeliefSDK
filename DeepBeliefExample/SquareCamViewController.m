@@ -671,13 +671,8 @@ bail:
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-	[self setupAVCapture];
-	square = [[UIImage imageNamed:@"squarePNG"] retain];
-	NSDictionary *detectorOptions = [[NSDictionary alloc] initWithObjectsAndKeys:CIDetectorAccuracyLow, CIDetectorAccuracy, nil];
-	faceDetector = [[CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions] retain];
-	[detectorOptions release];
+  [super viewDidLoad];
+
   NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"jetpac" ofType:@"ntwk"];
   if (networkPath == NULL) {
     fprintf(stderr, "Couldn't find the neural network parameters file - did you add it as a resource to your application?\n");
@@ -685,6 +680,12 @@ bail:
   }
   network = jpcnn_create_network([networkPath UTF8String]);
   assert(network != NULL);
+
+	[self setupAVCapture];
+	square = [[UIImage imageNamed:@"squarePNG"] retain];
+	NSDictionary *detectorOptions = [[NSDictionary alloc] initWithObjectsAndKeys:CIDetectorAccuracyLow, CIDetectorAccuracy, nil];
+	faceDetector = [[CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions] retain];
+	[detectorOptions release];
 
 //  NSString* imagePath = [[NSBundle mainBundle] pathForResource:@"dog" ofType:@"jpg"];
 //  void* inputImage = jpcnn_create_image_buffer_from_file([imagePath UTF8String]);
