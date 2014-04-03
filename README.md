@@ -15,7 +15,7 @@ what applications that lets you build.
  - [Getting Started](#getting-started)
  - [A Simple Example](#a-simple-example)
  - [API Reference](#api-reference)
- - [More Information][#more-information]
+ - [More Information](#more-information)
  - [License](#license)
 
 ## Getting Started
