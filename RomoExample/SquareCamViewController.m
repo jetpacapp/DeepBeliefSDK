@@ -54,6 +54,11 @@
 
 #import <DeepBelief/DeepBelief.h>
 
+const float kHeadingRange = 360;
+const float kHeadingStart = -180;
+const int kHeadingStepCount = 16;
+const float kHeadingIncrement = (kHeadingRange / kHeadingStepCount);
+
 #pragma mark-
 
 // used for KVO observation of the @"capturingStillImage" property to perform flash bulb animation
@@ -673,13 +678,8 @@ bail:
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-	[self setupAVCapture];
-	square = [[UIImage imageNamed:@"squarePNG"] retain];
-	NSDictionary *detectorOptions = [[NSDictionary alloc] initWithObjectsAndKeys:CIDetectorAccuracyLow, CIDetectorAccuracy, nil];
-	faceDetector = [[CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions] retain];
-	[detectorOptions release];
+  [super viewDidLoad];
+
   NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"jetpac" ofType:@"ntwk"];
   if (networkPath == NULL) {
     fprintf(stderr, "Couldn't find the neural network parameters file - did you add it as a resource to your application?\n");
@@ -687,6 +687,12 @@ bail:
   }
   network = jpcnn_create_network([networkPath UTF8String]);
   assert(network != NULL);
+
+	[self setupAVCapture];
+	square = [[UIImage imageNamed:@"squarePNG"] retain];
+	NSDictionary *detectorOptions = [[NSDictionary alloc] initWithObjectsAndKeys:CIDetectorAccuracyLow, CIDetectorAccuracy, nil];
+	faceDetector = [[CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions] retain];
+	[detectorOptions release];
 
 //  NSString* imagePath = [[NSBundle mainBundle] pathForResource:@"dog" ofType:@"jpg"];
 //  void* inputImage = jpcnn_create_image_buffer_from_file([imagePath UTF8String]);
@@ -891,8 +897,11 @@ bail:
       width: labelWidth height: labelHeight
       alignment:kCAAlignmentLeft];
 
-    if ((labelCount == 0) && (value > 0.5f)) {
-      [self speak: [label capitalizedString]];
+    if (labelCount == 0) {
+      if (value > 0.5f) {
+//        [self speak: [label capitalizedString]];
+      }
+      self.topObject = entry;
     }
 
     labelCount += 1;
@@ -974,7 +983,7 @@ bail:
   }
   AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString: words];
   utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"en-US"];
-  utterance.rate = 0.50*AVSpeechUtteranceDefaultSpeechRate;
+  utterance.rate = 0.75*AVSpeechUtteranceDefaultSpeechRate;
   [synth speakUtterance:utterance];
 }
 
@@ -987,10 +996,24 @@ bail:
     // Change Romo's LED to be solid at 80% power
     [self.Romo3.LEDs setSolidWithBrightness:0.8];
 
-    // When we plug Romo in, he get's excited!
+    // When we plug Romo in, he gets excited!
     self.Romo.expression = RMCharacterExpressionExcited;
 
-    [self.Romo3 driveWithRadius: -1.0 speed: 0.5];
+    [self.Romo3 tiltToAngle: 0.0f completion: NULL];
+
+    bestObjectsAtHeading = [[NSMutableArray array] retain];
+    self.topObject = @{
+      @"label" : @"none",
+      @"value" : [NSNumber numberWithFloat: -FLT_MAX]
+    };
+    for (int step = 0; step < kHeadingStepCount; step += 1) {
+      [bestObjectsAtHeading addObject: [NSMutableDictionary dictionary]];
+    }
+
+    [self speak: [NSString stringWithFormat: @"What's around here then?"]];
+
+    searchState = @"spinning";
+    [self turnToCurrentHeading];
   }
 }
 
@@ -999,10 +1022,139 @@ bail:
   if (robot == self.Romo3) {
     self.Romo3 = nil;
 
-    // When we plug Romo in, he get's excited!
+    // When we plug Romo in, he gets excited!
     self.Romo.expression = RMCharacterExpressionSad;
   }
 }
 
+- (void)turnToCurrentHeading {
+  NSLog(@"m");
+  const float currentHeading = (kHeadingStart + (headingStep * kHeadingIncrement));
+  [self.Romo3 turnToHeading: currentHeading
+    withRadius: RM_DRIVE_RADIUS_TURN_IN_PLACE
+    finishingAction: RMCoreTurnFinishingActionStopDriving
+    completion:^(BOOL success, float newHeading) {
+      [self takeNextAction];
+    }
+  ];
+}
+
+- (void)collectObjectsForHeading {
+  [bestObjectsAtHeading insertObject: self.topObject atIndex: headingStep];
+  self.topObject = @{
+    @"label" : @"none",
+    @"value" : [NSNumber numberWithFloat: -FLT_MAX]
+  };
+}
+
+- (void)turnToBestHeading {
+  float bestValue = -FLT_MAX;
+  int bestStep = 0;
+  NSString* bestLabel = @"";
+  for (int step = 0; step < kHeadingStepCount; step += 1) {
+    NSDictionary* entry = [bestObjectsAtHeading objectAtIndex: step];
+    NSNumber* valueObject =[entry objectForKey: @"value"];
+    const float value = [valueObject floatValue];
+    if (value > bestValue) {
+      bestValue = value;
+      bestStep = step;
+      bestLabel = [entry objectForKey: @"label"];
+    }
+  }
+  headingStep = bestStep;
+  searchState = @"starting_check";
+  [self turnToCurrentHeading];
+  [self speak: [NSString stringWithFormat: @"Did I find a %@? I'll take a closer look!", bestLabel]];
+  previousBestLabel = bestLabel;
+}
+
+- (void) spinAction {
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC),
+    dispatch_get_main_queue(), ^{
+      [self collectObjectsForHeading];
+      if (headingStep < kHeadingStepCount) {
+        headingStep += 1;
+        [self turnToCurrentHeading];
+      } else {
+        [self turnToBestHeading];
+      }
+    }
+  );
+}
+
+- (void) startCheckAction {
+  [self.Romo3 driveForwardWithSpeed: 0.5];
+  searchState = @"checking";
+  self.topObject = @{
+    @"label" : @"none",
+    @"value" : [NSNumber numberWithFloat: -FLT_MAX]
+  };
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC),
+    dispatch_get_main_queue(), ^{
+      [self takeNextAction];
+    }
+  );
+}
+
+- (void) completeCheckAction {
+  [self.Romo3 stopDriving];
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC),
+    dispatch_get_main_queue(), ^{
+    NSString* currentBestLabel = [self.topObject objectForKey: @"label"];
+    if ([currentBestLabel isEqualToString: previousBestLabel]) {
+      [self speak: [NSString stringWithFormat: @"I was right! It is a %@", previousBestLabel]];
+    } else if ([currentBestLabel isEqualToString: @"none"]) {
+      [self speak: [NSString stringWithFormat: @"Huh! I can't tell what it is!"]];
+    } else {
+      [self speak: [NSString stringWithFormat: @"I thought it was a %@, but it looks more like a %@ now", previousBestLabel, currentBestLabel]];
+    }
+    searchState = @"finding_next";
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
+      dispatch_get_main_queue(), ^{
+        [self takeNextAction];
+      }
+    );
+  });
+}
+
+- (void) findNextAction {
+
+  NSString* phrases[] = {
+    @"I wonder what else I can find?",
+    @"What's over here?",
+    @"Ohh, what's that?",
+    @"Let's check this out!",
+    @"What's this?",
+  };
+  const size_t phrasesLength = (sizeof(phrases) / sizeof(phrases[0]));
+  const int whichPhrase = (rand() % phrasesLength);
+
+  [self speak: phrases[whichPhrase]];
+  searchState = @"spinning";
+  headingStep = 0;
+  const float randomHeading = (-180.0f + ((rand() * 360.0f) / RAND_MAX));
+  [self.Romo3 turnToHeading: randomHeading
+    withRadius: RM_DRIVE_RADIUS_TURN_IN_PLACE
+    finishingAction: RMCoreTurnFinishingActionStopDriving
+    completion:^(BOOL success, float newHeading) {
+      [self takeNextAction];
+    }
+  ];
+}
+
+- (void)takeNextAction {
+  if ([searchState isEqualToString: @"spinning"]) {
+    [self spinAction];
+  } else if ([searchState isEqualToString: @"starting_check"]) {
+    [self startCheckAction];
+  } else if ([searchState isEqualToString: @"checking"]) {
+    [self completeCheckAction];
+  } else if ([searchState isEqualToString: @"finding_next"]) {
+    [self findNextAction];
+  } else {
+    NSLog(@"Bad search state found - %@", searchState);
+    assert(FALSE);
+  }
+}
 
 @end

@@ -71,10 +71,15 @@
   NSMutableDictionary* oldPredictionValues;
   NSMutableArray* labelLayers;
   AVCaptureSession* session;
+  NSMutableArray* bestObjectsAtHeading;
+  int headingStep;
+  NSString* searchState;
+  NSString* previousBestLabel;
 }
 @property (retain, nonatomic) CATextLayer *predictionTextLayer;
 @property (nonatomic, strong) RMCoreRobotRomo3 *Romo3;
 @property (nonatomic, strong) RMCharacter *Romo;
+@property (retain, nonatomic) NSDictionary* topObject;
 
 - (IBAction)takePicture:(id)sender;
 - (IBAction)switchCameras:(id)sender;
