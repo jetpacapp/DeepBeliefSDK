@@ -12,6 +12,12 @@ this approach for general image recognition, especially when it can run locally 
 low-power devices. It gives your iPhone the ability to see, and I can't wait to see
 what applications that lets you build.
 
+ - [Getting Started](#getting-started)
+ - [A Simple Example](#a-simple-example)
+ - [API Reference](#api-reference)
+ - [More Information][#more-information]
+ - [License](#license)
+
 ## Getting Started
 
 You'll need the usual tools required for developing iOS applications - XCode 5, an
@@ -33,7 +39,7 @@ is a massive step forward compared to the previous state of the art, you'll stil
 need to adapt it to the domain you're working in to get the best results in a real
 application.
 
-## Usage example
+## A Simple Example
 
 To use the library in your own application, you need to add the DeepBelief.framework bundle to the Link Binary with Libraries build phase in your XCode project settings, and add `#import <DeepBelief/DeepBelief.h>` to the top of the file you want to use the code in.
 
@@ -78,6 +84,14 @@ handles that have been returned from `*_create_*` calls if you want to avoid mem
 leaks. Input images are created from raw arrays of 8-bit RGB data, you can see how 
 to build those from iOS types by searching for `jpcnn_create_image_buffer()` in the 
 sample code.
+
+ - [jpcnn_create_network](#jpcnn_create_network)
+ - [jpcnn_destroy_network](#jpcnn_destroy_network)
+ - [jpcnn_create_image_buffer_from_file](#jpcnn_create_image_buffer_from_file)
+ - [jpcnn_create_image_buffer_from_uint8_data](#jpcnn_create_image_buffer_from_uint8_data)
+ - [jpcnn_destroy_image_buffer](#jpcnn_destroy_image_buffer)
+ - [jpcnn_classify_image](#jpcnn_classify_image)
+ - [jpcnn_print_network](#jpcnn_print_network)
 
 ### jpcnn_create_network
 
@@ -172,7 +186,7 @@ This is a debug logging call that prints information about a loaded neural netwo
 
 Join the [Deep Belief Developers email list](https://groups.google.com/group/deep-belief-developers) to find out more about the practical details of implementing deep learning.
 
-## Licensing
+## License
 
 The binary framework and network parameter file are under the BSD three-clause
 license, included in this folder as LICENSE.
