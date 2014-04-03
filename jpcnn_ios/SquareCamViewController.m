@@ -52,7 +52,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #include <sys/time.h>
 
-#import "libjpcnn.h"
+#import <DeepBelief/DeepBelief.h>
 
 #pragma mark-
 
@@ -678,7 +678,11 @@ bail:
 	NSDictionary *detectorOptions = [[NSDictionary alloc] initWithObjectsAndKeys:CIDetectorAccuracyLow, CIDetectorAccuracy, nil];
 	faceDetector = [[CIDetector detectorOfType:CIDetectorTypeFace context:nil options:detectorOptions] retain];
 	[detectorOptions release];
-  NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"homebrewed_transpressed" ofType:@"ntwk"];
+  NSString* networkPath = [[NSBundle mainBundle] pathForResource:@"jetpac" ofType:@"ntwk"];
+  if (networkPath == NULL) {
+    fprintf(stderr, "Couldn't find the neural network parameters file - did you add it as a resource to your application?\n");
+    assert(false);
+  }
   network = jpcnn_create_network([networkPath UTF8String]);
   assert(network != NULL);
 

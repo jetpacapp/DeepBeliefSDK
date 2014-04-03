@@ -6,7 +6,65 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		592FF8F818ECBF5E00C164F8 /* DeepBeliefFramework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 592FF8F918ECBF5E00C164F8 /* Build configuration list for PBXAggregateTarget "DeepBeliefFramework" */;
+			buildPhases = (
+				592FF8FE18ECBFB600C164F8 /* ShellScript */,
+			);
+			dependencies = (
+				592FF8FD18ECBF8E00C164F8 /* PBXTargetDependency */,
+			);
+			name = DeepBeliefFramework;
+			productName = DeepBeliefFramework;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
+		592FF81618ECB34F00C164F8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA841886FE8A007F9A2A /* Foundation.framework */; };
+		592FF83818ECB42600C164F8 /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241BB188DE27D003F2C0A /* basenode.cpp */; };
+		592FF83918ECB42600C164F8 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241BE188DE27D003F2C0A /* buffer.cpp */; };
+		592FF83A18ECB42600C164F8 /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241C1188DE27D003F2C0A /* convnode.cpp */; };
+		592FF83B18ECB42600C164F8 /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241C5188DE27D003F2C0A /* dropoutnode.cpp */; };
+		592FF83C18ECB42600C164F8 /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241C8188DE27D003F2C0A /* flatnode.cpp */; };
+		592FF83D18ECB42600C164F8 /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241CB188DE27D003F2C0A /* gconvnode.cpp */; };
+		592FF83E18ECB42600C164F8 /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241CE188DE27D003F2C0A /* graph.cpp */; };
+		592FF83F18ECB42600C164F8 /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241D1188DE27D003F2C0A /* maxnode.cpp */; };
+		592FF84018ECB42600C164F8 /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241D4188DE27D003F2C0A /* neuronnode.cpp */; };
+		592FF84118ECB42600C164F8 /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241D7188DE27D003F2C0A /* nodefactory.cpp */; };
+		592FF84218ECB42600C164F8 /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241DA188DE27D003F2C0A /* normalizenode.cpp */; };
+		592FF84318ECB42600C164F8 /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241DD188DE27D003F2C0A /* poolnode.cpp */; };
+		592FF84418ECB42600C164F8 /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E0188DE27D003F2C0A /* prepareinput.cpp */; };
+		592FF84518ECB42600C164F8 /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E3188DE27D003F2C0A /* relunode.cpp */; };
+		592FF84618ECB42600C164F8 /* libjpcnn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E7188DE27D003F2C0A /* libjpcnn.cpp */; };
+		592FF84718ECB42600C164F8 /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E9188DE27D003F2C0A /* matrix_add.cpp */; };
+		592FF84818ECB42600C164F8 /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241EB188DE27D003F2C0A /* matrix_channels.cpp */; };
+		592FF84918ECB42600C164F8 /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241ED188DE27D003F2C0A /* matrix_correlate.cpp */; };
+		592FF84A18ECB42600C164F8 /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241EF188DE27D003F2C0A /* matrix_dot.cpp */; };
+		592FF84B18ECB42600C164F8 /* matrix_gemm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9018C00C8300D6EEE2 /* matrix_gemm.cpp */; };
+		592FF84C18ECB42600C164F8 /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F1188DE27D003F2C0A /* matrix_local_response.cpp */; };
+		592FF84D18ECB42600C164F8 /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F3188DE27D003F2C0A /* matrix_margin.cpp */; };
+		592FF84E18ECB42600C164F8 /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F5188DE27D003F2C0A /* matrix_max.cpp */; };
+		592FF84F18ECB42600C164F8 /* matrix_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 591A037618B4559A0014C655 /* matrix_scale.cpp */; };
+		592FF85018ECB42600C164F8 /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F8188DE27D003F2C0A /* matrix_softmax.cpp */; };
+		592FF85118ECB42600C164F8 /* glbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9318C0313400D6EEE2 /* glbuffer.cpp */; };
+		592FF85218ECB42600C164F8 /* glcontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9518C0313400D6EEE2 /* glcontext.cpp */; };
+		592FF85318ECB42600C164F8 /* glcontext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59574E7318E24BA4008247E4 /* glcontext.mm */; };
+		592FF85418ECB42600C164F8 /* glgemm_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FA718C154D300D6EEE2 /* glgemm_test.cpp */; };
+		592FF85518ECB42600C164F8 /* glgemm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9F18C10BB800D6EEE2 /* glgemm.cpp */; };
+		592FF85618ECB42600C164F8 /* glprogram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FA218C114C200D6EEE2 /* glprogram.cpp */; };
+		592FF85718ECB42600C164F8 /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7B18B6DDF300D6EEE2 /* svm.cpp */; };
+		592FF85818ECB42600C164F8 /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7D18B6DDF300D6EEE2 /* svmutils.cpp */; };
+		592FF85918ECB42600C164F8 /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241FB188DE27D003F2C0A /* stb_image.cpp */; };
+		592FF85A18ECB42600C164F8 /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824201188DE27D003F2C0A /* binary_format.cpp */; };
+		592FF85B18ECB42600C164F8 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
+		592FF85C18ECB42600C164F8 /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
+		592FF85D18ECB42600C164F8 /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
+		592FF85F18ECB42D00C164F8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF85E18ECB42D00C164F8 /* Accelerate.framework */; };
+		592FF86018ECB43800C164F8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59574E6D18E240C2008247E4 /* OpenGLES.framework */; };
+		592FF86218ECB86C00C164F8 /* DeepBelief.h in Headers */ = {isa = PBXBuildFile; fileRef = 592FF81A18ECB34F00C164F8 /* DeepBelief.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		592FF86318ECB87900C164F8 /* libjpcnn.h in Headers */ = {isa = PBXBuildFile; fileRef = 59824237188DE285003F2C0A /* libjpcnn.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5930AA8D188A23DA00997469 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBAEE18870D27007F9A2A /* Accelerate.framework */; };
 		594BBA851886FE8A007F9A2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA841886FE8A007F9A2A /* Foundation.framework */; };
 		594BBA871886FE8A007F9A2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA861886FE8A007F9A2A /* CoreGraphics.framework */; };
@@ -157,6 +215,16 @@
 		59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		592FF8FC18ECBF8E00C164F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 59D2FBAF187F8D2A00427417 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 592FF81418ECB34F00C164F8;
+			remoteInfo = DeepBelief;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		59602FAA18C158C100D6EEE2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -180,6 +248,10 @@
 
 /* Begin PBXFileReference section */
 		591A037618B4559A0014C655 /* matrix_scale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix_scale.cpp; sourceTree = "<group>"; };
+		592FF81518ECB34F00C164F8 /* libDeepBelief.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDeepBelief.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		592FF81A18ECB34F00C164F8 /* DeepBelief.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeepBelief.h; sourceTree = "<group>"; };
+		592FF85E18ECB42D00C164F8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
+		592FF8A918ECBCE500C164F8 /* jpcnn_ios copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "jpcnn_ios copy-Info.plist"; path = "/Users/petewarden/vagrant/jpcnn/jpcnn_ios copy-Info.plist"; sourceTree = "<absolute>"; };
 		594BBA6D1884A94A007F9A2A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		594BBA821886FE8A007F9A2A /* Deep Belief.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Deep Belief.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		594BBA841886FE8A007F9A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -293,6 +365,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		592FF81218ECB34F00C164F8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592FF86018ECB43800C164F8 /* OpenGLES.framework in Frameworks */,
+				592FF85F18ECB42D00C164F8 /* Accelerate.framework in Frameworks */,
+				592FF81618ECB34F00C164F8 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		594BBA7F1886FE89007F9A2A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -346,6 +428,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		592FF81718ECB34F00C164F8 /* DeepBelief */ = {
+			isa = PBXGroup;
+			children = (
+				592FF81A18ECB34F00C164F8 /* DeepBelief.h */,
+			);
+			path = DeepBelief;
+			sourceTree = "<group>";
+		};
 		594BBA6F1884A996007F9A2A /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -357,6 +447,7 @@
 		594BBA831886FE8A007F9A2A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				592FF85E18ECB42D00C164F8 /* Accelerate.framework */,
 				59574E6F18E24125008247E4 /* GLKit.framework */,
 				59574E6D18E240C2008247E4 /* OpenGLES.framework */,
 				59602F8E18BFE4E500D6EEE2 /* OpenGL.framework */,
@@ -580,8 +671,10 @@
 				59D2FBC3187F8D9000427417 /* src */,
 				594BBA6F1884A996007F9A2A /* frameworks */,
 				594BBA8A1886FE8A007F9A2A /* jpcnn_ios */,
+				592FF81718ECB34F00C164F8 /* DeepBelief */,
 				594BBA831886FE8A007F9A2A /* Frameworks */,
 				59D2FBB8187F8D2A00427417 /* Products */,
+				592FF8A918ECBCE500C164F8 /* jpcnn_ios copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -592,6 +685,7 @@
 				594BBA821886FE8A007F9A2A /* Deep Belief.app */,
 				5962AD80188A0987009E64DD /* liblibjpcnn.dylib */,
 				59602FAC18C158C100D6EEE2 /* glgemm_test */,
+				592FF81518ECB34F00C164F8 /* libDeepBelief.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -610,6 +704,15 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		592FF86118ECB84900C164F8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592FF86218ECB86C00C164F8 /* DeepBelief.h in Headers */,
+				592FF86318ECB87900C164F8 /* libjpcnn.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5962AD7E188A0987009E64DD /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -623,6 +726,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		592FF81418ECB34F00C164F8 /* DeepBelief */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 592FF83118ECB34F00C164F8 /* Build configuration list for PBXNativeTarget "DeepBelief" */;
+			buildPhases = (
+				592FF81118ECB34F00C164F8 /* Sources */,
+				592FF81218ECB34F00C164F8 /* Frameworks */,
+				592FF86118ECB84900C164F8 /* Headers */,
+				592FF86418ECB91A00C164F8 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeepBelief;
+			productName = DeepBelief;
+			productReference = 592FF81518ECB34F00C164F8 /* libDeepBelief.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		594BBA811886FE89007F9A2A /* jpcnn_ios */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 594BBAB41886FE8A007F9A2A /* Build configuration list for PBXNativeTarget "jpcnn_ios" */;
@@ -717,6 +838,8 @@
 				594BBA811886FE89007F9A2A /* jpcnn_ios */,
 				5962AD7F188A0987009E64DD /* libjpcnn */,
 				59602FAB18C158C100D6EEE2 /* glgemm_test */,
+				592FF81418ECB34F00C164F8 /* DeepBelief */,
+				592FF8F818ECBF5E00C164F8 /* DeepBeliefFramework */,
 			);
 		};
 /* End PBXProject section */
@@ -737,7 +860,81 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		592FF86418ECB91A00C164F8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Versions/A/Headers\"\n\n# Link the \"Current\" version to \"A\"\n/bin/ln -sfh A \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Versions/Current\"\n/bin/ln -sfh Versions/Current/Headers \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Headers\"\n/bin/ln -sfh \"Versions/Current/${PRODUCT_NAME}\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/${PRODUCT_NAME}\"\n\n# The -a ensures that the headers maintain the source modification date so that we don't constantly\n# cause propagating rebuilds of files that import these headers.\n/bin/cp -a \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Versions/A/Headers\"\n\n/bin/cp -a \"${BUILT_PRODUCTS_DIR}/lib${PRODUCT_NAME}.a\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Versions/A/${PRODUCT_NAME}\"\n";
+		};
+		592FF8FE18ECBFB600C164F8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "set -e\nset +u\nset -x\n# Avoid recursively calling this script.\nif [[ $SF_MASTER_SCRIPT_RUNNING ]]\nthen\n    exit 0\nfi\nset -u\nexport SF_MASTER_SCRIPT_RUNNING=1\n\nSF_TARGET_NAME=DeepBelief\nSF_EXECUTABLE_PATH=\"lib${SF_TARGET_NAME}.a\"\nSF_WRAPPER_NAME=\"${SF_TARGET_NAME}.framework\"\n\n# The following conditionals come from\n# https://github.com/kstenerud/iOS-Universal-Framework\n\nif [[ \"$SDK_NAME\" =~ ([A-Za-z]+) ]]\nthen\n    SF_SDK_PLATFORM=${BASH_REMATCH[1]}\nelse\n    echo \"Could not find platform name from SDK_NAME: $SDK_NAME\"\n    exit 1\nfi\n\nif [[ \"$SDK_NAME\" =~ ([0-9]+.*$) ]]\nthen\n    SF_SDK_VERSION=${BASH_REMATCH[1]}\nelse\n    echo \"Could not find sdk version from SDK_NAME: $SDK_NAME\"\n    exit 1\nfi\n\nif [[ \"$SF_SDK_PLATFORM\" = \"iphoneos\" ]]\nthen\n    SF_OTHER_PLATFORM=iphonesimulator\nelse\n    SF_OTHER_PLATFORM=iphoneos\nfi\n\nif [[ \"$BUILT_PRODUCTS_DIR\" =~ (.*)$SF_SDK_PLATFORM$ ]]\nthen\n    SF_OTHER_BUILT_PRODUCTS_DIR=\"${BASH_REMATCH[1]}${SF_OTHER_PLATFORM}\"\nelse\n    echo \"Could not find platform name from build products directory: $BUILT_PRODUCTS_DIR\"\n    exit 1\nfi\n\n# Build the other platform.\nxcrun xcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${SF_OTHER_PLATFORM}${SF_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" OBJROOT=\"${OBJROOT}\" BUILD_ROOT=\"${BUILD_ROOT}\" SYMROOT=\"${SYMROOT}\" $ACTION\n\n# Smash the two static libraries into one fat binary and store it in the .framework\nxcrun lipo -create \"${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" -output \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n\n# Copy the binary to the other architecture folder to have a complete framework in both.\ncp -a \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		592FF81118ECB34F00C164F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				592FF83818ECB42600C164F8 /* basenode.cpp in Sources */,
+				592FF83918ECB42600C164F8 /* buffer.cpp in Sources */,
+				592FF83A18ECB42600C164F8 /* convnode.cpp in Sources */,
+				592FF83B18ECB42600C164F8 /* dropoutnode.cpp in Sources */,
+				592FF83C18ECB42600C164F8 /* flatnode.cpp in Sources */,
+				592FF83D18ECB42600C164F8 /* gconvnode.cpp in Sources */,
+				592FF83E18ECB42600C164F8 /* graph.cpp in Sources */,
+				592FF83F18ECB42600C164F8 /* maxnode.cpp in Sources */,
+				592FF84018ECB42600C164F8 /* neuronnode.cpp in Sources */,
+				592FF84118ECB42600C164F8 /* nodefactory.cpp in Sources */,
+				592FF84218ECB42600C164F8 /* normalizenode.cpp in Sources */,
+				592FF84318ECB42600C164F8 /* poolnode.cpp in Sources */,
+				592FF84418ECB42600C164F8 /* prepareinput.cpp in Sources */,
+				592FF84518ECB42600C164F8 /* relunode.cpp in Sources */,
+				592FF84618ECB42600C164F8 /* libjpcnn.cpp in Sources */,
+				592FF84718ECB42600C164F8 /* matrix_add.cpp in Sources */,
+				592FF84818ECB42600C164F8 /* matrix_channels.cpp in Sources */,
+				592FF84918ECB42600C164F8 /* matrix_correlate.cpp in Sources */,
+				592FF84A18ECB42600C164F8 /* matrix_dot.cpp in Sources */,
+				592FF84B18ECB42600C164F8 /* matrix_gemm.cpp in Sources */,
+				592FF84C18ECB42600C164F8 /* matrix_local_response.cpp in Sources */,
+				592FF84D18ECB42600C164F8 /* matrix_margin.cpp in Sources */,
+				592FF84E18ECB42600C164F8 /* matrix_max.cpp in Sources */,
+				592FF84F18ECB42600C164F8 /* matrix_scale.cpp in Sources */,
+				592FF85018ECB42600C164F8 /* matrix_softmax.cpp in Sources */,
+				592FF85118ECB42600C164F8 /* glbuffer.cpp in Sources */,
+				592FF85218ECB42600C164F8 /* glcontext.cpp in Sources */,
+				592FF85318ECB42600C164F8 /* glcontext.mm in Sources */,
+				592FF85418ECB42600C164F8 /* glgemm_test.cpp in Sources */,
+				592FF85518ECB42600C164F8 /* glgemm.cpp in Sources */,
+				592FF85618ECB42600C164F8 /* glprogram.cpp in Sources */,
+				592FF85718ECB42600C164F8 /* svm.cpp in Sources */,
+				592FF85818ECB42600C164F8 /* svmutils.cpp in Sources */,
+				592FF85918ECB42600C164F8 /* stb_image.cpp in Sources */,
+				592FF85A18ECB42600C164F8 /* binary_format.cpp in Sources */,
+				592FF85B18ECB42600C164F8 /* cstring_helpers.cpp in Sources */,
+				592FF85C18ECB42600C164F8 /* os_image_load.cpp in Sources */,
+				592FF85D18ECB42600C164F8 /* os_image_save.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		594BBA7E1886FE89007F9A2A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -885,6 +1082,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		592FF8FD18ECBF8E00C164F8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 592FF81418ECB34F00C164F8 /* DeepBelief */;
+			targetProxy = 592FF8FC18ECBF8E00C164F8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		594BBAF118871401007F9A2A /* MainStoryboard_iPad.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -905,6 +1110,80 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		592FF83218ECB34F00C164F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					i386,
+					x86_64,
+				);
+				CLANG_ENABLE_MODULES = YES;
+				DEAD_CODE_STRIPPING = NO;
+				DSTROOT = /tmp/DeepBelief.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					USE_ACCELERATE_GEMM,
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)Headers";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRIP_STYLE = "non-global";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Debug;
+		};
+		592FF83318ECB34F00C164F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					i386,
+					x86_64,
+				);
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
+				DSTROOT = /tmp/DeepBelief.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = USE_ACCELERATE_GEMM;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)Headers";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRIP_STYLE = "non-global";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Release;
+		};
+		592FF8FA18ECBF5E00C164F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		592FF8FB18ECBF5E00C164F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
 		594BBAB51886FE8A007F9A2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -918,7 +1197,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"USE_ACCELERATE_GEMM=1",
@@ -947,7 +1226,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_FAST_MATH = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
 				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
@@ -1098,6 +1377,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		592FF83118ECB34F00C164F8 /* Build configuration list for PBXNativeTarget "DeepBelief" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				592FF83218ECB34F00C164F8 /* Debug */,
+				592FF83318ECB34F00C164F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		592FF8F918ECBF5E00C164F8 /* Build configuration list for PBXAggregateTarget "DeepBeliefFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				592FF8FA18ECBF5E00C164F8 /* Debug */,
+				592FF8FB18ECBF5E00C164F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		594BBAB41886FE8A007F9A2A /* Build configuration list for PBXNativeTarget "jpcnn_ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

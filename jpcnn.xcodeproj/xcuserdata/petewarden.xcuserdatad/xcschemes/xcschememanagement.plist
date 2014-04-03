@@ -4,6 +4,16 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>DeepBelief.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>DeepBeliefFramework.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
 		<key>glgemm_test.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -13,6 +23,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>jpcnn_ios copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
 		</dict>
 		<key>jpcnn_ios.xcscheme</key>
 		<dict>
@@ -32,6 +47,26 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>592FF81418ECB34F00C164F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>592FF82118ECB34F00C164F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>592FF86518ECBCE500C164F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>592FF8F818ECBF5E00C164F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>594BBA811886FE89007F9A2A</key>
 		<dict>
 			<key>primary</key>
