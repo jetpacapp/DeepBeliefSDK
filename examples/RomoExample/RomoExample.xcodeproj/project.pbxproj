@@ -30,7 +30,7 @@
 		592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		592FF8BC18ECBD7600C164F8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		592FF8D118ECBD7600C164F8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		592FF8F618ECBDF700C164F8 /* DeepBelief.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeepBelief.framework; path = ../DeepBelief.framework; sourceTree = "<group>"; };
+		592FF8F618ECBDF700C164F8 /* DeepBelief.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeepBelief.framework; path = ../../DeepBelief.framework; sourceTree = "<group>"; };
 		592FF8FF18ECC59F00C164F8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		592FF90118ECC66200C164F8 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = SOURCE_ROOT; };
 		592FF90318ECCB8300C164F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -41,8 +41,8 @@
 		592FF91118EDD33E00C164F8 /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamAppDelegate.m; sourceTree = SOURCE_ROOT; };
 		592FF91218EDD33E00C164F8 /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquareCamViewController.h; sourceTree = SOURCE_ROOT; };
 		592FF91318EDD33E00C164F8 /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamViewController.m; sourceTree = SOURCE_ROOT; };
-		592FF91618EDD7A600C164F8 /* RMCharacter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RMCharacter.framework; path = ../../RomoSDK_v1.0C/frameworks/RMCharacter.framework; sourceTree = "<group>"; };
-		592FF91718EDD7A600C164F8 /* RMCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RMCore.framework; path = ../../RomoSDK_v1.0C/frameworks/RMCore.framework; sourceTree = "<group>"; };
+		592FF91618EDD7A600C164F8 /* RMCharacter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RMCharacter.framework; path = ../../../RomoSDK_v1.0C/frameworks/RMCharacter.framework; sourceTree = SOURCE_ROOT; };
+		592FF91718EDD7A600C164F8 /* RMCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RMCore.framework; path = ../../../RomoSDK_v1.0C/frameworks/RMCore.framework; sourceTree = "<group>"; };
 		592FF91A18EDD9D500C164F8 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/ExternalAccessory.framework; sourceTree = DEVELOPER_DIR; };
 		592FF91F18EDDA9B00C164F8 /* RMCharacter.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = RMCharacter.bundle; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
