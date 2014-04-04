@@ -993,7 +993,7 @@ bail:
 
   const float infoHeight = 150.0f;
 
-  const CGRect progressBackgroundBounds = CGRectMake(marginSizeX, marginSizeY, (viewWidth - marginSizeX), progressHeight);
+  const CGRect progressBackgroundBounds = CGRectMake(marginSizeX, marginSizeY, (viewWidth - (marginSizeX * 2)), progressHeight);
 
   self.progressBackground = [CATextLayer layer];
   [self.progressBackground setBackgroundColor: [UIColor blackColor].CGColor];
@@ -1003,7 +1003,7 @@ bail:
 
   [[self.view layer] addSublayer: self.progressBackground];
 
-  const CGRect progressForegroundBounds = CGRectMake(marginSizeX, marginSizeY, (marginSizeX + 50.0f), progressHeight);
+  const CGRect progressForegroundBounds = CGRectMake(marginSizeX, marginSizeY, 0.0f, progressHeight);
 
   self.progressForeground = [CATextLayer layer];
   [self.progressForeground setBackgroundColor: [UIColor blueColor].CGColor];
@@ -1013,7 +1013,7 @@ bail:
 
   [[self.view layer] addSublayer: self.progressForeground];
 
-  const CGRect infoBackgroundBounds = CGRectMake(marginSizeX, (marginSizeY + progressHeight + marginSizeY), (viewWidth - marginSizeX), infoHeight);
+  const CGRect infoBackgroundBounds = CGRectMake(marginSizeX, (marginSizeY + progressHeight + marginSizeY), (viewWidth - (marginSizeX * 2)), infoHeight);
 
   self.infoBackground = [CATextLayer layer];
   [self.infoBackground setBackgroundColor: [UIColor blackColor].CGColor];
@@ -1075,18 +1075,14 @@ bail:
 }
 
 - (void) setProgress: (float) amount {
-  const CGRect progressBackgroundBounds = [self.progressBackground bounds];
+  const CGRect progressBackgroundBounds = [self.progressBackground frame];
 
   const float fullWidth = progressBackgroundBounds.size.width;
   const float foregroundWidth = (fullWidth * amount);
 
-  const float marginSizeX = 5.0f;
-  const float marginSizeY = 2.0f;
-
-  const float progressHeight = 20.0f;
-
-  const CGRect progressForegroundBounds = CGRectMake(marginSizeX, marginSizeY, foregroundWidth, progressHeight);
-  [self.progressForeground setBounds: progressForegroundBounds];
+  CGRect progressForegroundBounds = [self.progressForeground frame];
+  progressForegroundBounds.size.width = foregroundWidth;
+  [self.progressForeground setFrame: progressForegroundBounds];
 }
 
 - (void) handleNetworkPredictions: (float*) predictions withLength: (int) predictionsLength {
