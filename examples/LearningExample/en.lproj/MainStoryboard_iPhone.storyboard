@@ -38,6 +38,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     </view>
                     <connections>
+                        <outlet property="mainButton" destination="iD8-yH-eWH" id="IK8-UV-IU5"/>
                         <outlet property="previewView" destination="12" id="13"/>
                     </connections>
                 </viewController>

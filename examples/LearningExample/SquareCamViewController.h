@@ -81,6 +81,7 @@
 @property (retain, nonatomic) CATextLayer *progressForeground;
 @property (retain, nonatomic) CATextLayer *infoBackground;
 @property (retain, nonatomic) CATextLayer *infoForeground;
+@property (retain, nonatomic) IBOutlet UIButton *mainButton;
 
 - (IBAction)takePicture:(id)sender;
 - (IBAction)switchCameras:(id)sender;

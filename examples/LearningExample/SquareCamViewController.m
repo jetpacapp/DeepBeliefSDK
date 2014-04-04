@@ -63,6 +63,7 @@ const int kElementsPerPrediction = 4096;
 enum EPredictionState {
   eWaiting,
   ePositiveLearning,
+  eNegativeWaiting,
   eNegativeLearning,
   ePredicting,
 };
@@ -383,7 +384,34 @@ bail:
 // the square overlay will be composited on top of the captured image and saved to the camera roll
 - (IBAction)takePicture:(id)sender
 {
-  [self triggerNextState];
+  switch (predictionState) {
+    case eWaiting: {
+      [sender setTitle: @"Learning" forState:UIControlStateNormal];
+      [self triggerNextState];
+    } break;
+
+    case ePositiveLearning: {
+      // Do nothing
+    } break;
+
+    case eNegativeWaiting: {
+      [sender setTitle: @"Learning" forState:UIControlStateNormal];
+      [self triggerNextState];
+    } break;
+
+    case eNegativeLearning: {
+      // Do nothing
+    } break;
+
+    case ePredicting: {
+      [self triggerNextState];
+    } break;
+
+    default: {
+      assert(FALSE); // Should never get here
+    } break;
+  }
+
 }
 
 // turn on/off face detection
@@ -605,6 +633,7 @@ bail:
 	[self teardownAVCapture];
 	[faceDetector release];
 	[square release];
+  [_mainButton release];
 	[super dealloc];
 }
 
@@ -930,6 +959,10 @@ bail:
     } break;
 
     case ePositiveLearning: {
+      [self startNegativeWaiting];
+    } break;
+
+    case eNegativeWaiting: {
       [self startNegativeLearning];
     } break;
 
@@ -956,6 +989,11 @@ bail:
   positivePredictionsCount = 0;
   predictionState = ePositiveLearning;
 
+  [self updateInfoDisplay];
+}
+
+- (void) startNegativeWaiting {
+  predictionState = eNegativeWaiting;
   [self updateInfoDisplay];
 }
 
@@ -987,13 +1025,14 @@ bail:
   const float viewWidth = 320.0f;
 
   const float marginSizeX = 5.0f;
-  const float marginSizeY = 2.0f;
+  const float marginSizeY = 5.0f;
+  const float marginTopY = 7.0f;
 
   const float progressHeight = 20.0f;
 
   const float infoHeight = 150.0f;
 
-  const CGRect progressBackgroundBounds = CGRectMake(marginSizeX, marginSizeY, (viewWidth - (marginSizeX * 2)), progressHeight);
+  const CGRect progressBackgroundBounds = CGRectMake(marginSizeX, marginTopY, (viewWidth - (marginSizeX * 2)), progressHeight);
 
   self.progressBackground = [CATextLayer layer];
   [self.progressBackground setBackgroundColor: [UIColor blackColor].CGColor];
@@ -1003,7 +1042,7 @@ bail:
 
   [[self.view layer] addSublayer: self.progressBackground];
 
-  const CGRect progressForegroundBounds = CGRectMake(marginSizeX, marginSizeY, 0.0f, progressHeight);
+  const CGRect progressForegroundBounds = CGRectMake(marginSizeX, marginTopY, 0.0f, progressHeight);
 
   self.progressForeground = [CATextLayer layer];
   [self.progressForeground setBackgroundColor: [UIColor blueColor].CGColor];
@@ -1049,8 +1088,14 @@ bail:
     } break;
 
     case ePositiveLearning: {
-      [self setInfo: @"Move around the thing you want to recognize, keeping the phone pointed at it, to capture different angles. This teaching phase will last a minute or so."];
+      [self setInfo: @"Move around the thing you want to recognize, keeping the phone pointed at it, to capture different angles."];
       [self setProgress: (positivePredictionsCount / (float)kPositivePredictionTotal)];
+    } break;
+
+    case eNegativeWaiting: {
+      [self setInfo: @"Now I need to see examples of things that aren't the object you're looking for. Press the button when you're ready."];
+      [self setProgress: 0.0f];
+      [self.mainButton setTitle: @"Continue Learning" forState:UIControlStateNormal];
     } break;
 
     case eNegativeLearning: {
@@ -1059,7 +1104,8 @@ bail:
     } break;
 
     case ePredicting: {
-      [self setInfo: @"You've taught the neural network to see! Now you should be able to scan around using the camera and detect the object's presence!"];
+      [self setInfo: @"You've taught the neural network to see! Now you should be able to scan around using the camera and detect the object's presence."];
+      [self.mainButton setTitle: @"Learn Again" forState:UIControlStateNormal];
     } break;
 
     default: {
@@ -1097,6 +1143,10 @@ bail:
       if (positivePredictionsCount >= kPositivePredictionTotal) {
         [self triggerNextState];
       }
+    } break;
+
+    case eNegativeWaiting: {
+      // Do nothing
     } break;
 
     case eNegativeLearning: {
