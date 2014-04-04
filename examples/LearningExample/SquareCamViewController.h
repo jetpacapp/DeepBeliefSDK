@@ -75,6 +75,8 @@
   void* trainer;
   void* predictor;
   int predictionState;
+
+  NSString* lastInfo;
 }
 @property (retain, nonatomic) CATextLayer *predictionTextLayer;
 @property (retain, nonatomic) CATextLayer *progressBackground;

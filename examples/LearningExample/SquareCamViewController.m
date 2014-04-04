@@ -949,6 +949,8 @@ bail:
   predictor = NULL;
   predictionState = eWaiting;
 
+  lastInfo = NULL;
+
   [self setupInfoDisplay];
 }
 
@@ -1074,7 +1076,7 @@ bail:
   [self.infoForeground setFontSize: fontSize];
   self.infoForeground.contentsScale = [[UIScreen mainScreen] scale];
 
-  [self.infoForeground setString: @"Some string"];
+  [self.infoForeground setString: @""];
 
   [[self.view layer] addSublayer: self.infoForeground];
 }
@@ -1116,8 +1118,11 @@ bail:
 }
 
 - (void) setInfo: (NSString*) info {
-  [self.infoForeground setString: info];
-  [self speak: info];
+  if (![info isEqualToString: lastInfo]) {
+    [self.infoForeground setString: info];
+    [self speak: info];
+    lastInfo = info;
+  }
 }
 
 - (void) setProgress: (float) amount {
