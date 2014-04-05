@@ -57,8 +57,10 @@
 #pragma mark-
 
 const int kPositivePredictionTotal = 100;
-const int kNegativePredictionTotal = 200;
+const int kNegativePredictionTotal = 100;
 const int kElementsPerPrediction = 4096;
+
+const float kMinSecondsBetweenPings = 0.5f;
 
 enum EPredictionState {
   eWaiting,
@@ -952,6 +954,7 @@ bail:
   lastInfo = NULL;
 
   [self setupInfoDisplay];
+  [self setupSound];
 }
 
 - (void) triggerNextState {
@@ -1014,6 +1017,8 @@ bail:
   predictionState = ePredicting;
 
   [self updateInfoDisplay];
+
+  self.lastFrameTime = [NSDate date];
 }
 
 - (void) restartLearning {
@@ -1165,6 +1170,14 @@ bail:
     case ePredicting: {
       const float predictionValue = jpcnn_predict(predictor, predictions, predictionsLength);
       [self setProgress: predictionValue];
+      const float frameDuration = - [self.lastFrameTime timeIntervalSinceNow];
+      self.lastFrameTime = [NSDate date];
+      const float pingProgress = (predictionValue * frameDuration);
+      timeToNextPing -= pingProgress;
+      if (timeToNextPing < 0.0f) {
+        AudioServicesPlaySystemSound(self.soundFileObject);
+        timeToNextPing = kMinSecondsBetweenPings;
+      }
     } break;
 
     default: {
@@ -1173,6 +1186,20 @@ bail:
   }
 
   [self updateInfoDisplay];
+}
+
+- (void) setupSound {
+  // Create the URL for the source audio file. The URLForResource:withExtension: method is
+  //    new in iOS 4.0.
+  NSURL *soundUrl   = [[NSBundle mainBundle] URLForResource: @"32093__jbum__jsyd-ping"
+    withExtension: @"wav"];
+  self.soundFileURLRef = (CFURLRef) [soundUrl retain];
+
+  // Create a system sound object representing the sound file.
+  AudioServicesCreateSystemSoundID (
+    self.soundFileURLRef,
+    &_soundFileObject
+  );
 }
 
 @end

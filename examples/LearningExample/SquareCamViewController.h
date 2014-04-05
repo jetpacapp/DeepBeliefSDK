@@ -77,6 +77,7 @@
   int predictionState;
 
   NSString* lastInfo;
+  float timeToNextPing;
 }
 @property (retain, nonatomic) CATextLayer *predictionTextLayer;
 @property (retain, nonatomic) CATextLayer *progressBackground;
@@ -84,6 +85,9 @@
 @property (retain, nonatomic) CATextLayer *infoBackground;
 @property (retain, nonatomic) CATextLayer *infoForeground;
 @property (retain, nonatomic) IBOutlet UIButton *mainButton;
+@property (readwrite)   CFURLRef        soundFileURLRef;
+@property (readonly)    SystemSoundID   soundFileObject;
+@property (retain, nonatomic) NSDate *lastFrameTime;
 
 - (IBAction)takePicture:(id)sender;
 - (IBAction)switchCameras:(id)sender;

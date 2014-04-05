@@ -18,6 +18,7 @@
 		592FF90D18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90A18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard */; };
 		592FF92518EE240200C164F8 /* SquareCamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF92218EE240200C164F8 /* SquareCamAppDelegate.m */; };
 		592FF92618EE240200C164F8 /* SquareCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 592FF92418EE240200C164F8 /* SquareCamViewController.m */; };
+		5958E8FC18EF86670047B97B /* 32093__jbum__jsyd-ping.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5958E8FA18EF86670047B97B /* 32093__jbum__jsyd-ping.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		592FF92218EE240200C164F8 /* SquareCamAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamAppDelegate.m; sourceTree = SOURCE_ROOT; };
 		592FF92318EE240200C164F8 /* SquareCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquareCamViewController.h; sourceTree = SOURCE_ROOT; };
 		592FF92418EE240200C164F8 /* SquareCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquareCamViewController.m; sourceTree = SOURCE_ROOT; };
+		5958E8FB18EF86670047B97B /* en */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = en; path = "32093__jbum__jsyd-ping.wav"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 		592FF90718EDD0DA00C164F8 /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
+				5958E8FA18EF86670047B97B /* 32093__jbum__jsyd-ping.wav */,
 				592FF90818EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard */,
 				592FF90A18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard */,
 			);
@@ -161,6 +164,7 @@
 			files = (
 				592FF90D18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard in Resources */,
 				592FF90C18EDD0DA00C164F8 /* MainStoryboard_iPad.storyboard in Resources */,
+				5958E8FC18EF86670047B97B /* 32093__jbum__jsyd-ping.wav in Resources */,
 				592FF90618ECCD3B00C164F8 /* jetpac.ntwk in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,6 +199,14 @@
 				592FF90B18EDD0DA00C164F8 /* en */,
 			);
 			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		5958E8FA18EF86670047B97B /* 32093__jbum__jsyd-ping.wav */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5958E8FB18EF86670047B97B /* en */,
+			);
+			name = "32093__jbum__jsyd-ping.wav";
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
