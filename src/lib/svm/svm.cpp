@@ -2676,6 +2676,11 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 	FILE *fp = fopen(model_file_name,"w");
 	if(fp==NULL) return -1;
 
+  return svm_save_model_to_file_handle(fp, model);
+}
+
+int svm_save_model_to_file_handle(FILE* fp, const svm_model* model) {
+
 	char *old_locale = strdup(setlocale(LC_ALL, NULL));
 	setlocale(LC_ALL, "C");
 

@@ -210,6 +210,15 @@ void* jpcnn_load_predictor(const char* filename) {
   return result;
 }
 
+void jpcnn_print_predictor(void* predictorHandle) {
+  SPredictorInfo* predictorInfo = (SPredictorInfo*)(predictorHandle);
+  struct svm_model* model = predictorInfo->model;
+  const int saveResult = svm_save_model_to_file_handle(stderr, model);
+  if (saveResult != 0) {
+    fprintf(stderr, "Couldn't print libsvm model file to stderr\n");
+  }
+}
+
 float jpcnn_predict(void* predictorHandle, float* predictions, int predictionsLength) {
   SPredictorInfo* predictorInfo = (SPredictorInfo*)(predictorHandle);
   struct svm_model* model = predictorInfo->model;

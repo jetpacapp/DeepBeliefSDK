@@ -34,6 +34,8 @@
 #ifndef _LIBSVM_H
 #define _LIBSVM_H
 
+#include <stdio.h>
+
 #define LIBSVM_VERSION 317
 
 #ifdef __cplusplus
@@ -108,6 +110,7 @@ struct svm_model *svm_train(const struct svm_problem *prob, const struct svm_par
 void svm_cross_validation(const struct svm_problem *prob, const struct svm_parameter *param, int nr_fold, double *target);
 
 int svm_save_model(const char *model_file_name, const struct svm_model *model);
+int svm_save_model_to_file_handle(FILE* fp, const svm_model* model);
 struct svm_model *svm_load_model(const char *model_file_name);
 
 int svm_get_svm_type(const struct svm_model *model);
