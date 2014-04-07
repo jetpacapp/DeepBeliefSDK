@@ -17,6 +17,7 @@ what applications that lets you build.
  - [API Reference](#api-reference)
  - [More Information](#more-information)
  - [License](#license)
+ - [Credits](#credits)
 
 ## Getting Started
 
@@ -85,6 +86,14 @@ leaks. Input images are created from raw arrays of 8-bit RGB data, you can see h
 to build those from iOS types by searching for `jpcnn_create_image_buffer()` in the 
 sample code.
 
+The API is broken up into two sections. The first gives you access to a pre-trained neural network, currently the example jetpac.ntwk file is the only one available. 
+This has been trained on 1,000 Imagenet categories, and the output will give you a decent general idea of what's in an image.
+
+The second section lets you replace the highest layer of the neural network with your own classification step. 
+This means you can use it to recognize the objects you care about more accurately.
+
+### Pre-trained calls
+
  - [jpcnn_create_network](#jpcnn_create_network)
  - [jpcnn_destroy_network](#jpcnn_destroy_network)
  - [jpcnn_create_image_buffer_from_file](#jpcnn_create_image_buffer_from_file)
@@ -92,6 +101,17 @@ sample code.
  - [jpcnn_destroy_image_buffer](#jpcnn_destroy_image_buffer)
  - [jpcnn_classify_image](#jpcnn_classify_image)
  - [jpcnn_print_network](#jpcnn_print_network)
+
+### Custom training calls
+
+ - [jpcnn_create_trainer](#jpcnn_create_trainer)
+ - [jpcnn_destroy_trainer](#jpcnn_destroy_trainer)
+ - [jpcnn_train](#jpcnn_train)
+ - [jpcnn_create_predictor_from_trainer](#jpcnn_create_predictor_from_trainer)
+ - [jpcnn_destroy_predictor](#jpcnn_destroy_predictor)
+ - [jpcnn_load_predictor](#jpcnn_load_predictor)
+ - [jpcnn_print_predictor](#jpcnn_print_predictor)
+ - [jpcnn_predict](#jpcnn_predict)
 
 ### jpcnn_create_network
 
@@ -182,6 +202,61 @@ The `JPCNN_MULTISAMPLE` flag takes ten different sample positions within the ima
 
 This is a debug logging call that prints information about a loaded neural network.
 
+### jpcnn_create_trainer
+
+`void* jpcnn_create_trainer()`
+
+Returns a handle to a trainer object that you can feed training examples into to build your own custom prediction model.
+
+### jpcnn_destroy_trainer
+
+`void jpcnn_destroy_trainer(void* trainerHandle)`
+
+Disposes of the memory used by the trainer object and destroys it.
+
+### jpcnn_train
+
+`void jpcnn_train(void* trainerHandle, float expectedLabel, float* predictions, int predictionsLength)`
+
+To create your own custom prediction model, you need to train it using 'positive' examples of images containing the object you care about, and 'negative' examples of images that don't.
+Once you've created a trainer object, you can call this with the neural network results for each positive or negative image, and with an expectedLabel of '0.0' for negatives and '1.0' for positives.
+Picking the exact number of each you'll need is more of an art than a science, since it depends on how easy your object is to recognize and how cluttered your environment is, but I've had decent results with as few as a hundred of each.
+You can use the output of any layer of the neural network, but I've found using the penultimate one works well. I discuss how to do this above in the [layerOffset](#layeroffset) section.
+To see how this works in practice, try out the [LearningExample](#learningexample) sample code for yourself.
+
+### jpcnn_create_predictor_from_trainer
+
+`void* jpcnn_create_predictor_from_trainer(void* trainerHandle)`
+
+Once you've passed in all your positive and negative examples to [jpcnn_train](#jpcnn_train), you can call this to build a predictor model from them all. 
+Under the hood, it's using libSVM to create a support vector machine model based on the examples.
+
+### jpcnn_destroy_predictor
+
+`void jpcnn_destroy_predictor(void* predictorHandle)`
+
+Deallocates any memory used by the predictor model, call this once you're finished with it.
+
+### jpcnn_load_predictor
+
+`void* jpcnn_load_predictor(const char* filename)`
+
+Loads a predictor you've already created from a libSVM-format text file. 
+Since you can't save files on iOS devices, the only way to create this file in the first place is to call [jpcnn_print_predictor](#jpcnn_print_predictor) once you've created a predictor, and then copy and paste the results from the developer console into a file, and then add it to your app's resources. 
+The [SavedModelExample](#savedmodelExample) sample code shows how to use this call.
+
+### jpcnn_print_predictor
+
+`void jpcnn_print_predictor(void* predictorHandle)`
+
+Outputs the parameters that define a custom predictor to stderr (and hence the developer console in XCode). You'll need to copy and paste this into your own text file to subsequently reload the predictor.
+
+### jpcnn_predict
+
+`float jpcnn_predict(void* predictorHandle, float* predictions, int predictionsLength)`
+
+Given the output from a pre-trained neural network, and a custom prediction model, returns a value estimating the probability that the image contains the object it has been trained against.
+
 ## More Information
 
 Join the [Deep Belief Developers email list](https://groups.google.com/group/deep-belief-developers) to find out more about the practical details of implementing deep learning.
@@ -191,4 +266,4 @@ Join the [Deep Belief Developers email list](https://groups.google.com/group/dee
 The binary framework and network parameter file are under the BSD three-clause
 license, included in this folder as LICENSE.
 
-
+## Credits
