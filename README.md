@@ -289,6 +289,20 @@ Outputs the parameters that define a custom predictor to stderr (and hence the d
 
 Given the output from a pre-trained neural network, and a custom prediction model, returns a value estimating the probability that the image contains the object it has been trained against.
 
+## FAQ
+
+### Is this available for Android or other platforms?
+
+Not right now. I hope to make it available on other devices like Android and the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe) and [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) if you're on the desktop.
+
+### Is the source available?
+
+Not at the moment. The compiled library and the neural network parameter set are freely reusable in your own apps under the BSD license though.
+
+### Can I train my own networks?
+
+There aren't any standard formats for sharing large neural networks unfortunately, so there's no way to import other CNNs into the app. The custom training should help you apply the included pre-trained network to your own problems to a large extent though.
+
 ## More Information
 
 Join the [Deep Belief Developers email list](https://groups.google.com/group/deep-belief-developers) to find out more about the practical details of implementing deep learning.
