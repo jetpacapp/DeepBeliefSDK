@@ -1014,6 +1014,9 @@ bail:
     jpcnn_destroy_predictor(predictor);
   }
   predictor = jpcnn_create_predictor_from_trainer(trainer);
+  fprintf(stderr, "------------- SVM File output - copy lines below ------------\n");
+  jpcnn_print_predictor(predictor);
+  fprintf(stderr, "------------- end of SVM File output - copy lines above ------------\n");
   predictionState = ePredicting;
 
   [self updateInfoDisplay];

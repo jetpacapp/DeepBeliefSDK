@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>FDFF5C83-2251-4B52-872D-84CD7FD27E4E</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SavedModelExample</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3626201D-7B1F-4616-A773-A657386D908F</key>
+		<string>ssh://github.com/jetpacapp/DeepBeliefSDK.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>examples/SavedModelExample/SavedModelExample.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3626201D-7B1F-4616-A773-A657386D908F</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/jetpacapp/DeepBeliefSDK.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3626201D-7B1F-4616-A773-A657386D908F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3626201D-7B1F-4616-A773-A657386D908F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>DeepBeliefSDK</string>
+		</dict>
+	</array>
+</dict>
+</plist>

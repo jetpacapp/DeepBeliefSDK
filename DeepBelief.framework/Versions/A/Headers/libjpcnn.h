@@ -30,6 +30,7 @@ void* jpcnn_create_predictor_from_trainer(void* trainerHandle);
 void jpcnn_destroy_predictor(void* predictorHandle);
 int jpcnn_save_predictor(const char* filename, void* predictorHandle);
 void* jpcnn_load_predictor(const char* filename);
+void jpcnn_print_predictor(void* predictorHandle);
 float jpcnn_predict(void* predictorHandle, float* predictions, int predictionsLength);
 
 #ifdef __cplusplus
