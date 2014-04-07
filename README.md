@@ -3,6 +3,8 @@ DeepBeliefSDK
 
 The SDK for [Jetpac's](https://www.jetpac.com) iOS Deep Belief image recognition framework.
 
+![](http://petewarden.files.wordpress.com/2014/04/learningshot61.png)
+
 This is a compiled framework implementing the convolutional neural network 
 architecture [described by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton](http://www.cs.toronto.edu/~hinton/absps/imagenet.pdf).
 The processing code has been highly optimized to run within the memory and 
