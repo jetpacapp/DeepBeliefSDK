@@ -307,7 +307,7 @@ Not at the moment. The compiled library and the neural network parameter set are
 
 ### Can I train my own networks?
 
-There aren't any standard formats for sharing large neural networks unfortunately, so there's no way to import other CNNs into the app. The custom training should help you apply the included pre-trained network to your own problems to a large extent though.
+There aren't any standard formats for sharing large neural networks unfortunately, so there's no way to import other CNNs into the app. The [custom training](https://github.com/jetpacapp/DeepBeliefSDK/wiki/How-to-recognize-custom-objects) should help you apply the included pre-trained network to your own problems to a large extent though.
 
 ## More Information
 
