@@ -276,4 +276,4 @@ Big thanks go to:
  - The Berkeley Vision and Learning Center for their work on [lightweight custom training of CNNs](https://github.com/BVLC/caffe).
  - My colleagues [Cathrine](https://twitter.com/lindblomsten), [Dave](https://twitter.com/davefearon), [Julian](https://twitter.com/juliangreensf), and [Sophia](https://twitter.com/spara) at Jetpac for all their help.
  
- [Pete Warden](https://twitter.com/petewarden)
+[Pete Warden](https://twitter.com/petewarden)
