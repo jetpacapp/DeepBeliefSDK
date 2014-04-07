@@ -267,3 +267,13 @@ The binary framework and network parameter file are under the BSD three-clause
 license, included in this folder as LICENSE.
 
 ## Credits
+
+Big thanks go to:
+
+ - [Daniel Nouri](http://danielnouri.org/) for his invaluable help on CNNs.
+ - [Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton](http://www.cs.toronto.edu/~hinton/absps/imagenet.pdf) for their ground-breaking work on ConvNet.
+ - [Yann LeCun](https://plus.google.com/+YannLeCunPhD/posts) for his pioneering research and continuing support of the field.
+ - The Berkeley Vision and Learning Center for their work on [lightweight custom training of CNNs](https://github.com/BVLC/caffe).
+ - My colleagues [Cathrine](https://twitter.com/lindblomsten), [Dave](https://twitter.com/davefearon), [Julian](https://twitter.com/juliangreensf), and [Sophia](https://twitter.com/spara) at Jetpac for all their help.
+ 
+ [Pete Warden](https://twitter.com/petewarden)
