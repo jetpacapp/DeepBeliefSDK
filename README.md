@@ -274,6 +274,6 @@ Big thanks go to:
  - [Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton](http://www.cs.toronto.edu/~hinton/absps/imagenet.pdf) for their ground-breaking work on ConvNet.
  - [Yann LeCun](https://plus.google.com/+YannLeCunPhD/posts) for his pioneering research and continuing support of the field.
  - The Berkeley Vision and Learning Center for their work on [lightweight custom training of CNNs](https://github.com/BVLC/caffe).
- - My colleagues [Cathrine](https://twitter.com/lindblomsten), [Dave](https://twitter.com/davefearon), [Julian](https://twitter.com/juliangreensf), and [Sophia](https://twitter.com/spara) at Jetpac for all their help.
+ - My colleagues [Cathrine](https://twitter.com/lindblomsten), [Dave](https://twitter.com/davefearon), [Julian](https://twitter.com/juliangreensf), and [Sophia](https://twitter.com/spara) at [Jetpac](https://www.jetpac.com/) for all their help.
  
 [Pete Warden](https://twitter.com/petewarden)
