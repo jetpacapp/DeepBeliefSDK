@@ -24,7 +24,7 @@ what applications that lets you build.
 
 You'll need the usual tools required for developing iOS applications - XCode 5, an
 OS X machine and a modern iOS device (it's been tested as far back as the original
-iPhone 4). Open up the DeepBeliefExample/DeepBeliefExample.xcodeproj, build and run.
+iPhone 4). Open up the SimpleExample/SimpleExample.xcodeproj, build and run.
 
 You should see some warnings (the example is based on Apple sample code which has
 some anachronisms in it unfortunately), then once it's running a live camera stream
@@ -40,6 +40,12 @@ Understanding images with no context is extremely hard, and while this approach
 is a massive step forward compared to the previous state of the art, you'll still
 need to adapt it to the domain you're working in to get the best results in a real
 application.
+
+Happily the framework includes the ability to retrain the network for custom objects that you care about.
+If you have logos you need to pick out, machine parts you need to spot, or just want to be able to distinguish between different kinds of scenes like offices, beaches, mountains or forests, you should look at the [LearningExample](#learningexample) sample code.
+It builds a custom layer on top of the basic neural network that responds to images you've trained it on, and allows you to embed the functionality in your own application easily.
+
+There's also [this full how-to guide](https://github.com/jetpacapp/DeepBeliefSDK/wiki/How-to-recognize-custom-objects) on training and embedding your own custom object recognition code.
 
 ## Examples
 
