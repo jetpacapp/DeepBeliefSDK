@@ -13,8 +13,9 @@ low-power devices. It gives your iPhone the ability to see, and I can't wait to 
 what applications that lets you build.
 
  - [Getting Started](#getting-started)
- - [A Simple Example](#a-simple-example)
+ - [Examples](#examples)
  - [API Reference](#api-reference)
+ - [FAQ](#faq)
  - [More Information](#more-information)
  - [License](#license)
  - [Credits](#credits)
@@ -40,9 +41,22 @@ is a massive step forward compared to the previous state of the art, you'll stil
 need to adapt it to the domain you're working in to get the best results in a real
 application.
 
-## A Simple Example
+## Examples
 
-To use the library in your own application, you need to add the DeepBelief.framework bundle to the Link Binary with Libraries build phase in your XCode project settings, and add `#import <DeepBelief/DeepBelief.h>` to the top of the file you want to use the code in.
+All of the sample code projects are included in the 'examples' folder in this git repository.
+
+ - [Adding to an existing application](#adding-to-an-existing-application)
+ - [SimpleExample](#simpleexample)
+ - [LearningExample](#learningexample)
+ - [SavedModelExample](#savedmodelexample)
+
+### Adding to an existing application
+
+To use the library in your own application: 
+
+ - Add the DeepBelief.framework bundle to the Link Binary with Libraries build phase in your XCode project settings.
+ - Add the system Accelerate.framework to your frameworks.
+ - Add `#import <DeepBelief/DeepBelief.h>` to the top of the file you want to use the code in.
 
 You should then be able to use code like this to classify a single image that you've included as a resource in your bundle. The code assumes it's called 'dog.jpg', but you should change it to match the name of your file.
 
@@ -75,6 +89,24 @@ You should then be able to use code like this to classify a single image that yo
   
   jpcnn_destroy_network(network);
 ```
+
+If you see errors related to `operator new` or similar messages at the linking stage, XCode may be skipping the standard C++ library, and that's needed by the DeepBelief.framework code. One workaround I've found is to include an empty .mm or .cpp file in the project to trick XCode into treating it as a C++ project.
+
+### SimpleExample
+
+This is a self-contained application that shows you how to load the neural network parameters, and process live video to estimate the probability that one of the 1,000 pre-defined Imagenet objects are present.
+The code is largely based on the [SquareCam Apple sample application](https://developer.apple.com/library/ios/samplecode/squarecam/Introduction/Intro.html), which is fairly old and contains some ugly code.
+If you look for `jpcnn_*` calls in SquareCamViewController.m you should be able to follow the sequence of first loading the network, applying it to video frames as they arrive, and destroying the objects once you're all done.
+
+### LearningExample
+
+This application allows you to apply the image recognition code to custom objects you care about. It demonstrates how to capture positive and negative examples, feed them into a trainer to create a prediction model, and then apply that prediction model to the live camera feed.
+It can be a bit messy thanks to all the live video feed code, but if you look for `jpcnn_*` you'll be able to spot the main flow. Once a prediction model has been fully trained, the parameters are written to the XCode console so they can be used as pre-trained predictors.
+
+### SavedModelExample
+
+This shows how you can use a custom prediction model that you've built using the [LearningExample](#learningexample) sample code. 
+I've included the simple 'wine_bottle_predictor.txt' that I quickly trained on a bottle of wine, you should be able to run it yourself and see the results of that model's prediction on your own images.
 
 ## API Reference
 
