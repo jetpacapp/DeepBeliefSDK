@@ -12,7 +12,7 @@ processing constraints of iOS devices, and can analyze an image in under 300ms o
 an iPhone 5S. We're releasing this framework because we're excited by the power of
 this approach for general image recognition, especially when it can run locally on
 low-power devices. It gives your iPhone the ability to see, and I can't wait to see
-what applications that lets you build.
+what applications that helps you build.
 
  - [Getting Started](#getting-started)
  - [Examples](#examples)
