@@ -285,6 +285,7 @@
 		59574E7118E242DF008247E4 /* glheaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glheaders.h; sourceTree = "<group>"; };
 		59574E7318E24BA4008247E4 /* glcontext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = glcontext.mm; sourceTree = "<group>"; };
 		59574E7618E61CCC008247E4 /* dog.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dog.jpg; sourceTree = "<group>"; };
+		5958E9021905D9EC0047B97B /* Android.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
 		59602F7B18B6DDF300D6EEE2 /* svm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = svm.cpp; sourceTree = "<group>"; };
 		59602F7C18B6DDF300D6EEE2 /* svm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svm.h; sourceTree = "<group>"; };
 		59602F7D18B6DDF300D6EEE2 /* svmutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = svmutils.cpp; sourceTree = "<group>"; };
@@ -667,6 +668,7 @@
 		59D2FBAE187F8D2A00427417 = {
 			isa = PBXGroup;
 			children = (
+				5958E9021905D9EC0047B97B /* Android.mk */,
 				594BBAE61887024B007F9A2A /* data */,
 				59D2FBC3187F8D9000427417 /* src */,
 				594BBA6F1884A996007F9A2A /* frameworks */,
@@ -1384,6 +1386,7 @@
 				592FF83318ECB34F00C164F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		592FF8F918ECBF5E00C164F8 /* Build configuration list for PBXAggregateTarget "DeepBeliefFramework" */ = {
 			isa = XCConfigurationList;
@@ -1392,6 +1395,7 @@
 				592FF8FB18ECBF5E00C164F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		594BBAB41886FE8A007F9A2A /* Build configuration list for PBXNativeTarget "jpcnn_ios" */ = {
 			isa = XCConfigurationList;
