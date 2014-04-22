@@ -1,0 +1,32 @@
+<project basedir="." default="all">
+
+  <target name="setup">
+    <property name="projectname" value="deepbelief" />
+    <property name="classname" value="DeepBelief" />
+    <property name="jarfolder" value="./jars" />
+    <property name="buildfolder" value="/tmp/${projectname}" />
+  </target>
+
+  <target name="all" depends="setup">
+    <mkdir dir="${jarfolder}" />
+    <mkdir dir="${buildfolder}" />
+    <!-- Compile -->
+    <javac
+      nowarn="off"
+      debug="true"
+      includeantruntime="no"
+      srcdir="./src/com/jetpac/${projectname}"
+      destdir="${buildfolder}"
+      classpath="${jarfolder}/jna-min.jar"
+    />
+    <!-- Create the jar -->
+    <jar destfile="${jarfolder}/${projectname}.jar" basedir="${buildfolder}">
+  	  <zipfileset src="${jarfolder}/jna-min.jar" />
+      <manifest>
+        <attribute name="Main-Class" value="com.jetpac.${projectname}.${classname}" />
+      </manifest>
+    </jar>
+  </target>
+
+</project>
+
