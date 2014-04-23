@@ -1204,6 +1204,10 @@
 					"$(inherited)",
 					"USE_ACCELERATE_GEMM=1",
 				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1231,6 +1235,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_ACCELERATE_GEMM=1";
 				GCC_UNROLL_LOOPS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/jpcnn_ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LLVM_LTO = YES;
@@ -1250,8 +1258,13 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					USE_ACCELERATE_GEMM,
+					USE_EIGEN_GEMM,
 					USE_OPENGL,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Users/petewarden/projects/eigen,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1260,7 +1273,12 @@
 		59602FB418C158C100D6EEE2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = USE_ACCELERATE_GEMM;
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = USE_EIGEN_GEMM;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Users/petewarden/projects/eigen,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1268,10 +1286,17 @@
 		5962AD82188A0987009E64DD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.2;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					USE_OS_IMAGE,
+					USE_EIGEN_GEMM,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Users/petewarden/projects/eigen/,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1280,10 +1305,16 @@
 		5962AD83188A0987009E64DD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.2;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_ACCELERATE_GEMM=1",
+					USE_EIGEN_GEMM,
 					USE_OS_IMAGE,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Users/petewarden/projects/eigen/,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1360,7 +1391,10 @@
 		59D2FBC1187F8D2A00427417 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					USE_EIGEN_GEMM,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1369,7 +1403,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"USE_ACCELERATE_GEMM=1",
+					USE_EIGEN_GEMM,
 					USE_OPENGL,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

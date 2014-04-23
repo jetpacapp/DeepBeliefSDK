@@ -23,11 +23,15 @@
 #include <cblas.h>
 #endif // USE_ATLAS_GEMM
 
+#ifdef USE_EIGEN_GEMM
+#include <Eigen/Dense>
+#endif // USE_EIGEN_GEMM
+
 #ifdef USE_OPENGL
 #include "glgemm.h"
 #endif // USE_OPENGL
 
-#if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL) && !defined(USE_ATLAS_GEMM)
+#if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL) && !defined(USE_ATLAS_GEMM) && !defined(USE_EIGEN_GEMM)
 #define USE_NAIVE_GEMM
 #endif
 
@@ -101,6 +105,23 @@ void matrix_gemm(
     (enum CBLAS_ORDER)(order),
     (enum CBLAS_TRANSPOSE)(transposeA),
     (enum CBLAS_TRANSPOSE)(transposeB),
+    m,
+    n,
+    k,
+    alpha,
+    a,
+    lda,
+    b,
+    ldb,
+    beta,
+    c,
+    ldc
+  );
+#elif defined(USE_EIGEN_GEMM)
+  eigen_cblas_sgemm(
+    order,
+    transposeA,
+    transposeB,
     m,
     n,
     k,
@@ -322,7 +343,7 @@ void naive_cblas_sgemm_fixed(
   }
 }
 
-#if defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM)
+#if defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM) || defined(USE_EIGEN_GEMM)
 void cblas_sgemm_fixed(
   int order,
   int transposeA,
@@ -421,6 +442,24 @@ void cblas_sgemm_fixed(
     } else {
       assert(false); // Should never get here, only 8 or 16 bit supported
     }
+#if defined(USE_EIGEN_GEMM)
+    eigen_cblas_sgemm(
+      order,
+      transposeA,
+      transposeB,
+      rowsThisTime,
+      n,
+      k,
+      alpha,
+      aSubMatrix,
+      lda,
+      b,
+      ldb,
+      beta,
+      (c + iBase),
+      ldc
+    );
+#else // USE_EIGEN_GEMM
     cblas_sgemm(
       (enum CBLAS_ORDER)(order),
       (enum CBLAS_TRANSPOSE)(transposeA),
@@ -437,9 +476,48 @@ void cblas_sgemm_fixed(
       (c + iBase),
       ldc
     );
+#endif // USE_EIGEN_GEMM
   }
 
   free(aSubMatrix);
   free(cSubMatrix);
 }
 #endif
+
+#if defined(USE_EIGEN_GEMM)
+
+typedef Eigen::Matrix<jpfloat_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> EigenMatrix;
+typedef Eigen::Map<EigenMatrix, Eigen::Unaligned> eigen_matrix_t;
+typedef Eigen::Map<const EigenMatrix, Eigen::Unaligned> eigen_matrix_const_t;
+
+void eigen_cblas_sgemm(
+  int order,
+  int transposeA,
+  int transposeB,
+  int m,
+  int n,
+  int k,
+  jpfloat_t alpha,
+  jpfloat_t *a,
+  int lda,
+  jpfloat_t *b,
+  int ldb,
+  jpfloat_t beta,
+  jpfloat_t* c,
+  int ldc) {
+
+  assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
+  assert(transposeB == JPCblasNoTrans);
+  assert(order == JPCblasColMajor);
+
+  eigen_matrix_t cMatrix(c, m, n);
+  cMatrix *= beta;
+  eigen_matrix_const_t aMatrix(a, m, k);
+  eigen_matrix_const_t bMatrix(b, k, n);
+  if (transposeA == JPCblasTrans) {
+    cMatrix.noalias() += (alpha * aMatrix * bMatrix);
+  } else {
+    cMatrix.noalias() += (alpha * aMatrix.transpose() * bMatrix);
+  }
+}
+#endif // USE_EIGEN_GEMM

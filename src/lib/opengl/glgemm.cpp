@@ -1063,7 +1063,7 @@ void test_gl_gemm() {
 //    ldc
 //  );
 //
-//  gl_gemm(
+//  eigen_cblas_sgemm(
 //    order,
 //    transposeA,
 //    transposeB,
