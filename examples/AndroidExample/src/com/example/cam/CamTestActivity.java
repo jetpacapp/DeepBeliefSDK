@@ -185,9 +185,24 @@ public class CamTestActivity extends Activity {
 	      predictionsNamesRef,
 	      predictionsNamesLengthRef);
 
-	    Pointer predictionsValues = predictionsValuesRef.getValue();
+	    Pointer predictionsValuesPointer = predictionsValuesRef.getValue();
 	    final int predictionsLength = predictionsLengthRef.getValue();
+	    Pointer predictionsNamesPointer = predictionsNamesRef.getValue();
+	    final int predictionsNamesLength = predictionsNamesLengthRef.getValue();
+
         System.err.println(String.format("predictionsLength = %d", predictionsLength));
+	    
+	    float[] predictionsValues = predictionsValuesPointer.getFloatArray(0, predictionsLength);
+	    Pointer[] predictionsNames = predictionsNamesPointer.getPointerArray(0); 
+	    for (int index = 0; index < predictionsLength; index += 1) {
+	    	final float predictionValue = predictionsValues[index];
+	    	if (predictionValue > 0.01f) {
+	    		byte[] nameBytes = predictionsNames[index].getByteArray(0, 10);
+	    		String name = new String(nameBytes);
+	            System.err.println(String.format("%s = %f", name, predictionValue));	    		
+	    	}
+	    }
+	    
 	}
 	
     private static boolean copyAsset(AssetManager assetManager,
