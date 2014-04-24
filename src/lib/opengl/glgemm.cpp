@@ -997,8 +997,11 @@ Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int 
 }
 
 void test_gl_gemm() {
-  Buffer* input = new Buffer(Dimensions(1, 100));
-  Buffer* weights = new Buffer(Dimensions(20, 100));
+  const int inputChannels = 363;
+  const int inputHeight = 3000;
+  const int outputChannels = 96;
+  Buffer* input = new Buffer(Dimensions(inputHeight, inputChannels));
+  Buffer* weights = new Buffer(Dimensions(outputChannels, inputChannels));
   const bool areWeightsTransposed = true;
 
   const Dimensions inputDims = input->_dims;
@@ -1022,7 +1025,7 @@ void test_gl_gemm() {
     outputChannelsIndex = 1;
   }
   assert(weightsDims[inputValuesIndex] == inputValuesCount);
-  const int outputChannels = weightsDims[outputChannelsIndex];
+//  const int outputChannels = weightsDims[outputChannelsIndex];
 
   const Dimensions outputDims(imageCount, outputChannels);
   Buffer* outputCPU = new Buffer(outputDims);
@@ -1079,15 +1082,16 @@ void test_gl_gemm() {
 //    outputGPU->_data,
 //    ldc
 //  );
-//
+
 //  outputCPU->printContents();
 //  outputGPU->printContents();
+//  assert(buffer_are_all_close(outputCPU, outputGPU));
 
   const float weightsMin = 0.0f;
   const float weightsMax = 1.0f;
-  const int weightsBitsPerElement = 8;
+  const int weightsBitsPerElement = 16;
 
-  Buffer* weightsFixed = new Buffer(Dimensions(20, 100), weightsMin, weightsMax, weightsBitsPerElement);
+  Buffer* weightsFixed = new Buffer(Dimensions(outputChannels, inputChannels), weightsMin, weightsMax, weightsBitsPerElement);
   Buffer* outputFixedCPU = new Buffer(outputDims);
   outputFixedCPU->setName("outputFixedCPU");
   Buffer* outputFixedGPU = new Buffer(outputDims);
@@ -1135,8 +1139,9 @@ void test_gl_gemm() {
     ldc
   );
 
-  outputFixedCPU->printContents();
-  outputFixedGPU->printContents();
+//  outputFixedCPU->printContents();
+//  outputFixedGPU->printContents();
+  assert(buffer_are_all_close(outputFixedCPU, outputFixedGPU));
 }
 
 #endif // USE_OPENGL

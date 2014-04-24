@@ -179,7 +179,7 @@ void matrix_gemm_fixed(
     c,
     ldc
   );
-#elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM)
+#elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM) || defined(USE_EIGEN_GEMM)
   cblas_sgemm_fixed(
     order,
     transposeA,
@@ -405,7 +405,7 @@ void cblas_sgemm_fixed(
           const int aIndex = ((lda * i) + l);
           const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
           const int aSubMatrixIndex = ((lda * iOffset) + l);
-          assert(aSubMatrix[aSubMatrixIndex] == aValue);
+          aSubMatrix[aSubMatrixIndex] = aValue;
         }
       }
 #endif // USE_ACCELERATE_GEMM
@@ -486,8 +486,9 @@ void cblas_sgemm_fixed(
 
 #if defined(USE_EIGEN_GEMM)
 
-typedef Eigen::Matrix<jpfloat_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> EigenMatrix;
-typedef Eigen::Map<EigenMatrix, Eigen::Unaligned> eigen_matrix_t;
+typedef Eigen::Stride<Eigen::Dynamic, Eigen::Dynamic> DynamicStride;
+typedef Eigen::Matrix<jpfloat_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> EigenMatrix;
+typedef Eigen::Map<EigenMatrix, Eigen::Unaligned, DynamicStride> eigen_matrix_t;
 typedef Eigen::Map<const EigenMatrix, Eigen::Unaligned> eigen_matrix_const_t;
 
 void eigen_cblas_sgemm(
@@ -510,13 +511,14 @@ void eigen_cblas_sgemm(
   assert(transposeB == JPCblasNoTrans);
   assert(order == JPCblasColMajor);
 
-  eigen_matrix_t cMatrix(c, m, n);
+  eigen_matrix_t cMatrix(c, m, n, DynamicStride(ldc, 1));
   cMatrix *= beta;
-  eigen_matrix_const_t aMatrix(a, m, k);
   eigen_matrix_const_t bMatrix(b, k, n);
-  if (transposeA == JPCblasTrans) {
+  if (transposeA == JPCblasNoTrans) {
+    eigen_matrix_const_t aMatrix(a, m, k);
     cMatrix.noalias() += (alpha * aMatrix * bMatrix);
   } else {
+    eigen_matrix_const_t aMatrix(a, k, m);
     cMatrix.noalias() += (alpha * aMatrix.transpose() * bMatrix);
   }
 }
