@@ -175,6 +175,7 @@ public class CamTestActivity extends Activity {
 	    IntByReference predictionsLengthRef = new IntByReference();
 	    PointerByReference predictionsNamesRef = new PointerByReference();
 	    IntByReference predictionsNamesLengthRef = new IntByReference();
+		long startT = System.currentTimeMillis();	    	    
 	    JPCNNLibrary.INSTANCE.jpcnn_classify_image(
 	      networkHandle,
 	      imageHandle,
@@ -184,8 +185,11 @@ public class CamTestActivity extends Activity {
 	      predictionsLengthRef,
 	      predictionsNamesRef,
 	      predictionsNamesLengthRef);
+		long stopT = System.currentTimeMillis();	   
+		float duration = (float)(stopT-startT) / 1000.0f;
+		System.err.println("jpcnn_classify_image() took " + duration + " seconds.");
 
-	    Pointer predictionsValuesPointer = predictionsValuesRef.getValue();
+	    Pointer predictionsValuesPointer = predictionsValuesRef.getValue(); 
 	    final int predictionsLength = predictionsLengthRef.getValue();
 	    Pointer predictionsNamesPointer = predictionsNamesRef.getValue();
 	    final int predictionsNamesLength = predictionsNamesLengthRef.getValue();
