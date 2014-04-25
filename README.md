@@ -1,20 +1,21 @@
 DeepBeliefSDK
 =============
 
-The SDK for [Jetpac's](https://www.jetpac.com) iOS Deep Belief image recognition framework.
+The SDK for [Jetpac's](https://www.jetpac.com) iOS and Android Deep Belief image recognition framework.
 
 ![](http://petewarden.files.wordpress.com/2014/04/learningshot61.png)
 
 This is a compiled framework implementing the convolutional neural network 
 architecture [described by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton](http://www.cs.toronto.edu/~hinton/absps/imagenet.pdf).
 The processing code has been highly optimized to run within the memory and 
-processing constraints of iOS devices, and can analyze an image in under 300ms on 
+processing constraints of modern mobile devices, and can analyze an image in under 300ms on
 an iPhone 5S. We're releasing this framework because we're excited by the power of
 this approach for general image recognition, especially when it can run locally on
 low-power devices. It gives your iPhone the ability to see, and I can't wait to see
 what applications that helps you build.
 
- - [Getting Started](#getting-started)
+ - [Getting Started on iOS](#getting-started-on-ios)
+ - [Getting Started on Android](#getting-started-on-android)
  - [Examples](#examples)
  - [API Reference](#api-reference)
  - [FAQ](#faq)
@@ -22,7 +23,7 @@ what applications that helps you build.
  - [License](#license)
  - [Credits](#credits)
 
-## Getting Started
+## Getting Started on iOS
 
 You'll need the usual tools required for developing iOS applications - XCode 5, an
 OS X machine and a modern iOS device (it's been tested as far back as the original
@@ -49,16 +50,26 @@ It builds a custom layer on top of the basic neural network that responds to ima
 
 There's also [this full how-to guide](https://github.com/jetpacapp/DeepBeliefSDK/wiki/How-to-recognize-custom-objects) on training and embedding your own custom object recognition code.
 
+## Getting Started on Android
+
+I've been using Google's ADT toolchain. To get started import the AndroidExample into
+their custom version of Eclipse, build and run it. Hopefully you should see a similar
+result to the iPhone app, with live video and tags displayed. You'll need to hold the
+phone in landscape orientation, look for the tag text and use that as your guide.
+
+The Android implementation uses NEON SIMD instructions, so it may not work on
+older phones, and will definitely not work on non-ARM devices.
+
 ## Examples
 
 All of the sample code projects are included in the 'examples' folder in this git repository.
 
- - [Adding to an existing application](#adding-to-an-existing-application)
+ - [Adding to an existing iOS application](#adding-to-an-existing-ios-application)
  - [SimpleExample](#simpleexample)
  - [LearningExample](#learningexample)
  - [SavedModelExample](#savedmodelexample)
 
-### Adding to an existing application
+### Adding to an existing iOS application
 
 To use the library in your own application: 
 
@@ -100,6 +111,84 @@ You should then be able to use code like this to classify a single image that yo
 
 If you see errors related to `operator new` or similar messages at the linking stage, XCode may be skipping the standard C++ library, and that's needed by the DeepBelief.framework code. One workaround I've found is to include an empty .mm or .cpp file in the project to trick XCode into treating it as a C++ project.
 
+### Adding to an existing Android application
+
+Under the hood the Android implementation uses a native C++ library that's linked to
+Java applications using JNA. That means the process of including the code is a bit more
+complex than on iOS. If you look at the [AndroidExample](#androidexample) sample code,
+you'll see a 'libs' folder. This contains a deepbelief.jar file that has the Java interface
+to the underlying native code, and then inside the armeabi there's jnidispatch.so which is
+part of JNA and handles the mechanics of calling native functions, and libjpcnn.so which
+implements the actual object recognition algorithm. You'll need to replicate this folder
+structure and copy the files to your own application's source tree.
+
+Once you've done that, you should be able to import the Java interface to the library:
+
+`import com.jetpac.deepbelief.DeepBelief.JPCNNLibrary;`
+
+This class contains a list of Java functions that correspond to exactly to the
+[C interface functions](#api-reference). The class code is available in the AndroidLibrary
+folder, and you should be able to rebuild it yourself by running ant, but here are the 
+definitions using JNA types:
+
+```java
+Pointer jpcnn_create_network(String filename);
+void jpcnn_destroy_network(Pointer networkHandle);
+Pointer jpcnn_create_image_buffer_from_file(String filename);
+void jpcnn_destroy_image_buffer(Pointer imageHandle);
+Pointer jpcnn_create_image_buffer_from_uint8_data(byte[] pixelData, int width, int height, int channels, int rowBytes, int reverseOrder, int doRotate);
+void jpcnn_classify_image(Pointer networkHandle, Pointer inputHandle, int doMultiSample, int layerOffset, PointerByReference outPredictionsValues, IntByReference outPredictionsLength, PointerByReference outPredictionsNames, IntByReference outPredictionsNamesLength);
+void jpcnn_print_network(Pointer networkHandle);
+
+Pointer jpcnn_create_trainer();
+void jpcnn_destroy_trainer(Pointer trainerHandle);
+void jpcnn_train(Pointer trainerHandle, float expectedLabel, float[] predictions, int predictionsLength);
+Pointer jpcnn_create_predictor_from_trainer(Pointer trainerHandle);
+void jpcnn_destroy_predictor(Pointer predictorHandle);
+int jpcnn_save_predictor(String filename, Pointer predictorHandle);
+Pointer jpcnn_load_predictor(String filename);
+float jpcnn_predict(Pointer predictorHandle, Pointer predictions, int predictionsLength);
+```
+
+There are a few quirks to using the interface that the example code demonstrates how to work around. 
+`jpcnn_create_network()` requires a standard filename path, but to distribute the network with an
+application it needs to be an asset, and because that may be compressed and part of an archive, there's
+no way to get a path to it. To fix that, `initDeepBelief()` copys the file to the application's data directory:
+
+```java
+AssetManager am = ctx.getAssets();
+String baseFileName = "jetpac.ntwk";
+String dataDir = ctx.getFilesDir().getAbsolutePath();
+String networkFile = dataDir + "/" + baseFileName;
+copyAsset(am, baseFileName, networkFile);
+networkHandle = JPCNNLibrary.INSTANCE.jpcnn_create_network(networkFile);
+```
+
+This has some overhead obviously, so one optimization might be to check for the existence of the file and only
+copy it over if it doesn't already exist.
+
+`jpcnn_create_image_buffer_from_uint8_data()` needs a plain byte array, and the `classifyBitmap()` function
+shows how you can extract what you need from a normal Bitmap object:
+
+```java
+final int width = bitmap.getWidth();
+final int height = bitmap.getHeight();
+final int pixelCount = (width * height);
+final int bytesPerPixel = 4;
+final int byteCount = (pixelCount * bytesPerPixel);
+ByteBuffer buffer = ByteBuffer.allocate(byteCount);
+bitmap.copyPixelsToBuffer(buffer);
+byte[] pixels = buffer.array();
+Pointer imageHandle = JPCNNLibrary.INSTANCE.jpcnn_create_image_buffer_from_uint8_data(pixels, width, height, 4, (4 * width), 0, 0);
+```
+
+Native objects are not garbage-collected, so you'll have to remember to explicitly call `jpcnn_destroy_image_buffer()`
+and other calls on objects you've created through the library if you want to avoid memory leaks.
+
+The rest of `classifyBitmap()` also demonstrates how to pull out the results as Java-accessible arrays from the JNA types.
+
+Performance
+
 ### SimpleExample
 
 This is a self-contained application that shows you how to load the neural network parameters, and process live video to estimate the probability that one of the 1,000 pre-defined Imagenet objects are present.
@@ -115,6 +204,11 @@ It can be a bit messy thanks to all the live video feed code, but if you look fo
 
 This shows how you can use a custom prediction model that you've built using the [LearningExample](#learningexample) sample code. 
 I've included the simple 'wine_bottle_predictor.txt' that I quickly trained on a bottle of wine, you should be able to run it yourself and see the results of that model's prediction on your own images.
+
+### AndroidExample
+
+A basic Android application that applies the classification algorithm to live video from the phone's camera. The first thing it does after initialization is analyze the standard image-processing image of Lena, you should see log output from that first.
+After that it continuously analyzes incoming camera frames, both displaying the found labels on screen and printing them to the console.
 
 ## API Reference
 
@@ -299,9 +393,9 @@ Given the output from a pre-trained neural network, and a custom prediction mode
 
 ## FAQ
 
-### Is this available for Android or other platforms?
+### Is this available for platforms other than iOS and Android?
 
-Not right now. I hope to make it available on other devices like Android and the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe) and [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) if you're on the desktop.
+Not right now. I hope to make it available on other devices like the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe) and [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) if you're on the desktop.
 
 ### Is the source available?
 
