@@ -58,7 +58,8 @@ result to the iPhone app, with live video and tags displayed. You'll need to hol
 phone in landscape orientation, look for the tag text and use that as your guide.
 
 The Android implementation uses NEON SIMD instructions, so it may not work on
-older phones, and will definitely not work on non-ARM devices.
+older phones, and will definitely not work on non-ARM devices. As a benchmark for 
+expected performance, classification takes around 650ms on a Samsung Galaxy S5.
 
 ## Examples
 
@@ -188,8 +189,6 @@ Native objects are not garbage-collected, so you'll have to remember to explicit
 and other calls on objects you've created through the library if you want to avoid memory leaks.
 
 The rest of `classifyBitmap()` also demonstrates how to pull out the results as Java-accessible arrays from the JNA types.
-
-Performance
 
 ### SimpleExample
 
