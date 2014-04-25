@@ -19,18 +19,16 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >"
-			<LinearLayout
-			    android:layout_width="fill_parent"
-			    android:layout_height="2px"
-			    android:layout_gravity="center_vertical"
-			    android:background="#ff0000" 
-			    android:layout_weight=".80" />
-            <Button
-                android:id="@+id/buttonClick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Click" />
+
+			
+
+			<TextView
+			    android:id="@+id/labelsView"
+			    android:layout_width="262dp"
+			    android:layout_height="191dp"
+                android:layout_gravity="center_horizontal"
+			    android:text="TextView" />
+
         </LinearLayout>
     </FrameLayout>
 

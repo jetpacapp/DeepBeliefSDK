@@ -4,23 +4,30 @@ package com.example.cam;
  * @author Jose Davis Nidhin
  */
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayOutputStream;
+import java.io.File; 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.hardware.Camera.PreviewCallback;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -32,6 +39,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.jetpac.deepbelief.DeepBelief;
 import com.jetpac.deepbelief.DeepBelief.JPCNNLibrary;
@@ -43,6 +51,7 @@ public class CamTestActivity extends Activity {
 	private static final String TAG = "CamTestActivity";
 	Preview preview;
 	Button buttonClick;
+	TextView labelsView;
 	Camera camera;
 	String fileName;
 	Activity act;
@@ -64,27 +73,9 @@ public class CamTestActivity extends Activity {
 		((FrameLayout) findViewById(R.id.preview)).addView(preview);
 		preview.setKeepScreenOn(true);
 		
-		buttonClick = (Button) findViewById(R.id.buttonClick);
+		labelsView = (TextView) findViewById(R.id.labelsView);
+		labelsView.setText("");
 		
-		buttonClick.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				//				preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-				camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-			}
-		});
-		
-		buttonClick.setOnLongClickListener(new OnLongClickListener(){
-			@Override
-			public boolean onLongClick(View arg0) {
-				camera.autoFocus(new AutoFocusCallback(){
-					@Override
-					public void onAutoFocus(boolean arg0, Camera arg1) {
-						//camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-					}
-				});
-				return true;
-			}
-		});
 		initDeepBelief();
 	}
 
@@ -95,6 +86,7 @@ public class CamTestActivity extends Activity {
 		camera = Camera.open();
 		camera.startPreview();
 		preview.setCamera(camera);
+		camera.setPreviewCallback(previewCallback);
 	}
 
 	@Override
@@ -112,39 +104,16 @@ public class CamTestActivity extends Activity {
 		camera.startPreview();
 		preview.setCamera(camera);
 	}
-
-	ShutterCallback shutterCallback = new ShutterCallback() {
-		public void onShutter() {
-			// Log.d(TAG, "onShutter'd");
-		}
-	};
-
-	PictureCallback rawCallback = new PictureCallback() {
-		public void onPictureTaken(byte[] data, Camera camera) {
-			// Log.d(TAG, "onPictureTaken - raw");
-		}
-	};
-
-	PictureCallback jpegCallback = new PictureCallback() {
-		public void onPictureTaken(byte[] data, Camera camera) {
-//			FileOutputStream outStream = null;
-//			try {
-//				// Write to SD Card
-//				fileName = String.format("/sdcard/camtest/%d.jpg", System.currentTimeMillis());
-//				outStream = new FileOutputStream(fileName);
-//				outStream.write(data);
-//				outStream.close();
-//				Log.d(TAG, "onPictureTaken - wrote bytes: " + data.length);
-
-				resetCam();
-
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			} finally {
-//			}
-			Log.d(TAG, "onPictureTaken - jpeg");
+	
+	PreviewCallback previewCallback = new PreviewCallback() {
+		public void onPreviewFrame(byte[] data, Camera camera) {
+			Size previewSize = camera.getParameters().getPreviewSize(); 
+			YuvImage yuvimage=new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 80, baos);
+			byte[] jdata = baos.toByteArray();
+			Bitmap bmp = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
+			classifyBitmap(bmp);
 		}
 	};
 
@@ -156,9 +125,28 @@ public class CamTestActivity extends Activity {
 		copyAsset(am, baseFileName, networkFile);
 	    networkHandle = JPCNNLibrary.INSTANCE.jpcnn_create_network(networkFile);
 
-	    Bitmap lenaBitmap = getBitmapFromAsset("lena.png");
+	    Bitmap lenaBitmap = getBitmapFromAsset("lena.png"); 
 	    classifyBitmap(lenaBitmap);
 	}
+	
+	private class PredictionLabel implements Comparable<PredictionLabel> {
+		public String name;
+		public float predictionValue;
+		public PredictionLabel(String inName, float inPredictionValue) {
+			this.name = inName;
+			this.predictionValue = inPredictionValue;
+		}
+		public int compareTo(PredictionLabel anotherInstance) {
+			final float diff = (this.predictionValue - anotherInstance.predictionValue);
+			if (diff < 0.0f) {
+				return 1;
+			} else if (diff > 0.0f) {
+				return -1;
+			} else {
+				return 0;
+			}
+	    }
+	};
 	
 	void classifyBitmap(Bitmap bitmap) {
 	    final int width = bitmap.getWidth();
@@ -189,24 +177,34 @@ public class CamTestActivity extends Activity {
 		float duration = (float)(stopT-startT) / 1000.0f;
 		System.err.println("jpcnn_classify_image() took " + duration + " seconds.");
 
+		JPCNNLibrary.INSTANCE.jpcnn_destroy_image_buffer(imageHandle);
+		
 	    Pointer predictionsValuesPointer = predictionsValuesRef.getValue(); 
 	    final int predictionsLength = predictionsLengthRef.getValue();
 	    Pointer predictionsNamesPointer = predictionsNamesRef.getValue();
 	    final int predictionsNamesLength = predictionsNamesLengthRef.getValue();
 
         System.err.println(String.format("predictionsLength = %d", predictionsLength));
-	    
+        
 	    float[] predictionsValues = predictionsValuesPointer.getFloatArray(0, predictionsLength);
 	    Pointer[] predictionsNames = predictionsNamesPointer.getPointerArray(0); 
+	    
+	    ArrayList<PredictionLabel> foundLabels = new ArrayList<PredictionLabel>();
 	    for (int index = 0; index < predictionsLength; index += 1) {
 	    	final float predictionValue = predictionsValues[index];
-	    	if (predictionValue > 0.01f) {
-	    		byte[] nameBytes = predictionsNames[index].getByteArray(0, 10);
-	    		String name = new String(nameBytes);
+	    	if (predictionValue > 0.05f) {
+	    		String name = predictionsNames[index].getString(0);
 	            System.err.println(String.format("%s = %f", name, predictionValue));	    		
+	            PredictionLabel label = new PredictionLabel(name, predictionValue);
+	            foundLabels.add(label);
 	    	}
 	    }
-	    
+	    Collections.sort(foundLabels);
+	    String labelsText = "";
+	    for (PredictionLabel label : foundLabels) {
+	    	labelsText += String.format("%s - %.2f\n", label.name, label.predictionValue);
+	    }
+	    labelsView.setText(labelsText);
 	}
 	
     private static boolean copyAsset(AssetManager assetManager,
