@@ -65,9 +65,11 @@ older phones, and will definitely not work on non-ARM devices.
 All of the sample code projects are included in the 'examples' folder in this git repository.
 
  - [Adding to an existing iOS application](#adding-to-an-existing-ios-application)
+ - [Adding to an existing Android application](#adding-to-an-existing-android-application)
  - [SimpleExample](#simpleexample)
  - [LearningExample](#learningexample)
  - [SavedModelExample](#savedmodelexample)
+ - [AndroidExample](#androidexample)
 
 ### Adding to an existing iOS application
 
