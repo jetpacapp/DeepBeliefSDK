@@ -25,11 +25,17 @@
 
 #ifdef USE_EIGEN_GEMM
 #include <Eigen/Dense>
+#include <android/log.h>
 #endif // USE_EIGEN_GEMM
 
 #ifdef USE_OPENGL
 #include "glgemm.h"
 #endif // USE_OPENGL
+
+#ifdef USE_NEON
+#include <arm_neon.h>
+#include <omp.h>
+#endif // USE_NEON
 
 #if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL) && !defined(USE_ATLAS_GEMM) && !defined(USE_EIGEN_GEMM)
 #define USE_NAIVE_GEMM
@@ -398,14 +404,52 @@ void cblas_sgemm_fixed(
         1,
         elementsPerSubMatrix
       );
+#elif defined(USE_NEON)
+
+      // Only works on data that's multiples of 8 in size
+      assert((k % 8) == 0);
+
+      const float32x4_t vAMin0 = vdupq_n_f32(aMin);
+      const float32x4_t vAMin1 = vdupq_n_f32(aMin);
+      const float32x4_t vARange0 = vdupq_n_f32(aRange);
+      const float32x4_t vARange1 = vdupq_n_f32(aRange);
+
+      for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
+        const int i = (iBase + iOffset);
+        uint16_t* currentA = (aData + (lda * i));
+        uint16_t* endA = (currentA + k);
+        jpfloat_t* currentSubMatrix = (aSubMatrix + (lda * iOffset));
+        while (currentA < endA) {
+          uint16x8_t vAInput16Bit = vld1q_u16(currentA);
+          uint16x4_t vAInput16BitHigh = vget_high_u16(vAInput16Bit);
+          uint16x4_t vAInput16BitLow = vget_low_u16(vAInput16Bit);
+          uint32x4_t vAInput32BitHigh = vmovl_u16(vAInput16BitHigh);
+          uint32x4_t vAInput32BitLow = vmovl_u16(vAInput16BitLow);
+          float32x4_t vAInputFloatHigh = vcvtq_f32_u32(vAInput32BitHigh);
+          float32x4_t vAInputFloatLow = vcvtq_f32_u32(vAInput32BitLow);
+          float32x4_t vOutputHigh = vmlaq_f32(vAMin0, vARange0, vAInputFloatHigh);
+          float32x4_t vOutputLow = vmlaq_f32(vAMin1, vARange1, vAInputFloatLow);
+
+          vst1q_f32(currentSubMatrix, vOutputLow);
+          currentSubMatrix += 4;
+          vst1q_f32(currentSubMatrix, vOutputHigh);
+          currentSubMatrix += 4;
+
+          currentA += 8;
+
+          const uint16_t dummyValue = *currentA;
+        }
+      }
 #else // USE_ACCELERATE_GEMM
       for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
         const int i = (iBase + iOffset);
-        for (int l = 0; l < k; l++) {
-          const int aIndex = ((lda * i) + l);
-          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
-          const int aSubMatrixIndex = ((lda * iOffset) + l);
-          aSubMatrix[aSubMatrixIndex] = aValue;
+        uint16_t* currentA = (aData + (lda * i));
+        uint16_t* endA = (currentA + k);
+        jpfloat_t* currentSubMatrix = (aSubMatrix + (lda * iOffset));
+        while (currentA < endA) {
+          *currentSubMatrix = (aMin + ((*currentA) * aRange));
+          currentA += 1;
+          currentSubMatrix += 1;
         }
       }
 #endif // USE_ACCELERATE_GEMM
@@ -428,14 +472,53 @@ void cblas_sgemm_fixed(
         1,
         elementsPerSubMatrix
       );
+#elif defined(USE_NEON)
+
+      // Only works on data that's multiples of 8 in size
+      assert((k % 8) == 0);
+
+      const float32x4_t vAMin0 = vdupq_n_f32(aMin);
+      const float32x4_t vAMin1 = vdupq_n_f32(aMin);
+      const float32x4_t vARange0 = vdupq_n_f32(aRange);
+      const float32x4_t vARange1 = vdupq_n_f32(aRange);
+
+      for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
+        const int i = (iBase + iOffset);
+        uint8_t* currentA = (aData + (lda * i));
+        uint8_t* endA = (currentA + k);
+        jpfloat_t* currentSubMatrix = (aSubMatrix + (lda * iOffset));
+        while (currentA < endA) {
+          uint8x8_t vAInput8Bit = vld1_u8(currentA);
+          uint16x8_t vAInput16Bit = vmovl_u8(vAInput8Bit);
+          uint16x4_t vAInput16BitHigh = vget_high_u16(vAInput16Bit);
+          uint16x4_t vAInput16BitLow = vget_low_u16(vAInput16Bit);
+          uint32x4_t vAInput32BitHigh = vmovl_u16(vAInput16BitHigh);
+          uint32x4_t vAInput32BitLow = vmovl_u16(vAInput16BitLow);
+          float32x4_t vAInputFloatHigh = vcvtq_f32_u32(vAInput32BitHigh);
+          float32x4_t vAInputFloatLow = vcvtq_f32_u32(vAInput32BitLow);
+          float32x4_t vOutputHigh = vmlaq_f32(vAMin0, vARange0, vAInputFloatHigh);
+          float32x4_t vOutputLow = vmlaq_f32(vAMin1, vARange1, vAInputFloatLow);
+
+          vst1q_f32(currentSubMatrix, vOutputLow);
+          currentSubMatrix += 4;
+          vst1q_f32(currentSubMatrix, vOutputHigh);
+          currentSubMatrix += 4;
+
+          currentA += 8;
+
+          const uint8_t dummyValue = *currentA;
+        }
+      }
 #else // USE_ACCELERATE_GEMM
       for (int iOffset = 0; iOffset < rowsThisTime; iOffset += 1) {
         const int i = (iBase + iOffset);
-        for (int l = 0; l < k; l++) {
-          const int aIndex = ((lda * i) + l);
-          const jpfloat_t aValue = aMin + (aData[aIndex] * aRange);
-          const int aSubMatrixIndex = ((lda * iOffset) + l);
-          aSubMatrix[aSubMatrixIndex] = aValue;
+        uint8_t* currentA = (aData + (lda * i));
+        uint8_t* endA = (currentA + k);
+        jpfloat_t* currentSubMatrix = (aSubMatrix + (lda * iOffset));
+        while (currentA < endA) {
+          *currentSubMatrix = (aMin + ((*currentA) * aRange));
+          currentA += 1;
+          currentSubMatrix += 1;
         }
       }
 #endif // USE_ACCELERATE_GEMM
@@ -488,8 +571,8 @@ void cblas_sgemm_fixed(
 
 typedef Eigen::Stride<Eigen::Dynamic, Eigen::Dynamic> DynamicStride;
 typedef Eigen::Matrix<jpfloat_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> EigenMatrix;
-typedef Eigen::Map<EigenMatrix, Eigen::Unaligned, DynamicStride> eigen_matrix_t;
-typedef Eigen::Map<const EigenMatrix, Eigen::Unaligned> eigen_matrix_const_t;
+typedef Eigen::Map<EigenMatrix, Eigen::Aligned, DynamicStride> eigen_matrix_t;
+typedef Eigen::Map<const EigenMatrix, Eigen::Aligned> eigen_matrix_const_t;
 
 void eigen_cblas_sgemm(
   int order,
@@ -510,16 +593,27 @@ void eigen_cblas_sgemm(
   assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
   assert(transposeB == JPCblasNoTrans);
   assert(order == JPCblasColMajor);
+  assert(alpha == 1.0f);
 
   eigen_matrix_t cMatrix(c, m, n, DynamicStride(ldc, 1));
-  cMatrix *= beta;
+  if (beta > 0.0f) {
+    cMatrix *= beta;
+  }
   eigen_matrix_const_t bMatrix(b, k, n);
   if (transposeA == JPCblasNoTrans) {
     eigen_matrix_const_t aMatrix(a, m, k);
-    cMatrix.noalias() += (alpha * aMatrix * bMatrix);
+    if (beta > 0.0f) {
+      cMatrix.noalias() += (aMatrix * bMatrix);
+    } else {
+      cMatrix.noalias() = (aMatrix * bMatrix);
+    }
   } else {
     eigen_matrix_const_t aMatrix(a, k, m);
-    cMatrix.noalias() += (alpha * aMatrix.transpose() * bMatrix);
+    if (beta > 0.0f) {
+      cMatrix.noalias() += (aMatrix.transpose() * bMatrix);
+    } else {
+      cMatrix.noalias() = (aMatrix.transpose() * bMatrix);
+    }
   }
 }
 #endif // USE_EIGEN_GEMM
