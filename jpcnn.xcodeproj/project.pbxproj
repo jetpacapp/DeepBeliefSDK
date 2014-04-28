@@ -1006,8 +1006,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					USE_OS_IMAGE,
-					USE_EIGEN_GEMM,
-					USE_NEON,
+					USE_ACCELERATE_GEMM,
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1024,9 +1023,8 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.2;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					USE_EIGEN_GEMM,
+					USE_ACCELERATE_GEMM,
 					USE_OS_IMAGE,
-					USE_NEON,
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

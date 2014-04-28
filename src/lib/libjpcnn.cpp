@@ -27,7 +27,7 @@ typedef struct SPredictorInfoStruct {
 extern "C" {
 
 void* jpcnn_create_network(const char* filename) {
-  Graph* graph = new_graph_from_file(filename, true, true);
+  Graph* graph = new_graph_from_file(filename, false, true);
   return (void*)(graph);
 }
 

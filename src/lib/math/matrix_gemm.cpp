@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 #ifdef USE_ACCELERATE_GEMM
 #include <Accelerate/Accelerate.h>
@@ -25,7 +27,6 @@
 
 #ifdef USE_EIGEN_GEMM
 #include <Eigen/Dense>
-#include <android/log.h>
 #endif // USE_EIGEN_GEMM
 
 #ifdef USE_OPENGL
@@ -108,9 +109,9 @@ void matrix_gemm(
   );
 #elif defined(USE_ACCELERATE_GEMM) || defined(USE_MKL_GEMM) || defined(USE_ATLAS_GEMM)
   cblas_sgemm(
-    (enum CBLAS_ORDER)(order),
-    (enum CBLAS_TRANSPOSE)(transposeA),
-    (enum CBLAS_TRANSPOSE)(transposeB),
+    (CBLAS_ORDER)(order),
+    (CBLAS_TRANSPOSE)(transposeA),
+    (CBLAS_TRANSPOSE)(transposeB),
     m,
     n,
     k,
@@ -544,9 +545,9 @@ void cblas_sgemm_fixed(
     );
 #else // USE_EIGEN_GEMM
     cblas_sgemm(
-      (enum CBLAS_ORDER)(order),
-      (enum CBLAS_TRANSPOSE)(transposeA),
-      (enum CBLAS_TRANSPOSE)(transposeB),
+      (CBLAS_ORDER)(order),
+      (CBLAS_TRANSPOSE)(transposeA),
+      (CBLAS_TRANSPOSE)(transposeB),
       rowsThisTime,
       n,
       k,

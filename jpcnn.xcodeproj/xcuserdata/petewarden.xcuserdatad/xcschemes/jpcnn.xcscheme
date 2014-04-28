@@ -45,7 +45,7 @@
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
       customWorkingDirectory = "/Users/petewarden/projects/jpcnn"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
@@ -61,11 +61,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--network data/example_networks/imagenet.ntwk"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--network data/example_networks/homebrewed_transpressed.ntwk"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--network data/example_networks/homebrewed_transposed.ntwk"
