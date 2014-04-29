@@ -1,7 +1,7 @@
 DeepBeliefSDK
 =============
 
-The SDK for [Jetpac's](https://www.jetpac.com) iOS and Android Deep Belief image recognition framework.
+The SDK for [Jetpac's](https://www.jetpac.com) iOS, Android and Linux Deep Belief image recognition framework.
 
 ![](http://petewarden.files.wordpress.com/2014/04/learningshot61.png)
 
@@ -483,9 +483,9 @@ Given the output from a pre-trained neural network, and a custom prediction mode
 
 ## FAQ
 
-### Is this available for platforms other than iOS and Android?
+### Is this available for platforms other than iOS, Android, and Linux x86-64?
 
-Not right now. I hope to make it available on other devices like the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe) and [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) if you're on the desktop.
+Not right now. I hope to make it available on other devices like the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe) and [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) if you're on the desktop too, they're great packages.
 
 ### Is the source available?
 
