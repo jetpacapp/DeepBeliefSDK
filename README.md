@@ -296,8 +296,10 @@ After that it continuously analyzes incoming camera frames, both displaying the 
 
 This is a small command line tool that shows how you can load a network file and classify an image using the default Imagenet categories.
 If you run it with no arguments, it looks for lena.png and analyzes that, otherwise it tries to load the file name in the first argument as its input image.
-The network file name is hardcoded to "jetpac.ntwk" in the current folder. 
+
+The network file name is hardcoded to "jetpac.ntwk" in the current folder.
 In a real application you'll want to set that yourself, either hard-coding it to a known absolute location for the file, or passing it in dynamically as an argument or environment variable.
+
 The output of the tool is tab-separated lines, with the probability first followed by the imagenet label, so you can sort and process it easily through pipes on the command line.
 
 ## API Reference
