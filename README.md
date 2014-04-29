@@ -79,7 +79,7 @@ make
 ./deepbelief 
 ```
 
-If the example program ran successfully, the output should look like this:
+If [the example program](#simplelinux) ran successfully, the output should look like this:
 
 ```shell
 0.016994	wool
