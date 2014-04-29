@@ -16,6 +16,7 @@ what applications that helps you build.
 
  - [Getting Started on iOS](#getting-started-on-ios)
  - [Getting Started on Android](#getting-started-on-android)
+ - [Getting Started on Linux](#getting-started-on-linux)
  - [Examples](#examples)
  - [API Reference](#api-reference)
  - [FAQ](#faq)
@@ -61,16 +62,64 @@ The Android implementation uses NEON SIMD instructions, so it may not work on
 older phones, and will definitely not work on non-ARM devices. As a benchmark for 
 expected performance, classification takes around 650ms on a Samsung Galaxy S5.
 
+## Getting Started on Linux
+
+I've been using Ubuntu 12.04 and 14.04 on x86-64 platforms, but the library ships as
+a simple .so with minimal dependencies, so hopefully it should work on most distros.
+
+As long as you have git and the build-essentials packages installed, you should be able
+to build an example by running the following commands in a terminal:
+
+```shell
+git clone https://github.com/jetpacapp/DeepBeliefSDK.git
+cd DeepBeliefSDK/LinuxLibrary
+sudo ./install.sh
+cd ../examples/SimpleLinux/
+make
+./deepbelief 
+```
+
+If the example program ran successfully, the output should look like this:
+
+```shell
+0.016994	wool
+0.016418	cardigan
+0.010924	kimono
+0.010713	miniskirt
+0.014307	crayfish
+0.015663	brassiere
+0.014216	harp
+0.017052	sandal
+0.024082	holster
+0.013580	velvet
+0.057286	bonnet
+0.018848	stole
+0.028298	maillot
+0.010915	gown
+0.073035	wig
+0.012413	hand blower
+0.031052	stage
+0.027875	umbrella
+0.012592	sarong
+```
+
+It's analyzing the default Lena image, and giving low probabilities of a wig
+and a bonnet, which isn't too crazy. You can pass in a command-line argument
+to analyze your own images, and the results are tab separated text, so you can
+pipe the results into other programs for further processing.
+
 ## Examples
 
 All of the sample code projects are included in the 'examples' folder in this git repository.
 
  - [Adding to an existing iOS application](#adding-to-an-existing-ios-application)
  - [Adding to an existing Android application](#adding-to-an-existing-android-application)
+ - [Adding to an existing Linux application](#adding-to-an-existing-linux-application)
  - [SimpleExample](#simpleexample)
  - [LearningExample](#learningexample)
  - [SavedModelExample](#savedmodelexample)
  - [AndroidExample](#androidexample)
+ - [SimpleLinux](#simplelinux)
 
 ### Adding to an existing iOS application
 
@@ -190,6 +239,38 @@ and other calls on objects you've created through the library if you want to avo
 
 The rest of `classifyBitmap()` also demonstrates how to pull out the results as Java-accessible arrays from the JNA types.
 
+### Adding to an existing Linux application
+
+To use the library in your own application, first make sure you've run the install.sh script
+in AndroidLibrary/ to install the libjpcnn.so in /usr/lib, and libjpcnn.h in /usr/include, as
+described in [Getting Started on Linux](#getting-started-on-linux).
+
+Then you should be able to access [all the API functions](#api-reference) by including the libjpcnn.h header, eg:
+
+```c
+#include <libjpcnn.h>
+```
+
+Here's how you would run a basic classification of a single image, from the [SimpleLinux example](#simplelinux):
+
+```c
+  networkHandle = jpcnn_create_network(NETWORK_FILE_NAME);
+  imageHandle = jpcnn_create_image_buffer_from_file(imageFileName);
+
+  jpcnn_classify_image(networkHandle, imageHandle, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+
+  for (index = 0; index < predictionsLength; index += 1) {
+    float predictionValue;
+    char* label;
+    predictionValue = predictions[index];
+    if (predictionValue < 0.01f) {
+      continue;
+    }
+    label = predictionsLabels[index];
+    fprintf(stdout, "%f\t%s\n", predictionValue, label);
+  }
+```
+
 ### SimpleExample
 
 This is a self-contained application that shows you how to load the neural network parameters, and process live video to estimate the probability that one of the 1,000 pre-defined Imagenet objects are present.
@@ -210,6 +291,14 @@ I've included the simple 'wine_bottle_predictor.txt' that I quickly trained on a
 
 A basic Android application that applies the classification algorithm to live video from the phone's camera. The first thing it does after initialization is analyze the standard image-processing image of Lena, you should see log output from that first.
 After that it continuously analyzes incoming camera frames, both displaying the found labels on screen and printing them to the console.
+
+### SimpleLinux
+
+This is a small command line tool that shows how you can load a network file and classify an image using the default Imagenet categories.
+If you run it with no arguments, it looks for lena.png and analyzes that, otherwise it tries to load the file name in the first argument as its input image.
+The network file name is hardcoded to "jetpac.ntwk" in the current folder. 
+In a real application you'll want to set that yourself, either hard-coding it to a known absolute location for the file, or passing it in dynamically as an argument or environment variable.
+The output of the tool is tab-separated lines, with the probability first followed by the imagenet label, so you can sort and process it easily through pipes on the command line.
 
 ## API Reference
 
