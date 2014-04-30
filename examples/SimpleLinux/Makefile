@@ -11,7 +11,7 @@ OBJS := $(subst .cpp,.o,$(SRCS))
 all: deepbelief
 
 deepbelief: $(OBJS)
-	g++ -o deepbelief $(OBJS) -L/usr/lib -ljpcnn
+	gcc -o deepbelief $(OBJS) -L/usr/lib -ljpcnn
 
 %.o: %.cpp
 	$(CC) $(CPPFLAGS) -fPIC -c $< -o $(basename $@).o
