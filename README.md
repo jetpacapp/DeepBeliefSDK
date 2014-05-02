@@ -9,7 +9,9 @@ This is a compiled framework implementing the convolutional neural network
 architecture [described by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton](http://www.cs.toronto.edu/~hinton/absps/imagenet.pdf).
 The processing code has been highly optimized to run within the memory and 
 processing constraints of modern mobile devices, and can analyze an image in under 300ms on
-an iPhone 5S. We're releasing this framework because we're excited by the power of
+an iPhone 5S. It's also pretty easy to use together with OpenCV.
+
+We're releasing this framework because we're excited by the power of
 this approach for general image recognition, especially when it can run locally on
 low-power devices. It gives your phone the ability to see, and I can't wait to see
 what applications that helps you build.
