@@ -568,7 +568,7 @@ Given the output from a pre-trained neural network, and a custom prediction mode
 
 ## FAQ
 
-### Is this available for platforms other than iOS, Android, and Linux x86-64?
+### Is this available for platforms other than iOS, Android, OS X, and Linux x86-64?
 
 Not right now. I hope to make it available on other devices like the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe) and [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) if you're on the desktop too, they're great packages.
 
