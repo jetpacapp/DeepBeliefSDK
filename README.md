@@ -1,7 +1,7 @@
 DeepBeliefSDK
 =============
 
-The SDK for [Jetpac's](https://www.jetpac.com) iOS, Android and Linux Deep Belief image recognition framework.
+The SDK for [Jetpac's](https://www.jetpac.com) iOS, Android, Linux, and OS X Deep Belief image recognition framework.
 
 ![](http://petewarden.files.wordpress.com/2014/04/learningshot61.png)
 
