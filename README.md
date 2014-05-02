@@ -29,6 +29,8 @@ what applications that helps you build.
  - [OS X](#adding-to-an-existing-os-x-application)
  - [Using with OpenCV](#using-with-opencv)
 
+### Documentation
+
  - [Examples](#examples)
  - [API Reference](#api-reference)
  - [FAQ](#faq)
