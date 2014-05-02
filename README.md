@@ -14,15 +14,21 @@ this approach for general image recognition, especially when it can run locally 
 low-power devices. It gives your phone the ability to see, and I can't wait to see
 what applications that helps you build.
 
- - [Getting Started on iOS](#getting-started-on-ios)
- - [Adding to an existing iOS application](#adding-to-an-existing-ios-application)
- - [Getting Started on Android](#getting-started-on-android)
- - [Adding to an existing Android application](#adding-to-an-existing-android-application)
- - [Getting Started on Linux](#getting-started-on-linux)
- - [Adding to an existing Linux application](#adding-to-an-existing-linux-application)
- - [Getting Started on OS X](#getting-started-on-os-x)
- - [Adding to an existing OS X application](#adding-to-an-existing-os-x-application)
+### Getting started
+
+ - [iOS](#getting-started-on-ios)
+ - [Android](#getting-started-on-android)
+ - [Linux](#getting-started-on-linux)
+ - [OS X](#getting-started-on-os-x)
+
+### Adding to an existing application
+
+ - [iOS](#adding-to-an-existing-ios-application)
+ - [Android](#adding-to-an-existing-android-application)
+ - [Linux](#adding-to-an-existing-linux-application)
+ - [OS X](#adding-to-an-existing-os-x-application)
  - [Using with OpenCV](#using-with-opencv)
+
  - [Examples](#examples)
  - [API Reference](#api-reference)
  - [FAQ](#faq)
