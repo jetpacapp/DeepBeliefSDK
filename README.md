@@ -15,8 +15,14 @@ low-power devices. It gives your phone the ability to see, and I can't wait to s
 what applications that helps you build.
 
  - [Getting Started on iOS](#getting-started-on-ios)
+ - [Adding to an existing iOS application](#adding-to-an-existing-ios-application)
  - [Getting Started on Android](#getting-started-on-android)
+ - [Adding to an existing Android application](#adding-to-an-existing-android-application)
  - [Getting Started on Linux](#getting-started-on-linux)
+ - [Adding to an existing Linux application](#adding-to-an-existing-linux-application)
+ - [Getting Started on OS X](#getting-started-on-os-x)
+ - [Adding to an existing OS X application](#adding-to-an-existing-os-x-application)
+ - [Using with OpenCV](#using-with-opencv)
  - [Examples](#examples)
  - [API Reference](#api-reference)
  - [FAQ](#faq)
@@ -50,76 +56,6 @@ If you have logos you need to pick out, machine parts you need to spot, or just 
 It builds a custom layer on top of the basic neural network that responds to images you've trained it on, and allows you to embed the functionality in your own application easily.
 
 There's also [this full how-to guide](https://github.com/jetpacapp/DeepBeliefSDK/wiki/How-to-recognize-custom-objects) on training and embedding your own custom object recognition code.
-
-## Getting Started on Android
-
-I've been using Google's ADT toolchain. To get started import the AndroidExample into
-their custom version of Eclipse, build and run it. Hopefully you should see a similar
-result to the iPhone app, with live video and tags displayed. You'll need to hold the
-phone in landscape orientation, look for the tag text and use that as your guide.
-
-The Android implementation uses NEON SIMD instructions, so it may not work on
-older phones, and will definitely not work on non-ARM devices. As a benchmark for 
-expected performance, classification takes around 650ms on a Samsung Galaxy S5.
-
-## Getting Started on Linux
-
-I've been using Ubuntu 12.04 and 14.04 on x86-64 platforms, but the library ships as
-a simple .so with minimal dependencies, so hopefully it should work on most distros.
-
-As long as you have git and the build-essentials packages installed, you should be able
-to build an example by running the following commands in a terminal:
-
-```shell
-git clone https://github.com/jetpacapp/DeepBeliefSDK.git
-cd DeepBeliefSDK/LinuxLibrary
-sudo ./install.sh
-cd ../examples/SimpleLinux/
-make
-./deepbelief 
-```
-
-If [the example program](#simplelinux) ran successfully, the output should look like this:
-
-```shell
-0.016994	wool
-0.016418	cardigan
-0.010924	kimono
-0.010713	miniskirt
-0.014307	crayfish
-0.015663	brassiere
-0.014216	harp
-0.017052	sandal
-0.024082	holster
-0.013580	velvet
-0.057286	bonnet
-0.018848	stole
-0.028298	maillot
-0.010915	gown
-0.073035	wig
-0.012413	hand blower
-0.031052	stage
-0.027875	umbrella
-0.012592	sarong
-```
-
-It's analyzing the default Lena image, and giving low probabilities of a wig
-and a bonnet, which isn't too crazy. You can pass in a command-line argument
-to analyze your own images, and the results are tab separated text, so you can
-pipe the results into other programs for further processing.
-
-## Examples
-
-All of the sample code projects are included in the 'examples' folder in this git repository.
-
- - [Adding to an existing iOS application](#adding-to-an-existing-ios-application)
- - [Adding to an existing Android application](#adding-to-an-existing-android-application)
- - [Adding to an existing Linux application](#adding-to-an-existing-linux-application)
- - [SimpleExample](#simpleexample)
- - [LearningExample](#learningexample)
- - [SavedModelExample](#savedmodelexample)
- - [AndroidExample](#androidexample)
- - [SimpleLinux](#simplelinux)
 
 ### Adding to an existing iOS application
 
@@ -162,6 +98,17 @@ You should then be able to use code like this to classify a single image that yo
 ```
 
 If you see errors related to `operator new` or similar messages at the linking stage, XCode may be skipping the standard C++ library, and that's needed by the DeepBelief.framework code. One workaround I've found is to include an empty .mm or .cpp file in the project to trick XCode into treating it as a C++ project.
+
+## Getting Started on Android
+
+I've been using Google's ADT toolchain. To get started import the AndroidExample into
+their custom version of Eclipse, build and run it. Hopefully you should see a similar
+result to the iPhone app, with live video and tags displayed. You'll need to hold the
+phone in landscape orientation, look for the tag text and use that as your guide.
+
+The Android implementation uses NEON SIMD instructions, so it may not work on
+older phones, and will definitely not work on non-ARM devices. As a benchmark for 
+expected performance, classification takes around 650ms on a Samsung Galaxy S5.
 
 ### Adding to an existing Android application
 
@@ -239,6 +186,52 @@ and other calls on objects you've created through the library if you want to avo
 
 The rest of `classifyBitmap()` also demonstrates how to pull out the results as Java-accessible arrays from the JNA types.
 
+## Getting Started on Linux
+
+I've been using Ubuntu 12.04 and 14.04 on x86-64 platforms, but the library ships as
+a simple .so with minimal dependencies, so hopefully it should work on most distros.
+
+As long as you have git and the build-essentials packages installed, you should be able
+to build an example by running the following commands in a terminal:
+
+```shell
+git clone https://github.com/jetpacapp/DeepBeliefSDK.git
+cd DeepBeliefSDK/LinuxLibrary
+sudo ./install.sh
+cd ../examples/SimpleLinux/
+make
+./deepbelief 
+```
+
+If [the example program](#simplelinux) ran successfully, the output should look like this:
+
+```shell
+0.016994	wool
+0.016418	cardigan
+0.010924	kimono
+0.010713	miniskirt
+0.014307	crayfish
+0.015663	brassiere
+0.014216	harp
+0.017052	sandal
+0.024082	holster
+0.013580	velvet
+0.057286	bonnet
+0.018848	stole
+0.028298	maillot
+0.010915	gown
+0.073035	wig
+0.012413	hand blower
+0.031052	stage
+0.027875	umbrella
+0.012592	sarong
+```
+
+It's analyzing the default Lena image, and giving low probabilities of a wig
+and a bonnet, which isn't too crazy. You can pass in a command-line argument
+to analyze your own images, and the results are tab separated text, so you can
+pipe the results into other programs for further processing.
+
 ### Adding to an existing Linux application
 
 To use the library in your own application, first make sure you've run the install.sh script
@@ -271,9 +264,70 @@ Here's how you would run a basic classification of a single image, from the [Sim
   }
 ```
 
-### SimpleExample
+## Getting Started on OS X
 
-This is a self-contained application that shows you how to load the neural network parameters, and process live video to estimate the probability that one of the 1,000 pre-defined Imagenet objects are present.
+Load the examples/OSXExample/MyRecorder.xcodeproj XCode project, build, and run.
+On any machine with a webcam, you should see a window appear showing live video.
+Move the webcam until it has a clear view of an object like a wine bottle, glass, mug, or a computer keyboard, and you should start to see overlaid labels and percentages.
+
+### Adding to an existing OS X application
+
+The DeepBelief.framework you'll need is in the OSXLibrary folder.
+Since installing frameworks in a shared location can be a pain, and Apple recommends keeping applications as self-contained as possible, it's designed to be bundled inside your app folder.
+The [OS X Example](#osxexample) sample code uses this approach, and is a good starting point for understanding the process.
+It has a symbolic link back to the framework, but you'll probably want to copy the library into your own source tree.
+[Apple's documentation on bundling private frameworks](https://developer.apple.com/library/mac/documentation/macosx/conceptual/BPFrameworks/Tasks/CreatingFrameworks.html#//apple_ref/doc/uid/20002258-106880) is the best documentation for the whole process, but here's the summary of what you'll need to do:
+
+ * Copy DeepBelief.framework into your source tree
+ * Drag it into the Frameworks folder of your project in the XCode navigator.
+ * Add it to the "Link Binary with Libraries" build phase in the project settings.
+ * Add a new "Copy Files Build Phase" to the project build phases.
+ * Add the framework as a new file in that build phase, with the destination as "Frameworks".
+
+Once you've done that, you should be able to build your app, and then "Show package contents" on the built product should show DeepBelief.framework inside the Contents/Frameworks folder.
+
+At that point, just add `#import <DeepBelief/DeepBelief.h>` and all of the code you need should be identical to the snippets shown in [the iOS guide](#adding-to-an-existing-ios-application).
+
+### Using with OpenCV
+
+It's pretty straightforward to use DeepBelief together with OpenCV, you just need to convert the images over.
+There's [sample code showing the whole process](#simpleopencv), but the heart of it is this image format conversion:
+
+```c++
+  const cv::Size size = image.size();
+  const int width = size.width;
+  const int height = size.height;
+  const int pixelCount = (width * height);
+  const int bytesPerPixel = 3;
+  const int byteCount = (pixelCount * bytesPerPixel);
+
+  // OpenCV images are BGR, we need RGB, so do a conversion to a temporary image
+  cv::Mat rgbImage;
+  cv::cvtColor(image, rgbImage, CV_BGR2RGB);
+  uint8_t* rgbPixels = (uint8_t*)rgbImage.data;
+
+  imageHandle = jpcnn_create_image_buffer_from_uint8_data(rgbPixels, width, height, 3, (3 * width), 0, 0);
+```
+
+Once you've done that, you can run the image classification and prediction as normal on the image handle.
+[The sample code](#simpleopencv) has some other convenience classes too, to help make using the library in C++ a bit easier.
+If you're using the Java interface, the same sort of call sequence works to handle the conversion, though you'll need `byte[]` arrays and you'll have to call `image.get(0, 0, pixels)` to actually get the raw image data you need.
+
+## Examples
+
+All of the sample code projects are included in the 'examples' folder in this git repository.
+
+ - [SimpleiOS](#simpleios)
+ - [LearningExample](#learningexample)
+ - [SavedModelExample](#savedmodelexample)
+ - [AndroidExample](#androidexample)
+ - [SimpleLinux](#simplelinux)
+ - [OSXExample](#osxexample)
+ - [SimpleOpenCV](#simpleopencv)
+
+### SimpleiOS
+
+This is a self-contained iOS application that shows you how to load the neural network parameters, and process live video to estimate the probability that one of the 1,000 pre-defined Imagenet objects are present.
 The code is largely based on the [SquareCam Apple sample application](https://developer.apple.com/library/ios/samplecode/squarecam/Introduction/Intro.html), which is fairly old and contains some ugly code.
 If you look for `jpcnn_*` calls in SquareCamViewController.m you should be able to follow the sequence of first loading the network, applying it to video frames as they arrive, and destroying the objects once you're all done.
 
@@ -301,6 +355,25 @@ The network file name is hardcoded to "jetpac.ntwk" in the current folder.
 In a real application you'll want to set that yourself, either hard-coding it to a known absolute location for the file, or passing it in dynamically as an argument or environment variable.
 
 The output of the tool is tab-separated lines, with the probability first followed by the imagenet label, so you can sort and process it easily through pipes on the command line.
+
+### OSXExample
+
+This project is based on [Apple's MyRecorder sample code](https://developer.apple.com/library/mac/samplecode/MYRecorder/Introduction/Intro.html), which is both quite old and fairly gnarly thanks to its use of QTKit!
+The complexity is mostly in the way it accesses the webcam, and converts the supplied image down to a simple array of RGB bytes to feed into the neural network code. 
+If you search for 'jpcnn' in the code, you'll see the calls to the library nestled amongst all the plumbing for the interface and the video, they should be fairly straightforward.
+
+The main steps are loading the 'jetpac.ntwk' neural network, that's included as a resource in the app, then extracting an image from the video, classifying it, and displaying the found labels in the UI.
+When you build and run the project, you should see a window appear with the webcam view in it, and any found labels overlaid on top. You'll also see some performance stats being output to the console - on my mid-2012 Macbook Pro it takes around 60ms to do the calculations.
+
+### SimpleOpenCV
+
+This is a basic Linux command-line tool that shows how OpenCV and the DeepBelief framework can work together.
+The main() function uses C++ classes defined in deepbeliefopencv.h to load a network, then it creates an OpenCV image from either lena.png or another file supplied on the command line.
+A wrapper class for the library's image handle object is then used to convert the OpenCV image into one the DeepBelief framework can analyze.
+The classification is run on that image, and the found labels are printed out.
+
+If you're doing a lot of work with OpenCV, the most crucial part for you is probably the conversion of the image objects between the two systems. 
+That's defined in deepbeliefopencv.cpp in the `Image::Image(const cv::Mat& image)` constructor, and [the section on using OpenCV](#using-with-opencv) covers what's going on in the actual code.
 
 ## API Reference
 

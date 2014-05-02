@@ -10,7 +10,6 @@
 		592FF8B918ECBD7600C164F8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8B818ECBD7600C164F8 /* Foundation.framework */; };
 		592FF8BB18ECBD7600C164F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */; };
 		592FF8BD18ECBD7600C164F8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8BC18ECBD7600C164F8 /* UIKit.framework */; };
-		592FF8F718ECBDF700C164F8 /* DeepBelief.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8F618ECBDF700C164F8 /* DeepBelief.framework */; };
 		592FF90018ECC59F00C164F8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8FF18ECC59F00C164F8 /* Accelerate.framework */; };
 		592FF90218ECC66200C164F8 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 592FF90118ECC66200C164F8 /* main.mm */; };
 		592FF90618ECCD3B00C164F8 /* jetpac.ntwk in Resources */ = {isa = PBXBuildFile; fileRef = 592FF90518ECCD1E00C164F8 /* jetpac.ntwk */; };
@@ -22,6 +21,7 @@
 		592FF91918EDD7A600C164F8 /* RMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF91718EDD7A600C164F8 /* RMCore.framework */; };
 		592FF91B18EDD9D500C164F8 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF91A18EDD9D500C164F8 /* ExternalAccessory.framework */; };
 		592FF92018EDDA9B00C164F8 /* RMCharacter.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 592FF91F18EDDA9B00C164F8 /* RMCharacter.bundle */; };
+		59CC3BDD191412310046B191 /* DeepBelief.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592FF8F618ECBDF700C164F8 /* DeepBelief.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +30,7 @@
 		592FF8BA18ECBD7600C164F8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		592FF8BC18ECBD7600C164F8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		592FF8D118ECBD7600C164F8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		592FF8F618ECBDF700C164F8 /* DeepBelief.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeepBelief.framework; path = ../../DeepBelief.framework; sourceTree = "<group>"; };
+		592FF8F618ECBDF700C164F8 /* DeepBelief.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeepBelief.framework; path = ../../iOSLibrary/DeepBelief.framework; sourceTree = "<group>"; };
 		592FF8FF18ECC59F00C164F8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		592FF90118ECC66200C164F8 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = SOURCE_ROOT; };
 		592FF90318ECCB8300C164F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -52,11 +52,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59CC3BDD191412310046B191 /* DeepBelief.framework in Frameworks */,
 				592FF91B18EDD9D500C164F8 /* ExternalAccessory.framework in Frameworks */,
 				592FF91818EDD7A600C164F8 /* RMCharacter.framework in Frameworks */,
 				592FF91918EDD7A600C164F8 /* RMCore.framework in Frameworks */,
 				592FF90018ECC59F00C164F8 /* Accelerate.framework in Frameworks */,
-				592FF8F718ECBDF700C164F8 /* DeepBelief.framework in Frameworks */,
 				592FF8BB18ECBD7600C164F8 /* CoreGraphics.framework in Frameworks */,
 				592FF8BD18ECBD7600C164F8 /* UIKit.framework in Frameworks */,
 				592FF8B918ECBD7600C164F8 /* Foundation.framework in Frameworks */,
@@ -257,6 +257,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					/Users/petewarden/projects/DeepBeliefSDK,
 					/Users/petewarden/projects/RomoSDK_v1.0C/frameworks,
+					/Users/petewarden/vagrant/DeepBeliefSDK/iOSLibrary,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -315,6 +316,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					/Users/petewarden/projects/DeepBeliefSDK,
 					/Users/petewarden/projects/RomoSDK_v1.0C/frameworks,
+					/Users/petewarden/vagrant/DeepBeliefSDK/iOSLibrary,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
