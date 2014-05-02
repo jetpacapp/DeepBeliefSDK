@@ -151,6 +151,50 @@
 		5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
 		598B042B18CA99B300098916 /* webgl.js in Sources */ = {isa = PBXBuildFile; fileRef = 598B042A18CA99B300098916 /* webgl.js */; };
 		598B042D18CD340000098916 /* webgl-debug.js in Sources */ = {isa = PBXBuildFile; fileRef = 598B042C18CD340000098916 /* webgl-debug.js */; };
+		59CC3B7F1912D18B0046B191 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59CC3B7D1912D18B0046B191 /* InfoPlist.strings */; };
+		59CC3B9C1912D1C80046B191 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59602F8E18BFE4E500D6EEE2 /* OpenGL.framework */; };
+		59CC3B9D1912D1CD0046B191 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59602F8C18BFE4DA00D6EEE2 /* GLUT.framework */; };
+		59CC3B9E1912D1D30046B191 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594BBA6D1884A94A007F9A2A /* Accelerate.framework */; };
+		59CC3B9F1912D1D90046B191 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5982425C188F2631003F2C0A /* ApplicationServices.framework */; };
+		59CC3BA01912D3730046B191 /* basenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241BB188DE27D003F2C0A /* basenode.cpp */; };
+		59CC3BA11912D3730046B191 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241BE188DE27D003F2C0A /* buffer.cpp */; };
+		59CC3BA21912D3730046B191 /* convnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241C1188DE27D003F2C0A /* convnode.cpp */; };
+		59CC3BA31912D3730046B191 /* dropoutnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241C5188DE27D003F2C0A /* dropoutnode.cpp */; };
+		59CC3BA41912D3730046B191 /* flatnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241C8188DE27D003F2C0A /* flatnode.cpp */; };
+		59CC3BA51912D3730046B191 /* gconvnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241CB188DE27D003F2C0A /* gconvnode.cpp */; };
+		59CC3BA61912D3730046B191 /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241CE188DE27D003F2C0A /* graph.cpp */; };
+		59CC3BA71912D3730046B191 /* maxnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241D1188DE27D003F2C0A /* maxnode.cpp */; };
+		59CC3BA81912D3730046B191 /* neuronnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241D4188DE27D003F2C0A /* neuronnode.cpp */; };
+		59CC3BA91912D3730046B191 /* nodefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241D7188DE27D003F2C0A /* nodefactory.cpp */; };
+		59CC3BAA1912D3730046B191 /* normalizenode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241DA188DE27D003F2C0A /* normalizenode.cpp */; };
+		59CC3BAB1912D3730046B191 /* poolnode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241DD188DE27D003F2C0A /* poolnode.cpp */; };
+		59CC3BAC1912D3730046B191 /* prepareinput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E0188DE27D003F2C0A /* prepareinput.cpp */; };
+		59CC3BAD1912D3730046B191 /* relunode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E3188DE27D003F2C0A /* relunode.cpp */; };
+		59CC3BAE1912D3730046B191 /* libjpcnn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E7188DE27D003F2C0A /* libjpcnn.cpp */; };
+		59CC3BAF1912D3730046B191 /* matrix_add.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241E9188DE27D003F2C0A /* matrix_add.cpp */; };
+		59CC3BB01912D3730046B191 /* matrix_channels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241EB188DE27D003F2C0A /* matrix_channels.cpp */; };
+		59CC3BB11912D3730046B191 /* matrix_correlate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241ED188DE27D003F2C0A /* matrix_correlate.cpp */; };
+		59CC3BB21912D3730046B191 /* matrix_dot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241EF188DE27D003F2C0A /* matrix_dot.cpp */; };
+		59CC3BB31912D3730046B191 /* matrix_gemm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9018C00C8300D6EEE2 /* matrix_gemm.cpp */; };
+		59CC3BB41912D3730046B191 /* matrix_local_response.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F1188DE27D003F2C0A /* matrix_local_response.cpp */; };
+		59CC3BB51912D3730046B191 /* matrix_margin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F3188DE27D003F2C0A /* matrix_margin.cpp */; };
+		59CC3BB61912D3730046B191 /* matrix_max.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F5188DE27D003F2C0A /* matrix_max.cpp */; };
+		59CC3BB71912D3730046B191 /* matrix_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 591A037618B4559A0014C655 /* matrix_scale.cpp */; };
+		59CC3BB81912D3730046B191 /* matrix_softmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241F8188DE27D003F2C0A /* matrix_softmax.cpp */; };
+		59CC3BB91912D3730046B191 /* glbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9318C0313400D6EEE2 /* glbuffer.cpp */; };
+		59CC3BBA1912D3730046B191 /* glcontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9518C0313400D6EEE2 /* glcontext.cpp */; };
+		59CC3BBB1912D3730046B191 /* glcontext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59574E7318E24BA4008247E4 /* glcontext.mm */; };
+		59CC3BBC1912D3730046B191 /* glgemm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F9F18C10BB800D6EEE2 /* glgemm.cpp */; };
+		59CC3BBD1912D3730046B191 /* glprogram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FA218C114C200D6EEE2 /* glprogram.cpp */; };
+		59CC3BBE1912D3730046B191 /* svm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7B18B6DDF300D6EEE2 /* svm.cpp */; };
+		59CC3BBF1912D3730046B191 /* svmutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602F7D18B6DDF300D6EEE2 /* svmutils.cpp */; };
+		59CC3BC01912D3730046B191 /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598241FB188DE27D003F2C0A /* stb_image.cpp */; };
+		59CC3BC11912D3730046B191 /* binary_format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824201188DE27D003F2C0A /* binary_format.cpp */; };
+		59CC3BC21912D3730046B191 /* cstring_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59602FDA18C3C3A600D6EEE2 /* cstring_helpers.cpp */; };
+		59CC3BC31912D3730046B191 /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
+		59CC3BC41912D3730046B191 /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
+		59CC3BC51912D4760046B191 /* libjpcnn.h in Headers */ = {isa = PBXBuildFile; fileRef = 59824237188DE285003F2C0A /* libjpcnn.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59CC3BC61912D4760046B191 /* DeepBelief.h in Headers */ = {isa = PBXBuildFile; fileRef = 59CC3B811912D18B0046B191 /* DeepBelief.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59DA425C18B4562A00462234 /* matrix_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 591A037618B4559A0014C655 /* matrix_scale.cpp */; };
 		59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DD71FB18B29CC10054D561 /* os_image_save.cpp */; };
 /* End PBXBuildFile section */
@@ -289,6 +333,14 @@
 		5982425C188F2631003F2C0A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		598B042A18CA99B300098916 /* webgl.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webgl.js; sourceTree = "<group>"; };
 		598B042C18CD340000098916 /* webgl-debug.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "webgl-debug.js"; sourceTree = "<group>"; };
+		59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OSXDeepBelief.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59CC3B741912D18B0046B191 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		59CC3B771912D18B0046B191 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		59CC3B781912D18B0046B191 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		59CC3B791912D18B0046B191 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		59CC3B7C1912D18B0046B191 /* OSXDeepBelief-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OSXDeepBelief-Info.plist"; sourceTree = "<group>"; };
+		59CC3B7E1912D18B0046B191 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		59CC3B811912D18B0046B191 /* DeepBelief.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeepBelief.h; sourceTree = "<group>"; };
 		59D2FBB7187F8D2A00427417 /* jpcnn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jpcnn; sourceTree = BUILT_PRODUCTS_DIR; };
 		59DD71FB18B29CC10054D561 /* os_image_save.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = os_image_save.cpp; sourceTree = "<group>"; };
 		59DD71FC18B29CC10054D561 /* os_image_save.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_image_save.h; sourceTree = "<group>"; };
@@ -323,6 +375,17 @@
 				59602F8D18BFE4DA00D6EEE2 /* GLUT.framework in Frameworks */,
 				5982425D188F2631003F2C0A /* ApplicationServices.framework in Frameworks */,
 				5962AD9E188A0A7B009E64DD /* Accelerate.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59CC3B6F1912D18B0046B191 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59CC3B9F1912D1D90046B191 /* ApplicationServices.framework in Frameworks */,
+				59CC3B9E1912D1D30046B191 /* Accelerate.framework in Frameworks */,
+				59CC3B9D1912D1CD0046B191 /* GLUT.framework in Frameworks */,
+				59CC3B9C1912D1C80046B191 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +438,8 @@
 				594BBA861886FE8A007F9A2A /* CoreGraphics.framework */,
 				594BBA881886FE8A007F9A2A /* UIKit.framework */,
 				594BBAA61886FE8A007F9A2A /* XCTest.framework */,
+				59CC3B741912D18B0046B191 /* Cocoa.framework */,
+				59CC3B761912D18B0046B191 /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -548,6 +613,34 @@
 			path = include;
 			sourceTree = "<group>";
 		};
+		59CC3B761912D18B0046B191 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				59CC3B771912D18B0046B191 /* Foundation.framework */,
+				59CC3B781912D18B0046B191 /* CoreData.framework */,
+				59CC3B791912D18B0046B191 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		59CC3B7A1912D18B0046B191 /* OSXDeepBelief */ = {
+			isa = PBXGroup;
+			children = (
+				59CC3B811912D18B0046B191 /* DeepBelief.h */,
+				59CC3B7B1912D18B0046B191 /* Supporting Files */,
+			);
+			path = OSXDeepBelief;
+			sourceTree = "<group>";
+		};
+		59CC3B7B1912D18B0046B191 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				59CC3B7C1912D18B0046B191 /* OSXDeepBelief-Info.plist */,
+				59CC3B7D1912D18B0046B191 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		59D2FBAE187F8D2A00427417 = {
 			isa = PBXGroup;
 			children = (
@@ -556,6 +649,7 @@
 				59D2FBC3187F8D9000427417 /* src */,
 				594BBA6F1884A996007F9A2A /* frameworks */,
 				592FF81718ECB34F00C164F8 /* DeepBelief */,
+				59CC3B7A1912D18B0046B191 /* OSXDeepBelief */,
 				594BBA831886FE8A007F9A2A /* Frameworks */,
 				59D2FBB8187F8D2A00427417 /* Products */,
 				592FF8A918ECBCE500C164F8 /* jpcnn_ios copy-Info.plist */,
@@ -569,6 +663,7 @@
 				5962AD80188A0987009E64DD /* liblibjpcnn.dylib */,
 				59602FAC18C158C100D6EEE2 /* glgemm_test */,
 				592FF81518ECB34F00C164F8 /* libDeepBelief.a */,
+				59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -603,6 +698,15 @@
 				59602FE018C51B9E00D6EEE2 /* offset.h in Headers */,
 				59574E7218E242DF008247E4 /* glheaders.h in Headers */,
 				59602FE218C51BA700D6EEE2 /* dimensions.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59CC3B701912D18B0046B191 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59CC3BC51912D4760046B191 /* libjpcnn.h in Headers */,
+				59CC3BC61912D4760046B191 /* DeepBelief.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,6 +765,24 @@
 			productReference = 5962AD80188A0987009E64DD /* liblibjpcnn.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		59CC3B721912D18B0046B191 /* OSXDeepBelief */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 59CC3B961912D18B0046B191 /* Build configuration list for PBXNativeTarget "OSXDeepBelief" */;
+			buildPhases = (
+				59CC3B6E1912D18B0046B191 /* Sources */,
+				59CC3B6F1912D18B0046B191 /* Frameworks */,
+				59CC3B701912D18B0046B191 /* Headers */,
+				59CC3B711912D18B0046B191 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OSXDeepBelief;
+			productName = OSXDeepBelief;
+			productReference = 59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		59D2FBB6187F8D2A00427417 /* jpcnn */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 59D2FBC0187F8D2A00427417 /* Build configuration list for PBXNativeTarget "jpcnn" */;
@@ -705,9 +827,21 @@
 				59602FAB18C158C100D6EEE2 /* glgemm_test */,
 				592FF81418ECB34F00C164F8 /* DeepBelief */,
 				592FF8F818ECBF5E00C164F8 /* DeepBeliefFramework */,
+				59CC3B721912D18B0046B191 /* OSXDeepBelief */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		59CC3B711912D18B0046B191 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59CC3B7F1912D18B0046B191 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		592FF86418ECB91A00C164F8 /* ShellScript */ = {
@@ -871,6 +1005,50 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		59CC3B6E1912D18B0046B191 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59CC3BA01912D3730046B191 /* basenode.cpp in Sources */,
+				59CC3BA11912D3730046B191 /* buffer.cpp in Sources */,
+				59CC3BA21912D3730046B191 /* convnode.cpp in Sources */,
+				59CC3BA31912D3730046B191 /* dropoutnode.cpp in Sources */,
+				59CC3BA41912D3730046B191 /* flatnode.cpp in Sources */,
+				59CC3BA51912D3730046B191 /* gconvnode.cpp in Sources */,
+				59CC3BA61912D3730046B191 /* graph.cpp in Sources */,
+				59CC3BA71912D3730046B191 /* maxnode.cpp in Sources */,
+				59CC3BA81912D3730046B191 /* neuronnode.cpp in Sources */,
+				59CC3BA91912D3730046B191 /* nodefactory.cpp in Sources */,
+				59CC3BAA1912D3730046B191 /* normalizenode.cpp in Sources */,
+				59CC3BAB1912D3730046B191 /* poolnode.cpp in Sources */,
+				59CC3BAC1912D3730046B191 /* prepareinput.cpp in Sources */,
+				59CC3BAD1912D3730046B191 /* relunode.cpp in Sources */,
+				59CC3BAE1912D3730046B191 /* libjpcnn.cpp in Sources */,
+				59CC3BAF1912D3730046B191 /* matrix_add.cpp in Sources */,
+				59CC3BB01912D3730046B191 /* matrix_channels.cpp in Sources */,
+				59CC3BB11912D3730046B191 /* matrix_correlate.cpp in Sources */,
+				59CC3BB21912D3730046B191 /* matrix_dot.cpp in Sources */,
+				59CC3BB31912D3730046B191 /* matrix_gemm.cpp in Sources */,
+				59CC3BB41912D3730046B191 /* matrix_local_response.cpp in Sources */,
+				59CC3BB51912D3730046B191 /* matrix_margin.cpp in Sources */,
+				59CC3BB61912D3730046B191 /* matrix_max.cpp in Sources */,
+				59CC3BB71912D3730046B191 /* matrix_scale.cpp in Sources */,
+				59CC3BB81912D3730046B191 /* matrix_softmax.cpp in Sources */,
+				59CC3BB91912D3730046B191 /* glbuffer.cpp in Sources */,
+				59CC3BBA1912D3730046B191 /* glcontext.cpp in Sources */,
+				59CC3BBB1912D3730046B191 /* glcontext.mm in Sources */,
+				59CC3BBC1912D3730046B191 /* glgemm.cpp in Sources */,
+				59CC3BBD1912D3730046B191 /* glprogram.cpp in Sources */,
+				59CC3BBE1912D3730046B191 /* svm.cpp in Sources */,
+				59CC3BBF1912D3730046B191 /* svmutils.cpp in Sources */,
+				59CC3BC01912D3730046B191 /* stb_image.cpp in Sources */,
+				59CC3BC11912D3730046B191 /* binary_format.cpp in Sources */,
+				59CC3BC21912D3730046B191 /* cstring_helpers.cpp in Sources */,
+				59CC3BC31912D3730046B191 /* os_image_load.cpp in Sources */,
+				59CC3BC41912D3730046B191 /* os_image_save.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		59D2FBB3187F8D2A00427417 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -891,6 +1069,17 @@
 			targetProxy = 592FF8FC18ECBF8E00C164F8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		59CC3B7D1912D18B0046B191 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				59CC3B7E1912D18B0046B191 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		592FF83218ECB34F00C164F8 /* Debug */ = {
@@ -1035,6 +1224,56 @@
 			};
 			name = Release;
 		};
+		59CC3B971912D18B0046B191 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					USE_ACCELERATE_GEMM,
+					LOAD_BUFFERS_AS_FLOAT,
+					USE_OS_IMAGE,
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "OSXDeepBelief/OSXDeepBelief-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				PRODUCT_NAME = DeepBelief;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		59CC3B981912D18B0046B191 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_ACCELERATE_GEMM,
+					LOAD_BUFFERS_AS_FLOAT,
+					USE_OS_IMAGE,
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "OSXDeepBelief/OSXDeepBelief-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				PRODUCT_NAME = DeepBelief;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
 		59D2FBBE187F8D2A00427417 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1163,6 +1402,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		59CC3B961912D18B0046B191 /* Build configuration list for PBXNativeTarget "OSXDeepBelief" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59CC3B971912D18B0046B191 /* Debug */,
+				59CC3B981912D18B0046B191 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		59D2FBB2187F8D2A00427417 /* Build configuration list for PBXProject "jpcnn" */ = {
 			isa = XCConfigurationList;

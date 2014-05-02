@@ -14,6 +14,16 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>OSXDeepBelief.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
+		<key>OSXDeepBeliefTests.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>9</integer>
+		</dict>
 		<key>glgemm_test.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -103,6 +113,16 @@
 			<true/>
 		</dict>
 		<key>5962ADF1188A1E26009E64DD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>59CC3B721912D18B0046B191</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>59CC3B871912D18B0046B191</key>
 		<dict>
 			<key>primary</key>
 			<true/>

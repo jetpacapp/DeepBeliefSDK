@@ -15,6 +15,10 @@
 #include <assert.h>
 #include <float.h>
 
+#ifdef USE_ACCELERATE_GEMM
+#include <Accelerate/Accelerate.h>
+#endif
+
 #ifdef USE_OS_IMAGE
 #include "os_image_load.h"
 #include "os_image_save.h"
@@ -663,14 +667,81 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
     const size_t sizeofElement = (bitsPerFloat / 8);
     assert(quantizedDataTag->type == JP_BLOB);
     assert(quantizedDataTag->length == (elementCount * sizeofElement));
-    const jpfloat_t min = get_float_from_dict(mainDict, "min");
-    const jpfloat_t max = get_float_from_dict(mainDict, "max");
+    jpfloat_t min = get_float_from_dict(mainDict, "min");
+    jpfloat_t max = get_float_from_dict(mainDict, "max");
     void* tagDataArray = quantizedDataTag->payload.jpchar;
     if (skipCopy) {
       buffer = new Buffer(dims, tagDataArray, min, max, bitsPerFloat);
     } else {
+#ifdef LOAD_BUFFERS_AS_FLOAT
+      buffer = new Buffer(dims);
+      jpfloat_t range = ((max - min) / (1 << bitsPerFloat));
+      const size_t elementsCount = dims.elementCount();
+      if (bitsPerFloat == 16) {
+        uint16_t* quantizedData = (uint16_t*)tagDataArray;
+        jpfloat_t* floatData = buffer->_data;
+#ifdef USE_ACCELERATE_GEMM
+        vDSP_vfltu16(
+          quantizedData,
+          1,
+          floatData,
+          1,
+          elementsCount);
+        vDSP_vsmsa(
+          floatData,
+          1,
+          &range,
+          &min,
+          floatData,
+          1,
+          elementsCount
+        );
+#else // USE_ACCELERATE_GEMM
+        jpfloat_t* current = floatData;
+        jpfloat_t* end = (current + elementsCount);
+        uint16_t* quantized = quantizedData;
+        while (current < end) {
+          *current = (min + ((*quantized) * range));
+          current += 1;
+          quantized += 1;
+        }
+#endif // USE_ACCELERATE_GEMM
+    } else if (bitsPerFloat == 8) {
+        uint8_t* quantizedData = (uint8_t*)tagDataArray;
+        jpfloat_t* floatData = buffer->_data;
+#ifdef USE_ACCELERATE_GEMM
+        vDSP_vfltu8(
+          quantizedData,
+          1,
+          floatData,
+          1,
+          elementsCount);
+        vDSP_vsmsa(
+          floatData,
+          1,
+          &range,
+          &min,
+          floatData,
+          1,
+          elementsCount
+        );
+#else // USE_ACCELERATE_GEMM
+        jpfloat_t* current = floatData;
+        jpfloat_t* end = (current + elementsCount);
+        uint8_t* quantized = quantizedData;
+        while (current < end) {
+          *current = (min + ((*quantized) * range));
+          current += 1;
+          quantized += 1;
+        }
+#endif // USE_ACCELERATE_GEMM
+      } else {
+        assert(false); // Should never get here, only 8 or 16 bit supported
+      }
+#else // LOAD_BUFFERS_AS_FLOAT
       buffer = new Buffer(dims, min, max, bitsPerFloat);
       memcpy(buffer->_quantizedData, tagDataArray, quantizedDataTag->length);
+#endif // LOAD_BUFFERS_AS_FLOAT
     }
   }
 

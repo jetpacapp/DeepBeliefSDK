@@ -388,7 +388,7 @@ void cblas_sgemm_fixed(
     const int elementsPerSubMatrix = (rowsThisTime * k);
     if (aBitsPerElement == 16) {
       uint16_t* aData = (uint16_t*)(a);
-#if USE_ACCELERATE_GEMM
+#ifdef USE_ACCELERATE_GEMM
       uint16_t* aSubDataStart = (aData + (lda * iBase));
       vDSP_vfltu16(
         aSubDataStart,
@@ -456,7 +456,7 @@ void cblas_sgemm_fixed(
 #endif // USE_ACCELERATE_GEMM
     } else if (aBitsPerElement == 8) {
       uint8_t* aData = (uint8_t*)(a);
-#if USE_ACCELERATE_GEMM
+#ifdef USE_ACCELERATE_GEMM
       uint8_t* aSubDataStart = (aData + (lda * iBase));
       vDSP_vfltu8(
         aSubDataStart,
