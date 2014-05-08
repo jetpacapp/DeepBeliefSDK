@@ -26,7 +26,10 @@ public:
 
   bool _useMemoryMap;
   bool _isHomebrewed;
+  bool _isLibCCV;
   SBinaryTag* _fileTag;
+  const char* _source;
+  int _inputSize;
 
   Buffer* _dataMean;
   BaseNode* _preparationNode;

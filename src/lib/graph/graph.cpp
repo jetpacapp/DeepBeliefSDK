@@ -28,16 +28,20 @@
 #import <UIKit/UIKit.h>
 #endif // USE_BUNDLE_LOADING
 
+//#define DO_LOG_OPERATIONS
 //#define CHECK_RESULTS
 //#define SAVE_RESULTS
 #if defined(CHECK_RESULTS) || defined(SAVE_RESULTS)
 #define FN_LEN (1024)
-#define DUMP_FILE_PATH ("data/fixed_dog_blobs/")
+#define DUMP_FILE_PATH ("data/libccv_blobs/")
 #endif // CHECK_RESULTS || SAVE_RESULTS
 
 Graph::Graph() :
   _useMemoryMap(false),
   _isHomebrewed(false),
+  _isLibCCV(false),
+  _source("none"),
+  _inputSize(256),
   _fileTag(NULL),
   _dataMean(NULL),
   _preparationNode(NULL),
@@ -98,7 +102,7 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
     if (expectedInput->canReshapeTo(currentInputDims)) {
       expectedInput->reshape(currentInputDims);
     }
-    if (!buffer_are_all_close(currentInput, expectedInput)) {
+    if (!buffer_are_all_close(currentInput, expectedInput, 0.1f)) {
       fprintf(stderr, "Inputs don't match for %s\n", layer->_name);
     } else {
       fprintf(stderr, "!!!!!Inputs match for %s\n", layer->_name);
@@ -108,7 +112,7 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
     char inputFilename[FN_LEN];
     snprintf(inputFilename, FN_LEN,
       "%s%03d_input.blob",
-      DUMP_FILE_PATH, index);
+      DUMP_FILE_PATH, inputIndex);
     buffer_dump_to_file(currentInput, inputFilename);
 #endif // SAVE_RESULTS
 
@@ -128,15 +132,15 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
 #else // USE_BUNDLE_LOADING
     char expectedOutputFilename[FN_LEN];
     snprintf(expectedOutputFilename, FN_LEN,
-      "%s%03d_output.blob",
-      DUMP_FILE_PATH, index);
+      "%s%03d_input.blob",
+      DUMP_FILE_PATH, (index + 1));
     Buffer* expectedOutput = buffer_from_dump_file(expectedOutputFilename);
 #endif // USE_BUNDLE_LOADING
     const Dimensions& currentOutputDims = currentOutput->_dims;
     if (expectedOutput->canReshapeTo(currentOutputDims)) {
       expectedOutput->reshape(currentOutputDims);
     }
-    if (!buffer_are_all_close(currentOutput, expectedOutput)) {
+    if (!buffer_are_all_close(currentOutput, expectedOutput, 0.1f)) {
       fprintf(stderr, "!!!Outputs don't match for %s\n", layer->_name);
     } else {
       fprintf(stderr, "***Outputs match for %s\n", layer->_name);
@@ -178,6 +182,17 @@ Graph* new_graph_from_file(const char* filename, int useMemoryMap, int isHomebre
   result->_useMemoryMap = useMemoryMap;
   result->_isHomebrewed = isHomebrewed;
   result->_fileTag = graphDict;
+
+  if (get_tag_from_dict(graphDict, "source")) {
+    result->_source = get_string_from_dict(graphDict, "source");
+    if (strcmp(result->_source, "libccv") == 0) {
+      result->_isLibCCV = true;
+    }
+  }
+
+  if (get_tag_from_dict(graphDict, "input_size")) {
+    result->_inputSize = get_uint_from_dict(graphDict, "input_size");
+  }
 
   SBinaryTag* dataMeanTag = get_tag_from_dict(graphDict, "data_mean");
   assert(dataMeanTag != NULL);

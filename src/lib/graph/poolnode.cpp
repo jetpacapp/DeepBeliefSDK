@@ -31,6 +31,14 @@ Buffer* PoolNode::run(Buffer* input) {
   return _output;
 }
 
+char* PoolNode::debugString() {
+  char additionalInfo[MAX_DEBUG_STRING_LEN];
+  snprintf(additionalInfo, sizeof(additionalInfo),
+    "_patchWidth=%d, _stride=%d, _mode=%s",
+    _patchWidth, _stride, ((_mode == PoolNode::EModeMax)?"max":"average"));
+  return this->debugStringWithMessage(additionalInfo);
+}
+
 SBinaryTag* PoolNode::toTag() {
   SBinaryTag* resultDict = create_dict_tag();
   resultDict = add_string_to_dict(resultDict, "class", "pool");

@@ -31,6 +31,14 @@ Buffer* NormalizeNode::run(Buffer* input) {
   return _output;
 }
 
+char* NormalizeNode::debugString() {
+  char additionalInfo[MAX_DEBUG_STRING_LEN];
+  snprintf(additionalInfo, sizeof(additionalInfo),
+    "_windowSize=%d, _k=%f, _alpha=%f, _beta=%f",
+    _windowSize, _k, _alpha, _beta);
+  return this->debugStringWithMessage(additionalInfo);
+}
+
 SBinaryTag* NormalizeNode::toTag() {
   SBinaryTag* resultDict = create_dict_tag();
   resultDict = add_string_to_dict(resultDict, "class", "normalize");

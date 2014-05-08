@@ -22,6 +22,7 @@ public:
 
   virtual Buffer* run(Buffer* input);
   virtual SBinaryTag* toTag();
+  virtual char* debugString();
 
   int _windowSize;
   jpfloat_t _k;

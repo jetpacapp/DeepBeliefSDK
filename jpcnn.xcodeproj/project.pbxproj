@@ -1347,7 +1347,7 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					USE_EIGEN_GEMM,
+					USE_ACCELERATE_GEMM,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1357,7 +1357,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					USE_EIGEN_GEMM,
+					USE_ACCELERATE_GEMM,
 					USE_OPENGL,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -61,14 +61,14 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--network data/example_networks/imagenet.ntwk"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--network data/example_networks/homebrewed_transpressed.ntwk"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--network data/example_networks/homebrewed_transposed.ntwk"
+            argument = "--network data/example_networks/homebrewed_transpressed.ntwk"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--network /Users/petewarden/projects/ccv/bin/ccv2012.ntwk"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -133,11 +133,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/lena.png"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--input data/dog.raw"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--debug"

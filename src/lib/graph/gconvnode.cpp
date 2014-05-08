@@ -73,7 +73,7 @@ char* GConvNode::debugString() {
     char* destBuffer = additionalInfoBuffers[(index + 1) % 2];
     BaseNode* subnode = _subnodes[index];
     if (index == 0) {
-      snprintf(destBuffer, MAX_DEBUG_STRING_LEN, "_subnodes = %s", subnode->debugString());
+      snprintf(destBuffer, MAX_DEBUG_STRING_LEN, "_kernelsCount = %d, _subnodes = %s", _kernelsCount, subnode->debugString());
     } else {
       snprintf(destBuffer, MAX_DEBUG_STRING_LEN, "%s %s", sourceBuffer, subnode->debugString());
     }

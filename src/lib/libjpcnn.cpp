@@ -125,7 +125,7 @@ void jpcnn_classify_image(void* networkHandle, void* inputHandle, unsigned int f
     doFlip = true;
     isMeanChanneled = false;
   }
-  const int rescaledSize = 256;
+  const int rescaledSize = graph->_inputSize;
 
   PrepareInput prepareInput(graph->_dataMean, !doMultiSample, doFlip, doRandomSample, imageSize, rescaledSize, isMeanChanneled);
   Buffer* rescaledInput = prepareInput.run(input);
