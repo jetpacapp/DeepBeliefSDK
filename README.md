@@ -34,6 +34,7 @@ what applications that helps you build.
 ### Documentation
 
  - [Examples](#examples)
+ - [Networks](#networks)
  - [API Reference](#api-reference)
  - [FAQ](#faq)
  - [More Information](#more-information)
