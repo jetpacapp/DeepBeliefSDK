@@ -385,6 +385,13 @@ The classification is run on that image, and the found labels are printed out.
 If you're doing a lot of work with OpenCV, the most crucial part for you is probably the conversion of the image objects between the two systems. 
 That's defined in deepbeliefopencv.cpp in the `Image::Image(const cv::Mat& image)` constructor, and [the section on using OpenCV](#using-with-opencv) covers what's going on in the actual code.
 
+## Networks
+
+There are currently three pre-built models available in the networks folder.
+jetpac.ntwk is the in-house model used here at Jetpac, and it's licensed under the same BSD conditions as the rest of the project. It has a few oddities, like only 999 labels (a file truncation problem I discovered too late during training) but has served us well and is a good place to start.
+
+The excellent [libccv](http://libccv.org) project also made a couple of networks available under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/). I've converted them over into a binary format, and they're in the networks folder as ccv2010.ntwk and ccv2012.ntwk. You should be able to substitute these in anywhere you'd use jetpac.ntwk. The 2012 file has very similar labels to our original, and the 2010 is an older architecture. You may notice slightly slower performance, the arrangement of the layers is a bit different (in technical terms the local-response normalization happens before the max-pooling in these models, which is more expensive since there's more data to normalize), but the accuracy of the 2012 model especially is good. One common technique in the academic world is to take multiple models and merge their votes for higher accuracy, so one application of the multiple models might be improved accuracy.
+
 ## API Reference
 
 Because we reuse the same code across a lot of different platforms, we use a
@@ -395,8 +402,8 @@ leaks. Input images are created from raw arrays of 8-bit RGB data, you can see h
 to build those from iOS types by searching for `jpcnn_create_image_buffer()` in the 
 sample code.
 
-The API is broken up into two sections. The first gives you access to a pre-trained neural network, currently the example jetpac.ntwk file is the only one available. 
-This has been trained on 1,000 Imagenet categories, and the output will give you a decent general idea of what's in an image.
+The API is broken up into two sections. The first gives you access to one of the pre-trained neural networks you'll find in the networks folder.
+These have been trained on 1,000 Imagenet categories, and the output will give you a decent general idea of what's in an image.
 
 The second section lets you replace the highest layer of the neural network with your own classification step. 
 This means you can use it to recognize the objects you care about more accurately.
@@ -570,7 +577,7 @@ Given the output from a pre-trained neural network, and a custom prediction mode
 
 ### Is this available for platforms other than iOS, Android, OS X, and Linux x86-64?
 
-Not right now. I hope to make it available on other devices like the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe) and [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) if you're on the desktop too, they're great packages.
+Not right now. I hope to make it available on other devices like the Raspberry Pi in the future. I recommend checking out [Caffe](https://github.com/BVLC/caffe), [OverFeat](http://cilvr.nyu.edu/doku.php?id=software:overfeat:start) and [libCCV](http://libccv.org) if you're on the desktop too, they're great packages.
 
 ### Is the source available?
 
@@ -578,7 +585,7 @@ Not at the moment. The compiled library and the neural network parameter set are
 
 ### Can I train my own networks?
 
-There aren't any standard formats for sharing large neural networks unfortunately, so there's no way to import other CNNs into the app. The [custom training](https://github.com/jetpacapp/DeepBeliefSDK/wiki/How-to-recognize-custom-objects) should help you apply the included pre-trained network to your own problems to a large extent though.
+There aren't any standard formats for sharing large neural networks unfortunately, so there's no easy way to import other CNNs into the app. The [custom training](https://github.com/jetpacapp/DeepBeliefSDK/wiki/How-to-recognize-custom-objects) should help you apply the included pre-trained network to your own problems to a large extent though.
 
 ## More Information
 
@@ -586,8 +593,10 @@ Join the [Deep Belief Developers email list](https://groups.google.com/group/dee
 
 ## License
 
-The binary framework and network parameter file are under the BSD three-clause
+The binary framework and jetpac.ntwk network parameter file are under the BSD three-clause
 license, included in this folder as LICENSE.
+
+The ccv2010.ntwk and ccv2012.ntwk network models were converted from files created as part of the [LibCCV project](http://libccv.org/) and are licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit [http://creativecommons.org/licenses/by/4.0/](http://creativecommons.org/licenses/by/4.0/).
 
 ## Credits
 

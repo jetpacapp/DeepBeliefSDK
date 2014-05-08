@@ -193,7 +193,7 @@ static CGContextRef CreateCGBitmapContextForSize(CGSize size)
 	[rootLayer addSublayer:previewLayer];
 	[session startRunning];
 
-  [self switchCameras: NULL];
+//  [self switchCameras: NULL];
 
 bail:
 	[session release];
@@ -1083,7 +1083,7 @@ bail:
 }
 
 - (void) startCheckAction {
-  [self.Romo3 driveForwardWithSpeed: 0.5];
+  [self.Romo3 driveBackwardWithSpeed: 0.5];
   searchState = @"checking";
   self.topObject = @{
     @"label" : @"none",

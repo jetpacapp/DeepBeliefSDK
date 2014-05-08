@@ -30,9 +30,16 @@ int main(int argc, const char * argv[]) {
     imageFileName = argv[1];
   }
 
-  networkHandle = jpcnn_create_network(NETWORK_FILE_NAME);
+  const char* networkFileName;
+  if (argc < 3) {
+    networkFileName = NETWORK_FILE_NAME;
+  } else {
+    networkFileName = argv[2];
+  }
+
+  networkHandle = jpcnn_create_network(networkFileName);
   if (networkHandle == NULL) {
-    fprintf(stderr, "DeepBeliefSDK: Couldn't load network file '%s'\n", NETWORK_FILE_NAME);
+    fprintf(stderr, "DeepBeliefSDK: Couldn't load network file '%s'\n", networkFileName);
     return 1;
   }
 
