@@ -333,7 +333,7 @@
 		5982425C188F2631003F2C0A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		598B042A18CA99B300098916 /* webgl.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webgl.js; sourceTree = "<group>"; };
 		598B042C18CD340000098916 /* webgl-debug.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "webgl-debug.js"; sourceTree = "<group>"; };
-		59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OSXDeepBelief.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = OSXDeepBelief.framework; path = DeepBelief.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59CC3B741912D18B0046B191 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59CC3B771912D18B0046B191 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59CC3B781912D18B0046B191 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -1196,6 +1196,7 @@
 					"$(inherited)",
 					USE_OS_IMAGE,
 					USE_ACCELERATE_GEMM,
+					LOAD_BUFFERS_AS_FLOAT,
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1214,6 +1215,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_ACCELERATE_GEMM,
 					USE_OS_IMAGE,
+					LOAD_BUFFERS_AS_FLOAT,
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1348,6 +1350,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					USE_ACCELERATE_GEMM,
+					LOAD_BUFFERS_AS_FLOAT,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1359,6 +1362,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_ACCELERATE_GEMM,
 					USE_OPENGL,
+					LOAD_BUFFERS_AS_FLOAT,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1410,6 +1414,7 @@
 				59CC3B981912D18B0046B191 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		59D2FBB2187F8D2A00427417 /* Build configuration list for PBXProject "jpcnn" */ = {
 			isa = XCConfigurationList;

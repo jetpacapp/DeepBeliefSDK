@@ -18,6 +18,10 @@
 #include <float.h>
 #include <string.h>
 
+#ifdef USE_ACCELERATE_GEMM
+#include <Accelerate/Accelerate.h>
+#endif // USE_ACCELERATE_GEMM
+
 #include "buffer.h"
 
 Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloat_t alpha, jpfloat_t beta) {
@@ -38,7 +42,8 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
   jpfloat_t* magBufferData = magBuffer->_data;
 
   const jpfloat_t* inputData = input->_data;
-  const jpfloat_t* inputDataEnd = (input->_data + inputDims.elementCount());
+  const int elementCount = inputDims.elementCount();
+  const jpfloat_t* inputDataEnd = (input->_data + elementCount);
   jpfloat_t* magnitudeData = magnitude->_data;
 
   const jpfloat_t alphaOverSize = (alpha / windowSize);
@@ -79,12 +84,20 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
   inputData = input->_data;
   magnitudeData = magnitude->_data;
   jpfloat_t* outputData = output->_data;
+#if defined(USE_ACCELERATE_GEMM)
+  jpfloat_t* repeatedBeta = (jpfloat_t*)(malloc(sizeof(jpfloat_t) * elementCount));
+  const float minusBeta = -beta;
+  vDSP_vfill(&minusBeta, repeatedBeta, 1, elementCount);
+  vvpowf(outputData, repeatedBeta, magnitudeData, &elementCount);
+  free(repeatedBeta);
+  vDSP_vmul(outputData, 1, inputData, 1, outputData, 1, elementCount);
+#else // USE_ACCELERATE_GEMM
   while (inputData < inputDataEnd) {
 
     const jpfloat_t inputValue = *inputData;
     const jpfloat_t magnitudeValue = *magnitudeData;
 
-    jpfloat_t outputValue = (pow(magnitudeValue, -beta) * inputValue);
+    jpfloat_t outputValue = (powf(magnitudeValue, -beta) * inputValue);
     if (isnan(outputValue)) {
       outputValue = 0.0;
     }
@@ -94,6 +107,7 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
     magnitudeData += 1;
     outputData += 1;
   }
+#endif // USE_ACCELERATE_GEMM
 
   delete magnitude;
 
