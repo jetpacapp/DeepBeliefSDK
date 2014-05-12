@@ -22,6 +22,10 @@
 #include <Accelerate/Accelerate.h>
 #endif // USE_ACCELERATE_GEMM
 
+#ifdef USE_MKL_GEMM
+#include <mkl_vml_functions.h>
+#endif // USE_MKL_GEMM
+
 #include "buffer.h"
 
 Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloat_t alpha, jpfloat_t beta) {
@@ -91,6 +95,18 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
   vvpowf(outputData, repeatedBeta, magnitudeData, &elementCount);
   free(repeatedBeta);
   vDSP_vmul(outputData, 1, inputData, 1, outputData, 1, elementCount);
+#elif defined(USE_MKL_GEMM)
+  jpfloat_t* repeatedBeta = (jpfloat_t*)(malloc(sizeof(jpfloat_t) * elementCount));
+  const float minusBeta = -beta;
+  jpfloat_t* betaCurrent = repeatedBeta;
+  const jpfloat_t* const betaEnd = (repeatedBeta + elementCount);
+  while (betaCurrent < betaEnd) {
+    *betaCurrent = minusBeta;
+    betaCurrent += 1;
+  }
+  vsPow(elementCount, magnitudeData, repeatedBeta, outputData);
+  free(repeatedBeta);
+  vsMul(elementCount, inputData, outputData, outputData);
 #else // USE_ACCELERATE_GEMM
   while (inputData < inputDataEnd) {
 
@@ -98,9 +114,6 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
     const jpfloat_t magnitudeValue = *magnitudeData;
 
     jpfloat_t outputValue = (powf(magnitudeValue, -beta) * inputValue);
-    if (isnan(outputValue)) {
-      outputValue = 0.0;
-    }
     *outputData = outputValue;
 
     inputData += 1;

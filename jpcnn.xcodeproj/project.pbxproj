@@ -333,7 +333,7 @@
 		5982425C188F2631003F2C0A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		598B042A18CA99B300098916 /* webgl.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webgl.js; sourceTree = "<group>"; };
 		598B042C18CD340000098916 /* webgl-debug.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "webgl-debug.js"; sourceTree = "<group>"; };
-		59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = OSXDeepBelief.framework; path = DeepBelief.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59CC3B731912D18B0046B191 /* DeepBelief.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DeepBelief.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59CC3B741912D18B0046B191 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59CC3B771912D18B0046B191 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59CC3B781912D18B0046B191 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -663,7 +663,7 @@
 				5962AD80188A0987009E64DD /* liblibjpcnn.dylib */,
 				59602FAC18C158C100D6EEE2 /* glgemm_test */,
 				592FF81518ECB34F00C164F8 /* libDeepBelief.a */,
-				59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */,
+				59CC3B731912D18B0046B191 /* DeepBelief.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -780,7 +780,7 @@
 			);
 			name = OSXDeepBelief;
 			productName = OSXDeepBelief;
-			productReference = 59CC3B731912D18B0046B191 /* OSXDeepBelief.framework */;
+			productReference = 59CC3B731912D18B0046B191 /* DeepBelief.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		59D2FBB6187F8D2A00427417 /* jpcnn */ = {
