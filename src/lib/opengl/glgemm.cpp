@@ -609,6 +609,8 @@ void gl_gemm(
   jpfloat_t* c,
   int ldc) {
 
+fprintf(stderr, "Calling gl_gemm()\n");
+
   assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
   assert(transposeB == JPCblasNoTrans);
   assert(order == JPCblasColMajor);
@@ -798,6 +800,8 @@ void gl_gemm_fixed(
   jpfloat_t inputBeta,
   jpfloat_t* c,
   int ldc) {
+
+fprintf(stderr, "Calling gl_gemm_fixed()\n");
 
   assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
   assert(transposeB == JPCblasNoTrans);
