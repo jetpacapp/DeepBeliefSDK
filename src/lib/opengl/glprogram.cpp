@@ -247,7 +247,7 @@ int link_program(GLint programId) {
   if (logLength > 0) {
     GLchar *log = (GLchar *)malloc(logLength);
     glGetProgramInfoLog(programId, logLength, &logLength, log);
-    fprintf(stderr, "Program link log:\n%s", log);
+    fprintf(stderr, "Program link log:\n%s\n", log);
     free(log);
   }
 #endif
