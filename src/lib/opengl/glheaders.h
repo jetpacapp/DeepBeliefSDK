@@ -21,6 +21,11 @@
     #include <OpenGL/gl.h>
     #include <OpenGL/glext.h>
   #endif
+#elif defined(TARGET_PI)
+  #include <EGL/egl.h>
+  #include <EGL/eglext.h>
+  #include <GLES2/gl2.h>
+  #include <bcm_host.h>
 #else
   #include <gl.h>
   #include <glext.h>
