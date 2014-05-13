@@ -1001,6 +1001,7 @@ Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int 
 }
 
 void test_gl_gemm() {
+#if 0
   const int inputChannels = 363;
   const int inputHeight = 3000;
   const int outputChannels = 96;
@@ -1146,6 +1147,7 @@ void test_gl_gemm() {
 //  outputFixedCPU->printContents();
 //  outputFixedGPU->printContents();
   assert(buffer_are_all_close(outputFixedCPU, outputFixedGPU));
+#endif
 }
 
 #endif // USE_OPENGL
