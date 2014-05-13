@@ -21,12 +21,6 @@
 #include "buffer.h"
 #include "matrix_ops.h"
 
-// The GLSL version on the Raspberry Pi doesn't support component
-// indexing by a variable, so use conditional logic instead.
-#if !defined(TARGET_PI)
-#define USE_DYNAMIC_INDEXING
-#endif // TARGET_PI
-
 static Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int bitsPerElement = 32);
 
 static const char* g_gemmVertexShader = "                       \n\
@@ -220,10 +214,6 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
     return Result;                                              \n\
   }                                                             \n\
   float decode16(vec4 rgba, int component, float min, float range) { \n\
-#if defined(USE_DYNAMIC_INDEXING)
-    float byte0 = rgba[(component * 2) + 0];                    \n\
-    float byte1 = rgba[(component * 2) + 1];                    \n\
-#else // USE_DYNAMIC_INDEXING
     float byte0;                                                \n\
     float byte1;                                                \n\
     if (component == 0) {                                       \n\
@@ -233,7 +223,6 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
       byte0 = rgba[2];                                          \n\
       byte1 = rgba[3];                                          \n\
     }                                                           \n\
-#endif // USE_DYNAMIC_INDEXING
     float value = (byte1 * (255.0 / 256.0)) + (byte0 / 256.0);  \n\
     float result = ((value * range) + min);                     \n\
     return result;                                              \n\
@@ -362,9 +351,6 @@ static const char* g_gemmFragmentShader8Bit = "                     \n\
     return Result;                                     \n\
   }                                                             \n\
   float decode8(vec4 rgba, int component, float min, float range) { \n\
-#if defined(USE_DYNAMIC_INDEXING)
-    float value = rgba[component];                              \n\
-#else // USE_DYNAMIC_INDEXING
     float value;                                                \n\
     if (component == 0) {                                       \n\
       value = rgba[0];                                          \n\
@@ -375,7 +361,6 @@ static const char* g_gemmFragmentShader8Bit = "                     \n\
     } else {                                                    \n\
       value = rgba[3];                                          \n\
     }                                                           \n\
-#endif // USE_DYNAMIC_INDEXING
     float result = ((value * range) + min);                     \n\
     return result;                                              \n\
   }                                                             \n\
