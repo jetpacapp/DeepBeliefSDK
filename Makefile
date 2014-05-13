@@ -25,6 +25,12 @@ ifeq ($(GEMM),eigen)
 LIBCPPFLAGS += -I../eigen -DUSE_EIGEN_GEMM=1
 endif
 
+ifeq ($(GEMM),gl)
+LIBCPPFLAGS += -I/usr/include -I/opt/vc/include/GLES \
+-DUSE_GL_GEMM -DUSE_OPENGL -DTARGET_PI
+LIBLDLIBS += -lblas
+endif
+
 LIBSRCS := $(shell find src/lib -name '*.cpp')
 LIBOBJS := $(subst .cpp,.o,$(LIBSRCS))
 
