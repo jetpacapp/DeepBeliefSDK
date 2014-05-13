@@ -178,7 +178,117 @@ void GLContext::copyOutputToHost(Buffer* hostBuffer) {
 }
 
 // OpenGL context support for non-iOS platforms
-#if !__APPLE__ || !TARGET_OS_IPHONE
+#if defined(TARGET_PI)
+
+typedef struct SGLSurfaceInfoStruct {
+  EGL_DISPMANX_WINDOW_T window;
+  EGLDisplay display;
+  EGLSurface surface;
+  EGLContext context;
+} SGLSurfaceInfo;
+
+void GLContext::createContextHandle() {
+  SGLSurfaceInfo* surface = (SGLSurfaceInfo*)(malloc(sizeof(SGLSurfaceInfo)));
+	surface->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	if (surface->display == EGL_NO_DISPLAY) {
+    fprintf(stderr, "GLContext::createContextHandle(): Failed to get display.\n");
+    return;
+	}
+	int majorVersion;
+  int minorVersion;
+	EGLBoolean initializeResult = eglInitialize(surface->display, &majorVersion, &minorVersion);
+	if (initializeResult == EGL_FALSE) {
+    fprintf(stderr, "GLContext::createContextHandle(): Failed to initialize.\n");
+    return;
+	}
+
+	EGLBoolean bindResult = eglBindAPI(EGL_OPENGL_ES_API);
+	if(bindResult ==EGL_FALSE) {
+    fprintf(stderr, "GLContext::createContextHandle(): Failed to bind.\n");
+    return;
+	}
+
+  const EGLint configAttributes[] = {
+    EGL_RED_SIZE, 8,
+    EGL_GREEN_SIZE, 8,
+    EGL_BLUE_SIZE, 8,
+    EGL_ALPHA_SIZE, 8,
+    EGL_DEPTH_SIZE, 16,
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+    EGL_NONE
+  };
+  EGLConfig config;
+  EGLint configCount;
+  eglChooseConfig(surface->display, configAttributes, &config, 1, &configCount);
+
+	const EGLint contextAttributes[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+	surface->context = eglCreateContext(surface->display, config, EGL_NO_CONTEXT, contextAttributes);
+	if(surface->context == EGL_NO_CONTEXT) {
+    fprintf(stderr, "GLContext::createContextHandle(): Failed to create context.\n");
+    return;
+	}
+
+  const int maxWidth = 1920;
+  const int maxHeight = 1080;
+
+	VC_RECT_T dstRect;
+	dstRect.x = 0;
+	dstRect.y = 0;
+  dstRect.width = maxWidth;
+  dstRect.height = maxHeight;
+
+	VC_RECT_T srcRect;
+	srcRect.x = 0;
+	srcRect.y = 0;
+	srcRect.width = maxWidth << 16;
+	srcRect.height = maxHeight << 16;
+
+  DISPMANX_DISPLAY_HANDLE_T dispmanDisplay = vc_dispmanx_display_open(0);
+	DISPMANX_UPDATE_HANDLE_T dispmanUpdate = vc_dispmanx_update_start(0);
+	DISPMANX_ELEMENT_HANDLE_T dispmanElement = vc_dispmanx_element_add(
+    dispmanUpdate,
+    dispmanDisplay,
+		0,
+    &dstRect,
+    0,
+    &srcRect,
+    DISPMANX_PROTECTION_NONE,
+    0,
+    0,
+    DISPMANX_NO_ROTATE);
+	vc_dispmanx_update_submit_sync(dispmanUpdate);
+
+	surface->window.element = dispmanElement;
+	surface->window.width = maxWidth;
+	surface->window.height = maxHeight;
+
+	surface->surface = eglCreateWindowSurface(surface->display, config, &surface->window, NULL );
+	if (surface->surface == EGL_NO_SURFACE) {
+    fprintf(stderr, "GLContext::createContextHandle(): Failed to create window surface.\n");
+    return;
+  }
+	EGLBoolean makeCurrentResult = eglMakeCurrent(surface->display, surface->surface, surface->surface, surface->context);
+  if (makeCurrentResult == EGL_FALSE) {
+    fprintf(stderr, "GLContext::createContextHandle(): Failed to switch to the context.\n");
+    return;
+  }
+  _contextHandle.pointer = (void*)(surface);
+}
+
+void GLContext::destroyContextHandle() {
+  SGLSurfaceInfo* surface = (SGLSurfaceInfo*)(_contextHandle.pointer);
+  eglSwapBuffers(surface->display, surface->surface);
+  eglMakeCurrent(surface->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+  eglDestroySurface(surface->display, surface->surface);
+  eglDestroyContext(surface->display, surface->context);
+  eglTerminate(surface->display);
+  free(surface);
+}
+
+#elif !__APPLE__ || !TARGET_OS_IPHONE
 
 void GLContext::createContextHandle() {
   static int nextWindowIndex = 0;
