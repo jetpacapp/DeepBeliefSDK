@@ -11,7 +11,7 @@
 
 #include "glheaders.h"
 
-#if __APPLE__ && TARGET_OS_IPHONE
+#if (__APPLE__ && TARGET_OS_IPHONE) || defined(TARGET_PI)
 #define gluErrorString(x) ("")
 #else
 #include <GLUT/glut.h>
