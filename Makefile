@@ -3,7 +3,7 @@ CXX=g++
 RM=rm -f
 CPPFLAGS=
 
-LIBCPPFLAGS=-O3 -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./src/lib/third_party -I ./src/lib/utility -I ./src/lib/svm -I ./src/lib/opengl -I ./src/lib -I ./src/include
+LIBCPPFLAGS=-Ofast -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./src/lib/third_party -I ./src/lib/utility -I ./src/lib/svm -I ./src/lib/opengl -I ./src/lib -I ./src/include
 LIBLDFLAG=
 LIBLDLIBS=
 
@@ -22,7 +22,11 @@ LIBLDLIBS += -lblas
 endif
 
 ifeq ($(GEMM),eigen)
-LIBCPPFLAGS += -I../eigen -DUSE_EIGEN_GEMM=1
+LIBCPPFLAGS += -I../eigen -DUSE_EIGEN_GEMM=1 
+endif
+
+ifeq ($(TARGET),pi)
+LIBCPPFLAGS += -DTARGET_PI -DLOAD_BUFFERS_AS_FLOAT -march=armv6 -mfloat-abi=hard -ftree-vectorize -funroll-all-loops -mfpu=vfp
 endif
 
 ifeq ($(GEMM),pigl)
@@ -31,8 +35,8 @@ LIBCPPFLAGS += \
 -I/opt/vc/include/ \
 -I/opt/vc/include/interface/vcos/pthreads/ \
 -I/opt/vc/include/interface/vmcs_host/linux/ \
--DUSE_GL_GEMM \
--DUSE_OPENGL \
+#-DUSE_GL_GEMM \
+#-DUSE_OPENGL \
 -DTARGET_PI \
 -DDEBUG
 LIBLDLIBS += -lblas -L/opt/vc/lib -lGLESv2 -lEGL -lopenmaxil -lbcm_host
