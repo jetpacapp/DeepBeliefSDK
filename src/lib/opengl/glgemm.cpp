@@ -832,6 +832,7 @@ void gl_gemm_fixed(
   int ldc) {
 
 fprintf(stderr, "Calling gl_gemm_fixed()\n");
+fprintf(stderr, "m=%d, n=%d, inputK=%d\n", m, n, inputK);
 
   assert((transposeA == JPCblasNoTrans) || (transposeA == JPCblasTrans));
   assert(transposeB == JPCblasNoTrans);
