@@ -41,7 +41,11 @@ Buffer::Buffer(const Dimensions& dims) :
 {
   const int elementCount = _dims.elementCount();
   const size_t byteCount = (elementCount * sizeof(jpfloat_t));
+#if defined(TARGET_PI)
+  posix_memalign((void**)(&_data), 16, (byteCount * 1));
+#else // TARGET_PI
   _data = (jpfloat_t*)(malloc(byteCount * 1));
+#endif // TARGET_PI
   _doesOwnData = true;
   setName("None");
 }
@@ -86,7 +90,12 @@ Buffer::Buffer(const Dimensions& dims, jpfloat_t min, jpfloat_t max, int bitsPer
   const int elementCount = _dims.elementCount();
   const int sizeofElement = (_bitsPerElement / 8);
   const size_t byteCount = (elementCount * sizeofElement);
+
+#if defined(TARGET_PI)
+  posix_memalign((void**)(&_quantizedData), 16, (byteCount * 1));
+#else // TARGET_PI
   _quantizedData = (void*)(malloc(byteCount * 1));
+#endif // TARGET_PI
   _doesOwnData = true;
   setName("None");
 }
