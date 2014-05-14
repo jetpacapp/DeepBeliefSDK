@@ -269,7 +269,7 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 32; l += 1) {                           \n\
+    for (int l = 0; l < 16; l += 1) {                           \n\
       float lCoord = (float(l) + 0.5);                          \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
