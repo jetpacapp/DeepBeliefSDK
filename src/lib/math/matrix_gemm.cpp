@@ -380,8 +380,15 @@ void cblas_sgemm_fixed(
 
   const size_t bytesPerRow = (k * sizeof(jpfloat_t));
   const size_t bytesPerSubMatrix = (bytesPerRow * rowsPerOperation);
+#if defined(TARGET_PI)
+  jpfloat_t* aSubMatrix;
+  posix_memalign(&aSubMatrix, 16, bytesPerSubMatrix);
+  jpfloat_t* cSubMatrix;
+  posix_memalign(&cSubMatrix, 16, bytesPerSubMatrix);
+#else // TARGET_PI
   jpfloat_t* aSubMatrix = (jpfloat_t*)(malloc(bytesPerSubMatrix));
   jpfloat_t* cSubMatrix = (jpfloat_t*)(malloc(bytesPerSubMatrix));
+#endif // TARGET_PI
 
   for (int iBase = 0; iBase < m; iBase += rowsPerOperation) {
     const int rowsThisTime = MIN(rowsPerOperation, (m - iBase));
