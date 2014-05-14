@@ -130,7 +130,7 @@ static const char* g_gemmFragmentShader = "                     \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 512; l += 1) {                            \n\
+    for (int l = 0; l < 24; l += 1) {                            \n\
       float lCoord = (float(l) + 0.5);                          \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -409,7 +409,7 @@ static const char* g_gemmFragmentShader8Bit = "                     \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 512; l += 1) {                            \n\
+    for (int l = 0; l < 24; l += 1) {                            \n\
       float lCoord = (float(l) + 0.5);                          \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -466,7 +466,7 @@ static const char* g_gemmFragmentShader4x = "                   \n\
       } else {                                                  \n\
         total = 0.0;                                            \n\
       }                                                         \n\
-      for (int l = 0; l < 512; l += 1) {                          \n\
+      for (int l = 0; l < 24; l += 1) {                          \n\
         float aLCoord = float(l) + 0.5;                         \n\
         vec2 aInputCoords = vec2(i, aLCoord);                   \n\
         vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -617,7 +617,7 @@ static const int g_gemm4xUniformCount = (sizeof(g_gemm4xUniformNames) / sizeof(g
 static GLint g_gemm4xUniformIds[g_gemm4xUniformCount];
 
 // The largest loop to allow in GLSL programs
-const int maxLoopSize = 512;
+const int maxLoopSize = 24;
 
 static GLContext* g_glContext = NULL;
 
@@ -995,6 +995,11 @@ Dimensions* physicalFromVirtualSize(Dimensions* virtualSize, bool doResize, int 
   const int virtualHeight = virtualSize->_dims[0];
   const int virtualChannels = virtualSize->_dims[2];
 
+#if DEBUG
+  if ((virtualWidth % elementsPerPixel) != 0) {
+    fprintf(stderr, "Bad virtualWidth/elementsPerPixel ratio: %d/%d\n", virtualWidth, elementsPerPixel);
+  }
+#endif // DEBUG
   assert((virtualWidth % elementsPerPixel) == 0);
 
   const int virtualPixelCount = ((virtualWidth / elementsPerPixel) * virtualHeight);
