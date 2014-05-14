@@ -892,6 +892,7 @@ fprintf(stderr, "m=%d, n=%d, inputK=%d\n", m, n, inputK);
     }
     Dimensions* bDims = new Dimensions(n, currentK, 1);
 
+    fprintf(stderr, "aDims=%s, bDims=%s\n", aDims->debugString(), bDims->debugString());
     Dimensions* aPhysicalDims = physicalFromVirtualSize(aDims, useVirtualSize, aBitsPerElement);
     Dimensions* bPhysicalDims = physicalFromVirtualSize(bDims, useVirtualSize);
 
