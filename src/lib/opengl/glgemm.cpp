@@ -258,16 +258,16 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
     return normalizedVirtualCoords;                            \n\
   }                                                             \n\
   void main(void) {                                             \n\
-//    vec2 cPhysicalCoords = (outTexCoord * cRecipPhysicalSize); \n\
-//    vec2 texCoord = physicalToVirtualCoords(cPhysicalCoords, cVirtualSize, cRecipVirtualSize, cPhysicalSize); \n\
-//    float i = (texCoord.x * cVirtualSize.x);                    \n\
-//    float j = (texCoord.y * cVirtualSize.y);                    \n\
-//    float cValue;                                               \n\
-//    if (beta != 0.0) {                                          \n\
-//      cValue = decode32(texture2D(c, cPhysicalCoords));             \n\
-//    } else {                                                    \n\
-//      cValue = 0.0;                                             \n\
-//    }                                                           \n\
+    vec2 cPhysicalCoords = (outTexCoord * cRecipPhysicalSize); \n\
+    vec2 texCoord = physicalToVirtualCoords(cPhysicalCoords, cVirtualSize, cRecipVirtualSize, cPhysicalSize); \n\
+    float i = (texCoord.x * cVirtualSize.x);                    \n\
+    float j = (texCoord.y * cVirtualSize.y);                    \n\
+    float cValue;                                               \n\
+    if (beta != 0.0) {                                          \n\
+      cValue = decode32(texture2D(c, cPhysicalCoords));             \n\
+    } else {                                                    \n\
+      cValue = 0.0;                                             \n\
+    }                                                           \n\
 //    float total = 0.0;                                          \n\
 //    for (int l = 0; l < 512; l += 1) {                            \n\
 //      float lCoord = (float(l) + 0.5);                          \n\
