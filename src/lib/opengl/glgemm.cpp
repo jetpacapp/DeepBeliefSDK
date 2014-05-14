@@ -258,34 +258,34 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
     return normalizedVirtualCoords;                            \n\
   }                                                             \n\
   void main(void) {                                             \n\
-    vec2 cPhysicalCoords = (outTexCoord * cRecipPhysicalSize); \n\
-    vec2 texCoord = physicalToVirtualCoords(cPhysicalCoords, cVirtualSize, cRecipVirtualSize, cPhysicalSize); \n\
-    float i = (texCoord.x * cVirtualSize.x);                    \n\
-    float j = (texCoord.y * cVirtualSize.y);                    \n\
-    float cValue;                                               \n\
-    if (beta != 0.0) {                                          \n\
-      cValue = decode32(texture2D(c, cPhysicalCoords));             \n\
-    } else {                                                    \n\
-      cValue = 0.0;                                             \n\
-    }                                                           \n\
-    float total = 0.0;                                          \n\
-    for (int l = 0; l < 512; l += 1) {                            \n\
-      float lCoord = (float(l) + 0.5);                          \n\
-      vec2 aInputCoords = vec2(i, lCoord);                      \n\
-      vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
-      int aComponent = int(mod(floor(aTransformedCoords.x), 2.0)); \n\
-      vec2 aVirtualCoords = (aTransformedCoords * aRecipVirtualSize); \n\
-      vec2 aPhysicalCoords = virtualToPhysicalCoordsFixed(aVirtualCoords, aVirtualSize, aPhysicalSize, aRecipPhysicalSize, 0.5); \n\
-      float aValue = decode16(texture2D(a, aPhysicalCoords), aComponent, aMin, aRange);    \n\
-      vec2 bVirtualCoords = (vec2(lCoord, j) * bRecipVirtualSize); \n\
-      vec2 bPhysicalCoords = virtualToPhysicalCoords(bVirtualCoords, bVirtualSize, bPhysicalSize, bRecipPhysicalSize); \n\
-      float bValue = decode32(texture2D(b, bPhysicalCoords));   \n\
-      total += (aValue * bValue);                               \n\
-      if (l >= k) {                                             \n\
-        break;                                                  \n\
-      }                                                         \n\
-    }                                                           \n\
-    gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
+//    vec2 cPhysicalCoords = (outTexCoord * cRecipPhysicalSize); \n\
+//    vec2 texCoord = physicalToVirtualCoords(cPhysicalCoords, cVirtualSize, cRecipVirtualSize, cPhysicalSize); \n\
+//    float i = (texCoord.x * cVirtualSize.x);                    \n\
+//    float j = (texCoord.y * cVirtualSize.y);                    \n\
+//    float cValue;                                               \n\
+//    if (beta != 0.0) {                                          \n\
+//      cValue = decode32(texture2D(c, cPhysicalCoords));             \n\
+//    } else {                                                    \n\
+//      cValue = 0.0;                                             \n\
+//    }                                                           \n\
+//    float total = 0.0;                                          \n\
+//    for (int l = 0; l < 512; l += 1) {                            \n\
+//      float lCoord = (float(l) + 0.5);                          \n\
+//      vec2 aInputCoords = vec2(i, lCoord);                      \n\
+//      vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
+//      int aComponent = int(mod(floor(aTransformedCoords.x), 2.0)); \n\
+//      vec2 aVirtualCoords = (aTransformedCoords * aRecipVirtualSize); \n\
+//      vec2 aPhysicalCoords = virtualToPhysicalCoordsFixed(aVirtualCoords, aVirtualSize, aPhysicalSize, aRecipPhysicalSize, 0.5); \n\
+//      float aValue = decode16(texture2D(a, aPhysicalCoords), aComponent, aMin, aRange);    \n\
+//      vec2 bVirtualCoords = (vec2(lCoord, j) * bRecipVirtualSize); \n\
+//      vec2 bPhysicalCoords = virtualToPhysicalCoords(bVirtualCoords, bVirtualSize, bPhysicalSize, bRecipPhysicalSize); \n\
+//      float bValue = decode32(texture2D(b, bPhysicalCoords));   \n\
+//      total += (aValue * bValue);                               \n\
+//      if (l >= k) {                                             \n\
+//        break;                                                  \n\
+//      }                                                         \n\
+//    }                                                           \n\
+//    gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
   }                                                             \n\
 ";
 
