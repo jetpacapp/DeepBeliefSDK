@@ -130,7 +130,7 @@ static const char* g_gemmFragmentShader = "                     \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 16; l += 1) {                            \n\
+    for (int l = 0; l < 512; l += 1) {                            \n\
       float lCoord = (float(l) + 0.5);                          \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -269,7 +269,7 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 16; l += 1) {                            \n\
+    for (int l = 0; l < 512; l += 1) {                            \n\
       float lCoord = (float(l) + 0.5);                          \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -409,7 +409,7 @@ static const char* g_gemmFragmentShader8Bit = "                     \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
     float total = 0.0;                                          \n\
-    for (int l = 0; l < 16; l += 1) {                            \n\
+    for (int l = 0; l < 512; l += 1) {                            \n\
       float lCoord = (float(l) + 0.5);                          \n\
       vec2 aInputCoords = vec2(i, lCoord);                      \n\
       vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -466,7 +466,7 @@ static const char* g_gemmFragmentShader4x = "                   \n\
       } else {                                                  \n\
         total = 0.0;                                            \n\
       }                                                         \n\
-      for (int l = 0; l < 16; l += 1) {                          \n\
+      for (int l = 0; l < 512; l += 1) {                          \n\
         float aLCoord = float(l) + 0.5;                         \n\
         vec2 aInputCoords = vec2(i, aLCoord);                   \n\
         vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -617,7 +617,7 @@ static const int g_gemm4xUniformCount = (sizeof(g_gemm4xUniformNames) / sizeof(g
 static GLint g_gemm4xUniformIds[g_gemm4xUniformCount];
 
 // The largest loop to allow in GLSL programs
-const int maxLoopSize = 16;
+const int maxLoopSize = 512;
 
 static GLContext* g_glContext = NULL;
 
@@ -656,6 +656,7 @@ fprintf(stderr, "Calling gl_gemm()\n");
   Dimensions* bFullDims;
   Dimensions* cDims;
   if (use4x) {
+    fprintf(stderr, "Compiling 4x float shader\n");
     program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader4x, g_gemm4xUniformNames, g_gemm4xUniformIds, g_gemm4xUniformCount);
     if (transposeA == JPCblasTrans) {
       aFullDims = new Dimensions(m, (inputK / 4), 4);
@@ -665,6 +666,7 @@ fprintf(stderr, "Calling gl_gemm()\n");
     bFullDims = new Dimensions(n, (inputK / 4), 4);
     cDims = new Dimensions(n, (m / 4), 4);
   } else {
+    fprintf(stderr, "Compiling float shader\n");
     program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader, g_gemmUniformNames, g_gemmUniformIds, g_gemmUniformCount);
     if (transposeA == JPCblasTrans) {
       aFullDims = new Dimensions(m, inputK, 1);
@@ -844,8 +846,10 @@ fprintf(stderr, "Calling gl_gemm_fixed()\n");
 
   GLProgram* program;
   if (aBitsPerElement == 16) {
+    fprintf(stderr, "Compiling 16-bit shader\n");
     program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader16Bit, g_gemm16BitUniformNames, g_gemm16BitUniformIds, g_gemm16BitUniformCount);
   } else if (aBitsPerElement == 8) {
+    fprintf(stderr, "Compiling 8-bit shader\n");
     program = new GLProgram(context, g_gemmVertexShader, g_gemmFragmentShader8Bit, g_gemm8BitUniformNames, g_gemm8BitUniformIds, g_gemm8BitUniformCount);
   } else {
     assert(false); // Should never get here
