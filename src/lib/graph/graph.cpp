@@ -29,7 +29,7 @@
 #import <UIKit/UIKit.h>
 #endif // USE_BUNDLE_LOADING
 
-#define DO_LOG_OPERATIONS
+//#define DO_LOG_OPERATIONS
 //#define CHECK_RESULTS
 //#define SAVE_RESULTS
 #if defined(CHECK_RESULTS) || defined(SAVE_RESULTS)
