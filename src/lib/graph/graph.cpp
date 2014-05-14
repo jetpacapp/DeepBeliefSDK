@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/time.h>
 
 #include "buffer.h"
 #include "binary_format.h"
@@ -116,11 +117,23 @@ Buffer* Graph::run(Buffer* input, int layerOffset) {
     buffer_dump_to_file(currentInput, inputFilename);
 #endif // SAVE_RESULTS
 
+#ifdef DO_LOG_OPERATIONS
+    struct timeval start;
+    gettimeofday(&start, NULL);
+#endif // DO_LOG_OPERATIONS
+
     Buffer* currentOutput = layer->run(currentInput);
     currentOutput->setName(layer->_name);
 
 #ifdef DO_LOG_OPERATIONS
+    struct timeval end;
+    gettimeofday(&end, NULL);
     fprintf(stderr, "Graph::run() currentOutput=%s\n", currentOutput->debugString());
+
+    long seconds  = end.tv_sec  - start.tv_sec;
+    long useconds = end.tv_usec - start.tv_usec;
+    long duration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+    fprintf(stderr, "Took %ldms\n", duration);
 #endif // DO_LOG_OPERATIONS
 
 #ifdef CHECK_RESULTS
