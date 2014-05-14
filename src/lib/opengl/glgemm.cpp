@@ -268,8 +268,8 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
     } else {                                                    \n\
       cValue = 0.0;                                             \n\
     }                                                           \n\
-//    float total = 0.0;                                          \n\
-//    for (int l = 0; l < 512; l += 1) {                            \n\
+    float total = 0.0;                                          \n\
+    for (int l = 0; l < 512; l += 1) {                            \n\
 //      float lCoord = (float(l) + 0.5);                          \n\
 //      vec2 aInputCoords = vec2(i, lCoord);                      \n\
 //      vec2 aTransformedCoords = vec2(dot(aInputCoords, aXTransform), dot(aInputCoords, aYTransform)); \n\
@@ -281,11 +281,11 @@ static const char* g_gemmFragmentShader16Bit = "                     \n\
 //      vec2 bPhysicalCoords = virtualToPhysicalCoords(bVirtualCoords, bVirtualSize, bPhysicalSize, bRecipPhysicalSize); \n\
 //      float bValue = decode32(texture2D(b, bPhysicalCoords));   \n\
 //      total += (aValue * bValue);                               \n\
-//      if (l >= k) {                                             \n\
-//        break;                                                  \n\
-//      }                                                         \n\
-//    }                                                           \n\
-//    gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
+      if (l >= k) {                                             \n\
+        break;                                                  \n\
+      }                                                         \n\
+    }                                                           \n\
+    gl_FragColor = encode32((alpha * total) + (beta * cValue)); \n\
   }                                                             \n\
 ";
 
