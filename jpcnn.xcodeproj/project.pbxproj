@@ -151,6 +151,9 @@
 		5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59824259188F1E0F003F2C0A /* os_image_load.cpp */; };
 		598B042B18CA99B300098916 /* webgl.js in Sources */ = {isa = PBXBuildFile; fileRef = 598B042A18CA99B300098916 /* webgl.js */; };
 		598B042D18CD340000098916 /* webgl-debug.js in Sources */ = {isa = PBXBuildFile; fileRef = 598B042C18CD340000098916 /* webgl-debug.js */; };
+		599909E11937DDEA00C99D65 /* mailbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 599909DC1937DDEA00C99D65 /* mailbox.cpp */; };
+		599909E21937DDEA00C99D65 /* mailbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 599909DD1937DDEA00C99D65 /* mailbox.h */; };
+		599909E71937E03100C99D65 /* qpu_gemm.h in Headers */ = {isa = PBXBuildFile; fileRef = 599909E51937E03100C99D65 /* qpu_gemm.h */; };
 		59CC3B7F1912D18B0046B191 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59CC3B7D1912D18B0046B191 /* InfoPlist.strings */; };
 		59CC3B9C1912D1C80046B191 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59602F8E18BFE4E500D6EEE2 /* OpenGL.framework */; };
 		59CC3B9D1912D1CD0046B191 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59602F8C18BFE4DA00D6EEE2 /* GLUT.framework */; };
@@ -333,6 +336,14 @@
 		5982425C188F2631003F2C0A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		598B042A18CA99B300098916 /* webgl.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webgl.js; sourceTree = "<group>"; };
 		598B042C18CD340000098916 /* webgl-debug.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "webgl-debug.js"; sourceTree = "<group>"; };
+		599909DA1937DDEA00C99D65 /* gemm_16bit.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = gemm_16bit.asm; sourceTree = "<group>"; };
+		599909DB1937DDEA00C99D65 /* gemm_8bit.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = gemm_8bit.asm; sourceTree = "<group>"; };
+		599909DC1937DDEA00C99D65 /* mailbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mailbox.cpp; sourceTree = "<group>"; };
+		599909DD1937DDEA00C99D65 /* mailbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailbox.h; sourceTree = "<group>"; };
+		599909DE1937DDEA00C99D65 /* gemm_float.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = gemm_float.asm; sourceTree = "<group>"; };
+		599909E41937E03100C99D65 /* qpu_gemm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qpu_gemm.cpp; sourceTree = "<group>"; };
+		599909E51937E03100C99D65 /* qpu_gemm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qpu_gemm.h; sourceTree = "<group>"; };
+		599909E81937E71900C99D65 /* helpers.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = helpers.asm; sourceTree = "<group>"; };
 		59CC3B731912D18B0046B191 /* DeepBelief.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DeepBelief.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59CC3B741912D18B0046B191 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59CC3B771912D18B0046B191 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -519,6 +530,7 @@
 				598241E7188DE27D003F2C0A /* libjpcnn.cpp */,
 				598241E8188DE27D003F2C0A /* math */,
 				59602F9218C0313400D6EEE2 /* opengl */,
+				599909D91937DDEA00C99D65 /* pi */,
 				59602F7A18B6DDF300D6EEE2 /* svm */,
 				598241FA188DE27D003F2C0A /* third_party */,
 				59824200188DE27D003F2C0A /* utility */,
@@ -613,6 +625,21 @@
 			path = include;
 			sourceTree = "<group>";
 		};
+		599909D91937DDEA00C99D65 /* pi */ = {
+			isa = PBXGroup;
+			children = (
+				599909DA1937DDEA00C99D65 /* gemm_16bit.asm */,
+				599909DB1937DDEA00C99D65 /* gemm_8bit.asm */,
+				599909DE1937DDEA00C99D65 /* gemm_float.asm */,
+				599909E81937E71900C99D65 /* helpers.asm */,
+				599909DC1937DDEA00C99D65 /* mailbox.cpp */,
+				599909DD1937DDEA00C99D65 /* mailbox.h */,
+				599909E41937E03100C99D65 /* qpu_gemm.cpp */,
+				599909E51937E03100C99D65 /* qpu_gemm.h */,
+			);
+			path = pi;
+			sourceTree = "<group>";
+		};
 		59CC3B761912D18B0046B191 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -698,6 +725,8 @@
 				59602FE018C51B9E00D6EEE2 /* offset.h in Headers */,
 				59574E7218E242DF008247E4 /* glheaders.h in Headers */,
 				59602FE218C51BA700D6EEE2 /* dimensions.h in Headers */,
+				599909E21937DDEA00C99D65 /* mailbox.h in Headers */,
+				599909E71937E03100C99D65 /* qpu_gemm.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -973,6 +1002,7 @@
 				59602F8118B6E78200D6EEE2 /* svm.cpp in Sources */,
 				59602F8218B6E78200D6EEE2 /* svmutils.cpp in Sources */,
 				59DA425C18B4562A00462234 /* matrix_scale.cpp in Sources */,
+				599909E11937DDEA00C99D65 /* mailbox.cpp in Sources */,
 				59E8BDED18B2A600008F62CC /* os_image_save.cpp in Sources */,
 				5982425E188F2673003F2C0A /* os_image_load.cpp in Sources */,
 				59824238188DE2F0003F2C0A /* basenode.cpp in Sources */,

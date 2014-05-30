@@ -15,6 +15,10 @@
 #include "buffer.h"
 #include "dimensions.h"
 
+#if defined(USE_QPU_GEMM)
+#include "qpu_gemm.h"
+#endif // USE_QPU_GEMM
+
 #ifdef USE_GEMM
 
 static Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride);
@@ -162,6 +166,7 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
   const jpfloat_t beta = 0.0f;
 
   if (kernels->_bitsPerElement == 32) {
+#if !defined(USE_QPU_GEMM)
     matrix_gemm(
       order,
       transposeA,
@@ -178,7 +183,26 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
       output->_data,
       ldc
     );
+#else // USE_QPU_GEMM
+    qpu_cblas_sgemm(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      kernels->_gpuMemoryBase,
+      lda,
+      patches->_gpuMemoryBase,
+      ldb,
+      beta,
+      output->_gpuMemoryBase,
+      ldc
+    );
+#endif // USE_QPU_GEMM
   } else {
+#if !defined(USE_QPU_GEMM)
     matrix_gemm_fixed(
       order,
       transposeA,
@@ -198,6 +222,27 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
       output->_data,
       ldc
     );
+#else
+    qpu_cblas_sgemm_fixed(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      kernels->_gpuMemoryBase,
+      kernels->_min,
+      kernels->_max,
+      kernels->_bitsPerElement,
+      lda,
+      patches->_gpuMemoryBase,
+      ldb,
+      beta,
+      output->_gpuMemoryBase,
+      ldc
+    );
+#endif
   }
 
   delete patches;

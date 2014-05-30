@@ -12,6 +12,10 @@
 
 #include "buffer.h"
 
+#if defined(USE_QPU_GEMM)
+#include "qpu_gemm.h"
+#endif // USE_QPU_GEMM
+
 Buffer* matrix_dot(Buffer* input, Buffer* weights, bool areWeightsTransposed) {
 
 #ifdef DO_LOG_OPERATIONS
@@ -70,6 +74,7 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights, bool areWeightsTransposed) {
   const jpfloat_t beta = 0.0f;
 
   if (weights->_bitsPerElement == 32) {
+#if !defined(USE_QPU_GEMM)
     matrix_gemm(
       order,
       transposeA,
@@ -86,7 +91,26 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights, bool areWeightsTransposed) {
       output->_data,
       ldc
     );
+#else // USE_QPU_GEMM
+    qpu_cblas_sgemm(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weights->_gpuMemoryBase,
+      lda,
+      input->_gpuMemoryBase,
+      ldb,
+      beta,
+      output->_gpuMemoryBase,
+      ldc
+    );
+#endif // USE_QPU_GEMM
   } else {
+#if !defined(USE_QPU_GEMM)
     matrix_gemm_fixed(
       order,
       transposeA,
@@ -106,6 +130,27 @@ Buffer* matrix_dot(Buffer* input, Buffer* weights, bool areWeightsTransposed) {
       output->_data,
       ldc
     );
+#else // USE_QPU_GEMM
+    qpu_cblas_sgemm_fixed(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weights->_gpuMemoryBase,
+      weights->_min,
+      weights->_max,
+      weights->_bitsPerElement,
+      lda,
+      input->_gpuMemoryBase,
+      ldb,
+      beta,
+      output->_gpuMemoryBase,
+      ldc
+    );
+#endif // USE_QPU_GEMM
   }
 
 #else // Use naive algorithm instead

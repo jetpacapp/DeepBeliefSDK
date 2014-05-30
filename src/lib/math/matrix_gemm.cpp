@@ -38,9 +38,11 @@
 #include <omp.h>
 #endif // USE_NEON
 
-#if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL) && !defined(USE_ATLAS_GEMM) && !defined(USE_EIGEN_GEMM)
+#if !defined(USE_ACCELERATE_GEMM) && !defined(USE_MKL_GEMM) && !defined(USE_OPENGL) && !defined(USE_ATLAS_GEMM) && !defined(USE_EIGEN_GEMM) && !defined(USE_QPU_GEMM)
 #define USE_NAIVE_GEMM
 #endif
+
+#define DO_LOG_OPERATIONS
 
 void matrix_gemm(
   int order,
@@ -141,6 +143,8 @@ void matrix_gemm(
     c,
     ldc
   );
+#elif defined(USE_QPU_GEMM)
+  assert(false); // You need to call the GEMM function directly so it has access to the GPU memory
 #else
 #error "No GEMM implementation defined"
 #endif
@@ -206,6 +210,8 @@ void matrix_gemm_fixed(
     c,
     ldc
   );
+#elif defined(USE_QPU_GEMM)
+  assert(false); // You need to call the GEMM function directly so it has access to the GPU memory
 #else
   naive_cblas_sgemm_fixed(
     order,

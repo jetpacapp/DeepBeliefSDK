@@ -27,6 +27,10 @@ public:
   Dimensions _dims;
   jpfloat_t* _data;
   void* _quantizedData;
+#if defined(TARGET_PI)
+  uint32_t _gpuMemoryHandle;
+  uint32_t _gpuMemoryBase;
+#endif // USE_QPU_GEMM
   jpfloat_t _min;
   jpfloat_t _max;
   int _bitsPerElement;

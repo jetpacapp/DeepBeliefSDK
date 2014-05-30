@@ -27,6 +27,9 @@
 #endif // USE_OS_IMAGE
 #include "binary_format.h"
 #include "cstring_helpers.h"
+#ifdef TARGET_PI
+#include "mailbox.h"
+#endif // TARGET_PI
 
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
 
@@ -42,7 +45,12 @@ Buffer::Buffer(const Dimensions& dims) :
   const int elementCount = _dims.elementCount();
   const size_t byteCount = (elementCount * sizeof(jpfloat_t));
 #if defined(TARGET_PI)
-  posix_memalign((void**)(&_data), 16, (byteCount * 1));
+  _gpuMemoryHandle = mem_alloc(byteCount, 4096, GPU_MEM_FLG);
+  if (!_gpuMemoryHandle) {
+    fprintf(stderr, "Unable to allocate %d bytes of GPU memory\n", byteCount);
+  }
+  _gpuMemoryBase = mem_lock(_gpuMemoryHandle);
+  _data = (jpfloat_t*)(mapmem(_gpuMemoryBase + GPU_MEM_MAP, byteCount));
 #else // TARGET_PI
   _data = (jpfloat_t*)(malloc(byteCount * 1));
 #endif // TARGET_PI
@@ -55,6 +63,10 @@ Buffer::Buffer(const Dimensions& dims, jpfloat_t* data) :
   _name(NULL),
   _debugString(NULL),
   _quantizedData(NULL),
+#if defined(TARGET_PI)
+  _gpuMemoryHandle(0),
+  _gpuMemoryBase(0),
+#endif // TARGET_PI
   _min(0.0f),
   _max(1.0f),
   _bitsPerElement(32)
@@ -69,6 +81,10 @@ Buffer::Buffer(const Dimensions& dims, void* quantizedData, jpfloat_t min, jpflo
   _name(NULL),
   _debugString(NULL),
   _data(NULL),
+#if defined(TARGET_PI)
+  _gpuMemoryHandle(0),
+  _gpuMemoryBase(0),
+#endif // TARGET_PI
   _min(min),
   _max(max),
   _bitsPerElement(bitsPerElement)
@@ -92,7 +108,12 @@ Buffer::Buffer(const Dimensions& dims, jpfloat_t min, jpfloat_t max, int bitsPer
   const size_t byteCount = (elementCount * sizeofElement);
 
 #if defined(TARGET_PI)
-  posix_memalign((void**)(&_quantizedData), 16, (byteCount * 1));
+  _gpuMemoryHandle = mem_alloc(byteCount, 4096, GPU_MEM_FLG);
+  if (!_gpuMemoryHandle) {
+    fprintf(stderr, "Unable to allocate %d bytes of GPU memory\n", byteCount);
+  }
+  _gpuMemoryBase = mem_lock(_gpuMemoryHandle);
+  _quantizedData = (char*)(mapmem(_gpuMemoryBase + GPU_MEM_MAP, byteCount));
 #else // TARGET_PI
   _quantizedData = (void*)(malloc(byteCount * 1));
 #endif // TARGET_PI
@@ -103,7 +124,23 @@ Buffer::Buffer(const Dimensions& dims, jpfloat_t min, jpfloat_t max, int bitsPer
 Buffer::~Buffer()
 {
   if (_doesOwnData) {
+#if defined(TARGET_PI)
+    if (_data) {
+      const int elementCount = _dims.elementCount();
+      const size_t byteCount = (elementCount * sizeof(jpfloat_t));
+      unmapmem(_data, byteCount);
+    } else if (_quantizedData) {
+      const int elementCount = _dims.elementCount();
+      const int sizeofElement = (_bitsPerElement / 8);
+      const size_t byteCount = (elementCount * sizeofElement);
+      unmapmem(_quantizedData, byteCount);
+    }
+    mem_unlock(_gpuMemoryHandle);
+    mem_free(_gpuMemoryHandle);
+#else // TARGET_PI
     free(_data);
+    free(_quantizedData);
+#endif // TARGET_PI
   }
   if (_debugString)
   {
@@ -683,6 +720,7 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
       buffer = new Buffer(dims, tagDataArray, min, max, bitsPerFloat);
     } else {
 #ifdef LOAD_BUFFERS_AS_FLOAT
+#warning "Compiling with LOAD_BUFFERS_AS_FLOAT"
       buffer = new Buffer(dims);
       jpfloat_t range = ((max - min) / (1 << bitsPerFloat));
       const size_t elementsCount = dims.elementCount();
@@ -748,6 +786,7 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
         assert(false); // Should never get here, only 8 or 16 bit supported
       }
 #else // LOAD_BUFFERS_AS_FLOAT
+#warning "Compiling without LOAD_BUFFERS_AS_FLOAT"
       buffer = new Buffer(dims, min, max, bitsPerFloat);
       memcpy(buffer->_quantizedData, tagDataArray, quantizedDataTag->length);
 #endif // LOAD_BUFFERS_AS_FLOAT

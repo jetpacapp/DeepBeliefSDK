@@ -8,6 +8,10 @@ LIBLDFLAG=
 LIBLDLIBS=
 
 $(warning GEMM=$(GEMM))
+$(warning TARGET=$(TARGET))
+
+LIBSRCS := $(shell find src/lib -name '*.cpp' -not -name '._*')
+LIBOBJS := $(subst .cpp,.o,$(LIBSRCS))
 
 ifeq ($(GEMM),mkl)
 MKLROOT = /opt/intel/composer_xe_2013_sp1.0.080/mkl
@@ -26,7 +30,14 @@ LIBCPPFLAGS += -I../eigen -DUSE_EIGEN_GEMM=1
 endif
 
 ifeq ($(TARGET),pi)
-LIBCPPFLAGS += -DTARGET_PI -DLOAD_BUFFERS_AS_FLOAT -march=armv6 -mfloat-abi=hard -ftree-vectorize -funroll-all-loops -mfpu=vfp
+LIBCPPFLAGS += \
+-DTARGET_PI \
+-march=armv6 \
+-mfloat-abi=hard \
+-ftree-vectorize \
+-funroll-all-loops \
+-mfpu=vfp \
+-I./src/lib/pi
 endif
 
 ifeq ($(GEMM),pigl)
@@ -35,22 +46,33 @@ LIBCPPFLAGS += \
 -I/opt/vc/include/ \
 -I/opt/vc/include/interface/vcos/pthreads/ \
 -I/opt/vc/include/interface/vmcs_host/linux/ \
-#-DUSE_GL_GEMM \
-#-DUSE_OPENGL \
+-DUSE_GL_GEMM \
+-DUSE_OPENGL \
 -DTARGET_PI \
 -DDEBUG
 LIBLDLIBS += -lblas -L/opt/vc/lib -lGLESv2 -lEGL -lopenmaxil -lbcm_host
 endif
 
-LIBSRCS := $(shell find src/lib -name '*.cpp')
-LIBOBJS := $(subst .cpp,.o,$(LIBSRCS))
+ifeq ($(GEMM),piqpu)
+LIBCPPFLAGS += -DUSE_QPU_GEMM -g
+ASMSRCS := ./src/lib/pi/gemm_float.asm ./src/lib/pi/gemm_8bit.asm ./src/lib/pi/gemm_16bit.asm
+ASMINTERMEDIATES := $(subst .asm,.cdat,$(ASMSRCS))
+ASMOBJS := $(subst .asm,.do,$(ASMSRCS))
+LIBOBJS += $(ASMOBJS)
+endif
 
 TOOLCPPFLAGS := -O3 -I ./src/include
 
-TOOLSRCS := $(shell find src/tool -name '*.cpp')
+TOOLSRCS := $(shell find src/tool -name '*.cpp' -not -name '._*')
 TOOLOBJS := $(subst .cpp,.o,$(TOOLSRCS))
 
 all: jpcnn
+
+%.cdat: $(ASMSRCS) ./src/lib/pi/helpers.asm
+	m4 -I ./src/lib/pi/ $< | qpu-asm -o $(basename $@).cdat -c g_$(notdir $(basename $@))Code
+
+%.do: %.cdat
+	$(CXX) $(CPPFLAGS) -x c -c $< -o $(basename $@).do	
 
 libjpcnn.so: CPPFLAGS=$(LIBCPPFLAGS)
 libjpcnn.so: $(LIBOBJS)
@@ -68,3 +90,4 @@ jpcnn: libjpcnn.so $(TOOLOBJS)
 
 clean:
 	find . -iname "*.o" -exec rm '{}' ';'
+	find . -iname "*.do" -exec rm '{}' ';'
