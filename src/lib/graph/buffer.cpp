@@ -358,6 +358,10 @@ Buffer* Buffer::view() {
   char copyName[MAX_DEBUG_STRING_LEN];
   snprintf(copyName, MAX_DEBUG_STRING_LEN, "%s (view)", _name);
   result->setName(copyName);
+#if defined(TARGET_PI)
+  result->_gpuMemoryHandle = _gpuMemoryHandle;
+  result->_gpuMemoryBase = _gpuMemoryBase;
+#endif // TARGET_PI
   return result;
 }
 
@@ -721,7 +725,6 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
       buffer = new Buffer(dims, tagDataArray, min, max, bitsPerFloat);
     } else {
 #ifdef LOAD_BUFFERS_AS_FLOAT
-#warning "Compiling with LOAD_BUFFERS_AS_FLOAT"
       buffer = new Buffer(dims);
       jpfloat_t range = ((max - min) / (1 << bitsPerFloat));
       const size_t elementsCount = dims.elementCount();
@@ -787,7 +790,6 @@ Buffer* buffer_from_tag_dict(SBinaryTag* mainDict, bool skipCopy) {
         assert(false); // Should never get here, only 8 or 16 bit supported
       }
 #else // LOAD_BUFFERS_AS_FLOAT
-#warning "Compiling without LOAD_BUFFERS_AS_FLOAT"
       buffer = new Buffer(dims, min, max, bitsPerFloat);
       memcpy(buffer->_quantizedData, tagDataArray, quantizedDataTag->length);
 #endif // LOAD_BUFFERS_AS_FLOAT
@@ -1006,6 +1008,10 @@ Buffer* buffer_view_at_top_index(Buffer* input, int index) {
   const int topStride = outputDims.elementCount();
   jpfloat_t* const viewData = (input->_data + (topStride * index));
   Buffer* output = new Buffer(outputDims, viewData);
+#if defined(TARGET_PI)
+  output->_gpuMemoryHandle = input->_gpuMemoryHandle;
+  output->_gpuMemoryBase = input->_gpuMemoryBase;
+#endif // TARGET_PI
   return output;
 }
 

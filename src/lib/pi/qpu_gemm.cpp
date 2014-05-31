@@ -13,7 +13,7 @@
 #define NUM_QPUS        (8)
 #define NUM_MESSAGE_VALUES (2)
 
-#define DO_LOG_OPERATIONS
+//#define DO_LOG_OPERATIONS
 
 extern uint32_t g_gemm_8bitCode[];
 extern size_t g_gemm_8bitCodeByteCount;
@@ -106,8 +106,10 @@ void qpu_cblas_sgemm_fixed(
   assert(order == JPCblasColMajor);
   assert((aBitsPerElement == 32) || (aBitsPerElement == 16) || (aBitsPerElement ==8));
 
+#ifdef DO_LOG_OPERATIONS
   struct timeval start;
   gettimeofday(&start, NULL);
+#endif // DO_LOG_OPERATIONS
 
   uint32_t* qpuCode = NULL;
   size_t qpuCodeByteCount = 0;
@@ -139,7 +141,6 @@ void qpu_cblas_sgemm_fixed(
       fprintf(stderr, "QPU enable failed.\n");
       return;
   }
-  printf("QPU enabled.\n");
 
   const size_t messageByteCount = (NUM_QPUS * NUM_MESSAGE_VALUES * sizeof(uint32_t));
 
@@ -236,12 +237,14 @@ void qpu_cblas_sgemm_fixed(
   mem_free(gpuMemoryHandle);
   qpu_enable(0);
 
+#ifdef DO_LOG_OPERATIONS
   struct timeval end;
   gettimeofday(&end, NULL);
   long seconds  = end.tv_sec  - start.tv_sec;
   long useconds = end.tv_usec - start.tv_usec;
   long duration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
   fprintf(stderr, "Took %ldms\n", duration);
+#endif // DO_LOG_OPERATIONS
 
 }
 
