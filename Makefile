@@ -3,6 +3,8 @@ CXX=g++
 RM=rm -f
 CPPFLAGS=
 
+.PRECIOUS: %.cdat
+
 LIBCPPFLAGS=-Ofast -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./src/lib/third_party -I ./src/lib/utility -I ./src/lib/svm -I ./src/lib/opengl -I ./src/lib -I ./src/include
 LIBLDFLAG=
 LIBLDLIBS=
@@ -68,7 +70,7 @@ TOOLOBJS := $(subst .cpp,.o,$(TOOLSRCS))
 
 all: jpcnn
 
-%.cdat: $(ASMSRCS) ./src/lib/pi/helpers.asm
+%.cdat: %.asm
 	m4 -I ./src/lib/pi/ $< | qpu-asm -o $(basename $@).cdat -c g_$(notdir $(basename $@))Code
 
 %.do: %.cdat

@@ -84,7 +84,7 @@ void qpu_cblas_sgemm_fixed(
   int ldc) {
 
 #ifdef DO_LOG_OPERATIONS
-  fprintf(stderr, "qpu_cblas_sgemm_fixed(\n  m=%d,\n  n=%d,\n  k=%d,\n  alpha=%f,\n  aMin=%f,\n  aMax=%f\n,  aBitsPerElement=%d,\n  a=%p,\n  lda=%d,\n  b=%p,\n  ldb=%d,\n  beta=%f,\n  c=%p,\n  ldc=%d)\n",
+  fprintf(stderr, "qpu_cblas_sgemm_fixed(\n  m=%d,\n  n=%d,\n  k=%d,\n  alpha=%f,\n  aMin=%f,\n  aMax=%f,\n  aBitsPerElement=%d,\n  a=%p,\n  lda=%d,\n  b=%p,\n  ldb=%d,\n  beta=%f,\n  c=%p,\n  ldc=%d)\n",
     m,
     n,
     k,
@@ -243,4 +243,181 @@ void qpu_cblas_sgemm_fixed(
   long duration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
   fprintf(stderr, "Took %ldms\n", duration);
 
+}
+
+void test_qpu_gemm() {
+//  const int inputChannels = (9216/1);
+//  const int inputHeight = 1;
+//  const int outputChannels = 4096;
+//  const int inputChannels = 147;
+//  const int inputHeight = 12321;
+//  const int outputChannels = 96;
+//  const int inputChannels = 729;
+//  const int inputHeight = 1200;
+//  const int outputChannels = 128;
+//  const int inputChannels = 9216;
+//  const int inputHeight = 1;
+//  const int outputChannels = 4096;
+  const int inputChannels = 363;
+  const int inputHeight = 3025;
+  const int outputChannels = 96;
+  Buffer* input = new Buffer(Dimensions(inputHeight, inputChannels));
+  input->setName("input");
+  const bool areWeightsTransposed = true;
+
+  const Dimensions inputDims = input->_dims;
+  // We're expecting (# of images, # of values)
+  assert(inputDims._length == 2);
+
+  const int imageCount = inputDims[0];
+  const int inputValuesCount = inputDims[1];
+
+  const Dimensions weightsDims(outputChannels, inputChannels);
+  // We're expecting (# of values in input, # of output channels)
+  assert(inputDims._length == 2);
+  assert(inputDims._length == 2);
+  int inputValuesIndex;
+  int outputChannelsIndex;
+  if (areWeightsTransposed) {
+    inputValuesIndex = 1;
+    outputChannelsIndex = 0;
+  } else {
+    inputValuesIndex = 0;
+    outputChannelsIndex = 1;
+  }
+  assert(weightsDims[inputValuesIndex] == inputValuesCount);
+
+  const Dimensions outputDims(imageCount, outputChannels);
+  Buffer* outputCPU = new Buffer(outputDims);
+  outputCPU->setName("outputCPU");
+  Buffer* outputGPU = new Buffer(outputDims);
+  outputGPU->setName("outputGPU");
+
+  input->populateWithRandomValues(0, 1);
+
+  const int order = JPCblasColMajor;
+  const int transposeA = JPCblasTrans;
+  const int transposeB = JPCblasNoTrans;
+
+  const int m = outputChannels;
+  const int n = input->_dims[0];
+  const int k = input->_dims[1];
+  const float alpha = 1.0f;
+  const int lda = (transposeA == JPCblasNoTrans) ? m : k;
+  const int ldb = k;
+  const int ldc = m;
+  const float beta = 0.0f;
+
+  const int weightsBitsPerElement = 16;
+
+  if (weightsBitsPerElement == 32) {
+
+    Buffer* weights = new Buffer(weightsDims);
+    weights->setName("weights");
+    weights->populateWithRandomValues(0, 1);
+
+    naive_cblas_sgemm(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weights->_data,
+      lda,
+      input->_data,
+      ldb,
+      beta,
+      outputCPU->_data,
+      ldc
+    );
+
+    qpu_cblas_sgemm(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weights->_gpuMemoryBase,
+      lda,
+      input->_gpuMemoryBase,
+      ldb,
+      beta,
+      outputGPU->_gpuMemoryBase,
+      ldc
+    );
+
+    delete weights;
+
+  } else {
+
+    const float weightsMin = 0.0f;
+    const float weightsMax = 1.0f;
+
+    Buffer* weightsFixed = new Buffer(Dimensions(outputChannels, inputChannels), weightsMin, weightsMax, weightsBitsPerElement);
+
+    weightsFixed->populateWithRandomValues(0, 1);
+
+//    uint16_t* weightData = (uint16_t*)(weightsFixed->_quantizedData);
+//    const float min = weightsFixed->_min;
+//    const float max = weightsFixed->_max;
+//    const float range = ((max - min) / ((1 << weightsBitsPerElement) - 0.0f));
+//    for (int index = 0; index < 16; index += 1) {
+//      const uint16_t value = weightData[index];
+//      const float floatValue = (min + (value * range));
+//      fprintf(stderr, "weightData[%d] = 0x%08x, %d (%f)\n", index, value, value, floatValue);
+//    }
+
+    naive_cblas_sgemm_fixed(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weightsFixed->_quantizedData,
+      weightsMin,
+      weightsMax,
+      weightsBitsPerElement,
+      lda,
+      input->_data,
+      ldb,
+      beta,
+      outputCPU->_data,
+      ldc
+    );
+
+    qpu_cblas_sgemm_fixed(
+      order,
+      transposeA,
+      transposeB,
+      m,
+      n,
+      k,
+      alpha,
+      weightsFixed->_gpuMemoryBase,
+      weightsMin,
+      weightsMax,
+      weightsBitsPerElement,
+      lda,
+      input->_gpuMemoryBase,
+      ldb,
+      beta,
+      outputGPU->_gpuMemoryBase,
+      ldc
+    );
+    delete weightsFixed;
+  }
+
+//  outputCPU->printContents();
+//  outputGPU->printContents();
+  assert(buffer_are_all_close(outputCPU, outputGPU));
+
+  delete outputCPU;
+  delete outputGPU;
+  delete input;
 }

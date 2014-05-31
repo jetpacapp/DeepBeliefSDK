@@ -223,6 +223,7 @@ Buffer* matrix_correlate(Buffer* input, Buffer* kernels, int kernelWidth, int ke
       ldc
     );
 #else
+fprintf(stderr,"kernels = %s\n", kernels->debugString());
     qpu_cblas_sgemm_fixed(
       order,
       transposeA,

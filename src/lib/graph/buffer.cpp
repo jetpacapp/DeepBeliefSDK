@@ -156,7 +156,8 @@ char* Buffer::debugString() {
   if (!_debugString) {
     _debugString = (char*)(malloc(MAX_DEBUG_STRING_LEN));
   }
-  snprintf(_debugString, MAX_DEBUG_STRING_LEN, "Buffer %s - %s", _name, _dims.debugString());
+  snprintf(_debugString, MAX_DEBUG_STRING_LEN, "Buffer %s - %s, %d bits per element, range (%f-%f)",
+    _name, _dims.debugString(), _bitsPerElement, _min, _max);
   return _debugString;
 }
 

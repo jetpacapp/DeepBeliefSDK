@@ -46,4 +46,6 @@ void qpu_cblas_sgemm_fixed(
   uint32_t c,
   int ldc);
 
+void test_qpu_gemm();
+
 #endif // INCLUDE_QPU_GEMM_H
