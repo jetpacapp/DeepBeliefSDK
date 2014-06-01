@@ -13,7 +13,7 @@
 #define NUM_QPUS        (8)
 #define NUM_MESSAGE_VALUES (2)
 
-//#define DO_LOG_OPERATIONS
+#define DO_LOG_OPERATIONS
 
 extern uint32_t g_gemm_8bitCode[];
 extern size_t g_gemm_8bitCodeByteCount;

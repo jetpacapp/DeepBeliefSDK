@@ -90,20 +90,20 @@ shl rVPMWriteAddr, rTotal, rAccum0; nop
 ldi rAccum0, VPM_DMA_STORE_SETUP_ADDRY_SHIFT
 shl rDMAStoreAddrY, rTotal, rAccum0; nop
 
-ldi rJ, 0
-loop_j:
-or rAccum0, rN, 0; nop
-sub ra39, rJ, rAccum0; nop
-brr.ne ra39, loop_j_break
-NOP
-NOP
-NOP
-
 or rI, rWhichQPU, 0; nop
 loop_i:
 or rAccum0, rM, 0; nop
 sub ra39, rI, rAccum0; nop
 brr.ne ra39, loop_i_break
+NOP
+NOP
+NOP
+
+ldi rJ, 0
+loop_j:
+or rAccum0, rN, 0; nop
+sub ra39, rJ, rAccum0; nop
+brr.ne ra39, loop_j_break
 NOP
 NOP
 NOP
@@ -400,14 +400,6 @@ VPM_DMA_STORE_START(rCurrentC)
 MUTEX_RELEASE()
 VPM_DMA_STORE_WAIT_FOR_COMPLETION()
 
-add rI, rI, NUM_QPUS; nop
-brr ra39, loop_i
-NOP
-NOP
-NOP
-
-loop_i_break:
-
 add rJ, rJ, 1; nop
 brr ra39, loop_j
 NOP
@@ -416,6 +408,13 @@ NOP
 
 loop_j_break:
 
+add rI, rI, NUM_QPUS; nop
+brr ra39, loop_i
+NOP
+NOP
+NOP
+
+loop_i_break:
 
 define(`STRIDE', 1)
 define(`ADDR', 0)
