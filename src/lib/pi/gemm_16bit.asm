@@ -53,10 +53,11 @@ define(`rA64to79', rb4)
 define(`rA80to95', rb5)
 define(`rA96to111', rb6)
 define(`rA112to127', rb7)
+define(`rBaseMask', rb8)
+define(`rElementCountMask', rb9)
 
 define(`rAccum0', r0)
 define(`rAccum1', r1)
-define(`rVectorsThisPass', r2)
 define(`rTotal', r3)
 
 # Load arguments
@@ -89,6 +90,16 @@ ldi rAccum0, VPM_BLOCK_WRITE_SETUP_ADDR_SHIFT
 shl rVPMWriteAddr, rTotal, rAccum0; nop
 ldi rAccum0, VPM_DMA_STORE_SETUP_ADDRY_SHIFT
 shl rDMAStoreAddrY, rTotal, rAccum0; nop
+
+ldi rAccum0, [0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+ldi rAccum1, [0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+add rAccum0, rAccum0, rAccum1; nop
+ldi rAccum1, [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3]
+add rAccum0, rAccum0, rAccum1; nop
+ldi rAccum1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 3]
+add rAccum0, rAccum0, rAccum1; nop
+ldi rAccum1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]
+add rBaseMask, rAccum0, rAccum1; nop
 
 or rI, rWhichQPU, 0; nop
 loop_i:
@@ -265,29 +276,21 @@ NOP
 NOP
 
 or rAccum0, rK, 0; nop
-sub rElementsToRead, rAccum0, rL; nop
-ldi rAccum0, ELEMENTS_PER_FINISH_PASS
-min rElementsToRead, rElementsToRead, rAccum0; nop
-ldi rAccum0, VPM_DMA_LOAD_SETUP_ROWLEN_SHIFT
-shl rElementsToRead, rElementsToRead, rAccum0; nop
-
-define(`STRIDE', 1)
-define(`ADDR', 0)
-ldi rAccum0, VPM_BLOCK_WRITE_SETUP_VALUE(STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-or rb49, rAccum0, rVPMWriteAddr; nop
-
-# Zero out the scratch memory before loading possibly-partial vectors to it
-and rVpmWriteFifo, r0, 0; nop
+sub rAccum0, rAccum0, rL; nop
+ldi rAccum1, ELEMENTS_PER_FINISH_PASS
+min rAccum0, rAccum0, rAccum1; nop
+sub rAccum0, rBaseMask, rAccum0; nop
+ldi rAccum1, 31
+asr rElementCountMask, rAccum0, rAccum1; nop
 
 define(`MPITCH', 2)
-define(`ROWLEN', 0) # Overridden below
+define(`ROWLEN', 16)
 define(`NROWS', 1)
 define(`VPITCH', 1)
 define(`ADDRY', 0)
 define(`ADDRX', 0)
 ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_16_BIT_OFFSET_0, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or rAccum0, rAccum0, rDMALoadAddrY; nop
-or ra49, rAccum0, rElementsToRead; nop
+or ra49, rAccum0, rDMALoadAddrY; nop
 
 MUTEX_ACQUIRE()
 VPM_DMA_LOAD_START(rCurrentA)
@@ -311,17 +314,20 @@ or rAccum0, rARange, 0; nop
 nop ra39, r0, r0; fmul rA0to15, rA0to15, rAccum0
 
 or rAccum0, rAMin, 0; nop
-fadd rA0to15, rA0to15, rAccum0;  nop
+fadd rAccum0, rA0to15, rAccum0;  nop
+and rA0to15, rAccum0, rElementCountMask; nop
+
+NOP
+or rDebugOutput, rA0to15, rA0to15; nop
 
 define(`MPITCH', 2)
-define(`ROWLEN', 0) # Overridden below
+define(`ROWLEN', 16)
 define(`NROWS', 1)
 define(`VPITCH', 1)
 define(`ADDRY', 0)
 define(`ADDRX', 0)
 ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or rAccum0, rAccum0, rDMALoadAddrY; nop
-or ra49, rAccum0, rElementsToRead; nop
+or ra49, rAccum0, rDMALoadAddrY; nop
 
 MUTEX_ACQUIRE()
 VPM_DMA_LOAD_START(rCurrentB)
@@ -335,7 +341,7 @@ ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_3
 or ra49, rAccum0, rVPMReadAddr; nop
 
 # Read 16 or fewer B values from VPM
-or rAccum0, rVpmReadFifo, 0;  nop
+and rAccum0, rVpmReadFifo, rElementCountMask;  nop
 
 # Multiply the two arrays together
 nop rb39, r0, r0; fmul rAccum0, rA0to15, rAccum0

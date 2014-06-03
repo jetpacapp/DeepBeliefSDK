@@ -221,16 +221,18 @@ void qpu_cblas_sgemm_fixed(
 
   unsigned ret = execute_qpu(NUM_QPUS, messageInputGpu, 1, 10000);
 
-//  for (int i=0; i < NUM_QPUS; i++) {
-//    const size_t currentDebugOffset = (i * debugCount * sizeof(uint32_t));
-//    uint32_t* currentDebugArm = (uint32_t*)(debugBaseArm + currentDebugOffset);
-//    for (int index = 0; index < debugCount; index += 1) {
-//      fprintf(stderr, "%d:%d=%f (0x%08x, %d)\n", i, index,
-//        *(float*)(&currentDebugArm[index]),
-//        currentDebugArm[index],
-//        currentDebugArm[index]);
-//    }
-//  }
+#ifdef DO_LOG_OPERATIONS
+  for (int i=0; i < NUM_QPUS; i++) {
+    const size_t currentDebugOffset = (i * debugCount * sizeof(uint32_t));
+    uint32_t* currentDebugArm = (uint32_t*)(debugBaseArm + currentDebugOffset);
+    for (int index = 0; index < debugCount; index += 1) {
+      fprintf(stderr, "%d:%d=%f (0x%08x, %d)\n", i, index,
+        *(float*)(&currentDebugArm[index]),
+        currentDebugArm[index],
+        currentDebugArm[index]);
+    }
+  }
+#endif
 
   unmapmem(armMemoryBase, totalByteCount);
   mem_unlock(gpuMemoryHandle);
@@ -255,15 +257,15 @@ void test_qpu_gemm() {
 //  const int inputChannels = 147;
 //  const int inputHeight = 12321;
 //  const int outputChannels = 96;
-//  const int inputChannels = 729;
-//  const int inputHeight = 1200;
-//  const int outputChannels = 128;
+  const int inputChannels = 729;
+  const int inputHeight = 1200;
+  const int outputChannels = 128;
 //  const int inputChannels = 9216;
 //  const int inputHeight = 1;
 //  const int outputChannels = 4096;
-  const int inputChannels = 363;
-  const int inputHeight = 3025;
-  const int outputChannels = 96;
+//  const int inputChannels = 363;
+//  const int inputHeight = 3025;
+//  const int outputChannels = 96;
   Buffer* input = new Buffer(Dimensions(inputHeight, inputChannels));
   input->setName("input");
   const bool areWeightsTransposed = true;
@@ -357,12 +359,12 @@ void test_qpu_gemm() {
 
   } else {
 
-    const float weightsMin = 0.0f;
-    const float weightsMax = 1.0f;
+    const float weightsMin = -0.393412f;
+    const float weightsMax = 0.419856f;
 
     Buffer* weightsFixed = new Buffer(Dimensions(outputChannels, inputChannels), weightsMin, weightsMax, weightsBitsPerElement);
 
-    weightsFixed->populateWithRandomValues(0, 1);
+    weightsFixed->populateWithRandomValues(weightsMin, weightsMax);
 
 //    uint16_t* weightData = (uint16_t*)(weightsFixed->_quantizedData);
 //    const float min = weightsFixed->_min;
