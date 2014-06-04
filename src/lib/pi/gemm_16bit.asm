@@ -55,9 +55,14 @@ define(`rA96to111', rb6)
 define(`rA112to127', rb7)
 define(`rBaseMask', rb8)
 define(`rElementCountMask', rb9)
+define(`rRowsToLoad', rb10)
+define(`rElementsRemaining', rb11)
+define(`rMaskShift', rb12)
+define(`rElementsPerVector', rb13)
 
 define(`rAccum0', r0)
 define(`rAccum1', r1)
+define(`rAccum2', r2)
 define(`rTotal', r3)
 
 # Load arguments
@@ -277,19 +282,15 @@ NOP
 
 or rAccum0, rK, 0; nop
 sub rAccum0, rAccum0, rL; nop
-ldi rAccum1, ELEMENTS_PER_FINISH_PASS
-min rAccum0, rAccum0, rAccum1; nop
-sub rAccum0, rBaseMask, rAccum0; nop
-ldi rAccum1, 31
-asr rElementCountMask, rAccum0, rAccum1; nop
+or rElementsRemaining, rAccum0, rAccum0; nop
 
 define(`MPITCH', 2)
 define(`ROWLEN', 16)
-define(`NROWS', 1)
+define(`NROWS', A_VECTORS_PER_PASS)
 define(`VPITCH', 1)
 define(`ADDRY', 0)
 define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_16_BIT_OFFSET_0, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
+ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
 or ra49, rAccum0, rDMALoadAddrY; nop
 
 MUTEX_ACQUIRE()
@@ -297,32 +298,55 @@ VPM_DMA_LOAD_START(rCurrentA)
 MUTEX_RELEASE()
 VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 
-define(`NUM', 1)
+define(`NUM', VECTORS_PER_PASS)
 define(`STRIDE', 1)
 define(`ADDR', 0)
 ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_16_BIT, ADDR)
 or ra49, rAccum0, rAVPMReadAddr; nop
 
-# Read 16 or fewer A values from VPM
+# Read 128 A values from VPM
 ldi rAccum0, 0x0000ffff
-and.unpack16a raMisc, rVpmReadFifo, rAccum0; nop
-NOP
+and.unpack16a rA0to15, rVpmReadFifo, rAccum0; nop
+and.unpack16a rA16to31, rVpmReadFifo, rAccum0; nop
+and.unpack16a rA32to47, rVpmReadFifo, rAccum0; nop
+and.unpack16a rA48to63, rVpmReadFifo, rAccum0; nop
+and.unpack16a rA64to79, rVpmReadFifo, rAccum0; nop
+and.unpack16a rA80to95, rVpmReadFifo, rAccum0; nop
+and.unpack16a rA96to111, rVpmReadFifo, rAccum0; nop
+and.unpack16a rA112to127, rVpmReadFifo, rAccum0; nop
 
-itof rA0to15, raMisc, raMisc; nop
+itof rA0to15, rA0to15, rA0to15; nop
+itof rA16to31, rA16to31, rA16to31; nop
+itof rA32to47, rA32to47, rA32to47; nop
+itof rA48to63, rA48to63, rA48to63; nop
+itof rA64to79, rA64to79, rA64to79; nop
+itof rA80to95, rA80to95, rA80to95; nop
+itof rA96to111, rA96to111, rA96to111; nop
+itof rA112to127, rA112to127, rA112to127; nop
 
 or rAccum0, rARange, 0; nop
 nop ra39, r0, r0; fmul rA0to15, rA0to15, rAccum0
+nop ra39, r0, r0; fmul rA16to31, rA16to31, rAccum0
+nop ra39, r0, r0; fmul rA32to47, rA32to47, rAccum0
+nop ra39, r0, r0; fmul rA48to63, rA48to63, rAccum0
+nop ra39, r0, r0; fmul rA64to79, rA64to79, rAccum0
+nop ra39, r0, r0; fmul rA80to95, rA80to95, rAccum0
+nop ra39, r0, r0; fmul rA96to111, rA96to111, rAccum0
+nop ra39, r0, r0; fmul rA112to127, rA112to127, rAccum0
 
 or rAccum0, rAMin, 0; nop
-fadd rAccum0, rA0to15, rAccum0;  nop
-and rA0to15, rAccum0, rElementCountMask; nop
-
-NOP
-or rDebugOutput, rA0to15, rA0to15; nop
+fadd rA0to15, rA0to15, rAccum0;  nop
+fadd rA16to31, rA16to31, rAccum0;  nop
+fadd rA32to47, rA32to47, rAccum0;  nop
+fadd rA48to63, rA48to63, rAccum0;  nop
+fadd rA64to79, rA64to79, rAccum0;  nop
+fadd rA80to95, rA80to95, rAccum0;  nop
+fadd rA96to111, rA96to111, rAccum0;  nop
+fadd rA112to127, rA112to127, rAccum0;  nop
 
 define(`MPITCH', 2)
 define(`ROWLEN', 16)
-define(`NROWS', 1)
+define(`NROWS', VECTORS_PER_PASS)
 define(`VPITCH', 1)
 define(`ADDRY', 0)
 define(`ADDRX', 0)
@@ -334,31 +358,87 @@ VPM_DMA_LOAD_START(rCurrentB)
 MUTEX_RELEASE()
 VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 
-define(`NUM', 1)
+define(`NUM', VECTORS_PER_PASS)
 define(`STRIDE', 1)
 define(`ADDR', 0)
 ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
 or ra49, rAccum0, rVPMReadAddr; nop
 
-# Read 16 or fewer B values from VPM
-and rAccum0, rVpmReadFifo, rElementCountMask;  nop
+ldi rMaskShift, 31
+ldi rElementsPerVector, 16
 
-# Multiply the two arrays together
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
 nop rb39, r0, r0; fmul rAccum0, rA0to15, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
 
 fadd rTotal, rTotal, rAccum0; nop
 
-ldi rAccum0, A_BYTES_PER_FINISH_PASS
-add rCurrentA, rCurrentA, rAccum0; nop
-ldi rAccum0, B_BYTES_PER_FINISH_PASS
-add rCurrentB, rCurrentB, rAccum0; nop
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
+nop rb39, r0, r0; fmul rAccum0, rA16to31, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
+fadd rTotal, rTotal, rAccum0; nop
 
-ldi rAccum0, ELEMENTS_PER_FINISH_PASS
-add rL, rL, rAccum0; nop
-brr ra39, finish_loop_l
-NOP
-NOP
-NOP
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
+nop rb39, r0, r0; fmul rAccum0, rA32to47, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
+fadd rTotal, rTotal, rAccum0; nop
+
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
+nop rb39, r0, r0; fmul rAccum0, rA48to63, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
+fadd rTotal, rTotal, rAccum0; nop
+
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
+nop rb39, r0, r0; fmul rAccum0, rA64to79, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
+fadd rTotal, rTotal, rAccum0; nop
+
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
+nop rb39, r0, r0; fmul rAccum0, rA80to95, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
+fadd rTotal, rTotal, rAccum0; nop
+
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
+nop rb39, r0, r0; fmul rAccum0, rA96to111, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
+fadd rTotal, rTotal, rAccum0; nop
+
+or rAccum1, rElementsRemaining, rElementsRemaining; nop
+sub rElementsRemaining, rAccum1, rElementsPerVector; nop
+sub rAccum0, rBaseMask, rAccum1; nop
+asr rAccum1, rAccum0, rMaskShift; nop
+or rAccum0, rVpmReadFifo, 0;  nop
+nop rb39, r0, r0; fmul rAccum0, rA112to127, rAccum0
+and rAccum0, rAccum0, rAccum1; nop
+fadd rTotal, rTotal, rAccum0; nop
 
 finish_loop_l_break:
 

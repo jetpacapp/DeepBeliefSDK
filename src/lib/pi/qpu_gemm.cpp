@@ -222,16 +222,16 @@ void qpu_cblas_sgemm_fixed(
   unsigned ret = execute_qpu(NUM_QPUS, messageInputGpu, 1, 10000);
 
 #ifdef DO_LOG_OPERATIONS
-  for (int i=0; i < NUM_QPUS; i++) {
-    const size_t currentDebugOffset = (i * debugCount * sizeof(uint32_t));
-    uint32_t* currentDebugArm = (uint32_t*)(debugBaseArm + currentDebugOffset);
-    for (int index = 0; index < debugCount; index += 1) {
-      fprintf(stderr, "%d:%d=%f (0x%08x, %d)\n", i, index,
-        *(float*)(&currentDebugArm[index]),
-        currentDebugArm[index],
-        currentDebugArm[index]);
-    }
-  }
+//  for (int i=0; i < NUM_QPUS; i++) {
+//    const size_t currentDebugOffset = (i * debugCount * sizeof(uint32_t));
+//    uint32_t* currentDebugArm = (uint32_t*)(debugBaseArm + currentDebugOffset);
+//    for (int index = 0; index < debugCount; index += 1) {
+//      fprintf(stderr, "%d:%d=%f (0x%08x, %d)\n", i, index,
+//        *(float*)(&currentDebugArm[index]),
+//        currentDebugArm[index],
+//        currentDebugArm[index]);
+//    }
+//  }
 #endif
 
   unmapmem(armMemoryBase, totalByteCount);
@@ -257,15 +257,19 @@ void test_qpu_gemm() {
 //  const int inputChannels = 147;
 //  const int inputHeight = 12321;
 //  const int outputChannels = 96;
-  const int inputChannels = 729;
-  const int inputHeight = 1200;
-  const int outputChannels = 128;
+//  const int inputChannels = 729;
+//  const int inputHeight = 1200;
+//  const int outputChannels = 128;
 //  const int inputChannels = 9216;
 //  const int inputHeight = 1;
 //  const int outputChannels = 4096;
 //  const int inputChannels = 363;
 //  const int inputHeight = 3025;
 //  const int outputChannels = 96;
+  const int inputChannels = 2304;
+  const int inputHeight = 169;
+  const int outputChannels = 384;
+
   Buffer* input = new Buffer(Dimensions(inputHeight, inputChannels));
   input->setName("input");
   const bool areWeightsTransposed = true;

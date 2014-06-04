@@ -166,6 +166,10 @@ void Buffer::printContents(int maxElements) {
   fprintf(output, "%s : \n", debugString());
   Dimensions dims = _dims;
   const int elementCount = dims.elementCount();
+  const int bitsPerElement = _bitsPerElement;
+  const jpfloat_t min = _min;
+  const jpfloat_t max = _max;
+  const jpfloat_t range = ((max - min) / (1 << bitsPerElement));
   if (elementCount < 5000) {
     maxElements = -1;
   }
@@ -200,7 +204,19 @@ void Buffer::printContents(int maxElements) {
       if (x > 0) {
         fprintf(output, ", ");
       }
-      const jpfloat_t value = *(data + dims.offset(x));
+      jpfloat_t value;
+      if (bitsPerElement == 32) {
+        value = *(data + dims.offset(x));
+      } else if (bitsPerElement == 16) {
+        uint16_t quantizedValue = *(((uint16_t*)(_quantizedData) + dims.offset(x)));
+        value = (min + (quantizedValue * range));
+      } else if (bitsPerElement == 8) {
+        uint8_t quantizedValue = *(((uint8_t*)(_quantizedData) + dims.offset(x)));
+        value = (min + (quantizedValue * range));
+      } else {
+        assert(false); // Should never get here
+        value = 0.0f;
+      }
       fprintf(output, "%.10f", value);
     }
     fprintf(output, "]");
@@ -247,8 +263,19 @@ void Buffer::printContents(int maxElements) {
         if (x > 0) {
           fprintf(output, ", ");
         }
-        const jpfloat_t value = *(data + dims.offset(y, x));
-        fprintf(output, "%.10f", value);
+        jpfloat_t value;
+        if (bitsPerElement == 32) {
+          value = *(data + dims.offset(y, x));
+        } else if (bitsPerElement == 16) {
+          uint16_t quantizedValue = *(((uint16_t*)(_quantizedData) + dims.offset(y, x)));
+          value = (min + (quantizedValue * range));
+        } else if (bitsPerElement == 8) {
+          uint8_t quantizedValue = *(((uint8_t*)(_quantizedData) + dims.offset(y, x)));
+          value = (min + (quantizedValue * range));
+        } else {
+          assert(false); // Should never get here
+          value = 0.0f;
+        }
       }
       if (y < (height - 1)) {
         fprintf(output, "],\n");
@@ -303,7 +330,19 @@ void Buffer::printContents(int maxElements) {
         }
         fprintf(output, "(");
         for (int channel = 0; channel < channels; channel += 1) {
-          const jpfloat_t value = *(data + dims.offset(y, x, channel));
+          jpfloat_t value;
+          if (bitsPerElement == 32) {
+            value = *(data + dims.offset(y, x, channel));
+          } else if (bitsPerElement == 16) {
+            uint16_t quantizedValue = *(((uint16_t*)(_quantizedData) + dims.offset(y, x, channel)));
+            value = (min + (quantizedValue * range));
+          } else if (bitsPerElement == 8) {
+            uint8_t quantizedValue = *(((uint8_t*)(_quantizedData) + dims.offset(y, x, channel)));
+            value = (min + (quantizedValue * range));
+          } else {
+            assert(false); // Should never get here
+            value = 0.0f;
+          }
           if (channel > 0) {
             fprintf(output, ", ");
           }
