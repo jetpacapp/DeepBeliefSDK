@@ -284,14 +284,20 @@ or rAccum0, rK, 0; nop
 sub rAccum0, rAccum0, rL; nop
 or rElementsRemaining, rAccum0, rAccum0; nop
 
+ldi rAccum1, 31
+add rAccum0, rAccum0, rAccum1; nop
+shr rAccum0, rAccum0, 5; nop
+ldi rAccum1, VPM_DMA_LOAD_SETUP_NROWS_SHIFT
+shl rAccum1, rAccum0, rAccum1; nop
 define(`MPITCH', 2)
 define(`ROWLEN', 16)
-define(`NROWS', A_VECTORS_PER_PASS)
+define(`NROWS', 0)
 define(`VPITCH', 1)
 define(`ADDRY', 0)
 define(`ADDRX', 0)
 ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or ra49, rAccum0, rDMALoadAddrY; nop
+or rAccum0, rAccum0, rDMALoadAddrY; nop
+or ra49, rAccum0, rAccum1; nop
 
 MUTEX_ACQUIRE()
 VPM_DMA_LOAD_START(rCurrentA)
@@ -344,14 +350,20 @@ fadd rA80to95, rA80to95, rAccum0;  nop
 fadd rA96to111, rA96to111, rAccum0;  nop
 fadd rA112to127, rA112to127, rAccum0;  nop
 
+ldi rAccum1, 15
+add rAccum0, rElementsRemaining, rAccum1; nop
+shr rAccum0, rAccum0, 4; nop
+ldi rAccum1, VPM_DMA_LOAD_SETUP_NROWS_SHIFT
+shl rAccum1, rAccum0, rAccum1; nop
 define(`MPITCH', 2)
 define(`ROWLEN', 16)
-define(`NROWS', VECTORS_PER_PASS)
+define(`NROWS', 0)
 define(`VPITCH', 1)
 define(`ADDRY', 0)
 define(`ADDRX', 0)
 ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or ra49, rAccum0, rDMALoadAddrY; nop
+or rAccum0, rAccum0, rDMALoadAddrY; nop
+or ra49, rAccum0, rAccum1; nop
 
 MUTEX_ACQUIRE()
 VPM_DMA_LOAD_START(rCurrentB)
