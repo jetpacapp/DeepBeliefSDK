@@ -226,6 +226,19 @@ itof rA112to127, r2A112to127, r2A112to127; nop
 
 after_a_load:
 
+define(`MPITCH', 2)
+define(`ROWLEN', 16)
+define(`NROWS', VECTORS_PER_PASS)
+define(`VPITCH', 1)
+define(`ADDRY', 0)
+define(`ADDRX', 0)
+ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
+or ra49, rAccum0, rDMALoadAddrY; nop
+
+MUTEX_ACQUIRE()
+VPM_DMA_LOAD_START(rCurrentB)
+MUTEX_RELEASE()
+
 or rAccum0, rARange, 0; nop
 nop ra39, r0, r0; fmul rA0to15, rA0to15, rAccum0
 nop ra39, r0, r0; fmul rA16to31, rA16to31, rAccum0
@@ -246,18 +259,6 @@ fadd rA80to95, rA80to95, rAccum0;  nop
 fadd rA96to111, rA96to111, rAccum0;  nop
 fadd rA112to127, rA112to127, rAccum0;  nop
 
-define(`MPITCH', 2)
-define(`ROWLEN', 16)
-define(`NROWS', VECTORS_PER_PASS)
-define(`VPITCH', 1)
-define(`ADDRY', 0)
-define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or ra49, rAccum0, rDMALoadAddrY; nop
-
-MUTEX_ACQUIRE()
-VPM_DMA_LOAD_START(rCurrentB)
-MUTEX_RELEASE()
 VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 
 define(`NUM', VECTORS_PER_PASS)
