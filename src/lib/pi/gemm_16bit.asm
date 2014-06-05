@@ -240,24 +240,16 @@ VPM_DMA_LOAD_START(rCurrentB)
 MUTEX_RELEASE()
 
 or rAccum0, rARange, 0; nop
-nop ra39, r0, r0; fmul rA0to15, rA0to15, rAccum0
-nop ra39, r0, r0; fmul rA16to31, rA16to31, rAccum0
-nop ra39, r0, r0; fmul rA32to47, rA32to47, rAccum0
-nop ra39, r0, r0; fmul rA48to63, rA48to63, rAccum0
-nop ra39, r0, r0; fmul rA64to79, rA64to79, rAccum0
-nop ra39, r0, r0; fmul rA80to95, rA80to95, rAccum0
-nop ra39, r0, r0; fmul rA96to111, rA96to111, rAccum0
-nop ra39, r0, r0; fmul rA112to127, rA112to127, rAccum0
-
-or rAccum0, rAMin, 0; nop
-fadd rA0to15, rA0to15, rAccum0;  nop
-fadd rA16to31, rA16to31, rAccum0;  nop
-fadd rA32to47, rA32to47, rAccum0;  nop
-fadd rA48to63, rA48to63, rAccum0;  nop
-fadd rA64to79, rA64to79, rAccum0;  nop
-fadd rA80to95, rA80to95, rAccum0;  nop
-fadd rA96to111, rA96to111, rAccum0;  nop
-fadd rA112to127, rA112to127, rAccum0;  nop
+or rAccum1, rAMin, 0; nop
+nop ra39, r0, r0; fmul rAccum2, rA0to15, rAccum0
+fadd rA0to15, rAccum2, rAccum1; fmul rAccum2, rA16to31, rAccum0
+fadd rA16to31, rAccum2, rAccum1; fmul rAccum2, rA32to47, rAccum0
+fadd rA32to47, rAccum2, rAccum1; fmul rAccum2, rA48to63, rAccum0
+fadd rA48to63, rAccum2, rAccum1; fmul rAccum2, rA64to79, rAccum0
+fadd rA64to79, rAccum2, rAccum1; fmul rAccum2, rA80to95, rAccum0
+fadd rA80to95, rAccum2, rAccum1; fmul rAccum2, rA96to111, rAccum0
+fadd rA96to111, rAccum2, rAccum1; fmul rAccum2, rA112to127, rAccum0
+fadd rA112to127, rAccum2, rAccum1; nop
 
 VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 
