@@ -260,37 +260,30 @@ ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_3
 or ra49, rAccum0, rVPMReadAddr; nop
 
 # Read 128 B values from VPM
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA0to15, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo;  nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA0to15, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA16to31, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA16to31, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA32to47, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA32to47, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA48to63, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA48to63, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA64to79, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA64to79, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA80to95, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA80to95, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA96to111, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA96to111, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA112to127, rAccum0
-fadd rTotal, rTotal, rAccum0; nop
+nop rb39, r0, r0; fmul rAccum1, rA112to127, rAccum0
+fadd rTotal, rTotal, rAccum1; nop
 
 ldi rAccum0, A_BYTES_PER_PASS
 add rCurrentA, rCurrentA, rAccum0; nop
