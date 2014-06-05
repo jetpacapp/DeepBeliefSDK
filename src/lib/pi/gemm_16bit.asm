@@ -59,6 +59,14 @@ define(`rRowsToLoad', rb10)
 define(`rElementsRemaining', rb11)
 define(`rMaskShift', rb12)
 define(`rElementsPerVector', rb13)
+define(`r2A0to15', rb14)
+define(`r2A16to31', rb15)
+define(`r2A32to47', rb16)
+define(`r2A48to63', rb17)
+define(`r2A64to79', rb18)
+define(`r2A80to95', rb19)
+define(`r2A96to111', rb20)
+define(`r2A112to127', rb21)
 
 define(`rAccum0', r0)
 define(`rAccum1', r1)
@@ -144,9 +152,16 @@ NOP
 NOP
 NOP
 
+ldi rAccum0, ELEMENTS_PER_PASS
+and rAccum0, rL, rAccum0; nop
+brr.zc rAccum0, skip_a_load
+NOP
+NOP
+NOP
+
 define(`MPITCH', 2)
 define(`ROWLEN', 16)
-define(`NROWS', A_VECTORS_PER_PASS)
+define(`NROWS', VECTORS_PER_PASS)
 define(`VPITCH', 1)
 define(`ADDRY', 0)
 define(`ADDRX', 0)
@@ -158,7 +173,7 @@ VPM_DMA_LOAD_START(rCurrentA)
 MUTEX_RELEASE()
 VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 
-define(`NUM', VECTORS_PER_PASS)
+define(`NUM', 0)
 define(`STRIDE', 1)
 define(`ADDR', 0)
 ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_16_BIT, ADDR)
@@ -175,6 +190,15 @@ and.unpack16a rA80to95, rVpmReadFifo, rAccum0; nop
 and.unpack16a rA96to111, rVpmReadFifo, rAccum0; nop
 and.unpack16a rA112to127, rVpmReadFifo, rAccum0; nop
 
+and.unpack16a r2A0to15, rVpmReadFifo, rAccum0; nop
+and.unpack16a r2A16to31, rVpmReadFifo, rAccum0; nop
+and.unpack16a r2A32to47, rVpmReadFifo, rAccum0; nop
+and.unpack16a r2A48to63, rVpmReadFifo, rAccum0; nop
+and.unpack16a r2A64to79, rVpmReadFifo, rAccum0; nop
+and.unpack16a r2A80to95, rVpmReadFifo, rAccum0; nop
+and.unpack16a r2A96to111, rVpmReadFifo, rAccum0; nop
+and.unpack16a r2A112to127, rVpmReadFifo, rAccum0; nop
+
 itof rA0to15, rA0to15, rA0to15; nop
 itof rA16to31, rA16to31, rA16to31; nop
 itof rA32to47, rA32to47, rA32to47; nop
@@ -183,6 +207,24 @@ itof rA64to79, rA64to79, rA64to79; nop
 itof rA80to95, rA80to95, rA80to95; nop
 itof rA96to111, rA96to111, rA96to111; nop
 itof rA112to127, rA112to127, rA112to127; nop
+
+brr ra39, after_a_load
+NOP
+NOP
+NOP
+
+skip_a_load:
+
+itof rA0to15, r2A0to15, r2A0to15; nop
+itof rA16to31, r2A16to31, r2A16to31; nop
+itof rA32to47, r2A32to47, r2A32to47; nop
+itof rA48to63, r2A48to63, r2A48to63; nop
+itof rA64to79, r2A64to79, r2A64to79; nop
+itof rA80to95, r2A80to95, r2A80to95; nop
+itof rA96to111, r2A96to111, r2A96to111; nop
+itof rA112to127, r2A112to127, r2A112to127; nop
+
+after_a_load:
 
 or rAccum0, rARange, 0; nop
 nop ra39, r0, r0; fmul rA0to15, rA0to15, rAccum0
@@ -284,6 +326,13 @@ or rAccum0, rK, 0; nop
 sub rAccum0, rAccum0, rL; nop
 or rElementsRemaining, rAccum0, rAccum0; nop
 
+ldi rAccum1, ELEMENTS_PER_PASS
+and rAccum1, rL, rAccum1; nop
+brr.zc rAccum1, finish_skip_a_load
+NOP
+NOP
+NOP
+
 ldi rAccum1, 31
 add rAccum0, rAccum0, rAccum1; nop
 shr rAccum0, rAccum0, 5; nop
@@ -329,6 +378,24 @@ itof rA64to79, rA64to79, rA64to79; nop
 itof rA80to95, rA80to95, rA80to95; nop
 itof rA96to111, rA96to111, rA96to111; nop
 itof rA112to127, rA112to127, rA112to127; nop
+
+brr ra39, finish_after_a_load
+NOP
+NOP
+NOP
+
+finish_skip_a_load:
+
+itof rA0to15, r2A0to15, r2A0to15; nop
+itof rA16to31, r2A16to31, r2A16to31; nop
+itof rA32to47, r2A32to47, r2A32to47; nop
+itof rA48to63, r2A48to63, r2A48to63; nop
+itof rA64to79, r2A64to79, r2A64to79; nop
+itof rA80to95, r2A80to95, r2A80to95; nop
+itof rA96to111, r2A96to111, r2A96to111; nop
+itof rA112to127, r2A112to127, r2A112to127; nop
+
+finish_after_a_load:
 
 or rAccum0, rARange, 0; nop
 nop ra39, r0, r0; fmul rA0to15, rA0to15, rAccum0
