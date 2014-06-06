@@ -1,6 +1,5 @@
 include(`helpers.asm')
 
-define(`A_VECTORS_PER_PASS', 4)
 define(`VECTORS_PER_PASS', 8)
 define(`ELEMENTS_PER_PASS', `eval(VECTORS_PER_PASS * 16)')
 define(`ELEMENTS_PER_PASS_MINUS_ONE', `eval(ELEMENTS_PER_PASS - 1)')
@@ -119,18 +118,18 @@ loop_i:
 or rAccum0, rM, 0; nop
 sub ra39, rI, rAccum0; nop
 brr.ne ra39, loop_i_break
-NOP
-NOP
-NOP
+#NOP
+#NOP
+#NOP
 
 ldi rJ, 0
 loop_j:
 or rAccum0, rN, 0; nop
 sub ra39, rJ, rAccum0; nop
 brr.ne ra39, loop_j_break
-NOP
-NOP
-NOP
+#NOP
+#NOP
+#NOP
 
 shl rAccum0, rLDA, 1; nop
 nop rb39, r0, r0; mul24 rAccum0, rI, rAccum0
@@ -149,15 +148,15 @@ sub rAccum0, rK, rAccum0; nop
 sub ra39, rL, rAccum0; nop
 brr.ne ra39, main_loop_l_break
 NOP
-NOP
-NOP
+#NOP - Removed because next instructions can execute without side-effects
+#NOP
 
 ldi rAccum0, ELEMENTS_PER_PASS
 and rAccum0, rL, rAccum0; nop
 brr.zc rAccum0, skip_a_load
 NOP
-NOP
-NOP
+#NOP - Removed because next instructions can execute without side-effects
+#NOP
 
 define(`MPITCH', 2)
 define(`ROWLEN', 16)
@@ -171,12 +170,12 @@ or ra49, rAccum0, rDMALoadAddrY; nop
 MUTEX_ACQUIRE()
 VPM_DMA_LOAD_START(rCurrentA)
 MUTEX_RELEASE()
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 
 define(`NUM', 0)
 define(`STRIDE', 1)
 define(`ADDR', 0)
 ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_16_BIT, ADDR)
+VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 or ra49, rAccum0, rAVPMReadAddr; nop
 
 # Read 128 A values from VPM
@@ -204,14 +203,10 @@ itof rA16to31, rA16to31, rA16to31; nop
 itof rA32to47, rA32to47, rA32to47; nop
 itof rA48to63, rA48to63, rA48to63; nop
 itof rA64to79, rA64to79, rA64to79; nop
+brr ra39, after_a_load # Removed no-ops after branch!
 itof rA80to95, rA80to95, rA80to95; nop
 itof rA96to111, rA96to111, rA96to111; nop
 itof rA112to127, rA112to127, rA112to127; nop
-
-brr ra39, after_a_load
-NOP
-NOP
-NOP
 
 skip_a_load:
 
@@ -251,12 +246,16 @@ fadd rA80to95, rAccum2, rAccum1; fmul rAccum2, rA96to111, rAccum0
 fadd rA96to111, rAccum2, rAccum1; fmul rAccum2, rA112to127, rAccum0
 fadd rA112to127, rAccum2, rAccum1; nop
 
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
+ldi rAccum0, A_BYTES_PER_PASS
+add rCurrentA, rCurrentA, rAccum0; nop
+ldi rAccum0, B_BYTES_PER_PASS
+add rCurrentB, rCurrentB, rAccum0; nop
 
 define(`NUM', VECTORS_PER_PASS)
 define(`STRIDE', 1)
 define(`ADDR', 0)
 ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
+VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 or ra49, rAccum0, rVPMReadAddr; nop
 
 # Read 128 B values from VPM
@@ -280,22 +279,16 @@ or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA80to95, rAccum0
 fadd rTotal, rTotal, rAccum1; nop
 
 or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA96to111, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
 
+ldi rAccum2, ELEMENTS_PER_PASS
+add rL, rL, rAccum2; nop
+brr ra39, main_loop_l
+#NOP
+#NOP
+#NOP
+fadd rTotal, rTotal, rAccum1; nop
 nop rb39, r0, r0; fmul rAccum1, rA112to127, rAccum0
 fadd rTotal, rTotal, rAccum1; nop
-
-ldi rAccum0, A_BYTES_PER_PASS
-add rCurrentA, rCurrentA, rAccum0; nop
-ldi rAccum0, B_BYTES_PER_PASS
-add rCurrentB, rCurrentB, rAccum0; nop
-
-ldi rAccum0, ELEMENTS_PER_PASS
-add rL, rL, rAccum0; nop
-brr ra39, main_loop_l
-NOP
-NOP
-NOP
 
 main_loop_l_break:
 
@@ -315,9 +308,9 @@ or rElementsRemaining, rAccum0, rAccum0; nop
 ldi rAccum1, ELEMENTS_PER_PASS
 and rAccum1, rL, rAccum1; nop
 brr.zc rAccum1, finish_skip_a_load
-NOP
-NOP
-NOP
+#NOP
+#NOP
+#NOP
 
 ldi rAccum1, 31
 add rAccum0, rAccum0, rAccum1; nop
@@ -337,12 +330,12 @@ or ra49, rAccum0, rAccum1; nop
 MUTEX_ACQUIRE()
 VPM_DMA_LOAD_START(rCurrentA)
 MUTEX_RELEASE()
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 
 define(`NUM', VECTORS_PER_PASS)
 define(`STRIDE', 1)
 define(`ADDR', 0)
 ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_16_BIT, ADDR)
+VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 or ra49, rAccum0, rAVPMReadAddr; nop
 
 # Read 128 A values from VPM
@@ -384,24 +377,16 @@ itof rA112to127, r2A112to127, r2A112to127; nop
 finish_after_a_load:
 
 or rAccum0, rARange, 0; nop
-nop ra39, r0, r0; fmul rA0to15, rA0to15, rAccum0
-nop ra39, r0, r0; fmul rA16to31, rA16to31, rAccum0
-nop ra39, r0, r0; fmul rA32to47, rA32to47, rAccum0
-nop ra39, r0, r0; fmul rA48to63, rA48to63, rAccum0
-nop ra39, r0, r0; fmul rA64to79, rA64to79, rAccum0
-nop ra39, r0, r0; fmul rA80to95, rA80to95, rAccum0
-nop ra39, r0, r0; fmul rA96to111, rA96to111, rAccum0
-nop ra39, r0, r0; fmul rA112to127, rA112to127, rAccum0
-
-or rAccum0, rAMin, 0; nop
-fadd rA0to15, rA0to15, rAccum0;  nop
-fadd rA16to31, rA16to31, rAccum0;  nop
-fadd rA32to47, rA32to47, rAccum0;  nop
-fadd rA48to63, rA48to63, rAccum0;  nop
-fadd rA64to79, rA64to79, rAccum0;  nop
-fadd rA80to95, rA80to95, rAccum0;  nop
-fadd rA96to111, rA96to111, rAccum0;  nop
-fadd rA112to127, rA112to127, rAccum0;  nop
+or rAccum1, rAMin, 0; nop
+nop ra39, r0, r0; fmul rAccum2, rA0to15, rAccum0
+fadd rA0to15, rAccum2, rAccum1; fmul rAccum2, rA16to31, rAccum0
+fadd rA16to31, rAccum2, rAccum1; fmul rAccum2, rA32to47, rAccum0
+fadd rA32to47, rAccum2, rAccum1; fmul rAccum2, rA48to63, rAccum0
+fadd rA48to63, rAccum2, rAccum1; fmul rAccum2, rA64to79, rAccum0
+fadd rA64to79, rAccum2, rAccum1; fmul rAccum2, rA80to95, rAccum0
+fadd rA80to95, rAccum2, rAccum1; fmul rAccum2, rA96to111, rAccum0
+fadd rA96to111, rAccum2, rAccum1; fmul rAccum2, rA112to127, rAccum0
+fadd rA112to127, rAccum2, rAccum1; nop
 
 ldi rAccum1, 15
 add rAccum0, rElementsRemaining, rAccum1; nop
@@ -421,16 +406,16 @@ or ra49, rAccum0, rAccum1; nop
 MUTEX_ACQUIRE()
 VPM_DMA_LOAD_START(rCurrentB)
 MUTEX_RELEASE()
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
+
+ldi rMaskShift, 31
+ldi rElementsPerVector, 16
 
 define(`NUM', VECTORS_PER_PASS)
 define(`STRIDE', 1)
 define(`ADDR', 0)
 ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
+VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
 or ra49, rAccum0, rVPMReadAddr; nop
-
-ldi rMaskShift, 31
-ldi rElementsPerVector, 16
 
 or rAccum1, rElementsRemaining, rElementsRemaining; nop
 sub rElementsRemaining, rAccum1, rElementsPerVector; nop
@@ -549,11 +534,12 @@ or rb49, rAccum0, rDMAStoreAddrY; nop
 MUTEX_ACQUIRE()
 VPM_DMA_STORE_START(rCurrentC)
 MUTEX_RELEASE()
-VPM_DMA_STORE_WAIT_FOR_COMPLETION()
 
 add rJ, rJ, 1; nop
+
 brr ra39, loop_j
-NOP
+VPM_DMA_STORE_WAIT_FOR_COMPLETION()
+#NOP
 NOP
 NOP
 
@@ -567,24 +553,24 @@ NOP
 
 loop_i_break:
 
-define(`STRIDE', 1)
-define(`ADDR', 0)
-ldi rAccum0, VPM_BLOCK_WRITE_SETUP_VALUE(STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-or rb49, rAccum0, rVPMWriteAddr; nop
-
-or rVpmWriteFifo, rDebugOutput, 0; nop
-
-define(`UNITS', 1)
-define(`DEPTH', 16)
-define(`ADDRY', 0)
-define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_STORE_SETUP_VALUE(UNITS, DEPTH, IS_HORIZ, ADDRY, ADDRX, MODEW_32_BIT)
-or rb49, rAccum0, rDMAStoreAddrY; nop
-
-MUTEX_ACQUIRE()
-VPM_DMA_STORE_START(rDebugAddress)
-MUTEX_RELEASE()
-VPM_DMA_STORE_WAIT_FOR_COMPLETION()
+#define(`STRIDE', 1)
+#define(`ADDR', 0)
+#ldi rAccum0, VPM_BLOCK_WRITE_SETUP_VALUE(STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
+#or rb49, rAccum0, rVPMWriteAddr; nop
+#
+#or rVpmWriteFifo, rDebugOutput, 0; nop
+#
+#define(`UNITS', 1)
+#define(`DEPTH', 16)
+#define(`ADDRY', 0)
+#define(`ADDRX', 0)
+#ldi rAccum0, VPM_DMA_STORE_SETUP_VALUE(UNITS, DEPTH, IS_HORIZ, ADDRY, ADDRX, MODEW_32_BIT)
+#or rb49, rAccum0, rDMAStoreAddrY; nop
+#
+#MUTEX_ACQUIRE()
+#VPM_DMA_STORE_START(rDebugAddress)
+#MUTEX_RELEASE()
+#VPM_DMA_STORE_WAIT_FOR_COMPLETION()
 
 sema up, ALL_DONE_SEMA
 
