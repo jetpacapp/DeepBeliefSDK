@@ -328,7 +328,7 @@ If you're using the Java interface, the same sort of call sequence works to hand
 ## Getting Started on a Raspberry Pi
 
 The library is available as a Raspbian .so library in the RaspberryPiLibrary folder.
-Using it is very similar to ordinary Linux, and you can follow most of the [same instructions](#getting-started-on-linux), just substituing the install.sh in the Pi folder.
+Using it is very similar to ordinary Linux, and you can follow most of the [same instructions](#getting-started-on-linux), substituting the install.sh in the Pi folder.
 The biggest difference is that the Pi library uses the GPU to handle a lot of the calculations, so you need to run [the example program](#simplelinux) as a super user, e.g. `sudo ./deepbelief`.
 This optimization allows an image to be recognized on a stock Pi in around five seconds, and in three seconds with a boosted GPU clock rate.
 
