@@ -22,6 +22,7 @@ what applications that helps you build.
  - [Android](#getting-started-on-android)
  - [Linux](#getting-started-on-linux)
  - [OS X](#getting-started-on-os-x)
+ - [Raspberry Pi](#getting-started-on-a-raspberry-pi)
 
 ### Adding to an existing application
 
@@ -323,6 +324,13 @@ There's [sample code showing the whole process](#simpleopencv), but the heart of
 Once you've done that, you can run the image classification and prediction as normal on the image handle.
 [The sample code](#simpleopencv) has some other convenience classes too, to help make using the library in C++ a bit easier.
 If you're using the Java interface, the same sort of call sequence works to handle the conversion, though you'll need `byte[]` arrays and you'll have to call `image.get(0, 0, pixels)` to actually get the raw image data you need.
+
+## Getting Started on a Raspberry Pi
+
+The library is available as a Raspbian .so library in the RaspberryPiLibrary folder.
+Using it is very similar to ordinary Linux, and you can follow most of the [same instructions](#getting-started-on-linux), just substituing the install.sh in the Pi folder.
+The biggest difference is that the Pi library uses the GPU to handle a lot of the calculations, so you need to run [the example program](#simplelinux) as a super user, e.g. `sudo ./deepbelief`.
+This optimization allows an image to be recognized on a stock Pi in around five seconds, and in three seconds with a boosted GPU clock rate.
 
 ## Examples
 
