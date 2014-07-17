@@ -572,8 +572,7 @@ $(_.delay(function() {
       toggleWebcam();
     });
     g_video = $('#live').get(0);
-    var networkUrl = 'https://d2rlgkokhpr1uq.cloudfront.net/jetpac.ntwk'; // 'data/example_networks/jetpac.ntwk'
-    // var networkUrl = '/jetpac.ntwk';
+    var networkUrl = 'networks/jetpac.ntwk'
     g_network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress});
   }
 }, 0));
