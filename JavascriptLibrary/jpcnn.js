@@ -485,11 +485,6 @@ Network = function(filename, onLoad, options) {
   if (_.isUndefined(options)) {
     options = {};
   }
-  if (options.useWebGL) {
-    g_useWebGL = true;
-  } else {
-    g_useWebGL = false;
-  }
   this._isLoaded = false;
   this._isHomebrewed = true;
   this._fileTag = null;
@@ -529,7 +524,13 @@ Network = function(filename, onLoad, options) {
   xhr.send();
 };
 window['Network'] = Network;
-Network.prototype.classifyImage = function(input, doMultiSample, layerOffset) {
+Network.prototype.classifyImage = function(input, doMultiSample, layerOffset, useWebGL) {
+
+  if (useWebGL) {
+    g_useWebGL = true;
+  } else {
+    g_useWebGL = false;
+  }
 
   var doFlip;
   var imageSize;
@@ -1557,8 +1558,8 @@ function matrixGemmScaleA(
       beta,
       cBuffer._data,
       ldc,
-      aScale,
-      aOffset
+      aBuffer._spread,
+      aBuffer._min
     );
   }
 

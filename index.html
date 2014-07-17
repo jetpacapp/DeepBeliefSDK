@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
@@ -22,7 +22,7 @@
     <div class="span12 header">
       <div>
         <div class="logo">
-          Deep Belief
+          DeepBeliefSDK Javascript Demo
         </div>
       </div>
     </div>
@@ -33,7 +33,6 @@
 <div class="demo-container">
   <video class="video-preview" id="live" autoplay></video>
 
-  <h2 class="demo-title">DeepBeliefSDK Javascript Demo</h2>
   <div class="top-section">
     <canvas class="image-preview-canvas"></canvas>
     <canvas class="image-preview" id="image-preview"></canvas>
@@ -51,7 +50,7 @@
         <span class="action-button load-image">Choose a Photo</span>
       </span>
     </div>
-    <div class="action-button use-webcam">Use Webcam</div>
+    <div class="action-button webgl-toggle">Enable WebGL</div>
 
     <div class="sdk-button" data-url="https://github.com/jetpacapp/DeepBeliefSDK"><span><i class="icon-github"></i></span><span><strong>SOURCE</strong><br>On Github</span></div>
   </div>
@@ -142,57 +141,8 @@ function onNetworkLoad() {
   g_isReady = true;
 }
 
-function toggleWebcam() {
-  if (g_isWebcamOn) {
-    stopWebcamClassification();
-    g_currentImage = undefined;
-    $('.vote-tag-container').hide();
-  } else {
-    startWebcamClassification();
-  }
-}
-
-function startWebcamClassification() {
-  navigator.getMedia = (navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia ||
-    navigator.msGetUserMedia);
-
-  if (!navigator.getMedia) {
-    alert('Your browser doesn\'t support the WebRTC extensions that are required to access the webcam, sorry!');
-    return;
-  }
-
-  g_wantDemo = false;
-
-  navigator.getMedia({video: true},
-      function(stream) {
-        g_isWebcamOn = true;
-        g_webcamStream = stream;
-        $('.use-webcam').text('Stop Webcam');
-        g_video.src = URL.createObjectURL(stream);
-        g_webcamInterval = setInterval(classifyWebcamSnapshot, 500);
-      },
-      function(err) {
-        alert('Could\'t access the webcam, failed with ' + err);
-      }
-  );
-}
-
-function stopWebcamClassification() {
-  if (!g_isWebcamOn) {
-    return;
-  }
-  if (g_webcamStream.pause) {
-    g_webcamStream.pause();
-  }
-  if (g_webcamStream.stop) {
-    g_webcamStream.stop();
-  }
-  g_video.src = null;
-  $('.use-webcam').text('Use Webcam');
-  clearInterval(g_webcamInterval);
-  g_isWebcamOn = false;
+function toggleWebGL() {
+  setWebGLEnabled(!g_webGLEnabled);
 }
 
 function startDemoClassification() {
@@ -272,7 +222,7 @@ function classifyImage(image, width, height) {
   inputBuffer.setName('inputBuffer');
 
   var startTime = new Date().getTime();
-  var results = g_network.classifyImage(inputBuffer, false, 0);
+  var results = g_network.classifyImage(inputBuffer, false, 0, g_webGLEnabled);
   var endTime = new Date().getTime();
   var duration = (endTime - startTime);
 
@@ -342,40 +292,6 @@ var g_uploadedImages = {};
 var g_isReady = false;
 var g_currentImage;
 
-$(document).on({
-  click: function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    if (g_isReady) {
-      $('.vote-tag-container').show();
-      stopWebcamClassification();
-      g_wantDemo = false;
-
-      $('.spotter-image-gallery .img').removeClass('selected');
-      $(this).addClass('selected');
-
-      var img = $(this).find('img')[0];
-      g_currentImage = img;
-
-      var data = $(img).data();
-
-      $('.vote-box div').text(data.votes);
-      $('.tag-box span').removeClass('selected');
-      if (data.tags != '') {
-        $('.tag-box span.' + data.tags).addClass('selected');
-      }
-
-      var image = new Image();
-      image.onload = function() {
-        classifyImage(image, image.width, image.height);
-      };
-      var url = img.src.substring(img.src.lastIndexOf('/') + 1);
-      image.src = '/deepbeliefdemo/getimage/' + url;
-    }
-  }
-}, '.spotter-image-gallery .img');
-
 function onFilePick(file) {
   var imageType = /image.*/;
   if (!file.type.match(imageType)) {
@@ -385,51 +301,9 @@ function onFilePick(file) {
   reader.onload = function(e) {
     var image = new Image();
     image.src = reader.result;
-    stopWebcamClassification();
     g_wantDemo = false;
-    $('.vote-tag-container').show();
     // Delay is needed for Firefox for some reason.
     _.delay(function() {
-      if (_.isUndefined(g_uploadedImages[reader.result])) {
-        $('.vote-box div').text('0');
-        $('.tag-box span').removeClass('selected');
-        g_uploadedImages[reader.result] = true;
-        $.ajax({
-          url: '/deepbeliefdemo/saveimage',
-          data: {
-            image: reader.result,
-            _csrf: csrf._csrf
-          },
-          method: 'POST',
-          async: true,
-          success: function(result) {
-            // console.log(result);
-            g_uploadedImages[reader.result] = true;
-            image.dataset['tags'] = '';
-            image.dataset['votes'] = '0';
-            image.dataset['id'] = result;
-            var newImageObj = {
-              src: reader.result,
-              id: result,
-              tags: '',
-              votes: '0',
-              template: '<div class="img"><img src="' + reader.result + '" data-id="' + result + '" data-tags="" data-votes="0"></div>'
-            };
-            g_galleryImages.unshift(newImageObj);
-            g_currentImage = image;
-            // $('.spotter-image-gallery .gallery').prepend(newImageObj.template);
-
-            loadGalleryImages();
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            // console.log(jqXHR);
-            // console.log(textStatus);
-            // console.log(errorThrown);
-            delete g_uploadedImages[reader.result];
-          }
-        });
-      }
-
       classifyImage(image, image.width, image.height);
     }, 200);
   }
@@ -526,19 +400,39 @@ function getMaxTextureSize() {
 })();
 
 var g_hasWebGL = false;
+var g_webGLEnabled = false;
+
+function setWebGLEnabled(state) {
+  if (state && !g_hasWebGL) {
+    alert("Sorry, no WebGL support detected in this browser!");
+    return;
+  }
+  g_webGLEnabled = state;
+  if (state) {
+    $('.webgl-toggle').text('Disable WebGL');
+  } else {
+    $('.webgl-toggle').text('Enable WebGL');
+  }
+}
 
 function checkCompatibility() {
   g_hasWebGL = hasWebGL();
-  var maxTextureSize = getMaxTextureSize();
-  var neededTextureSize = 4096;
-  if (maxTextureSize < neededTextureSize) {
-    $('.compatibility-message').html('Your graphics card doesn\'t support large enough textures.');
-    $('.compatibility-action').html(
-      'This demo requires a minimum of ' +
-      neededTextureSize + 'x' + neededTextureSize +
-      ', and your GPU can only handle ' +
-      maxTextureSize + 'x' + maxTextureSize + ', sorry.');
-      return false;
+  if (g_hasWebGL) {
+    // Some strange WebGL issues have cropped up on Firefox, so disable it by default for now
+    if (!$.browser.mozilla) {
+      setWebGLEnabled(true);
+    }
+
+    var maxTextureSize = getMaxTextureSize();
+    var neededTextureSize = 4096;
+    if (maxTextureSize < neededTextureSize) {
+      $('.compatibility-message').html('Your graphics card doesn\'t support large enough textures.');
+      $('.compatibility-action').html(
+        'This demo requires a minimum of ' +
+        neededTextureSize + 'x' + neededTextureSize +
+        ', and your GPU can only handle ' +
+        maxTextureSize + 'x' + maxTextureSize + ', sorry.');
+    }
   }
   $('.compatibility-container').css({display: 'none'});
   $('.loading-container').css({display: 'block'});
@@ -552,8 +446,8 @@ $(_.delay(function() {
     $('.load-image').on('click', function(event) {
 
     });
-    $('.use-webcam').on('click', function(event) {
-      toggleWebcam();
+    $('.webgl-toggle').on('click', function(event) {
+      toggleWebGL();
     });
     g_video = $('#live').get(0);
     var networkUrl = 'networks/jetpac_untransposed.ntwk'
