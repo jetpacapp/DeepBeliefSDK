@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
     return 1;
   }
 
-  jpcnn_classify_image(networkHandle, imageHandle, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
+  jpcnn_classify_image(networkHandle, imageHandle, 0, -2, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
 
   jpcnn_destroy_image_buffer(imageHandle);
 
@@ -57,11 +57,7 @@ int main(int argc, const char * argv[]) {
     float predictionValue;
     char* label;
     predictionValue = predictions[index];
-    if (predictionValue < 0.01f) {
-      continue;
-    }
-    label = predictionsLabels[index];
-    fprintf(stdout, "%f\t%s\n", predictionValue, label);
+    fprintf(stdout, "%d\t%f\n", index, predictionValue);
   }
 
   jpcnn_destroy_network(networkHandle);
