@@ -23,6 +23,7 @@ what applications that helps you build.
  - [Linux](#getting-started-on-linux)
  - [OS X](#getting-started-on-os-x)
  - [Raspberry Pi](#getting-started-on-a-raspberry-pi)
+ - [Javascript](#getting-started-with-javascript)
 
 ### Adding to an existing application
 
@@ -331,6 +332,14 @@ The library is available as a Raspbian .so library in the RaspberryPiLibrary fol
 Using it is very similar to ordinary Linux, and you can follow most of the [same instructions](#getting-started-on-linux), substituting the install.sh in the Pi folder.
 The biggest difference is that the Pi library uses the GPU to handle a lot of the calculations, so you need to run [the example program](#simplelinux) as a super user, e.g. `sudo ./deepbelief`.
 This optimization allows an image to be recognized on a stock Pi in around five seconds, and in three seconds with a boosted GPU clock rate.
+
+## Getting Started with Javascript
+
+The Javascript version of the library includes complete source, and a [browser demo page](http://jetpacapp.github.io/DeepBeliefSDK/).
+The interface is similar to the C version, but uses native Javascript image objects, camelCase function names, and classes.
+You'll need to include the jpcnn.js file, and then load the networks/jetpac_untransposed.ntwk file (which is a slightly-modified version of the standard Jetpac network).
+Then you should be able to call `Network.classifyImage()`, with an option to accelerate the calculations using WebGL if you're in a browser that supports it.
+On my 2012 MacBook Pro in Chrome, the WebGL version takes around 600ms, whereas the naive CPU path takes 5 seconds.
 
 ## Examples
 
