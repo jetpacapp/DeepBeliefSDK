@@ -572,7 +572,7 @@ $(_.delay(function() {
       toggleWebcam();
     });
     g_video = $('#live').get(0);
-    var networkUrl = 'networks/jetpac.ntwk'
+    var networkUrl = 'networks/jetpac_untransposed.ntwk'
     g_network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress});
   }
 }, 0));
