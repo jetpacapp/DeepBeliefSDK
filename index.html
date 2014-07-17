@@ -525,16 +525,10 @@ function getMaxTextureSize() {
   jQuery.browser = browser;
 })();
 
+var g_hasWebGL = false;
+
 function checkCompatibility() {
-  if (!hasWebGL()) {
-    $('.compatibility-message').html('This demo needs WebGL to run, and unfortunately it\'s not available in your browser.');
-    if ($.browser.safari) {
-      $('.compatibility-action').html('If you\'re on OS X Safari, you can turn it by following <a href="https://discussions.apple.com/thread/3300585?tstart=0" target="_new">these instructions</a> and then reloading this page.');
-    } else {
-      $('.compatibility-action').html('If you\'re on Chrome, Firefox or Internet Explorer, you may be able to enable it by upgrading.');
-    }
-    return false;
-  }
+  g_hasWebGL = hasWebGL();
   var maxTextureSize = getMaxTextureSize();
   var neededTextureSize = 4096;
   if (maxTextureSize < neededTextureSize) {
@@ -563,7 +557,7 @@ $(_.delay(function() {
     });
     g_video = $('#live').get(0);
     var networkUrl = 'networks/jetpac_untransposed.ntwk'
-    g_network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress});
+    g_network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress, useWebGL: hasWebGL});
   }
 }, 0));
     </script>
