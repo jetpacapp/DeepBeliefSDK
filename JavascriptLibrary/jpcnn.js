@@ -485,6 +485,11 @@ Network = function(filename, onLoad, options) {
   if (_.isUndefined(options)) {
     options = {};
   }
+  if (options.useWebGL) {
+    g_useWebGL = true;
+  } else {
+    g_useWebGL = false;
+  }
   this._isLoaded = false;
   this._isHomebrewed = true;
   this._fileTag = null;
@@ -1424,6 +1429,8 @@ function matrixCorrelate(input, kernels, kernelWidth, kernelCount, stride) {
   return output;
 }
 
+var g_useWebGL = false;
+
 function matrixGemm(
   m,
   n,
@@ -1437,22 +1444,7 @@ function matrixGemm(
   cBuffer,
   ldc) {
 
-  var useNaive = false;
-  if (useNaive) {
-    return naiveGemm(
-      m,
-      n,
-      k,
-      alpha,
-      aBuffer._data,
-      lda,
-      bBuffer._data,
-      ldb,
-      beta,
-      cBuffer._data,
-      ldc
-    );
-  } else {
+  if (g_useWebGL) {
     return glGemm(
       m,
       n,
@@ -1464,6 +1456,20 @@ function matrixGemm(
       ldb,
       beta,
       cBuffer,
+      ldc
+    );
+  } else {
+    return naiveGemm(
+      m,
+      n,
+      k,
+      alpha,
+      aBuffer._data,
+      lda,
+      bBuffer._data,
+      ldb,
+      beta,
+      cBuffer._data,
       ldc
     );
   }
@@ -1521,24 +1527,7 @@ function matrixGemmScaleA(
   aOffset,
   aBitDepth) {
 
-  var useNaive = false;
-  if (useNaive) {
-    return naiveGemmScaleA(
-      m,
-      n,
-      k,
-      alpha,
-      aBuffer._quantizedData,
-      lda,
-      bBuffer._data,
-      ldb,
-      beta,
-      cBuffer._data,
-      ldc,
-      aScale,
-      aOffset
-    );
-  } else {
+  if (g_useWebGL) {
     return glGemm(
       m,
       n,
@@ -1554,6 +1543,22 @@ function matrixGemmScaleA(
       aBuffer._spread,
       aBuffer._min,
       aBuffer._bitsPerFloat
+    );
+  } else {
+    return naiveGemmScaleA(
+      m,
+      n,
+      k,
+      alpha,
+      aBuffer._quantizedData,
+      lda,
+      bBuffer._data,
+      ldb,
+      beta,
+      cBuffer._data,
+      ldc,
+      aScale,
+      aOffset
     );
   }
 
@@ -1806,12 +1811,11 @@ function matrixLocalResponse(input, windowSize, k, alpha, beta) {
 }
 
 function matrixMaxPatch(input, patchWidth, stride) {
-  var useNaive = false;
   var output;
-  if (useNaive) {
-    output = naiveMaxPatch(input, patchWidth, stride);
-  } else {
+  if (g_useWebGL) {
     output = glMaxPatch(input, patchWidth, stride);
+  } else {
+    output = naiveMaxPatch(input, patchWidth, stride);
   }
   return output;
 }
@@ -1863,11 +1867,10 @@ function naiveMaxPatch(input, patchWidth, stride) {
 }
 
 function matrixMax(input, maxValue) {
-  var useNaive = true;
-  if (useNaive) {
-    return naiveMax(input, maxValue);
-  } else {
+  if (g_useWebGL) {
     return glMax(input, maxValue);
+  } else {
+    return naiveMax(input, maxValue);
   }
 }
 
