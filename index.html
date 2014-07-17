@@ -1,344 +1,582 @@
-<html>
-  <head>
-    <title>Jetpac Deep Belief Demo</title>
-    <script type="text/javascript" src="JavascriptLibrary/Utils/underscore.js"></script>
-    <script type="text/javascript" src="JavascriptLibrary/Utils/glMatrix.js"></script>
-    <!--<script type="text/javascript" src="JavascriptLibrary/Utils/webgl-debug.js"></script>-->
-    <script type="text/javascript" src="JavascriptLibrary/Utils/webgl.js"></script>
-    <script type="text/javascript" src="JavascriptLibrary/jpcnn.js"></script>
-    <style>
-      .image {
-        float: left;
-      }
-      .labels-container {
-        float: left;
-        width: 400px;
-      }
-      .video-preview {
-        width: 400px;
-      }
-    </style>
-  </head>
-  <body>
-    <h2>Jetpac's Deep Belief in Javascript</h2>
+<<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <title>Deep Belief in Javascript</title>
+  <script type="text/javascript" src="/js/modernizr.js"></script>
+</head>
+<body id="deepbeliefdemo">
+  <div id="wrap">
+    <div class="container-fluid">
+  <div class="row-fluid">
 
+    <div class="span12 header">
+      <div>
+        <div class="logo">
+          Deep Belief
+        </div>
+        <div class="links"><a href="/deepbelief">Apps</a> <a target="_blank" href="http://spotterapp.tumblr.com/">#SpotterWin</a> <a href="/developer">Developer</a> <a href="/deepbeliefdemo">Demo</a></div>
+      </div>
+    </div>
+
+  </div> <!-- /row-fluid -->
+</div> <!-- /container -->
+
+<div class="demo-container">
+  <video class="video-preview" id="live" autoplay></video>
+
+  <h2 class="demo-title">Demo of Deep Belief in Javascript in the Browser</h2>
+  <p> <div class="demo-subtitle"> (Some issues have been reported using Fireworks. Chrome should work fine.)</p>
+  <div class="top-section">
+    <canvas class="image-preview-canvas"></canvas>
+    <canvas class="image-preview" id="image-preview"></canvas>
+    <div class="results-container">
+      <div class="results-title">Looks like:</div>
+      <table class="results-list"></table>
+      <div class="time"></div>
+    </div>
+    <div class="vote-tag-container" style="display: none;">
+      <div class="tag-box">
+        <span data-tag="win" class="win">#SpotterWin</span> | <span data-tag="fail" class="fail">#SpotterFail</span>
+      </div>
+      <div class="vote-box">
+        <i data-direction='up' class="icon-circle-arrow-up"></i> <i data-direction='down' class="icon-circle-arrow-down"></i> <div>0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-section">
+    <div class="file-button-container">
+      <span class="file-wrapper">
+        <input type="file" name="photo" id="photo" />
+        <span class="action-button load-image">Choose a Photo</span>
+      </span>
+      <p class="small-text">* Your image will be added to the gallery below.</p>
+    </div>
+    <div class="action-button use-webcam">Use Webcam</div>
+
+    <div class="sdk-button" data-url="https://github.com/jetpacapp/DeepBeliefSDK"><span><i class="icon-github"></i></span><span><strong>DOWNLOAD</strong><br>Deep Belief SDK</span></div>
+    <div class="sdk-button" data-url="https://itunes.apple.com/us/app/spotter-by-jetpac-object-recognition/id858890030?ls=1&mt=8"><span><i class="icon-apple"></i></span><span><strong>DOWNLOAD</strong><br>iPhone App</span></div>
+
+    <div class="twitter-button-holder">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check out @JetpacApp's Demo of Deep Belief in Javascript in the Browser" data-via="jetpacapp" data-size="large" data-count="none">Tweet</a>
+    </div>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+  </div>
+
+  <div class="loading-container">
+    <div class="loading-message">
+      Loading the neural network - <span class="loading-amount">0.0</span> of 60 million connections
+    </div>
     <progress id="network-progress-bar" value="0" max="100"></progress>
+  </div>
 
-    <video style="visibility: visible;" class="video-preview" id="live" autoplay></video>
-
-    <div>
-      Choose an image file to analyze:
-      <input type="file" id="file-input">
+  <div class="compatibility-container">
+    <div class="compatibility-message">
+      Checking to see if your browser supports WebGL
     </div>
-
-    <canvas class="image" id="image-preview"></canvas>
-    <div class="labels-container">
+    <div class="compatibility-action">
     </div>
-    <div class="time"></div>
+  </div>
 
-    <canvas class="gl-test" id="gl-test"></canvas>
+</div>
+
+  <script type="text/javascript" src="JavascriptLibrary/Utils/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="JavascriptLibrary/Utils/bootstrap-2.3.1.min.js"></script>
+  <script type="text/javascript" src="JavascriptLibrary/Utils/underscore.js"></script>
+  <script type="text/javascript" src="JavascriptLibrary/Utils/glMatrix.js"></script>
+  <script type="text/javascript" src="JavascriptLibrary/Utils/webgl.js"></script>
+  <script type="text/javascript" src="JavascriptLibrary/Utils/jpcnn.js"></script>
 
     <script type="text/javascript">
-      var video = document.getElementById("live");
+var g_isWebcamOn = false;
+var g_wantDemo = true;
+var g_network;
+var g_video;
+var g_demoPhotoUrls = [
+  'baguette.png',
+  'coffee.png',
+  'cup.png',
+  'dalmatian.png',
+  'menu.png',
+  'redwine.png',
+  'squash.png',
+  'vwbeetle.png',
+  'boat.png',
+  'corgi.png',
+  'daisy.png',
+  'laptop.png',
+  'pumpkin.png',
+  'spaghetti.png',
+  'trombone.png',
+  'abacus.jpg',
+  'artichoke.jpg',
+  'bellpepper.jpg',
+  'candle.jpg',
+  'meatloaf.jpg',
+  'peacock.jpg',
+  'pillbottle.jpg',
+  'pineapple.jpg',
+  'strawberry.jpg',
+  'vegetablebowl.jpg',
+  'vespa.jpg',
+  'accordion.jpg',
+  'beachlady.jpg',
+  'building.jpg',
+  'elephantgirl.jpg',
+  'harp.jpg',
+  'landscape.jpg',
+  'marina.jpg',
+  'piano.jpg',
+  'pizza.jpg',
+  'pooltable.jpg',
+  'sax.jpg',
+  'seashoreandcliff.jpg',
+  'sunglasses.jpg',
+  'teresacoffeeart.jpg'
+];
 
-      var networkUrl = 'networks/jetpac.ntwk'
-      var network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress});
+function onNetworkProgress(percentComplete) {
+  var progressBar = document.getElementById('network-progress-bar');
+  progressBar.value = percentComplete;
+  var totalConnections = 60;
+  var currentConnections = ((percentComplete * totalConnections) / 100).toFixed(1);
+  $('.loading-amount').text(currentConnections);
+}
 
-      function onNetworkProgress(percentComplete) {
-        var progressBar = document.getElementById('network-progress-bar');
-        progressBar.value = percentComplete;
+function onNetworkLoad() {
+  $('.loading-container').css({display: 'none'});
+  startDemoClassification();
+  g_isReady = true;
+}
+
+function toggleWebcam() {
+  if (g_isWebcamOn) {
+    stopWebcamClassification();
+    g_currentImage = undefined;
+    $('.vote-tag-container').hide();
+  } else {
+    startWebcamClassification();
+  }
+}
+
+function startWebcamClassification() {
+  navigator.getMedia = (navigator.getUserMedia ||
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia ||
+    navigator.msGetUserMedia);
+
+  if (!navigator.getMedia) {
+    alert('Your browser doesn\'t support the WebRTC extensions that are required to access the webcam, sorry!');
+    return;
+  }
+
+  g_wantDemo = false;
+
+  navigator.getMedia({video: true},
+      function(stream) {
+        g_isWebcamOn = true;
+        g_webcamStream = stream;
+        $('.use-webcam').text('Stop Webcam');
+        g_video.src = URL.createObjectURL(stream);
+        g_webcamInterval = setInterval(classifyWebcamSnapshot, 500);
+      },
+      function(err) {
+        alert('Could\'t access the webcam, failed with ' + err);
+      }
+  );
+}
+
+function stopWebcamClassification() {
+  if (!g_isWebcamOn) {
+    return;
+  }
+  if (g_webcamStream.pause) {
+    g_webcamStream.pause();
+  }
+  if (g_webcamStream.stop) {
+    g_webcamStream.stop();
+  }
+  g_video.src = null;
+  $('.use-webcam').text('Use Webcam');
+  clearInterval(g_webcamInterval);
+  g_isWebcamOn = false;
+}
+
+function startDemoClassification() {
+  if (g_wantDemo) {
+    g_currentImage = undefined;
+    $('.vote-tag-container').hide();
+    _.delay(startDemoClassification, 5000);
+  }
+  var demoPhotoIndex = Math.floor(Math.random() * g_demoPhotoUrls.length);
+  var demoPhotoUrl = g_demoPhotoUrls[demoPhotoIndex];
+  var proxiedUrl = 'JavascriptLibrary/Images/' + demoPhotoUrl;
+  var demoImage = $('<img>');
+  demoImage.on('load', function(event) {
+    var demoImageElement = demoImage.get(0);
+    if (g_wantDemo) {
+      classifyImage(demoImageElement, demoImageElement.width, demoImageElement.height);
+    }
+  });
+  demoImage.attr('src', proxiedUrl);
+}
+
+function classifyImage(image, width, height) {
+
+  var destSize = 256;
+
+  var canvasElement = $('.image-preview-canvas').get(0);
+  canvasElement.width = destSize;
+  canvasElement.height = destSize;
+
+  var sourceX;
+  var sourceY;
+  var sourceSize;
+  if (width > height) {
+    sourceSize = height;
+    sourceX = ((width - height) / 2);
+    sourceY = 0;
+  } else {
+    sourceSize = width;
+    sourceX = 0;
+    sourceY = ((height - width) / 2);
+  }
+
+  var canvas = canvasElement.getContext('2d');
+  // Workaround for Firefox bug that causes an error when the video's
+  // not yet ready and we try to draw with it. See:
+  // http://stackoverflow.com/questions/18580844/firefox-drawimagevideo-fails-with-ns-error-not-available-component-is-not-av
+  try {
+    canvas.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, destSize, destSize);
+  } catch (e) {
+    if (e.name == 'NS_ERROR_NOT_AVAILABLE') {
+      return;
+    } else {
+      throw e;
+    }
+  }
+
+  var previewElement = $('.image-preview');
+  var previewCanvas = previewElement.get(0).getContext('2d');
+
+  var previewSize = previewElement.width();
+  previewElement.attr('width', previewSize);
+  previewElement.attr('height', previewSize);
+  previewCanvas.drawImage(canvasElement, 0, 0, previewSize, previewSize);
+
+  var imageData = canvas.getImageData(0, 0, destSize, destSize);
+
+  var inputBuffer = new Buffer([destSize, destSize, 3]);
+  for (var y = 0; y < destSize; y += 1) {
+    for (var x = 0; x < destSize; x += 1) {
+      var imageOffset = (y * destSize * 4) + (x * 4);
+      var bufferOffset = (y * destSize * 3) + (x * 3);
+      inputBuffer._data[bufferOffset + 0] = imageData.data[imageOffset + 0];
+      inputBuffer._data[bufferOffset + 1] = imageData.data[imageOffset + 1];
+      inputBuffer._data[bufferOffset + 2] = imageData.data[imageOffset + 2];
+    }
+  }
+  inputBuffer.setName('inputBuffer');
+
+  var startTime = new Date().getTime();
+  var results = g_network.classifyImage(inputBuffer, false, 0);
+  var endTime = new Date().getTime();
+  var duration = (endTime - startTime);
+
+  var topResults = _.select(results, function(prediction) {
+    return (prediction.value > 0.01);
+  });
+  topResults = topResults.sort(function(a, b) { return (b.value - a.value); });
+  topResults = _.first(topResults, 10);
+  var resultsList = $('.results-list');
+  resultsList.empty();
+  if (topResults.length > 0) {
+    _.each(topResults, function(prediction) {
+      var score = Math.round(prediction.value * 100);
+      var resultEntry = $('<tr>')
+      .addClass('result-entry');
+      var resultScore = $('<td>').text(score + '%').addClass('score');
+      var prettyLabel = prediction.label.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+          return letter.toUpperCase();
+      });
+      var resultLabel = $('<td>').text(prettyLabel).addClass('label');
+      resultEntry.append(resultScore);
+      resultEntry.append(resultLabel);
+      resultsList.append(resultEntry);
+    });
+  } else {
+    var resultEntry = $('<div>')
+    .addClass('result-entry')
+    .text('No results found');
+    resultsList.append(resultEntry);
+  }
+
+  // var holder = document.getElementsByClassName('twitter-button-holder')[0];
+  // holder.innerHTML = '<a href="https://twitter.com/share" class="twitter-share-button" data-text="blah blah" data-via="jetpacapp" data-size="large" data-count="none">Tweet</a>';
+  // twttr.widgets.load();
+
+  $('.time').text('Took ' + duration + 'ms');
+}
+
+var g_isAlreadyClassifying;
+function classifyWebcamSnapshot() {
+  if (g_isAlreadyClassifying) {
+    return;
+  }
+  g_isAlreadyClassifying = true;
+  var videoElement = g_video;
+  classifyImage(videoElement, videoElement.videoWidth, videoElement.videoHeight);
+  g_isAlreadyClassifying = false;
+}
+
+var SITE = SITE || {};
+
+SITE.fileInputs = function() {
+  var $this = $(this),
+      $val = $this.val(),
+      valArray = $val.split('\\'),
+      newVal = valArray[valArray.length - 1],
+      $button = $this.siblings('.button'),
+      $fakeFile = $this.siblings('.file-holder');
+  if (newVal !== '') {
+    $button.text('Photo Chosen');
+    var fileInput = $('#photo').get(0);
+    onFilePick(fileInput.files[0]);
+  }
+};
+
+var g_uploadedImages = {};
+var g_isReady = false;
+var g_currentImage;
+
+$(document).on({
+  click: function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (g_isReady) {
+      $('.vote-tag-container').show();
+      stopWebcamClassification();
+      g_wantDemo = false;
+
+      $('.spotter-image-gallery .img').removeClass('selected');
+      $(this).addClass('selected');
+
+      var img = $(this).find('img')[0];
+      g_currentImage = img;
+
+      var data = $(img).data();
+
+      $('.vote-box div').text(data.votes);
+      $('.tag-box span').removeClass('selected');
+      if (data.tags != '') {
+        $('.tag-box span.' + data.tags).addClass('selected');
       }
 
-      function onNetworkLoad() {
-        testDogImage();
-        beginWebcamClassification();
-      }
+      var image = new Image();
+      image.onload = function() {
+        classifyImage(image, image.width, image.height);
+      };
+      var url = img.src.substring(img.src.lastIndexOf('/') + 1);
+      image.src = '/deepbeliefdemo/getimage/' + url;
+    }
+  }
+}, '.spotter-image-gallery .img');
 
-      function beginWebcamClassification() {
-        navigator.getMedia = ( navigator.getUserMedia ||
-          navigator.webkitGetUserMedia ||
-          navigator.mozGetUserMedia ||
-          navigator.msGetUserMedia);
+function onFilePick(file) {
+  var imageType = /image.*/;
+  if (!file.type.match(imageType)) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var image = new Image();
+    image.src = reader.result;
+    stopWebcamClassification();
+    g_wantDemo = false;
+    $('.vote-tag-container').show();
+    // Delay is needed for Firefox for some reason.
+    _.delay(function() {
+      if (_.isUndefined(g_uploadedImages[reader.result])) {
+        $('.vote-box div').text('0');
+        $('.tag-box span').removeClass('selected');
+        g_uploadedImages[reader.result] = true;
+        $.ajax({
+          url: '/deepbeliefdemo/saveimage',
+          data: {
+            image: reader.result,
+            _csrf: csrf._csrf
+          },
+          method: 'POST',
+          async: true,
+          success: function(result) {
+            // console.log(result);
+            g_uploadedImages[reader.result] = true;
+            image.dataset['tags'] = '';
+            image.dataset['votes'] = '0';
+            image.dataset['id'] = result;
+            var newImageObj = {
+              src: reader.result,
+              id: result,
+              tags: '',
+              votes: '0',
+              template: '<div class="img"><img src="' + reader.result + '" data-id="' + result + '" data-tags="" data-votes="0"></div>'
+            };
+            g_galleryImages.unshift(newImageObj);
+            g_currentImage = image;
+            // $('.spotter-image-gallery .gallery').prepend(newImageObj.template);
 
-        navigator.getMedia({video: true},
-            function(stream) {
-              video.src = URL.createObjectURL(stream)
-              setInterval(classifyWebcamSnapshot, 500);
-            },
-            function(err) {
-              console.log("Unable to get video stream!")
-            }
-        );
-
-      }
-
-      testGemm();
-      //testMaxPatch();
-
-      var dogImage;
-      function testDogImage() {
-        dogImage = document.createElement('img');
-        dogImage.onload = function() {
-          classifyImage(dogImage, dogImage.width, dogImage.height);
-        };
-        dogImage.src = 'data/dog.jpg';
-      }
-
-      function classifyImage(image, width, height) {
-
-        var destSize = 256;
-
-        var canvasElement = document.getElementById('image-preview');//document.createElement("canvas");
-        canvasElement.width = destSize;
-        canvasElement.height = destSize;
-
-        var sourceX;
-        var sourceY;
-        var sourceSize;
-        if (width > height) {
-          sourceSize = height;
-          sourceX = ((width - height) / 2);
-          sourceY = 0;
-        } else {
-          sourceSize = width;
-          sourceX = 0;
-          sourceY = ((height - width) / 2);
-        }
-
-        var canvas = canvasElement.getContext("2d");
-        // Workaround for Firefox bug that causes an error when the video's
-        // not yet ready and we try to draw with it. See:
-        // http://stackoverflow.com/questions/18580844/firefox-drawimagevideo-fails-with-ns-error-not-available-component-is-not-av
-        try {
-          canvas.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, destSize, destSize);
-        } catch (e) {
-          if (e.name == "NS_ERROR_NOT_AVAILABLE") {
-            return;
-          } else {
-            throw e;
+            loadGalleryImages();
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            // console.log(jqXHR);
+            // console.log(textStatus);
+            // console.log(errorThrown);
+            delete g_uploadedImages[reader.result];
           }
-        }
-        var imageData = canvas.getImageData(0, 0, destSize, destSize);
-
-        var inputBuffer = new Buffer([destSize, destSize, 3]);
-        for (var y = 0; y < destSize; y += 1) {
-          for (var x = 0; x < destSize; x += 1) {
-            var imageOffset = (y * destSize * 4) + (x * 4);
-            var bufferOffset = (y * destSize * 3) + (x * 3);
-            inputBuffer._data[bufferOffset + 0] = imageData.data[imageOffset + 0];
-            inputBuffer._data[bufferOffset + 1] = imageData.data[imageOffset + 1];
-            inputBuffer._data[bufferOffset + 2] = imageData.data[imageOffset + 2];
-          }
-        }
-        inputBuffer.setName('inputBuffer');
-
-        var startTime = new Date().getTime();
-        var results = network.classifyImage(inputBuffer, false, 0);
-        var endTime = new Date().getTime();
-        var duration = (endTime - startTime);
-
-        var topResults = _.select(results, function(prediction) {
-          return (prediction.value > 0.01);
-        });
-        topResults = topResults.sort(function(a, b) { return (b.value - a.value); });
-        topResults = _.first(topResults, 10);
-        var labelsContainer = document.getElementsByClassName('labels-container')[0];
-        labelsContainer.innerHTML = '';
-        if (topResults.length > 0) {
-          _.each(topResults, function(prediction) {
-            var score = Math.round(prediction.value * 100);
-            var label = document.createElement('div');
-            label.className = 'label';
-            label.innerHTML = prediction.label + ' - ' + score + '%';
-            labelsContainer.appendChild(label);
-          });
-        } else {
-          var label = document.createElement('div');
-          label.className = 'label';
-          label.innerHTML = 'No labels found';
-          labelsContainer.appendChild(label);
-        }
-        var timeContainer = document.getElementsByClassName('time')[0];
-        timeContainer.innerHTML = 'Took ' + duration + 'ms';
-      }
-
-      var g_isAlreadyClassifying;
-      function classifyWebcamSnapshot() {
-        if (g_isAlreadyClassifying) {
-          return;
-        }
-        g_isAlreadyClassifying = true;
-        var videoElement = document.getElementById('live');
-        classifyImage(videoElement, videoElement.videoWidth, videoElement.videoHeight);
-        g_isAlreadyClassifying = false;
-      }
-
-      window.onload = function() {
-        var fileInput = document.getElementById('file-input');
-        fileInput.addEventListener('change', function(e) {
-          var file = fileInput.files[0];
-          var imageType = /image.*/;
-
-          if (file.type.match(imageType)) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-              var image = new Image();
-              image.src = reader.result;
-              g_isAlreadyClassifying = true;
-              classifyImage(image, image.width, image.height);
-            }
-            reader.readAsDataURL(file); 
-          } else {
-            alert('File type "' + file.type + '" can\'t be read as an image');
-          }
-        });
-
-        var gpuCalculator = new GPUCalculator();
-
-        var testFragmentShader = '' +
-          '  precision mediump float;\n' +
-          '  varying vec2 outTexCoord;\n' +
-          '  void main(void) {\n' +
-          '    vec2 texCoord = outTexCoord;\n' +
-          '    gl_FragColor = vec4(0.333333, 1, 0, 1);\n' +
-          '  }\n';
-
-        var testOutput = gpuCalculator.applyShader({
-          shaderText: testFragmentShader,
-          width: 300,
-          height: 300
-        });
-
-        var halveFragmentShader = '' +
-          '  precision mediump float;\n' +
-          '  varying vec2 outTexCoord;\n' +
-          '  uniform sampler2D input0;\n' +
-          '  uniform vec2 input0Scale;\n' +
-          '  uniform vec2 input0Offset;\n' +
-          '  void main(void) {\n' +
-          '    vec2 texCoord0 = outTexCoord;\n' +
-          '    texCoord0 += input0Offset;\n' +
-          '    texCoord0 *= input0Scale;\n' +
-          '    vec4 inputColor = texture2D(input0, texCoord0);\n' +
-          '    gl_FragColor = inputColor * 0.25;\n' +
-          '  }\n';
-
-        var halvedOutput = gpuCalculator.applyShader({
-          shaderText: halveFragmentShader,
-          inputBuffers: { input0: testOutput },
-          width: 300,
-          height: 300
-        });
-
-        var result = gpuCalculator.getResult(testOutput);
-        console.log('result = ' + result[0] + ', ' + result[1] + ', ' + result[2] + ', ' + result[3]);
-        console.log('result[1196] = ' + result[1196] + ', ' + result[1197] + ', ' + result[1198] + ', ' + result[1199]);
-
-        gpuCalculator.deleteBuffer(testOutput);
-        gpuCalculator.deleteBuffer(halvedOutput);
-
-        //testGemm();
-      }
-
-      function testGemm() {
-        var weights;
-        var input;
-        var expectedOutput;
-        delayedBufferFromFileAtURL('data/gemm_test/a.buff', function(buffer) {
-          weights = buffer;
-          delayedBufferFromFileAtURL('data/gemm_test/b.buff', function(buffer) {
-            input = buffer;
-            delayedBufferFromFileAtURL('data/gemm_test/output.buff', function(buffer) {
-              expectedOutput = buffer;
-              doTestGemm(weights, input, expectedOutput);
-            });
-          });
         });
       }
 
-      function doTestGemm(weights, input, expectedOutput) {
+      classifyImage(image, image.width, image.height);
+    }, 200);
+  }
+  reader.readAsDataURL(file);
+}
 
-        var inputDims = input._dims;
-        // We're expecting (# of images, # of values)
-        console.assert(inputDims._dims.length == 2);
+function hasWebGL() {
+  var canvas = document.createElement('canvas');
+  var gl;
+  try {
+    gl = canvas.getContext('webgl');
+  } catch (x) {
+    gl = null;
+  }
 
-        var imageCount = inputDims._dims[0];
-        var inputValuesCount = inputDims._dims[1];
+  if (gl === null) {
+    try {
+      gl = canvas.getContext('experimental-webgl');
+      glExperimental = true;
+    } catch (x) {
+      gl = null;
+    }
+  }
 
-        var weightsDims = weights._dims;
-        // We're expecting (# of values in input, # of output channels)
-        console.assert(inputDims._dims.length == 2);
-        console.assert(weightsDims._dims[0] == inputValuesCount);
-        var outputChannels = weightsDims._dims[1];
+  if (gl) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
-        var outputDims = new Dimensions(imageCount, outputChannels);
-        var output = new Buffer(outputDims);
-        output.setName('gpu output');
+function getMaxTextureSize() {
+  var canvas = document.createElement('canvas');
+  var gl;
+  try {
+    gl = canvas.getContext('webgl');
+  } catch (x) {
+    gl = null;
+  }
 
-        var m = outputChannels;
-        var n = input._dims._dims[0];
-        var k = input._dims._dims[1];
-        var alpha = 1.0;
-        var lda = m;
-        var ldb = k;
-        var ldc = m;
-        var beta = 0.0;
-        var gpuOutput = glGemm(
-          m,
-          n,
-          k,
-          alpha,
-          weights,
-          lda,
-          input,
-          ldb,
-          beta,
-          gpuOutput,
-          ldc
-        );
+  if (gl === null) {
+    try {
+      gl = canvas.getContext('experimental-webgl');
+      glExperimental = true;
+    } catch (x) {
+      gl = null;
+    }
+  }
 
-        var cpuOutput = new Buffer(outputDims);
-        cpuOutput.setName('cpu output');
-        cpuOutput = naiveGemm(
-          m,
-          n,
-          k,
-          alpha,
-          weights._data,
-          lda,
-          input._data,
-          ldb,
-          beta,
-          cpuOutput._data,
-          ldc
-        );
+  if (gl) {
+    return Number(gl.getParameter(gl.MAX_TEXTURE_SIZE));
+  } else {
+    return 0;
+  }
+}
 
-        gpuOutput.areAllClose(cpuOutput);
-        console.log(gpuOutput);
-        console.log(cpuOutput);
-      }
+(function() {
+  var matched, browser;
+  // Use of jQuery.browser is frowned upon.
+  // More details: http://api.jquery.com/jQuery.browser
+  // jQuery.uaMatch maintained for back-compat
+  jQuery.uaMatch = function(ua) {
+    ua = ua.toLowerCase();
 
-      function testMaxPatch() {
-        var inputData = new Float32Array([
-          9,    8,    7,    6,    0,    0,    0,    0,
-          0,    0,    0,    0,    0,    0,    0,    0,
-          9,    0,    0,    0,    5,    4,    3,    2,
-          0,    0,    0,    0,    0,    0,    0,    0,
-        ]);
-        var inputDims = new Dimensions(1, 4, 2, 4);
-        var inputBuffer = new Buffer(inputDims, inputData);
-        var patchWidth = 2;
-        var stride = 2;
-        var naiveOutput = naiveMaxPatch(inputBuffer, patchWidth, stride);
-        var glOutput = glMaxPatch(inputBuffer, patchWidth, stride);
+    var match = /(chrome)[ \/]([\w.]+)/.exec(ua) ||
+      /(webkit)[ \/]([\w.]+)/.exec(ua) ||
+      /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) ||
+      /(msie) ([\w.]+)/.exec(ua) ||
+      ua.indexOf('compatible') < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
+      [];
 
-        console.log(naiveOutput);
-        console.log(glOutput);
+    return {
+      browser: match[1] || '',
+      version: match[2] || '0'
+    };
+  };
 
-        console.assert(glOutput.areAllClose(naiveOutput));
+  matched = jQuery.uaMatch(navigator.userAgent);
+  browser = {};
 
-      }
+  if (matched.browser) {
+    browser[matched.browser] = true;
+    browser.version = matched.version;
+  }
 
+  // Chrome is Webkit, but Webkit is also Safari.
+  if (browser.chrome) {
+    browser.webkit = true;
+  } else if (browser.webkit) {
+    browser.safari = true;
+  }
+
+  jQuery.browser = browser;
+})();
+
+function checkCompatibility() {
+  if (!hasWebGL()) {
+    $('.compatibility-message').html('This demo needs WebGL to run, and unfortunately it\'s not available in your browser.');
+    if ($.browser.safari) {
+      $('.compatibility-action').html('If you\'re on OS X Safari, you can turn it by following <a href="https://discussions.apple.com/thread/3300585?tstart=0" target="_new">these instructions</a> and then reloading this page.');
+    } else {
+      $('.compatibility-action').html('If you\'re on Chrome, Firefox or Internet Explorer, you may be able to enable it by upgrading.');
+    }
+    return false;
+  }
+  var maxTextureSize = getMaxTextureSize();
+  var neededTextureSize = 4096;
+  if (maxTextureSize < neededTextureSize) {
+    $('.compatibility-message').html('Your graphics card doesn\'t support large enough textures.');
+    $('.compatibility-action').html(
+      'This demo requires a minimum of ' +
+      neededTextureSize + 'x' + neededTextureSize +
+      ', and your GPU can only handle ' +
+      maxTextureSize + 'x' + maxTextureSize + ', sorry.');
+      return false;
+  }
+  $('.compatibility-container').css({display: 'none'});
+  $('.loading-container').css({display: 'block'});
+  return true;
+}
+
+$(_.delay(function() {
+  if (checkCompatibility()) {
+    $('.file-wrapper input[type=file]').bind('change focus click', SITE.fileInputs);
+
+    $('.load-image').on('click', function(event) {
+
+    });
+    $('.use-webcam').on('click', function(event) {
+      toggleWebcam();
+    });
+    g_video = $('#live').get(0);
+    var networkUrl = 'https://d2rlgkokhpr1uq.cloudfront.net/jetpac.ntwk'; // 'data/example_networks/jetpac.ntwk'
+    // var networkUrl = '/jetpac.ntwk';
+    g_network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress});
+  }
+}, 0));
     </script>
-  </body>
-</html>
+
+</body>
