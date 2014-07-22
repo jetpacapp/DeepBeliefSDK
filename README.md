@@ -5,7 +5,7 @@ The SDK for [Jetpac's](https://www.jetpac.com) iOS, Android, Linux, and OS X Dee
 
 ![](http://petewarden.files.wordpress.com/2014/04/learningshot61.png)
 
-This is a compiled framework implementing the convolutional neural network 
+This is a  framework implementing the convolutional neural network
 architecture [described by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton](http://www.cs.toronto.edu/~hinton/absps/imagenet.pdf).
 The processing code has been highly optimized to run within the memory and 
 processing constraints of modern mobile devices, and can analyze an image in under 300ms on
@@ -612,7 +612,7 @@ Join the [Deep Belief Developers email list](https://groups.google.com/group/dee
 ## License
 
 The binary framework and jetpac.ntwk network parameter file are under the BSD three-clause
-license, included in this folder as LICENSE.
+license, included in this folder as LICENSE. All source code is under that BSD license unless otherwise noted.
 
 The ccv2010.ntwk and ccv2012.ntwk network models were converted from files created as part of the [LibCCV project](http://libccv.org/) and are licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit [http://creativecommons.org/licenses/by/4.0/](http://creativecommons.org/licenses/by/4.0/).
 
