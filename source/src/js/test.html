@@ -1,0 +1,344 @@
+<html>
+  <head>
+    <title>Jetpac Deep Belief Demo</title>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="glMatrix.js"></script>
+    <!--<script type="text/javascript" src="webgl-debug.js"></script>-->
+    <script type="text/javascript" src="webgl.js"></script>
+    <script type="text/javascript" src="jpcnn.js"></script>
+    <style>
+      .image {
+        float: left;
+      }
+      .labels-container {
+        float: left;
+        width: 400px;
+      }
+      .video-preview {
+        width: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Jetpac's Deep Belief in Javascript</h2>
+
+    <progress id="network-progress-bar" value="0" max="100"></progress>
+
+    <video style="visibility: visible;" class="video-preview" id="live" autoplay></video>
+
+    <div>
+      Choose an image file to analyze:
+      <input type="file" id="file-input">
+    </div>
+
+    <canvas class="image" id="image-preview"></canvas>
+    <div class="labels-container">
+    </div>
+    <div class="time"></div>
+
+    <canvas class="gl-test" id="gl-test"></canvas>
+
+    <script type="text/javascript">
+      var video = document.getElementById("live");
+
+      var networkUrl = 'http://d2rlgkokhpr1uq.cloudfront.net/jetpac.ntwk'; // 'data/example_networks/jetpac.ntwk'
+      var network = new Network(networkUrl, onNetworkLoad, {progress: onNetworkProgress});
+
+      function onNetworkProgress(percentComplete) {
+        var progressBar = document.getElementById('network-progress-bar');
+        progressBar.value = percentComplete;
+      }
+
+      function onNetworkLoad() {
+        testDogImage();
+        beginWebcamClassification();
+      }
+
+      function beginWebcamClassification() {
+        navigator.getMedia = ( navigator.getUserMedia ||
+          navigator.webkitGetUserMedia ||
+          navigator.mozGetUserMedia ||
+          navigator.msGetUserMedia);
+
+        navigator.getMedia({video: true},
+            function(stream) {
+              video.src = URL.createObjectURL(stream)
+              setInterval(classifyWebcamSnapshot, 500);
+            },
+            function(err) {
+              console.log("Unable to get video stream!")
+            }
+        );
+
+      }
+
+      testGemm();
+      //testMaxPatch();
+
+      var dogImage;
+      function testDogImage() {
+        dogImage = document.createElement('img');
+        dogImage.onload = function() {
+          classifyImage(dogImage, dogImage.width, dogImage.height);
+        };
+        dogImage.src = 'data/dog.jpg';
+      }
+
+      function classifyImage(image, width, height) {
+
+        var destSize = 256;
+
+        var canvasElement = document.getElementById('image-preview');//document.createElement("canvas");
+        canvasElement.width = destSize;
+        canvasElement.height = destSize;
+
+        var sourceX;
+        var sourceY;
+        var sourceSize;
+        if (width > height) {
+          sourceSize = height;
+          sourceX = ((width - height) / 2);
+          sourceY = 0;
+        } else {
+          sourceSize = width;
+          sourceX = 0;
+          sourceY = ((height - width) / 2);
+        }
+
+        var canvas = canvasElement.getContext("2d");
+        // Workaround for Firefox bug that causes an error when the video's
+        // not yet ready and we try to draw with it. See:
+        // http://stackoverflow.com/questions/18580844/firefox-drawimagevideo-fails-with-ns-error-not-available-component-is-not-av
+        try {
+          canvas.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, destSize, destSize);
+        } catch (e) {
+          if (e.name == "NS_ERROR_NOT_AVAILABLE") {
+            return;
+          } else {
+            throw e;
+          }
+        }
+        var imageData = canvas.getImageData(0, 0, destSize, destSize);
+
+        var inputBuffer = new Buffer([destSize, destSize, 3]);
+        for (var y = 0; y < destSize; y += 1) {
+          for (var x = 0; x < destSize; x += 1) {
+            var imageOffset = (y * destSize * 4) + (x * 4);
+            var bufferOffset = (y * destSize * 3) + (x * 3);
+            inputBuffer._data[bufferOffset + 0] = imageData.data[imageOffset + 0];
+            inputBuffer._data[bufferOffset + 1] = imageData.data[imageOffset + 1];
+            inputBuffer._data[bufferOffset + 2] = imageData.data[imageOffset + 2];
+          }
+        }
+        inputBuffer.setName('inputBuffer');
+
+        var startTime = new Date().getTime();
+        var results = network.classifyImage(inputBuffer, false, 0);
+        var endTime = new Date().getTime();
+        var duration = (endTime - startTime);
+
+        var topResults = _.select(results, function(prediction) {
+          return (prediction.value > 0.01);
+        });
+        topResults = topResults.sort(function(a, b) { return (b.value - a.value); });
+        topResults = _.first(topResults, 10);
+        var labelsContainer = document.getElementsByClassName('labels-container')[0];
+        labelsContainer.innerHTML = '';
+        if (topResults.length > 0) {
+          _.each(topResults, function(prediction) {
+            var score = Math.round(prediction.value * 100);
+            var label = document.createElement('div');
+            label.className = 'label';
+            label.innerHTML = prediction.label + ' - ' + score + '%';
+            labelsContainer.appendChild(label);
+          });
+        } else {
+          var label = document.createElement('div');
+          label.className = 'label';
+          label.innerHTML = 'No labels found';
+          labelsContainer.appendChild(label);
+        }
+        var timeContainer = document.getElementsByClassName('time')[0];
+        timeContainer.innerHTML = 'Took ' + duration + 'ms';
+      }
+
+      var g_isAlreadyClassifying;
+      function classifyWebcamSnapshot() {
+        if (g_isAlreadyClassifying) {
+          return;
+        }
+        g_isAlreadyClassifying = true;
+        var videoElement = document.getElementById('live');
+        classifyImage(videoElement, videoElement.videoWidth, videoElement.videoHeight);
+        g_isAlreadyClassifying = false;
+      }
+
+      window.onload = function() {
+        var fileInput = document.getElementById('file-input');
+        fileInput.addEventListener('change', function(e) {
+          var file = fileInput.files[0];
+          var imageType = /image.*/;
+
+          if (file.type.match(imageType)) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              var image = new Image();
+              image.src = reader.result;
+              g_isAlreadyClassifying = true;
+              classifyImage(image, image.width, image.height);
+            }
+            reader.readAsDataURL(file); 
+          } else {
+            alert('File type "' + file.type + '" can\'t be read as an image');
+          }
+        });
+
+        var gpuCalculator = new GPUCalculator();
+
+        var testFragmentShader = '' +
+          '  precision mediump float;\n' +
+          '  varying vec2 outTexCoord;\n' +
+          '  void main(void) {\n' +
+          '    vec2 texCoord = outTexCoord;\n' +
+          '    gl_FragColor = vec4(0.333333, 1, 0, 1);\n' +
+          '  }\n';
+
+        var testOutput = gpuCalculator.applyShader({
+          shaderText: testFragmentShader,
+          width: 300,
+          height: 300
+        });
+
+        var halveFragmentShader = '' +
+          '  precision mediump float;\n' +
+          '  varying vec2 outTexCoord;\n' +
+          '  uniform sampler2D input0;\n' +
+          '  uniform vec2 input0Scale;\n' +
+          '  uniform vec2 input0Offset;\n' +
+          '  void main(void) {\n' +
+          '    vec2 texCoord0 = outTexCoord;\n' +
+          '    texCoord0 += input0Offset;\n' +
+          '    texCoord0 *= input0Scale;\n' +
+          '    vec4 inputColor = texture2D(input0, texCoord0);\n' +
+          '    gl_FragColor = inputColor * 0.25;\n' +
+          '  }\n';
+
+        var halvedOutput = gpuCalculator.applyShader({
+          shaderText: halveFragmentShader,
+          inputBuffers: { input0: testOutput },
+          width: 300,
+          height: 300
+        });
+
+        var result = gpuCalculator.getResult(testOutput);
+        console.log('result = ' + result[0] + ', ' + result[1] + ', ' + result[2] + ', ' + result[3]);
+        console.log('result[1196] = ' + result[1196] + ', ' + result[1197] + ', ' + result[1198] + ', ' + result[1199]);
+
+        gpuCalculator.deleteBuffer(testOutput);
+        gpuCalculator.deleteBuffer(halvedOutput);
+
+        //testGemm();
+      }
+
+      function testGemm() {
+        var weights;
+        var input;
+        var expectedOutput;
+        delayedBufferFromFileAtURL('data/gemm_test/a.buff', function(buffer) {
+          weights = buffer;
+          delayedBufferFromFileAtURL('data/gemm_test/b.buff', function(buffer) {
+            input = buffer;
+            delayedBufferFromFileAtURL('data/gemm_test/output.buff', function(buffer) {
+              expectedOutput = buffer;
+              doTestGemm(weights, input, expectedOutput);
+            });
+          });
+        });
+      }
+
+      function doTestGemm(weights, input, expectedOutput) {
+
+        var inputDims = input._dims;
+        // We're expecting (# of images, # of values)
+        console.assert(inputDims._dims.length == 2);
+
+        var imageCount = inputDims._dims[0];
+        var inputValuesCount = inputDims._dims[1];
+
+        var weightsDims = weights._dims;
+        // We're expecting (# of values in input, # of output channels)
+        console.assert(inputDims._dims.length == 2);
+        console.assert(weightsDims._dims[0] == inputValuesCount);
+        var outputChannels = weightsDims._dims[1];
+
+        var outputDims = new Dimensions(imageCount, outputChannels);
+        var output = new Buffer(outputDims);
+        output.setName('gpu output');
+
+        var m = outputChannels;
+        var n = input._dims._dims[0];
+        var k = input._dims._dims[1];
+        var alpha = 1.0;
+        var lda = m;
+        var ldb = k;
+        var ldc = m;
+        var beta = 0.0;
+        var gpuOutput = glGemm(
+          m,
+          n,
+          k,
+          alpha,
+          weights,
+          lda,
+          input,
+          ldb,
+          beta,
+          gpuOutput,
+          ldc
+        );
+
+        var cpuOutput = new Buffer(outputDims);
+        cpuOutput.setName('cpu output');
+        cpuOutput = naiveGemm(
+          m,
+          n,
+          k,
+          alpha,
+          weights._data,
+          lda,
+          input._data,
+          ldb,
+          beta,
+          cpuOutput._data,
+          ldc
+        );
+
+        gpuOutput.areAllClose(cpuOutput);
+        console.log(gpuOutput);
+        console.log(cpuOutput);
+      }
+
+      function testMaxPatch() {
+        var inputData = new Float32Array([
+          9,    8,    7,    6,    0,    0,    0,    0,
+          0,    0,    0,    0,    0,    0,    0,    0,
+          9,    0,    0,    0,    5,    4,    3,    2,
+          0,    0,    0,    0,    0,    0,    0,    0,
+        ]);
+        var inputDims = new Dimensions(1, 4, 2, 4);
+        var inputBuffer = new Buffer(inputDims, inputData);
+        var patchWidth = 2;
+        var stride = 2;
+        var naiveOutput = naiveMaxPatch(inputBuffer, patchWidth, stride);
+        var glOutput = glMaxPatch(inputBuffer, patchWidth, stride);
+
+        console.log(naiveOutput);
+        console.log(glOutput);
+
+        console.assert(glOutput.areAllClose(naiveOutput));
+
+      }
+
+    </script>
+  </body>
+</html>
