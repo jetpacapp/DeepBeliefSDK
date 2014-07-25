@@ -2681,7 +2681,13 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 
 int svm_save_model_to_file_handle(FILE* fp, const svm_model* model) {
 
-	char *old_locale = strdup(setlocale(LC_ALL, NULL));
+	char *locale = setlocale(LC_ALL, NULL);
+	char *old_locale;
+	if (!locale)
+		old_locale = NULL;
+	else
+	 	old_locale = strdup(locale);
+	 	
 	setlocale(LC_ALL, "C");
 
 	const svm_parameter& param = model->param;
@@ -2797,7 +2803,12 @@ svm_model *svm_load_model(const char *model_file_name)
 	FILE *fp = fopen(model_file_name,"rb");
 	if(fp==NULL) return NULL;
 
-	char *old_locale = strdup(setlocale(LC_ALL, NULL));
+	char *locale = setlocale(LC_ALL, NULL);
+	char *old_locale;
+	if (!locale)
+		old_locale = NULL;
+	else
+	 	old_locale = strdup(locale);
 	setlocale(LC_ALL, "C");
 
 	// read parameters

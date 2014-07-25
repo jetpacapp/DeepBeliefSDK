@@ -1,2 +1,5 @@
 *.o
+*.d
+*.so
+*.a
 data/example_networks/imagenet.ntwk
