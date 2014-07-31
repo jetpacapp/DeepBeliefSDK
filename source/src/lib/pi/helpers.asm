@@ -8,6 +8,12 @@ define(`raReadUniform', `ra32')
 define(`rbReadUniform', `rb32')
 define(`raZero', `ra39')
 define(`rbZero', `rb39')
+define(`raTmu0S', `ra56')
+define(`rbTmu0S', `rb56')
+define(`raTmu1S', `ra60')
+define(`rbTmu1S', `rb60')
+define(`raTmuNoSwap', `ra36')
+define(`rbTmuNoSwap', `rb36')
 
 # Macro argument constants
 define(`MODEW_32_BIT', 0)
@@ -191,3 +197,16 @@ NOP
 # ~~~
 # Do nothing on both pipes for a cycle
 define(`NOP', `nop ra39, ra39, ra39;       nop rb39, rb39, rb39')
+
+# LOG_AND_EXIT
+# ~~~~~~~~~~~~
+# Assuming you have a debug output register and end section, will
+# store the input register in the debug area and immediately jump
+# to the debug_exit label.
+define(`LOG_AND_EXIT',`
+NOP
+or rDebugOutput, $1, 0; nop
+brr ra39, debug_exit
+NOP
+NOP
+NOP')

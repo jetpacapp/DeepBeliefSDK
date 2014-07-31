@@ -24,7 +24,7 @@ typedef struct SPredictorInfoStruct {
   SLibSvmProblem* problem;
 } SPredictorInfo;
 
-//extern void test_qpu_gemm();
+extern void test_qpu_gemm();
 
 extern "C" {
 

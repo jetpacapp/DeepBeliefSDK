@@ -276,6 +276,7 @@ void Buffer::printContents(int maxElements) {
           assert(false); // Should never get here
           value = 0.0f;
         }
+        fprintf(output, "%.10f", value);
       }
       if (y < (height - 1)) {
         fprintf(output, "],\n");

@@ -238,7 +238,6 @@
 		592FF81518ECB34F00C164F8 /* libDeepBelief.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDeepBelief.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		592FF81A18ECB34F00C164F8 /* DeepBelief.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeepBelief.h; sourceTree = "<group>"; };
 		592FF85E18ECB42D00C164F8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
-		592FF8A918ECBCE500C164F8 /* jpcnn_ios copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "jpcnn_ios copy-Info.plist"; path = "/Users/petewarden/vagrant/jpcnn/jpcnn_ios copy-Info.plist"; sourceTree = "<absolute>"; };
 		594BBA6D1884A94A007F9A2A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		594BBA841886FE8A007F9A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		594BBA861886FE8A007F9A2A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -679,7 +678,6 @@
 				59CC3B7A1912D18B0046B191 /* OSXDeepBelief */,
 				594BBA831886FE8A007F9A2A /* Frameworks */,
 				59D2FBB8187F8D2A00427417 /* Products */,
-				592FF8A918ECBCE500C164F8 /* jpcnn_ios copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};

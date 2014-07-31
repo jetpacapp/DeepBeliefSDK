@@ -5,7 +5,7 @@
 include(`helpers.asm')
 
 # Constants we'll use later on
-define(`VECTORS_PER_PASS', 8)
+define(`VECTORS_PER_PASS', 1)
 define(`ELEMENTS_PER_PASS', `eval(VECTORS_PER_PASS * 16)')
 define(`ELEMENTS_PER_PASS_MINUS_ONE', `eval(ELEMENTS_PER_PASS - 1)')
 define(`A_BYTES_PER_PASS', `eval(ELEMENTS_PER_PASS * 4)')
@@ -14,8 +14,10 @@ define(`ELEMENTS_PER_FINISH_PASS', 16)
 define(`ELEMENTS_PER_FINISH_PASS_MINUS_ONE', `eval(ELEMENTS_PER_FINISH_PASS - 1)')
 define(`A_BYTES_PER_FINISH_PASS', `eval(ELEMENTS_PER_FINISH_PASS * 4)')
 define(`B_BYTES_PER_FINISH_PASS', `eval(ELEMENTS_PER_FINISH_PASS * 4)')
-define(`NUM_QPUS', 8)
+define(`VPM_ROWS_PER_PASS', 1)
+define(`NUM_QPUS', 12)
 define(`ALL_DONE_SEMA', 0)
+define(`SHOULD_DISABLE_TMU_SWAPPING', 1)
 
 # Registers used to hold uniforms
 define(`rM', ra0)
@@ -58,7 +60,7 @@ define(`rA64to79', rb4)
 define(`rA80to95', rb5)
 define(`rA96to111', rb6)
 define(`rA112to127', rb7)
-define(`rBaseMask', rb8)
+define(`rLinearRamp', rb8)
 define(`rElementCountMask', rb9)
 define(`rRowsToLoad', rb10)
 define(`rElementsRemaining', rb11)
@@ -91,11 +93,19 @@ or rWhichQPU, raReadUniform, 0; nop
 # Store 0.5f in the debug output register, so we can tell if it's been untouched
 ldi rDebugOutput, 0x3f000000
 
+or raTmu0S, rDebugAddress, 0; nop
+or.ldtmu0 ra39, ra39, ra39; nop
+add rDebugOutput, r4, 1; nop
+
+# Turn off the automatic switching of TMU0/1 behind the scenes since we're
+# going to explicitly control calling each TMU unit.
+ldi raTmuNoSwap, SHOULD_DISABLE_TMU_SWAPPING
+
 # Set up our working area of memory in the shared VPM space, based on the
 # QPU number we've been given. The VPM can be viewed as a 2d table, 16 floats
-# wide and 64 rows high. In our case, we use 8 QPUs, and give each one 8 rows
-# in the VPM table.
-nop rb39, r0, r0; mul24 rTotal, rWhichQPU, VECTORS_PER_PASS
+# wide and 64 rows high. In our case, we use 12 QPUs, and give each one a single
+# row in the VPM table.
+nop rb39, r0, r0; mul24 rTotal, rWhichQPU, VPM_ROWS_PER_PASS
 ldi rAccum0, VPM_DMA_LOAD_SETUP_ADDRY_SHIFT
 shl rDMALoadAddrY, rTotal, rAccum0; nop
 ldi rAccum0, VPM_BLOCK_READ_SETUP_ADDR_SHIFT
@@ -116,7 +126,7 @@ add rAccum0, rAccum0, rAccum1; nop
 ldi rAccum1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 3]
 add rAccum0, rAccum0, rAccum1; nop
 ldi rAccum1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]
-add rBaseMask, rAccum0, rAccum1; nop
+add rLinearRamp, rAccum0, rAccum1; nop
 
 or rI, rWhichQPU, 0; nop
 loop_i:
@@ -147,268 +157,115 @@ add rCurrentB, rBAddress, rAccum0; nop
 
 ldi rTotal, 0
 
-ldi rL, 0
-main_loop_l:
+# Constants we use for address calculations inside the loop
+or rAccum1, rLinearRamp, rLinearRamp; nop
+shl rAccum1, rAccum1, 2; nop
+ldi rAccum2, 64
 
-# See if we're out of 128-element chunks to process yet
+# Kick off eight vector fetches (each of 16 floats) through the TMUs.
+# We explicitly control which TMU is used, so four are fired off on TMU 0, and
+# four on TMU1. This is the maximum number we can keep in-flight at a time.
+add raTmu0S, rCurrentA, rAccum1; nop
+add raTmu1S, rCurrentB, rAccum1; nop
+
+add rCurrentA, rCurrentA, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
+
+add raTmu0S, rCurrentA, rAccum1; nop
+add raTmu1S, rCurrentB, rAccum1; nop
+
+add rCurrentA, rCurrentA, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
+
+add raTmu0S, rCurrentA, rAccum1; nop
+add raTmu1S, rCurrentB, rAccum1; nop
+
+add rCurrentA, rCurrentA, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
+
+add raTmu0S, rCurrentA, rAccum1; nop
+add raTmu1S, rCurrentB, rAccum1; nop
+
+add rCurrentA, rCurrentA, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
+
+ldi rL, 0
+
+# Do an initial check if we have too few elements for a full pass.
 ldi rAccum0, ELEMENTS_PER_PASS_MINUS_ONE
 sub rAccum0, rK, rAccum0; nop
 sub ra39, rL, rAccum0; nop
 brr.ne ra39, main_loop_l_break
 NOP
-#NOP - Removed because next instructions can execute without side-effects
-#NOP
+NOP
+NOP
 
-# Set up the DMA to read from the A matrix into the 8 rows of VPM memory
-define(`MPITCH', 2)
-define(`ROWLEN', 16)
-define(`NROWS', VECTORS_PER_PASS)
-define(`VPITCH', 1)
-define(`ADDRY', 0)
-define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or ra49, rAccum0, rDMALoadAddrY; nop
+# This is the section that handles multiplying the A and B vectors together,
+# and adding them to the total.
+main_loop_l:
 
-MUTEX_ACQUIRE()
-VPM_DMA_LOAD_START(rCurrentA)
-MUTEX_RELEASE()
+# We read a pending A result from the queue, and then immediately fire off the
+# next memory fetch, to get the maximum concurrency.
+or.ldtmu0 ra39, ra39, ra39; nop
+add raTmu0S, rCurrentA, rAccum1; nop
+or rA0to15, r4, 0; nop
 
-define(`NUM', VECTORS_PER_PASS)
-define(`STRIDE', 1)
-define(`ADDR', 0)
-ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
-or ra49, rAccum0, rVPMReadAddr; nop
+# Now we pull the values from B, and fire off the next fetch.
+add.ldtmu1 rCurrentA, rCurrentA, rAccum2; nop
+add raTmu1S, rCurrentB, rAccum1; nop
+add rCurrentB, rCurrentB, rAccum2; fmul rAccum0, rA0to15, r4
+fadd rTotal, rTotal, rAccum0; nop
 
-# Read 128 A values from VPM
-or rA0to15, rVpmReadFifo, 0; nop
-or rA16to31, rVpmReadFifo, 0; nop
-or rA32to47, rVpmReadFifo, 0; nop
-or rA48to63, rVpmReadFifo, 0; nop
-or rA64to79, rVpmReadFifo, 0; nop
-or rA80to95, rVpmReadFifo, 0; nop
-or rA96to111, rVpmReadFifo, 0; nop
-or rA112to127, rVpmReadFifo, 0; nop
+sub rL, rL, -16; nop
 
-# Set up the DMA to read from the B matrix into the 8 rows of VPM memory
-define(`MPITCH', 2)
-define(`ROWLEN', 16)
-define(`NROWS', VECTORS_PER_PASS)
-define(`VPITCH', 1)
-define(`ADDRY', 0)
-define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or ra49, rAccum0, rDMALoadAddrY; nop
-
-MUTEX_ACQUIRE()
-VPM_DMA_LOAD_START(rCurrentB)
-MUTEX_RELEASE()
-
-ldi rAccum0, A_BYTES_PER_PASS
-add rCurrentA, rCurrentA, rAccum0; nop
-ldi rAccum0, B_BYTES_PER_PASS
-add rCurrentB, rCurrentB, rAccum0; nop
-
-define(`NUM', VECTORS_PER_PASS)
-define(`STRIDE', 1)
-define(`ADDR', 0)
-ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
-or ra49, rAccum0, rVPMReadAddr; nop
-
-# Read 128 B values from VPM and multiply them with the corresponding A values
-or rAccum0, rVpmReadFifo, rVpmReadFifo;  nop
-or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA0to15, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
-
-or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA16to31, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
-
-or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA32to47, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
-
-or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA48to63, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
-
-or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA64to79, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
-
-or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA80to95, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
-
-or rAccum0, rVpmReadFifo, rVpmReadFifo; fmul rAccum1, rA96to111, rAccum0
-
-ldi rAccum2, ELEMENTS_PER_PASS
-add rL, rL, rAccum2; nop
-brr ra39, main_loop_l
-#NOP
-#NOP
-#NOP
-fadd rTotal, rTotal, rAccum1; nop
-nop rb39, r0, r0; fmul rAccum1, rA112to127, rAccum0
-fadd rTotal, rTotal, rAccum1; nop
+sub rAccum0, rK, 15; nop
+sub ra39, rL, rAccum0; nop
+brr.ns ra39, main_loop_l
+NOP
+NOP
+NOP
 
 main_loop_l_break:
-
-# See if we have any elements to process after going through the 128-wide chunks
-or rAccum0, rK, 0; nop
-sub ra39, rL, rAccum0; nop
-brr.ne ra39, finish_loop_l_break
-NOP
-NOP
-NOP
 
 # Set up a count of how many elements we have left
 or rAccum0, rK, 0; nop
 sub rAccum0, rAccum0, rL; nop
 or rElementsRemaining, rAccum0, rAccum0; nop
 
-# Load just the VPM rows we need from A
-ldi rAccum1, 15
-add rAccum0, rAccum0, rAccum1; nop
-shr rAccum0, rAccum0, 4; nop
-ldi rAccum1, VPM_DMA_LOAD_SETUP_NROWS_SHIFT
-shl rAccum1, rAccum0, rAccum1; nop
-define(`MPITCH', 2)
-define(`ROWLEN', 16)
-define(`NROWS', 0)
-define(`VPITCH', 1)
-define(`ADDRY', 0)
-define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or rAccum0, rAccum0, rDMALoadAddrY; nop
-or ra49, rAccum0, rAccum1; nop
+ldi rAccum0, 64
+or rAccum1, rLinearRamp, rLinearRamp; nop
+shl rAccum1, rAccum1, 2; nop
 
-MUTEX_ACQUIRE()
-VPM_DMA_LOAD_START(rCurrentA)
-MUTEX_RELEASE()
+# We pull the next two fetches from A and B, and later we'll mask the unneeded
+# elements of the vectors out, to handle row lengths that aren't multiples of 16.
+add.ldtmu0 rCurrentA, rCurrentA, rAccum2; nop
+or rA0to15, r4, 0; nop
+or.ldtmu1 ra39, ra39, ra39; nop
+add rCurrentB, rCurrentB, rAccum2; fmul rA0to15, rA0to15, r4
 
-define(`NUM', VECTORS_PER_PASS)
-define(`STRIDE', 1)
-define(`ADDR', 0)
-ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
-or ra49, rAccum0, rVPMReadAddr; nop
+# We actually have been firing off memory fetches ahead of where we are, so we
+# need to consume and discard six vectors. This means we're reading off the end
+# of the matrix on the last row, which in theory could cause a memory fault,
+# but because we're dealing with contiguous physical memory addresses at the
+# hardware level, in practice it's not a problem.
+or.ldtmu0 ra39, ra39, ra39; nop
+or.ldtmu1 ra39, ra39, ra39; nop
 
-# Read 128 A values from VPM
-or rA0to15, rVpmReadFifo, 0; nop
-or rA16to31, rVpmReadFifo, 0; nop
-or rA32to47, rVpmReadFifo, 0; nop
-or rA48to63, rVpmReadFifo, 0; nop
-or rA64to79, rVpmReadFifo, 0; nop
-or rA80to95, rVpmReadFifo, 0; nop
-or rA96to111, rVpmReadFifo, 0; nop
-or rA112to127, rVpmReadFifo, 0; nop
+or.ldtmu0 ra39, ra39, ra39; nop
+or.ldtmu1 ra39, ra39, ra39; nop
 
-# Load just the VPM rows we need from B
-ldi rAccum1, 15
-add rAccum0, rElementsRemaining, rAccum1; nop
-shr rAccum0, rAccum0, 4; nop
-ldi rAccum1, VPM_DMA_LOAD_SETUP_NROWS_SHIFT
-shl rAccum1, rAccum0, rAccum1; nop
-define(`MPITCH', 2)
-define(`ROWLEN', 16)
-define(`NROWS', 0)
-define(`VPITCH', 1)
-define(`ADDRY', 0)
-define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_LOAD_SETUP_VALUE(MODEW_32_BIT, MPITCH, ROWLEN, NROWS, VPITCH, NOT_VERT, ADDRY, ADDRX)
-or rAccum0, rAccum0, rDMALoadAddrY; nop
-or ra49, rAccum0, rAccum1; nop
+or.ldtmu0 ra39, ra39, ra39; nop
+or.ldtmu1 ra39, ra39, ra39; nop
 
-MUTEX_ACQUIRE()
-VPM_DMA_LOAD_START(rCurrentB)
-MUTEX_RELEASE()
-
-# There's some magic in the way we exclude the off-the-end values here.
-# The QPUs don't have much in the way of component selection within the 16-float
-# vectors they operate on, so I have to fake it by subtracting from the base mask
-# we set up earlier. It's a linear ramp of indexes for each component, 0 to 15,
-# and by subtracting the wanted number and then shifting right 31 bits, we end
-# up with either 0 or -1 (0xffffffff) in each component vector, depending on
-# their position. I then use that to mask out the components we don't care about.
 ldi rMaskShift, 31
 ldi rElementsPerVector, 16
 
-define(`NUM', VECTORS_PER_PASS)
-define(`STRIDE', 1)
-define(`ADDR', 0)
-ldi rAccum0, VPM_BLOCK_READ_SETUP_VALUE(NUM, STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-VPM_DMA_LOAD_WAIT_FOR_COMPLETION()
-or ra49, rAccum0, rVPMReadAddr; nop
-
 or rAccum1, rElementsRemaining, rElementsRemaining; nop
 sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
+sub rAccum0, rLinearRamp, rAccum1; nop
 asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA0to15, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-
-fadd rTotal, rTotal, rAccum0; nop
-
-or rAccum1, rElementsRemaining, rElementsRemaining; nop
-sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
-asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA16to31, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-fadd rTotal, rTotal, rAccum0; nop
-
-or rAccum1, rElementsRemaining, rElementsRemaining; nop
-sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
-asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA32to47, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-fadd rTotal, rTotal, rAccum0; nop
-
-or rAccum1, rElementsRemaining, rElementsRemaining; nop
-sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
-asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA48to63, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-fadd rTotal, rTotal, rAccum0; nop
-
-or rAccum1, rElementsRemaining, rElementsRemaining; nop
-sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
-asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA64to79, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-fadd rTotal, rTotal, rAccum0; nop
-
-or rAccum1, rElementsRemaining, rElementsRemaining; nop
-sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
-asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA80to95, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-fadd rTotal, rTotal, rAccum0; nop
-
-or rAccum1, rElementsRemaining, rElementsRemaining; nop
-sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
-asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA96to111, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-fadd rTotal, rTotal, rAccum0; nop
-
-or rAccum1, rElementsRemaining, rElementsRemaining; nop
-sub rElementsRemaining, rAccum1, rElementsPerVector; nop
-sub rAccum0, rBaseMask, rAccum1; nop
-asr rAccum1, rAccum0, rMaskShift; nop
-or rAccum0, rVpmReadFifo, 0;  nop
-nop rb39, r0, r0; fmul rAccum0, rA112to127, rAccum0
-and rAccum0, rAccum0, rAccum1; nop
-fadd rTotal, rTotal, rAccum0; nop
+and rAccum2, rA0to15, rAccum1; nop
+fadd rTotal, rTotal, rAccum2; nop
 
 finish_loop_l_break:
 
@@ -479,24 +336,24 @@ loop_i_break:
 # This block will write out the 16 values in the rDebugOutput register to main
 # memory if it's uncommented. This is my main debugging tool, you can examine
 # intermediate values by storing them into this register.
-#define(`STRIDE', 1)
-#define(`ADDR', 0)
-#ldi rAccum0, VPM_BLOCK_WRITE_SETUP_VALUE(STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-#or rb49, rAccum0, rVPMWriteAddr; nop
-#
-#or rVpmWriteFifo, rDebugOutput, 0; nop
-#
-#define(`UNITS', 1)
-#define(`DEPTH', 16)
-#define(`ADDRY', 0)
-#define(`ADDRX', 0)
-#ldi rAccum0, VPM_DMA_STORE_SETUP_VALUE(UNITS, DEPTH, IS_HORIZ, ADDRY, ADDRX, MODEW_32_BIT)
-#or rb49, rAccum0, rDMAStoreAddrY; nop
-#
-#MUTEX_ACQUIRE()
-#VPM_DMA_STORE_START(rDebugAddress)
-#MUTEX_RELEASE()
-#VPM_DMA_STORE_WAIT_FOR_COMPLETION()
+define(`STRIDE', 1)
+define(`ADDR', 0)
+ldi rAccum0, VPM_BLOCK_WRITE_SETUP_VALUE(STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
+or rb49, rAccum0, rVPMWriteAddr; nop
+
+or rVpmWriteFifo, rDebugOutput, 0; nop
+
+define(`UNITS', 1)
+define(`DEPTH', 16)
+define(`ADDRY', 0)
+define(`ADDRX', 0)
+ldi rAccum0, VPM_DMA_STORE_SETUP_VALUE(UNITS, DEPTH, IS_HORIZ, ADDRY, ADDRX, MODEW_32_BIT)
+or rb49, rAccum0, rDMAStoreAddrY; nop
+
+MUTEX_ACQUIRE()
+VPM_DMA_STORE_START(rDebugAddress)
+MUTEX_RELEASE()
+VPM_DMA_STORE_WAIT_FOR_COMPLETION()
 
 # We need to coordinate the execution of all the QPUs, so that the program end
 # isn't signaled before they're all done. To handle this, first each program
@@ -512,6 +369,10 @@ NOP
 NOP
 
 # The number of 'down's must match the number of QPUs being run
+sema down, ALL_DONE_SEMA
+sema down, ALL_DONE_SEMA
+sema down, ALL_DONE_SEMA
+sema down, ALL_DONE_SEMA
 sema down, ALL_DONE_SEMA
 sema down, ALL_DONE_SEMA
 sema down, ALL_DONE_SEMA

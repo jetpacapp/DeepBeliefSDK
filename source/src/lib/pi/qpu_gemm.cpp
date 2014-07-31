@@ -10,10 +10,10 @@
 #include "matrix_ops.h"
 #include "qpu_gemm.h"
 
-#define NUM_QPUS        (8)
+#define NUM_QPUS        (12)
 #define NUM_MESSAGE_VALUES (2)
 
-//#define DO_LOG_OPERATIONS
+#define DO_LOG_OPERATIONS
 
 extern uint32_t g_gemm_8bitCode[];
 extern size_t g_gemm_8bitCodeByteCount;
@@ -222,16 +222,16 @@ void qpu_cblas_sgemm_fixed(
   unsigned ret = execute_qpu(NUM_QPUS, messageInputGpu, 1, 10000);
 
 #ifdef DO_LOG_OPERATIONS
-//  for (int i=0; i < NUM_QPUS; i++) {
-//    const size_t currentDebugOffset = (i * debugCount * sizeof(uint32_t));
-//    uint32_t* currentDebugArm = (uint32_t*)(debugBaseArm + currentDebugOffset);
-//    for (int index = 0; index < debugCount; index += 1) {
-//      fprintf(stderr, "%d:%d=%f (0x%08x, %d)\n", i, index,
-//        *(float*)(&currentDebugArm[index]),
-//        currentDebugArm[index],
-//        currentDebugArm[index]);
-//    }
-//  }
+  for (int i=0; i < NUM_QPUS; i++) {
+    const size_t currentDebugOffset = (i * debugCount * sizeof(uint32_t));
+    uint32_t* currentDebugArm = (uint32_t*)(debugBaseArm + currentDebugOffset);
+    for (int index = 0; index < debugCount; index += 1) {
+      fprintf(stderr, "%d:%d=%f (0x%08x, %d)\n", i, index,
+        *(float*)(&currentDebugArm[index]),
+        currentDebugArm[index],
+        currentDebugArm[index]);
+    }
+  }
 #endif
 
   unmapmem(armMemoryBase, totalByteCount);
@@ -317,7 +317,7 @@ void test_qpu_gemm() {
   const int ldc = m;
   const float beta = 0.0f;
 
-  const int weightsBitsPerElement = 16;
+  const int weightsBitsPerElement = 8;
 
   if (weightsBitsPerElement == 32) {
 
@@ -380,6 +380,18 @@ void test_qpu_gemm() {
 //      fprintf(stderr, "weightData[%d] = 0x%08x, %d (%f)\n", index, value, value, floatValue);
 //    }
 
+weightsFixed->populateWithRandomValues(0.0f, 0.0f);
+
+    uint8_t* weightData = (uint8_t*)(weightsFixed->_quantizedData);
+    for (int whichQPU = 0; whichQPU < NUM_QPUS; whichQPU += 1) {
+      uint8_t* weightRow = (weightData + (whichQPU * inputChannels));
+      for (int index = 0; index < 16; index += 1) {
+        weightRow[index] = ((16 * whichQPU) + index);
+      }
+    }
+
+input->printContents();
+
     naive_cblas_sgemm_fixed(
       order,
       transposeA,
@@ -423,7 +435,7 @@ void test_qpu_gemm() {
   }
 
 //  outputCPU->printContents();
-//  outputGPU->printContents();
+  outputGPU->printContents();
   assert(buffer_are_all_close(outputCPU, outputGPU));
 
   delete outputCPU;
