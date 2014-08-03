@@ -8,12 +8,10 @@ include(`helpers.asm')
 define(`VECTORS_PER_PASS', 1)
 define(`ELEMENTS_PER_PASS', `eval(VECTORS_PER_PASS * 16)')
 define(`ELEMENTS_PER_PASS_MINUS_ONE', `eval(ELEMENTS_PER_PASS - 1)')
-define(`A_BYTES_PER_PASS', `eval(ELEMENTS_PER_PASS * 4)')
+define(`A_BYTES_PER_PASS', `eval(ELEMENTS_PER_PASS * 2)')
 define(`B_BYTES_PER_PASS', `eval(ELEMENTS_PER_PASS * 4)')
 define(`ELEMENTS_PER_FINISH_PASS', 16)
 define(`ELEMENTS_PER_FINISH_PASS_MINUS_ONE', `eval(ELEMENTS_PER_FINISH_PASS - 1)')
-define(`A_BYTES_PER_FINISH_PASS', `eval(ELEMENTS_PER_FINISH_PASS * 4)')
-define(`B_BYTES_PER_FINISH_PASS', `eval(ELEMENTS_PER_FINISH_PASS * 4)')
 define(`VPM_ROWS_PER_PASS', 1)
 define(`NUM_QPUS', 12)
 define(`ALL_DONE_SEMA', 0)
@@ -144,7 +142,7 @@ brr.ne ra39, loop_j_break
 #NOP
 
 # Set up the reading addresses for the A and B matrices
-or rAccum0, rLDA, 0; nop
+shl rAccum0, rLDA, 1; nop
 nop rb39, r0, r0; mul24 rAccum0, rI, rAccum0
 add rCurrentA, rAAddress, rAccum0; nop
 
@@ -152,13 +150,14 @@ shl rAccum0, rLDB, 2; nop
 nop rb39, r0, r0; mul24 rAccum0, rJ, rAccum0
 add rCurrentB, rBAddress, rAccum0; nop
 
-ldi rTotal, 0
-
 # Constants we use for address calculations inside the loop
-or rAccum0, rLinearRamp, rLinearRamp; nop
-shl rAccum1, rAccum0, 2; nop
+or rAccum2, rLinearRamp, rLinearRamp; nop
+shl rAccum0, rAccum2, 1; nop
+shl rAccum1, rAccum2, 2; nop
 
 ldi rAccum2, 64
+
+ldi rTotal, 32
 
 # Kick off eight vector fetches (each of 16 floats) through the TMUs.
 # We explicitly control which TMU is used, so four are fired off on TMU 0, and
@@ -166,26 +165,28 @@ ldi rAccum2, 64
 add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
-sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentA, rCurrentA, rTotal; nop
+add rCurrentB, rCurrentB, rAccum2; nop
 
 add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
-sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentA, rCurrentA, rTotal; nop
+add rCurrentB, rCurrentB, rAccum2; nop
 
 add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
-sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentA, rCurrentA, rTotal; nop
+add rCurrentB, rCurrentB, rAccum2; nop
 
 add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
-sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentA, rCurrentA, rTotal; nop
+add rCurrentB, rCurrentB, rAccum2; nop
+
+ldi rTotal, 0
 
 ldi rL, 0
 
@@ -204,37 +205,33 @@ main_loop_l:
 
 # We read a pending A result from the queue, and then immediately fire off the
 # next memory fetch, to get the maximum concurrency.
-or.ldtmu0 rAccum0, rLinearRamp, rLinearRamp; nop
-add raTmu0S, rCurrentA, rAccum1; nop
+or rAccum0, rLinearRamp, rLinearRamp; nop
+shl rAccum0, rAccum0, 1; nop
+or.ldtmu0 ra39, ra39, ra39; nop
+add raTmu0S, rCurrentA, rAccum0; nop
 or raMisc, r4, 0; nop
 NOP
 
-ldi rUnpackMask, [0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
-fadd.unpack8d rAccum0, raMisc, 0; nop
+ldi rAccum1, 0x0000ffff
+ldi rUnpackMask, [0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1]
+and.unpack16b rAccum0, raMisc, rAccum1; nop
 and rAccum2, rAccum0, rUnpackMask; nop
 
-ldi rUnpackMask, [0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0]
-fadd.unpack8c rAccum0, raMisc, 0; nop
-and rAccum0, rAccum0, rUnpackMask; nop
-or rAccum2, rAccum2, rAccum0; nop
-
-ldi rUnpackMask, [0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0]
-fadd.unpack8b rAccum0, raMisc, 0; nop
-and rAccum0, rAccum0, rUnpackMask; nop
-or rAccum2, rAccum2, rAccum0; nop
-
-ldi rUnpackMask, [-1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0]
-fadd.unpack8a rAccum0, raMisc, 0; nop
+ldi rUnpackMask, [-1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0]
+and.unpack16a rAccum0, raMisc, rAccum1; nop
 and rAccum0, rAccum0, rUnpackMask; nop
 or rAccum0, rAccum2, rAccum0; nop
 
+itof rAccum0, rAccum0, rAccum0; nop
 or rb39, rb39, rb39; fmul rAccum0, rAccum0, rARange; nop
 fadd rAccum0, rAccum0, rAMin; nop
 
-
 # Now we pull the values from B, and fire off the next fetch.
+ldi rAccum2, 32
+add rCurrentA, rCurrentA, rAccum2; nop
+or rAccum1, rLinearRamp, rLinearRamp; nop
+shl rAccum1, rAccum1, 2; nop
 or.ldtmu1 ra39, ra39, ra39; nop
-sub rCurrentA, rCurrentA, -16; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 ldi rAccum2, 64
 add rCurrentB, rCurrentB, rAccum2; fmul rAccum0, rAccum0, r4

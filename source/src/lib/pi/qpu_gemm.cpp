@@ -317,7 +317,7 @@ void test_qpu_gemm() {
   const int ldc = m;
   const float beta = 0.0f;
 
-  const int weightsBitsPerElement = 8;
+  const int weightsBitsPerElement = 16;
 
   if (weightsBitsPerElement == 32) {
 
@@ -392,12 +392,12 @@ void test_qpu_gemm() {
 
 //input->printContents();
 //weightsFixed->printContents();
-//uint8_t* weightData = (uint8_t*)(weightsFixed->_quantizedData);
-//for (int index = 0; index < inputChannels; index += 1) {
+//uint16_t* weightData = (uint16_t*)(weightsFixed->_quantizedData);
+//for (int index = 0; index < 16; index += 1) {
 //  if (index > 0) {
 //    fprintf(stderr, ", ");
 //  }
-//  fprintf(stderr, "%02x", weightData[index]);
+//  fprintf(stderr, "%04x", weightData[index]);
 //}
 //fprintf(stderr, "\n");
 
