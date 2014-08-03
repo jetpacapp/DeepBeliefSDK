@@ -29,8 +29,8 @@ extern void test_qpu_gemm();
 extern "C" {
 
 void* jpcnn_create_network(const char* filename) {
-//test_qpu_gemm();
-//exit(1);
+test_qpu_gemm();
+exit(1);
   Graph* graph = new_graph_from_file(filename, false, true);
   return (void*)(graph);
 }

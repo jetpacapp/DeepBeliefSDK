@@ -380,17 +380,26 @@ void test_qpu_gemm() {
 //      fprintf(stderr, "weightData[%d] = 0x%08x, %d (%f)\n", index, value, value, floatValue);
 //    }
 
-weightsFixed->populateWithRandomValues(0.0f, 0.0f);
+//weightsFixed->populateWithRandomValues(0.0f, 0.0f);
 
-    uint8_t* weightData = (uint8_t*)(weightsFixed->_quantizedData);
-    for (int whichQPU = 0; whichQPU < NUM_QPUS; whichQPU += 1) {
-      uint8_t* weightRow = (weightData + (whichQPU * inputChannels));
-      for (int index = 0; index < 16; index += 1) {
-        weightRow[index] = ((16 * whichQPU) + index);
-      }
-    }
+//    uint8_t* weightData = (uint8_t*)(weightsFixed->_quantizedData);
+//    for (int whichQPU = 0; whichQPU < NUM_QPUS; whichQPU += 1) {
+//      uint8_t* weightRow = (weightData + (whichQPU * inputChannels));
+//      for (int index = 0; index < 16; index += 1) {
+//        weightRow[index] = ((16 * whichQPU) + index);
+//      }
+//    }
 
-input->printContents();
+//input->printContents();
+//weightsFixed->printContents();
+//uint8_t* weightData = (uint8_t*)(weightsFixed->_quantizedData);
+//for (int index = 0; index < inputChannels; index += 1) {
+//  if (index > 0) {
+//    fprintf(stderr, ", ");
+//  }
+//  fprintf(stderr, "%02x", weightData[index]);
+//}
+//fprintf(stderr, "\n");
 
     naive_cblas_sgemm_fixed(
       order,
@@ -435,7 +444,7 @@ input->printContents();
   }
 
 //  outputCPU->printContents();
-  outputGPU->printContents();
+//  outputGPU->printContents();
   assert(buffer_are_all_close(outputCPU, outputGPU));
 
   delete outputCPU;

@@ -167,25 +167,25 @@ add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
 sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
 
 add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
 sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
 
 add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
 sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
 
 add raTmu0S, rCurrentA, rAccum0; nop
 add raTmu1S, rCurrentB, rAccum1; nop
 
 sub rCurrentA, rCurrentA, -16; nop
-#add rCurrentB, rCurrentB, rAccum2; nop
+add rCurrentB, rCurrentB, rAccum2; nop
 
 ldi rL, 0
 
@@ -205,7 +205,7 @@ main_loop_l:
 # We read a pending A result from the queue, and then immediately fire off the
 # next memory fetch, to get the maximum concurrency.
 or.ldtmu0 rAccum0, rLinearRamp, rLinearRamp; nop
-add raTmu0S, rCurrentA, rAccum1; nop
+add raTmu0S, rCurrentA, rAccum0; nop
 or raMisc, r4, 0; nop
 NOP
 
@@ -230,7 +230,6 @@ or rAccum0, rAccum2, rAccum0; nop
 
 or rb39, rb39, rb39; fmul rAccum0, rAccum0, rARange; nop
 fadd rAccum0, rAccum0, rAMin; nop
-
 
 # Now we pull the values from B, and fire off the next fetch.
 or.ldtmu1 ra39, ra39, ra39; nop
