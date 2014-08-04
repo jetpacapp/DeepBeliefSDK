@@ -209,7 +209,9 @@ or rAccum0, rLinearRamp, rLinearRamp; nop
 shl rAccum0, rAccum0, 1; nop
 or.ldtmu0 ra39, ra39, ra39; nop
 add raTmu0S, rCurrentA, rAccum0; nop
-or raMisc, r4, 0; nop
+and rAccum0, rCurrentA, 2; nop
+shl rAccum0, rAccum0, 3; nop
+ror raMisc, r4, rAccum0; nop
 NOP
 
 ldi rAccum1, 0x0000ffff
@@ -253,35 +255,25 @@ or rAccum0, rK, 0; nop
 sub rAccum0, rAccum0, rL; nop
 or rElementsRemaining, rAccum0, rAccum0; nop
 
-ldi rAccum0, 64
-or rAccum1, rLinearRamp, rLinearRamp; nop
-shl rAccum1, rAccum1, 2; nop
-
 # We pull the next two fetches from A and B, and later we'll mask the unneeded
 # elements of the vectors out, to handle row lengths that aren't multiples of 16.
 or.ldtmu0 ra39, ra39, ra39; nop
-or raMisc, r4, 0; nop
+and rAccum0, rCurrentA, 2; nop
+shl rAccum0, rAccum0, 3; nop
+ror raMisc, r4, rAccum0; nop
 NOP
 
-ldi rUnpackMask, [0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
-fadd.unpack8d rAccum0, raMisc, 0; nop
+ldi rAccum1, 0x0000ffff
+ldi rUnpackMask, [0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1]
+and.unpack16b rAccum0, raMisc, rAccum1; nop
 and rAccum2, rAccum0, rUnpackMask; nop
 
-ldi rUnpackMask, [0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0]
-fadd.unpack8c rAccum0, raMisc, 0; nop
-and rAccum0, rAccum0, rUnpackMask; nop
-or rAccum2, rAccum2, rAccum0; nop
-
-ldi rUnpackMask, [0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0]
-fadd.unpack8b rAccum0, raMisc, 0; nop
-and rAccum0, rAccum0, rUnpackMask; nop
-or rAccum2, rAccum2, rAccum0; nop
-
-ldi rUnpackMask, [-1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0]
-fadd.unpack8a rAccum0, raMisc, 0; nop
+ldi rUnpackMask, [-1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0]
+and.unpack16a rAccum0, raMisc, rAccum1; nop
 and rAccum0, rAccum0, rUnpackMask; nop
 or rAccum0, rAccum2, rAccum0; nop
 
+itof rAccum0, rAccum0, rAccum0; nop
 or rb39, rb39, rb39; fmul rAccum0, rAccum0, rARange; nop
 fadd rAccum0, rAccum0, rAMin; nop
 

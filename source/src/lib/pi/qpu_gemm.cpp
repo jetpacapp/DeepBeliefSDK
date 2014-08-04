@@ -266,7 +266,7 @@ void test_qpu_gemm() {
 //  const int inputChannels = 363;
 //  const int inputHeight = 3025;
 //  const int outputChannels = 96;
-  const int inputChannels = 2304;
+  const int inputChannels = 233;//2304;
   const int inputHeight = 169;
   const int outputChannels = 384;
 
@@ -380,26 +380,26 @@ void test_qpu_gemm() {
 //      fprintf(stderr, "weightData[%d] = 0x%08x, %d (%f)\n", index, value, value, floatValue);
 //    }
 
-//weightsFixed->populateWithRandomValues(0.0f, 0.0f);
+weightsFixed->populateWithRandomValues(0.0f, 0.0f);
 
-//    uint8_t* weightData = (uint8_t*)(weightsFixed->_quantizedData);
-//    for (int whichQPU = 0; whichQPU < NUM_QPUS; whichQPU += 1) {
-//      uint8_t* weightRow = (weightData + (whichQPU * inputChannels));
-//      for (int index = 0; index < 16; index += 1) {
-//        weightRow[index] = ((16 * whichQPU) + index);
-//      }
-//    }
+uint16_t* weightData = (uint16_t*)(weightsFixed->_quantizedData);
+for (int whichQPU = 0; whichQPU < NUM_QPUS; whichQPU += 1) {
+  uint16_t* weightRow = (weightData + (whichQPU * inputChannels));
+  for (int index = 0; index < 16; index += 1) {
+    weightRow[index] = ((16 * whichQPU) + index);
+  }
+}
 
 //input->printContents();
-//weightsFixed->printContents();
+weightsFixed->printContents();
 //uint16_t* weightData = (uint16_t*)(weightsFixed->_quantizedData);
-//for (int index = 0; index < 16; index += 1) {
-//  if (index > 0) {
-//    fprintf(stderr, ", ");
-//  }
-//  fprintf(stderr, "%04x", weightData[index]);
-//}
-//fprintf(stderr, "\n");
+for (int index = 0; index < 16; index += 1) {
+  if (index > 0) {
+    fprintf(stderr, ", ");
+  }
+  fprintf(stderr, "%04x", weightData[index]);
+}
+fprintf(stderr, "\n");
 
     naive_cblas_sgemm_fixed(
       order,
@@ -443,7 +443,7 @@ void test_qpu_gemm() {
     delete weightsFixed;
   }
 
-//  outputCPU->printContents();
+  outputCPU->printContents();
 //  outputGPU->printContents();
   assert(buffer_are_all_close(outputCPU, outputGPU));
 
