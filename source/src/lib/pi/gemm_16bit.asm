@@ -371,25 +371,25 @@ loop_i_break:
 # This block will write out the 16 values in the rDebugOutput register to main
 # memory if it's uncommented. This is my main debugging tool, you can examine
 # intermediate values by storing them into this register.
-debug_exit:
-define(`STRIDE', 1)
-define(`ADDR', 0)
-ldi rAccum0, VPM_BLOCK_WRITE_SETUP_VALUE(STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
-or rb49, rAccum0, rVPMWriteAddr; nop
-
-or rVpmWriteFifo, rDebugOutput, 0; nop
-
-define(`UNITS', 1)
-define(`DEPTH', 16)
-define(`ADDRY', 0)
-define(`ADDRX', 0)
-ldi rAccum0, VPM_DMA_STORE_SETUP_VALUE(UNITS, DEPTH, IS_HORIZ, ADDRY, ADDRX, MODEW_32_BIT)
-or rb49, rAccum0, rDMAStoreAddrY; nop
-
-MUTEX_ACQUIRE()
-VPM_DMA_STORE_START(rDebugAddress)
-MUTEX_RELEASE()
-VPM_DMA_STORE_WAIT_FOR_COMPLETION()
+#debug_exit:
+#define(`STRIDE', 1)
+#define(`ADDR', 0)
+#ldi rAccum0, VPM_BLOCK_WRITE_SETUP_VALUE(STRIDE, IS_HORIZ, NOT_LANED, SIZE_32_BIT, ADDR)
+#or rb49, rAccum0, rVPMWriteAddr; nop
+#
+#or rVpmWriteFifo, rDebugOutput, 0; nop
+#
+#define(`UNITS', 1)
+#define(`DEPTH', 16)
+#define(`ADDRY', 0)
+#define(`ADDRX', 0)
+#ldi rAccum0, VPM_DMA_STORE_SETUP_VALUE(UNITS, DEPTH, IS_HORIZ, ADDRY, ADDRX, MODEW_32_BIT)
+#or rb49, rAccum0, rDMAStoreAddrY; nop
+#
+#MUTEX_ACQUIRE()
+#VPM_DMA_STORE_START(rDebugAddress)
+#MUTEX_RELEASE()
+#VPM_DMA_STORE_WAIT_FOR_COMPLETION()
 
 # We need to coordinate the execution of all the QPUs, so that the program end
 # isn't signaled before they're all done. To handle this, first each program

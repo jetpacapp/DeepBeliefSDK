@@ -13,7 +13,7 @@
 #define NUM_QPUS        (12)
 #define NUM_MESSAGE_VALUES (2)
 
-#define DO_LOG_OPERATIONS
+//#define DO_LOG_OPERATIONS
 
 extern uint32_t g_gemm_8bitCode[];
 extern size_t g_gemm_8bitCodeByteCount;
@@ -266,7 +266,7 @@ void test_qpu_gemm() {
 //  const int inputChannels = 363;
 //  const int inputHeight = 3025;
 //  const int outputChannels = 96;
-  const int inputChannels = 233;//2304;
+  const int inputChannels = 33;//2304;
   const int inputHeight = 169;
   const int outputChannels = 384;
 
@@ -317,7 +317,7 @@ void test_qpu_gemm() {
   const int ldc = m;
   const float beta = 0.0f;
 
-  const int weightsBitsPerElement = 16;
+  const int weightsBitsPerElement = 8;
 
   if (weightsBitsPerElement == 32) {
 
