@@ -49,15 +49,14 @@ int main(int argc, const char * argv[]) {
     return 1;
   }
 
-  jpcnn_classify_image(networkHandle, imageHandle, 0, -2, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
-
+  jpcnn_classify_image(networkHandle, imageHandle, 0, 0, &predictions, &predictionsLength, &predictionsLabels, &predictionsLabelsLength);
   jpcnn_destroy_image_buffer(imageHandle);
 
   for (index = 0; index < predictionsLength; index += 1) {
     float predictionValue;
-    char* label;
+    char* label = predictionsLabels[index];
     predictionValue = predictions[index];
-    fprintf(stdout, "%d\t%f\n", index, predictionValue);
+    fprintf(stdout, "%d\t%f\t%s\n", index, predictionValue, label);
   }
 
   jpcnn_destroy_network(networkHandle);
