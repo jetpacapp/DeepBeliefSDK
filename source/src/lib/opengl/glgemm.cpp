@@ -772,6 +772,7 @@ fprintf(stderr, "Calling gl_gemm()\n");
     program->setUniform1f("alpha", alpha);
     program->setUniform1f("beta", beta);
     program->setUniform1i("k", currentK);
+    program->clearInputBuffers();
     program->setInputBuffer("a", aBuffer);
     program->setInputBuffer("b", bBuffer);
     program->setInputBuffer("c", previousCBuffer);
