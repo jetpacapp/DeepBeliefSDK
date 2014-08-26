@@ -74,9 +74,11 @@ There's also [this full how-to guide](https://github.com/jetpacapp/DeepBeliefSDK
 
 To use the library in your own application: 
 
- - Add the DeepBelief.framework bundle to the Link Binary with Libraries build phase in your XCode project settings.
- - Add the system Accelerate.framework to your frameworks.
- - Add `#import <DeepBelief/DeepBelief.h>` to the top of the file you want to use the code in.
+1. Add the following frameworks to the **Link Binary with Libraries** in your XCode project's Build Phases:
+  1. `DeepBelief.framework`
+  1. `Accelerate.framework`
+  1. `libc++.dylib`
+1. Add `#import <DeepBelief/DeepBelief.h>` to the top of the file you want to use the code in.
 
 You should then be able to use code like this to classify a single image that you've included as a resource in your bundle. The code assumes it's called 'dog.jpg', but you should change it to match the name of your file.
 
@@ -109,8 +111,6 @@ You should then be able to use code like this to classify a single image that yo
   
   jpcnn_destroy_network(network);
 ```
-
-If you see errors related to `operator new` or similar messages at the linking stage, XCode may be skipping the standard C++ library, and that's needed by the DeepBelief.framework code. One workaround I've found is to include an empty .mm or .cpp file in the project to trick XCode into treating it as a C++ project.
 
 ## Getting Started on Android
 
