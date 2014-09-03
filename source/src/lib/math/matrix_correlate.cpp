@@ -72,7 +72,7 @@ Buffer* patches_into_rows(Buffer* input, int kernelWidth, int stride) {
         } else {
           size_t bytesToCopy;
           if (inputEndX > inputWidth) {
-            bytesToCopy = ((inputEndX - inputWidth) * inputChannels * sizeof(jpfloat_t));
+            bytesToCopy = ((kernelWidth - (inputEndX - inputWidth)) * inputChannels * sizeof(jpfloat_t));
           } else {
             bytesToCopy = bytesPerKernelRow;
           }
