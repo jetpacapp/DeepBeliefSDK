@@ -44,14 +44,15 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
 
   const int inputChannels = inputDims[3];
 
-  const int elementCount = inputDims.elementCount();
-  const jpfloat_t* inputDataEnd = (input->_data + elementCount);
+  
   Buffer* magnitude = new Buffer(inputDims);
 
   Buffer* magBuffer = new Buffer(Dimensions(inputChannels));
   jpfloat_t* magBufferData = magBuffer->_data;
 
   const jpfloat_t* inputData = input->_data;
+  const int elementCount = inputDims.elementCount();
+  const jpfloat_t* inputDataEnd = (input->_data + elementCount);
   jpfloat_t* magnitudeData = magnitude->_data;
 
   const jpfloat_t alphaOverSize = (alpha / windowSize);
