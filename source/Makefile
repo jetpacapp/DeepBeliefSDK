@@ -28,7 +28,7 @@ LIBLDLIBS += -lblas
 endif
 
 ifeq ($(GEMM),eigen)
-LIBCPPFLAGS += -I../eigen -DUSE_EIGEN_GEMM=1 
+LIBCPPFLAGS += -I../eigen -DUSE_EIGEN_GEMM=1  -D__MATH_FPABI=1 -mfloat-abi=hard
 endif
 
 ifeq ($(TARGET),pi)
