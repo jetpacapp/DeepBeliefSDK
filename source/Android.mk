@@ -17,8 +17,8 @@ LOCAL_C_INCLUDES += ./src/lib/include \
 /Users/petewarden/android_ndk/sources/cxx-stl/gnu-libstdc++/4.6/include \
 /Users/petewarden/android_ndk/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi/include
 
-LOCAL_CFLAGS := -DUSE_EIGEN_GEMM -DUSE_NEON -D__MATH_FPABI=0
-LOCAL_CFLAGS += -mfloat-abi=softfp -mfpu=neon -march=armv7 
+LOCAL_CFLAGS := -DUSE_EIGEN_GEMM -DUSE_NEON
+LOCAL_CFLAGS += -mfloat-abi=softfp -mfpu=neon -march=armv7
 
 LOCAL_CFLAGS += -fopenmp -O3
 LOCAL_LDFLAGS += -fopenmp -llog
