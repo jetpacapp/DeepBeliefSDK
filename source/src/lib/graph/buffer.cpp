@@ -546,10 +546,7 @@ void Buffer::transpose() {
   const int elementCount = originalDims.elementCount();
   const size_t byteCount = (elementCount * bytesPerElement);
   void* newDataBytes = malloc(byteCount);
-  
-  void* oldData = _data;
-  void* oldQuantizedData = _quantizedData;
-  
+
   if (bitsPerElement == 32) {
     jpfloat_t* originalData = _data;
     jpfloat_t* newData = (jpfloat_t*)(newDataBytes);
@@ -588,8 +585,7 @@ void Buffer::transpose() {
   }
 
   if (_doesOwnData) {
-    free(oldData);
-    free(oldQuantizedData);
+    free(_data);
   }
 
   _dims = newDims;
