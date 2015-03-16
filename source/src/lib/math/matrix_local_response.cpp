@@ -26,9 +26,6 @@
 #include <mkl_vml_functions.h>
 #endif // USE_MKL_GEMM
 
-#ifdef USE_NEON
-#include <math_neon.h>
-#endif
 
 #include "buffer.h"
 
@@ -112,19 +109,6 @@ Buffer* matrix_local_response(Buffer* input, int windowSize, jpfloat_t k, jpfloa
   vsPow(elementCount, magnitudeData, repeatedBeta, outputData);
   free(repeatedBeta);
   vsMul(elementCount, inputData, outputData, outputData);
-#elif defined(USE_NEON)
-  while (inputData < inputDataEnd) {
-
-    const jpfloat_t inputValue = *inputData;
-    const jpfloat_t magnitudeValue = *magnitudeData;
-    
-    jpfloat_t outputValue = (powf_neon(magnitudeValue, -beta) * inputValue);
-    *outputData = outputValue;
-
-    inputData += 1;
-    magnitudeData += 1;
-    outputData += 1;
-  }
 #else // USE_ACCELERATE_GEMM
   while (inputData < inputDataEnd) {
 
