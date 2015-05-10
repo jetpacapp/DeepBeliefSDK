@@ -337,7 +337,7 @@ This optimization allows an image to be recognized on a stock Pi in around five 
 ## Getting Started on a Raspberry Pi 2
 
 There's no pre-built library for the Pi 2, and the GPU version that's fastest on the Pi 1 doesn't work, so you can't just re-use the older library.
-The good news is that the CPU has improved so much, you can get better performance using the optimized Eigen open-source library, and compiling it from source.
+The good news is that the CPU has improved so much, you can get better performance using the optimized [Eigen open-source library](http://eigen.tuxfamily.org/index.php?title=Main_Page), and compiling it from source.
 Here are the instructions:
 
 `mkdir ~/projects`
