@@ -22,7 +22,8 @@ what applications that helps you build.
  - [Android](#getting-started-on-android)
  - [Linux](#getting-started-on-linux)
  - [OS X](#getting-started-on-os-x)
- - [Raspberry Pi](#getting-started-on-a-raspberry-pi)
+ - [Raspberry Pi 1](#getting-started-on-a-raspberry-pi-1)
+ - [Raspberry Pi 2](#getting-started-on-a-raspberry-pi-2)
  - [Javascript](#getting-started-with-javascript)
 
 ### Adding to an existing application
@@ -326,12 +327,35 @@ Once you've done that, you can run the image classification and prediction as no
 [The sample code](#simpleopencv) has some other convenience classes too, to help make using the library in C++ a bit easier.
 If you're using the Java interface, the same sort of call sequence works to handle the conversion, though you'll need `byte[]` arrays and you'll have to call `image.get(0, 0, pixels)` to actually get the raw image data you need.
 
-## Getting Started on a Raspberry Pi
+## Getting Started on a Raspberry Pi 1
 
 The library is available as a Raspbian .so library in the RaspberryPiLibrary folder.
 Using it is very similar to ordinary Linux, and you can follow most of the [same instructions](#getting-started-on-linux), substituting the install.sh in the Pi folder.
 The biggest difference is that the Pi library uses the GPU to handle a lot of the calculations, so you need to run [the example program](#simplelinux) as a super user, e.g. `sudo ./deepbelief`.
 This optimization allows an image to be recognized on a stock Pi in around five seconds, and in three seconds with a boosted GPU clock rate.
+
+## Getting Started on a Raspberry Pi 2
+
+There's no pre-built library for the Pi 2, and the GPU version that's fastest on the Pi 1 doesn't work, so you can't just re-use the older library.
+The good news is that the CPU has improved so much, you can get better performance using the optimized Eigen open-source library, and compiling it from source.
+Here are the instructions:
+`mkdir ~/projects`
+`cd ~/projects`
+Clone this repository into ~/projects/DeepBeliefSDK
+`curl -O -L http://bitbucket.org/eigen/eigen/get/3.2.4.tar.gz`
+`tar -xzf 3.2.4.tar.gz`
+`rm -rf 3.2.4.tar.gz`
+`ln -s ~/projects/eigen-eigen-10219c95fe65 ~/projects/DeepBeliefSDK/eigen`
+`cd ~/projects/DeepBeliefSDK/source`
+`make clean`
+`sudo apt-get install gcc-4.8 g++-4.8`
+`sudo rm -rf /usr/bin/gcc`
+`sudo rm -rf /usr/bin/g++`
+`sudo ln -s /usr/bin/gcc-4.8 /usr/bin/gcc`
+`sudo ln -s /usr/bin/g++-4.8 /usr/bin/g++`
+`make GEMM=eigen TARGET=pi2`
+`./jpcnn -i data/dog.jpg -n ../networks/jetpac.ntwk -t -m s -d`
+You should see the classification results, with a time of around 4.2 seconds on a stock Pi 2. If you then overclock it with `raspi-config`, you can increase that to 3.8s.
 
 ## Getting Started with Javascript
 
