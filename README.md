@@ -370,7 +370,7 @@ Clone this repository into ~/projects/DeepBeliefSDK
 
 `./jpcnn -i data/dog.jpg -n ../networks/jetpac.ntwk -t -m s -d`
 
-You should see the classification results, with a time of around 4.2 seconds on a stock Pi 2. If you then overclock it with `raspi-config`, you can increase that to 3.8s.
+You should see the classification results, with a time of around 3.8 seconds on a stock Pi 2. If you then overclock it with `raspi-config`, you can increase that to 3.2s.
 
 ## Getting Started with Javascript
 
