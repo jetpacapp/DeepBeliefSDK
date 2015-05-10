@@ -5,7 +5,7 @@ CPPFLAGS=
 
 .PRECIOUS: %.cdat
 
-LIBCPPFLAGS=-Ofast -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./src/lib/third_party -I ./src/lib/utility -I ./src/lib/svm -I ./src/lib/opengl -I ./src/lib -I ./src/include
+LIBCPPFLAGS=-Ofast -I ./src/lib/include -I ./src/lib/graph -I ./src/lib/math -I ./src/lib/third_party -I ./src/lib/utility -I ./src/lib/svm -I ./src/lib/opengl -I ./src/lib -I ./src/include -g
 LIBLDFLAG=
 LIBLDLIBS=
 
@@ -42,6 +42,13 @@ LIBCPPFLAGS += \
 -I./src/lib/pi
 endif
 
+ifeq ($(TARGET),pi2)
+LIBCPPFLAGS += \
+-mcpu=cortex-a7 \
+-mfpu=neon-vfpv4 \
+-mfloat-abi=hard
+endif
+
 ifeq ($(GEMM),pigl)
 LIBCPPFLAGS += \
 -I/usr/include \
@@ -63,7 +70,7 @@ ASMOBJS := $(subst .asm,.do,$(ASMSRCS))
 LIBOBJS += $(ASMOBJS)
 endif
 
-TOOLCPPFLAGS := -O3 -I ./src/include
+TOOLCPPFLAGS := -O3 -I ./src/include -g
 
 TOOLSRCS := $(shell find src/tool -name '*.cpp' -not -name '._*')
 TOOLOBJS := $(subst .cpp,.o,$(TOOLSRCS))

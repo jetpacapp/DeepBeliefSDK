@@ -391,6 +391,9 @@ void cblas_sgemm_fixed(
   posix_memalign((void**)(&aSubMatrix), 16, bytesPerSubMatrix);
   jpfloat_t* cSubMatrix;
   posix_memalign((void**)(&cSubMatrix), 16, bytesPerSubMatrix);
+#elif defined(USE_EIGEN_GEMM)
+  jpfloat_t* aSubMatrix = (jpfloat_t*)(Eigen::internal::aligned_malloc(bytesPerSubMatrix));
+  jpfloat_t* cSubMatrix = (jpfloat_t*)(Eigen::internal::aligned_malloc(bytesPerSubMatrix));
 #else // TARGET_PI
   jpfloat_t* aSubMatrix = (jpfloat_t*)(malloc(bytesPerSubMatrix));
   jpfloat_t* cSubMatrix = (jpfloat_t*)(malloc(bytesPerSubMatrix));
@@ -576,8 +579,13 @@ void cblas_sgemm_fixed(
 #endif // USE_EIGEN_GEMM
   }
 
+#if defined(USE_EIGEN_GEMM)
+  Eigen::internal::aligned_free(aSubMatrix);
+  Eigen::internal::aligned_free(cSubMatrix);
+#else // USE_EIGEN_GEMM
   free(aSubMatrix);
   free(cSubMatrix);
+#endif // USE_EIGEN_GEMM
 }
 #endif
 

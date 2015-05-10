@@ -31,6 +31,10 @@
 #include "mailbox.h"
 #endif // TARGET_PI
 
+#ifdef USE_EIGEN_GEMM
+#include <Eigen/Core>
+#endif // USE_EIGEN_GEMM
+
 static void buffer_do_save_to_image_file(Buffer* buffer, const char* filename);
 
 Buffer::Buffer(const Dimensions& dims) :
@@ -51,6 +55,8 @@ Buffer::Buffer(const Dimensions& dims) :
   }
   _gpuMemoryBase = mem_lock(_gpuMemoryHandle);
   _data = (jpfloat_t*)(mapmem(_gpuMemoryBase + GPU_MEM_MAP, byteCount));
+#elif defined(USE_EIGEN_GEMM)
+  _data = (jpfloat_t*)(Eigen::internal::aligned_malloc(byteCount));
 #else // TARGET_PI
   _data = (jpfloat_t*)(malloc(byteCount * 1));
 #endif // TARGET_PI
@@ -114,8 +120,10 @@ Buffer::Buffer(const Dimensions& dims, jpfloat_t min, jpfloat_t max, int bitsPer
   }
   _gpuMemoryBase = mem_lock(_gpuMemoryHandle);
   _quantizedData = (char*)(mapmem(_gpuMemoryBase + GPU_MEM_MAP, byteCount));
+#elif defined(USE_EIGEN_GEMM)
+  _quantizedData = (void*)(Eigen::internal::aligned_malloc(byteCount));
 #else // TARGET_PI
-  _quantizedData = (void*)(malloc(byteCount * 1));
+  _quantizedData = (void*)(malloc(byteCount));
 #endif // TARGET_PI
   _doesOwnData = true;
   setName("None");
@@ -137,6 +145,9 @@ Buffer::~Buffer()
     }
     mem_unlock(_gpuMemoryHandle);
     mem_free(_gpuMemoryHandle);
+#elif defined(USE_EIGEN_GEMM)
+    Eigen::internal::aligned_free(_data);
+    Eigen::internal::aligned_free(_quantizedData);
 #else // TARGET_PI
     free(_data);
     free(_quantizedData);

@@ -1,3 +1,4 @@
+#ifdef USE_QPU_GEMM
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +14,7 @@
 #define NUM_QPUS        (12)
 #define NUM_MESSAGE_VALUES (2)
 
-//#define DO_LOG_OPERATIONS
+
 
 extern uint32_t g_gemm_8bitCode[];
 extern size_t g_gemm_8bitCodeByteCount;
@@ -451,3 +452,5 @@ fprintf(stderr, "\n");
   delete outputGPU;
   delete input;
 }
+
+#endif // USE_QPU_GEMM
