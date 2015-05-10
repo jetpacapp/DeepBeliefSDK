@@ -339,22 +339,39 @@ This optimization allows an image to be recognized on a stock Pi in around five 
 There's no pre-built library for the Pi 2, and the GPU version that's fastest on the Pi 1 doesn't work, so you can't just re-use the older library.
 The good news is that the CPU has improved so much, you can get better performance using the optimized Eigen open-source library, and compiling it from source.
 Here are the instructions:
+
 `mkdir ~/projects`
+
 `cd ~/projects`
+
 Clone this repository into ~/projects/DeepBeliefSDK
+
 `curl -O -L http://bitbucket.org/eigen/eigen/get/3.2.4.tar.gz`
+
 `tar -xzf 3.2.4.tar.gz`
+
 `rm -rf 3.2.4.tar.gz`
+
 `ln -s ~/projects/eigen-eigen-10219c95fe65 ~/projects/DeepBeliefSDK/eigen`
+
 `cd ~/projects/DeepBeliefSDK/source`
+
 `make clean`
+
 `sudo apt-get install gcc-4.8 g++-4.8`
+
 `sudo rm -rf /usr/bin/gcc`
+
 `sudo rm -rf /usr/bin/g++`
+
 `sudo ln -s /usr/bin/gcc-4.8 /usr/bin/gcc`
+
 `sudo ln -s /usr/bin/g++-4.8 /usr/bin/g++`
+
 `make GEMM=eigen TARGET=pi2`
+
 `./jpcnn -i data/dog.jpg -n ../networks/jetpac.ntwk -t -m s -d`
+
 You should see the classification results, with a time of around 4.2 seconds on a stock Pi 2. If you then overclock it with `raspi-config`, you can increase that to 3.8s.
 
 ## Getting Started with Javascript
