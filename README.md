@@ -346,13 +346,11 @@ Here are the instructions:
 
 Clone this repository into ~/projects/DeepBeliefSDK
 
-`curl -O -L http://bitbucket.org/eigen/eigen/get/3.2.4.tar.gz`
+`sudo apt-get install -y mercurial`
 
-`tar -xzf 3.2.4.tar.gz`
+`hg clone https://bitbucket.org/eigen/eigen`
 
-`rm -rf 3.2.4.tar.gz`
-
-`ln -s ~/projects/eigen-eigen-10219c95fe65 ~/projects/DeepBeliefSDK/eigen`
+`ln -s ~/projects/eigen ~/projects/DeepBeliefSDK/eigen`
 
 `cd ~/projects/DeepBeliefSDK/source`
 
