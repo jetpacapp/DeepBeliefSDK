@@ -49,6 +49,15 @@ LIBCPPFLAGS += \
 -mfloat-abi=hard
 endif
 
+ifeq ($(TARGET),beagle)
+LIBCPPFLAGS += \
+-march=armv7-a \
+-mtune=cortex-a8 \
+-mfloat-abi=hard \
+-mfpu=neon \
+-ffast-math
+endif
+
 ifeq ($(GEMM),pigl)
 LIBCPPFLAGS += \
 -I/usr/include \
