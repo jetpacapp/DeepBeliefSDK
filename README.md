@@ -24,6 +24,7 @@ what applications that helps you build.
  - [OS X](#getting-started-on-os-x)
  - [Raspberry Pi 1](#getting-started-on-a-raspberry-pi-1)
  - [Raspberry Pi 2](#getting-started-on-a-raspberry-pi-2)
+ - [Beaglebone Black](#getting-started-on-a-beaglebone-black)
  - [Javascript](#getting-started-with-javascript)
 
 ### Adding to an existing application
@@ -371,6 +372,32 @@ Clone this repository into ~/projects/DeepBeliefSDK
 `./jpcnn -i data/dog.jpg -n ../networks/jetpac.ntwk -t -m s -d`
 
 You should see the classification results, with a time of around 3.8 seconds on a stock Pi 2. If you then overclock it with `raspi-config`, you can increase that to 3.2s.
+
+## Getting Started on a Beaglebone Black
+
+Like the Pi 2, there’s no pre-built library for the Beaglebone Black, but you can build it yourself using the ARM-optimized [Eigen open-source library](http://eigen.tuxfamily.org/index.php?title=Main_Page). You will need to use the latest development version of Eigen to make sure NEON is enabled on the default gcc v4.6 compiler though, see [this patch](https://bitbucket.org/eigen/eigen/pull-request/117/add-check-for-older-neon-macro/diff#comment-None).
+
+Here are the instructions:
+
+`mkdir ~/projects`
+
+`cd ~/projects`
+
+Clone this repository into ~/projects/DeepBeliefSDK
+
+`sudo apt-get install -y mercurial`
+
+`hg clone https://bitbucket.org/eigen/eigen`
+
+`ln -s ~/projects/eigen ~/projects/DeepBeliefSDK/eigen`
+
+`cd ~/projects/DeepBeliefSDK/source`
+
+`make clean`
+
+`make GEMM=eigen TARGET=beagle`
+
+`./jpcnn -i data/dog.jpg -n ../networks/jetpac.ntwk -t -m s -d`
 
 ## Getting Started with Javascript
 
