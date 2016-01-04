@@ -134,7 +134,7 @@ WebGL.prototype = {
 
     return name;
   },
-  
+
   setUniforms: function(shaderName, uniforms) {
     var gl = this.gl;
     if (typeof uniforms === 'undefined') {
@@ -259,7 +259,7 @@ WebGL.prototype = {
     }, loadInfo);
     texture.image.src = url;
   },
-  
+
   createTextureFromImage: function(name, image) {
     var gl = this.gl;
     var texture = gl.createTexture();
@@ -367,7 +367,7 @@ WebGL.prototype = {
     var pointHeight = this.pointHeight;
     var projection = mat4.ortho(0, pointWidth, pointHeight, 0, -1.0, 1.0);
     var modelView = mat4.identity(mat4.create());
-  
+
     _.each(this.programs, _.bind(function(program, name) {
       var projectionLocation = this.getUniformLocation(name, 'projection');
       if (!isGLError(projectionLocation)) {
@@ -383,7 +383,7 @@ WebGL.prototype = {
       }
     }, this));
   },
-  
+
   clearScreen: function(red, green, blue, alpha) {
     if (typeof red === 'undefined') {
       red = 0.0;
@@ -403,12 +403,12 @@ WebGL.prototype = {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   },
-  
+
   enable: function(name) {
     var gl = this.gl;
     gl.enable(gl[name]);
   },
-  
+
   disable: function(name) {
     var gl = this.gl;
     gl.disable(gl[name]);
@@ -473,7 +473,7 @@ WebGL.prototype = {
 
     var vertexPositionLocation = this.getAttribLocation(name, 'vertexPosition');
     gl.enableVertexAttribArray(vertexPositionLocation);
-    
+
     var texCoordsLocation = this.getAttribLocation(name, 'texCoords');
     if (!isGLError(texCoordsLocation)) {
       gl.enableVertexAttribArray(texCoordsLocation);
@@ -483,7 +483,7 @@ WebGL.prototype = {
   stopUsingShaderProgram: function(name) {
     var gl = this.gl;
     var vertexPositionLocation = this.getAttribLocation(name, 'vertexPosition');
-    gl.disableVertexAttribArray(vertexPositionLocation);    
+    gl.disableVertexAttribArray(vertexPositionLocation);
     var texCoordsLocation = this.getAttribLocation(name, 'texCoords');
     if (!isGLError(texCoordsLocation)) {
       gl.disableVertexAttribArray(texCoordsLocation);
@@ -737,7 +737,8 @@ GPUCalculator.prototype = {
         inputBuffers: { input0: output },
         uniforms: {},
         width: (outputTexture.width * 4),
-        height: outputTexture.height
+        height: outputTexture.height,
+        bitDepth: 8
       });
 
     } else if (channels === 1) {
@@ -795,7 +796,8 @@ GPUCalculator.prototype = {
         inputBuffers: { input0: output },
         uniforms: {},
         width: outputTexture.width,
-        height: outputTexture.height
+        height: outputTexture.height,
+        bitDepth: 8
       });
 
     } else {
@@ -843,4 +845,3 @@ if ( !window.requestAnimationFrame ) {
     };
   } )();
 }
-
