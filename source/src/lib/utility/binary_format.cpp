@@ -11,7 +11,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
+
 #include <sys/stat.h>
 #include <fcntl.h>
 
@@ -22,14 +26,18 @@ SBinaryTag* read_tag_from_file(const char* filename, bool useMemoryMap) {
     return NULL;
   }
 
+
   SBinaryTag* result;
+#ifndef _WIN32
   if (useMemoryMap) {
     const int fileHandle = open(filename, O_RDONLY);
     struct stat statBuffer;
     fstat(fileHandle, &statBuffer);
     const size_t bytesInFile = (size_t)(statBuffer.st_size);
     result = (SBinaryTag*)(mmap(NULL, bytesInFile, PROT_READ, MAP_SHARED, fileHandle, 0));
-  } else {
+  } else 
+#endif
+  {
     FILE* file = fopen(filename, "rb");
     if (file == NULL) {
       fprintf(stderr, "read_tag_from_file() - couldn't open '%s'\n", filename);
@@ -53,12 +61,15 @@ SBinaryTag* read_tag_from_file(const char* filename, bool useMemoryMap) {
 }
 
 void deallocate_file_tag(SBinaryTag* fileTag, bool useMemoryMap) {
-  if (useMemoryMap) {
+#ifndef _WIN32
+  if ( useMemoryMap ) {
     // This assumes that there's only a single root tag in a binary file, so we can
     // calculate the file length based on the tag length.
     const size_t tagTotalBytes = get_total_sizeof_tag(fileTag);
     munmap(fileTag, tagTotalBytes);
-  } else {
+  } else 
+#endif
+  {
     free(fileTag);
   }
 }

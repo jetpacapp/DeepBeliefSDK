@@ -11,16 +11,17 @@
 #include "deepbeliefopencv.h"
 
 #include <cctype>
+#include <cstdint>
 #include <iostream>
 #include <iterator>
 
 #include <stdio.h>
 #include <assert.h>
 
-#include "opencv2/core/utility.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/imgproc/types_c.h"
-#include "opencv2/highgui/highgui_c.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/types_c.h>
+#include <opencv2/highgui/highgui_c.h>
 
 #include "libjpcnn.h"
 

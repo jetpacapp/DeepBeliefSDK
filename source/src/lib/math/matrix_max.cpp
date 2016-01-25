@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+#include <algorithm>
 
 #include "buffer.h"
 
@@ -72,9 +73,9 @@ Buffer* matrix_max_patch(Buffer* input, int patchWidth, int stride) {
         for (int outputChannel = 0; outputChannel < outputChannels; outputChannel += 1) {
           jpfloat_t patchMax = -FLT_MAX;
           for (int patchY = 0; patchY < patchWidth; patchY += 1) {
-            const int inputY = (int)fmin((inputHeight - 1), (inputOriginY + patchY));
+            const int inputY = (int)std::min((inputHeight - 1), (inputOriginY + patchY));
             for (int patchX = 0; patchX < patchWidth; patchX += 1) {
-              const int inputX = (int)fmin((inputWidth - 1), (inputOriginX + patchX));
+              const int inputX = (int)std::min((inputWidth - 1), (inputOriginX + patchX));
               const int inputOffset = inputDims.offset(imageIndex, inputY, inputX, outputChannel);
               const jpfloat_t inputValue = *(input->_data + inputOffset);
               patchMax = fmaxf(patchMax, inputValue);

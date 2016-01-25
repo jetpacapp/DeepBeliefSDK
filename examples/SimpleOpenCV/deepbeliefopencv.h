@@ -13,7 +13,7 @@
 
 #include <string>
 
-#include "opencv2/core/utility.hpp"
+#include "opencv2/core/core.hpp"
 
 namespace DeepBelief {
 
