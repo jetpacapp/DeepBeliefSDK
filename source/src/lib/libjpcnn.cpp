@@ -11,7 +11,7 @@
 #include "libjpcnn.h"
 
 #include <stdio.h>
-#include <sys/time.h>
+//#include <sys/time.h>
 
 #include "buffer.h"
 #include "prepareinput.h"
@@ -111,8 +111,8 @@ void* jpcnn_create_image_buffer_from_uint8_data(unsigned char* pixelData, int wi
 
 void jpcnn_classify_image(void* networkHandle, void* inputHandle, unsigned int flags, int layerOffset, float** outPredictionsValues, int* outPredictionsLength, char*** outPredictionsNames, int* outPredictionsNamesLength) {
 
-  const bool doMultiSample = (flags & JPCNN_MULTISAMPLE);
-  const bool doRandomSample = (flags & JPCNN_RANDOM_SAMPLE);
+  const bool doMultiSample = (flags & JPCNN_MULTISAMPLE) != 0;
+  const bool doRandomSample = (flags & JPCNN_RANDOM_SAMPLE) != 0;
 
   Graph* graph = (Graph*)(networkHandle);
   Buffer* input = (Buffer*)(inputHandle);
@@ -231,7 +231,7 @@ float jpcnn_predict(void* predictorHandle, float* predictions, int predictionsLe
   svm_predict_probability(model, nodes, probabilityEstimates);
   const double predictionValue = probabilityEstimates[0];
   destroy_node_list(nodes);
-  return predictionValue;
+  return (float)predictionValue;
 }
 
 

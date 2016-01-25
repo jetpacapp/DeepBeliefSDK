@@ -7,7 +7,6 @@
 //
 
 #include <stdio.h>
-#include <sys/time.h>
 #include <string.h>
 #include <getopt.h>
 #include <assert.h>
@@ -15,10 +14,15 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <errno.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <stdint.h>
 
 #include "libjpcnn.h"
+#include "timer.h"
+
+#include <chrono>
 
 #define STATIC_ARRAY_LEN(x) (sizeof(x) / sizeof(x[0]))
 
@@ -148,7 +152,7 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
         fprintf(stderr, "Unknown option '%s'\n", fullArg);
         print_usage_and_exit(argc, argv);
       }
-      const bool hasArgument = foundToolOption->hasArgument;
+      const bool hasArgument = foundToolOption->hasArgument!=0;
       const char* valueString;
       if (hasArgument) {
         if (argIndex == (argc - 1)) {
@@ -215,7 +219,7 @@ void parse_command_line_args(int argc, const char* argv[], SToolArgumentValues* 
       const int optionIntValue = atoi(optionStringValue);
       outValues->doTime = optionIntValue;
     } else if (strcmp("threshold", longName) == 0) {
-      const float optionFloatValue = atof(optionStringValue);
+      const float optionFloatValue = (float)atof(optionStringValue);
       outValues->threshold = optionFloatValue;
     } else if (strcmp("layer", longName) == 0) {
       const int optionIntValue = atoi(optionStringValue);
@@ -262,7 +266,7 @@ void print_usage_and_exit(int argc, const char* argv[]) {
 
 void do_classify_image(void* network, const char* inputFilename, int doMultisample, int layerOffset, float** predictions, int* predictionsLength, char*** predictionsLabels, long* outDuration) {
   void* input = jpcnn_create_image_buffer_from_file(inputFilename);
-  if (input == NULL) {
+  if ( input == NULL ) {
     *predictions = NULL;
     *predictionsLength = 0;
     *predictionsLabels = NULL;
@@ -270,19 +274,16 @@ void do_classify_image(void* network, const char* inputFilename, int doMultisamp
   }
   int predictionsLabelsLength;
   int actualPredictionsLength;
-  struct timeval start;
-  gettimeofday(&start, NULL);
   uint32_t flags = 0;
-  if (doMultisample) {
+  if ( doMultisample ) {
     flags = (flags | JPCNN_MULTISAMPLE);
   }
-  jpcnn_classify_image(network, input, flags, layerOffset, predictions, &actualPredictionsLength, predictionsLabels, &predictionsLabelsLength);
-  struct timeval end;
-  gettimeofday(&end, NULL);
+  {
+    Timer timer;
+    jpcnn_classify_image(network, input, flags, layerOffset, predictions, &actualPredictionsLength, predictionsLabels, &predictionsLabelsLength);
+    *outDuration = (long)timer.getElapsedTimeMs();
+  }
   jpcnn_destroy_image_buffer(input);
-  long seconds  = end.tv_sec  - start.tv_sec;
-  long useconds = end.tv_usec - start.tv_usec;
-  *outDuration = ((seconds) * 1000 + useconds/1000.0) + 0.5;
   if (doMultisample) {
     for (int index = 0; index < actualPredictionsLength; index += 1) {
       const float predictionValue = (*predictions)[index];
@@ -426,11 +427,14 @@ void prediction_callback(void* cookie, float* predictions, int predictionsLength
   const size_t outPathLength = outputDirectoryNameLength + 1 + outnameLength;
   char* outPath = (char*)(malloc(outPathLength + 1));
   snprintf(outPath, (outPathLength + 1), "%s/%s", outputDirectory, outname);
-
+  
+  fprintf(stderr, "'%s' -> '%s' with error number %d\n", outPath, fullPath, errno);
+#ifndef _WIN32
   const int symlinkResult = symlink(fullPath, outPath);
   if (symlinkResult != 0) {
     fprintf(stderr, "symlink failed for '%s' -> '%s' with error number %d\n", outPath, fullPath, errno);
   }
+#endif
   free(outPath);
 }
 
