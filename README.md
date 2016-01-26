@@ -168,7 +168,7 @@ float jpcnn_predict(Pointer predictorHandle, Pointer predictions, int prediction
 There are a few quirks to using the interface that the example code demonstrates how to work around. 
 `jpcnn_create_network()` requires a standard filename path, but to distribute the network with an
 application it needs to be an asset, and because that may be compressed and part of an archive, there's
-no way to get a path to it. To fix that, `initDeepBelief()` copys the file to the application's data directory:
+no way to get a path to it. To fix that, `initDeepBelief()` copies the file to the application's data directory:
 
 ```java
 AssetManager am = ctx.getAssets();
