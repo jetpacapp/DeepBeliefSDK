@@ -54,7 +54,7 @@ Buffer::Buffer(const Dimensions& dims) :
     fprintf(stderr, "Unable to allocate %d bytes of GPU memory\n", byteCount);
   }
   _gpuMemoryBase = mem_lock(_gpuMemoryHandle);
-  _data = (jpfloat_t*)(mapmem(_gpuMemoryBase + GPU_MEM_MAP, byteCount));
+  _data = (jpfloat_t*)(mapmem(BUS_TO_PHYS(_gpuMemoryBase + GPU_MEM_MAP), byteCount));
 #elif defined(USE_EIGEN_GEMM)
   _data = (jpfloat_t*)(Eigen::internal::aligned_malloc(byteCount));
 #else // TARGET_PI
@@ -119,7 +119,7 @@ Buffer::Buffer(const Dimensions& dims, jpfloat_t min, jpfloat_t max, int bitsPer
     fprintf(stderr, "Unable to allocate %d bytes of GPU memory\n", byteCount);
   }
   _gpuMemoryBase = mem_lock(_gpuMemoryHandle);
-  _quantizedData = (char*)(mapmem(_gpuMemoryBase + GPU_MEM_MAP, byteCount));
+  _quantizedData = (char*)(mapmem(BUS_TO_PHYS(_gpuMemoryBase + GPU_MEM_MAP), byteCount));
 #elif defined(USE_EIGEN_GEMM)
   _quantizedData = (void*)(Eigen::internal::aligned_malloc(byteCount));
 #else // TARGET_PI

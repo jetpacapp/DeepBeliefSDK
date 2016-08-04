@@ -163,7 +163,7 @@ void qpu_cblas_sgemm_fixed(
     return;
   }
   uint32_t gpuMemoryBase = mem_lock(gpuMemoryHandle);
-  char* armMemoryBase = (char*)(mapmem(gpuMemoryBase + GPU_MEM_MAP, totalByteCount));
+  char* armMemoryBase = (char*)(mapmem(BUS_TO_PHYS(gpuMemoryBase + GPU_MEM_MAP), totalByteCount));
 
   const size_t messageOffset = 0;
   const size_t codeOffset = (messageOffset + messageByteCount);

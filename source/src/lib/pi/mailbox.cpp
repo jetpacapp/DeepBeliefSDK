@@ -43,8 +43,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define MAJOR_NUM 100
 #define IOCTL_MBOX_PROPERTY _IOWR(MAJOR_NUM, 0, char *)
-#define DEVICE_DIRECTORY "/var/lib/jpcnn"
-#define DEVICE_PATH "/var/lib/jpcnn/char_dev"
+#define DEVICE_DIRECTORY "/dev"
+#define DEVICE_PATH DEVICE_DIRECTORY "/vcio"
 #define PAGE_SIZE (4*1024)
 
 int g_mailboxHandle = -1;
