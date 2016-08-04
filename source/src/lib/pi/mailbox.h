@@ -47,4 +47,6 @@ unsigned execute_code(unsigned code, unsigned r0, unsigned r1, unsigned r2, unsi
 unsigned execute_qpu(unsigned num_qpus, unsigned control, unsigned noflush, unsigned timeout);
 unsigned qpu_enable(unsigned enable);
 
+#define BUS_TO_PHYS(x) ((((x)) & ~0xC0000000))
+
 #endif // INCLUDE_MAILBOX_H
