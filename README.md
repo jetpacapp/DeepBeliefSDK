@@ -24,6 +24,7 @@ what applications that helps you build.
  - [OS X](#getting-started-on-os-x)
  - [Raspberry Pi 1](#getting-started-on-a-raspberry-pi-1)
  - [Raspberry Pi 2](#getting-started-on-a-raspberry-pi-2)
+ - [Raspberry Pi 3](#getting-started-on-a-raspberry-pi-3)
  - [Beaglebone Black](#getting-started-on-a-beaglebone-black)
  - [Javascript](#getting-started-with-javascript)
  - [Building from Source](#building-from-source)
@@ -373,6 +374,10 @@ Clone this repository into ~/projects/DeepBeliefSDK
 `./jpcnn -i data/dog.jpg -n ../networks/jetpac.ntwk -t -m s -d`
 
 You should see the classification results, with a time of around 3.8 seconds on a stock Pi 2. If you then overclock it with `raspi-config`, you can increase that to 3.2s.
+
+## Getting Started on a Raspberry Pi 3
+
+There's no pre-built library for the Pi 3, just like for Pi 2, and the GPU version that's fastest on the Pi 1 doesn't work, so you can't just re-use the older library, or build from source, as described in [Building from Source](#building-from-source). You should see the classification results, with a time of around 2.5 seconds on a stock Pi 3. Using Raspberry Pi 3 Model B gives a much better time, because of its 1GB RAM and 64-bit Broadcom BCM2837 ARM v8 processor which is a quad-core chip that runs at 1.2GHz.
 
 ## Getting Started on a Beaglebone Black
 
