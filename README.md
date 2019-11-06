@@ -405,7 +405,7 @@ The excellent [libccv](http://libccv.org) project also made a couple of networks
 
 Because we reuse the same code across a lot of different platforms, we use a
 plain-old C interface to our library. All of the handles to different objects are
-opaque pointers, and you have to explictly call the `*_destroy_*` function on any
+opaque pointers, and you have to explicitly call the `*_destroy_*` function on any
 handles that have been returned from `*_create_*` calls if you want to avoid memory
 leaks. Input images are created from raw arrays of 8-bit RGB data, you can see how 
 to build those from iOS types by searching for `jpcnn_create_image_buffer()` in the 
